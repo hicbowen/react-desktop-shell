@@ -1,116 +1,89 @@
 .sidebar {
-    width: 228px;
-    height: calc(100vh - 40px);
-
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-
-    transition: width 0.18s cubic-bezier(0.2, 0, 0, 1);
+  width: var(--sidebar-width);
+  height: calc(100vh - var(--title-bar-height));
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transition: width 0.18s cubic-bezier(0.2, 0, 0, 1);
 }
 
-/* 折叠状态 */
 .sidebar.collapsed {
-    width: 56px;
+  width: var(--sidebar-collapsed-width);
 }
 
-/* 固定高度区域 */
-.sidebar-header,
 .sidebar-item,
 .sidebar-footer,
 .sidebar-group-title {
-    flex-shrink: 0;
+  flex-shrink: 0;
 }
 
-/* 可滚动区域 */
 .sidebar-nav {
-    flex: 1;
-    min-height: 0;
-    padding: 4px;
-
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-
-    overflow-y: auto;
+  flex: 1;
+  min-height: 0;
+  padding: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  overflow-y: auto;
 }
 
-/* Footer */
 .sidebar-footer {
-    padding: 4px;
+  padding: 4px;
 }
 
-/* Item */
 .sidebar-item {
-    height: 36px;
-    padding: 0 12px 0 16px;
-    font-size: 14px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-
-    border-radius: 8px;
-    cursor: default;
-    color: #333;
-
-    transition: background 0.15s ease, padding 0.2s ease;
+  width: 100%;
+  height: 36px;
+  padding: 0 12px 0 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--text-color);
+  font: inherit;
+  font-size: 14px;
+  text-align: left;
+  background: transparent;
+  border: 0;
+  border-radius: 8px;
+  cursor: default;
+  transition:
+    background 0.15s ease,
+    color 0.15s ease,
+    padding 0.2s ease;
 }
 
-.sidebar.collapsed .sidebar-item,
-.sidebar.collapsed .sidebar-header {
-    justify-content: center;
-    padding: 0;
+.sidebar.collapsed .sidebar-item {
+  justify-content: center;
+  padding: 0;
 }
 
 .sidebar-item:hover {
-    background: rgba(0, 0, 0, 0.05);
+  background: var(--hover-bg);
 }
 
 .sidebar-item.active {
-    background: #edf3fb;
-    color: #115ea3;
-    position: relative;
+  position: relative;
+  color: var(--accent-color);
+  background: var(--accent-bg);
 }
 
-/* Win11 左侧强调条 */
 .sidebar-item.active::before {
-    content: '';
-    position: absolute;
-    left: 1px;
-    top: 50%;
-    transform: translateY(-50%);
-
-    width: 4px;
-    height: 16px;
-    border-radius: 4px;
-    background: currentColor;
+  content: '';
+  position: absolute;
+  left: 1px;
+  top: 50%;
+  width: 4px;
+  height: 16px;
+  border-radius: 4px;
+  background: currentColor;
+  transform: translateY(-50%);
 }
 
-/* 分组标题 */
 .sidebar-group-title {
-    margin: 14px 12px 6px;
-    font-size: 11.5px;
-    font-weight: 500;
-    color: rgba(0, 0, 0, 0.5);
-    pointer-events: none;
-    user-select: none;
-}
-
-/* 深色模式 */
-@media (prefers-color-scheme: dark) {
-    .sidebar-item {
-        color: #ddd;
-    }
-
-    .sidebar-group-title {
-        color: #ddd;
-    }
-
-    .sidebar-item:hover {
-        background: rgba(255, 255, 255, 0.06);
-    }
-
-    .sidebar-item.active {
-        background: rgba(15, 108, 189, 0.25);
-    }
+  margin: 14px 12px 6px;
+  color: var(--muted-text-color);
+  font-size: 11.5px;
+  font-weight: 600;
+  pointer-events: none;
+  user-select: none;
 }

@@ -1,96 +1,68 @@
 import { useEffect, useState } from 'react'
-import {
-    Home,
-    Users,
-    ClipboardList,
-    MessageSquare,
-    BookOpen,
-    Settings,
-    ListChecks,
-    Layers,
-    Flag,
-} from 'lucide-react'
+import type { NavItem, NavLink, RouteId } from './app.config'
 import './sidebar.css'
 
 const COLLAPSE_WIDTH = 700
 
-const navItems = [
-    { type: 'item', id: 'home', label: '首页', icon: Home },
-    { type: 'item', id: 'today', label: '今日事项', icon: ListChecks },
-
-    { type: 'group', label: '学员与班级' },
-    { type: 'item', id: 'student', label: '学员信息', icon: Users },
-    { type: 'item', id: 'class', label: '班级管理', icon: Layers },
-    { type: 'item', id: 'makeup', label: '补课计划', icon: ClipboardList },
-
-    { type: 'group', label: '服务与规划' },
-    { type: 'item', id: 'feedback', label: '课后反馈', icon: MessageSquare },
-    { type: 'item', id: 'phrases', label: '常用语', icon: BookOpen },
-    { type: 'item', id: 'plan', label: '学习规划', icon: Flag },
-] as const
-
 export default function Sidebar({
-    active,
-    onChange,
+  active,
+  footerItems,
+  items,
+  onChange,
 }: {
-    active: string
-    onChange: (id: string) => void
+  active: RouteId
+  footerItems: NavLink[]
+  items: NavItem[]
+  onChange: (id: RouteId) => void
 }) {
-    const [collapsed, setCollapsed] = useState(
-        window.innerWidth < COLLAPSE_WIDTH
-    )
+  const [collapsed, setCollapsed] = useState(
+    window.innerWidth < COLLAPSE_WIDTH,
+  )
 
-    useEffect(() => {
-        const onResize = () =>
-            setCollapsed(window.innerWidth < COLLAPSE_WIDTH)
-        window.addEventListener('resize', onResize)
-        return () => window.removeEventListener('resize', onResize)
-    }, [])
+  useEffect(() => {
+    const onResize = () => {
+      setCollapsed(window.innerWidth < COLLAPSE_WIDTH)
+    }
+
+    window.addEventListener('resize', onResize)
+    return () => window.removeEventListener('resize', onResize)
+  }, [])
+
+  const renderItem = (item: NavLink) => {
+    const Icon = item.icon
 
     return (
-        <aside className={`sidebar no-select ${collapsed ? 'collapsed' : ''}`}>
-            {/* <div className="sidebar-header">
-            </div> */}
-            <nav className="sidebar-nav">
-                {navItems.map((item, index) => {
-                    if (item.type === 'group') {
-                        // 折叠状态：分组标题直接隐藏（Win11 就是这样）
-                        if (collapsed) return null
-
-                        return (
-                            <div key={`group-${index}`} className="sidebar-group-title">
-                                {item.label}
-                            </div>
-                        )
-                    }
-
-                    const Icon = item.icon
-                    return (
-                        <div
-                            key={item.id}
-                            className={`sidebar-item ${active === item.id ? 'active' : ''
-                                }`}
-                            onClick={() => onChange(item.id)}
-                            title={collapsed ? item.label : undefined}
-                        >
-                            <Icon size={16} />
-                            {!collapsed && <span>{item.label}</span>}
-                        </div>
-                    )
-                })}
-            </nav>
-            <div className="sidebar-footer">
-                <div
-                    key={'settings'}
-                    className={`sidebar-item ${active === 'settings' ? 'active' : ''
-                        }`}
-                    onClick={() => onChange('settings')}
-                    title={collapsed ? '设置' : undefined}
-                >
-                    <Settings size={16} />
-                    {!collapsed && <span>{'设置'}</span>}
-                </div>
-            </div>
-        </aside>
+      <button
+        key={item.id}
+        className={`sidebar-item ${active === item.id ? 'active' : ''}`}
+        onClick={() => onChange(item.id)}
+        title={collapsed ? item.label : undefined}
+        type="button"
+      >
+        <Icon size={16} />
+        {!collapsed && <span>{item.label}</span>}
+      </button>
     )
+  }
+
+  return (
+    <aside className={`sidebar no-select ${collapsed ? 'collapsed' : ''}`}>
+      <nav className="sidebar-nav">
+        {items.map((item, index) => {
+          if (item.type === 'group') {
+            if (collapsed) return null
+
+            return (
+              <div key={`group-${index}`} className="sidebar-group-title">
+                {item.label}
+              </div>
+            )
+          }
+
+          return renderItem(item)
+        })}
+      </nav>
+      <div className="sidebar-footer">{footerItems.map(renderItem)}</div>
+    </aside>
+  )
 }
