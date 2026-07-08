@@ -4,8 +4,8 @@
   --app-page-content-gap: 24px;
   --app-page-title-size: 28px;
   --app-page-title-weight: 600;
-  --app-page-text-color: #1f1f1f;
-  --app-page-muted-text-color: #707070;
+  --app-page-text-color: var(--app-shell-text-color, #1f1f1f);
+  --app-page-muted-text-color: var(--app-shell-muted-text-color, #707070);
 
   width: 100%;
   min-width: 0;

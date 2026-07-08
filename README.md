@@ -82,12 +82,25 @@ function App() {
 
 ```tsx
 <AppShell
+  theme="system"
   titleBar={<AppTitleBar title="My App" />}
   rail={<AppRail value={active} items={items} onChange={setActive} />}
 >
   <HomePage />
 </AppShell>
 ```
+
+## Theme
+
+`AppShell` supports light, dark, and system themes.
+
+```tsx
+<AppShell theme="system">...</AppShell>
+<AppShell theme="light">...</AppShell>
+<AppShell theme="dark">...</AppShell>
+```
+
+`system` is the default theme and follows the operating system color scheme through `prefers-color-scheme`. The theme is scoped to `AppShell` and does not modify `html`, `body`, or global application theme state.
 
 ## App Page
 
@@ -237,7 +250,7 @@ Override variables on `.app-shell`, `.app-page`, `.app-rail`, and `.app-title-ba
 .app-shell {
   --app-shell-chrome-bg: #f3f3f3;
   --app-shell-content-bg: #f7f8fa;
-  --app-shell-content-margin: 0 8px 8px 0;
+  --app-shell-content-margin: 0 5px 5px 0;
   --app-shell-content-radius: 10px;
 }
 
@@ -259,30 +272,40 @@ Override variables on `.app-shell`, `.app-page`, `.app-rail`, and `.app-title-ba
 | ---------------------------------- | --------------------- |
 | `--app-shell-chrome-bg`            | `#f3f3f3`             |
 | `--app-shell-content-bg`           | `#f7f8fa`             |
+| `--app-shell-text-color`           | `#1f1f1f`             |
+| `--app-shell-muted-text-color`     | `#707070`             |
+| `--app-shell-hover-bg`             | `rgb(0 0 0 / 5%)`     |
+| `--app-shell-control-hover-bg`     | `#d4d4d4`             |
+| `--app-shell-active-bg`            | `#edf3fb`             |
+| `--app-shell-border-color`         | `rgb(0 0 0 / 8%)`     |
+| `--app-shell-accent-color`         | `#115ea3`             |
+| `--app-shell-danger-bg`            | `#ef4444`             |
 | `--app-shell-content-margin`       | `0 5px 5px 0`         |
 | `--app-shell-content-radius`       | `10px`                |
-| `--app-shell-content-border-color` | `#e6e6e6`             |
+| `--app-shell-content-border-color` | `var(--app-shell-border-color)` |
 | `--app-page-padding`               | `24px`                |
 | `--app-page-header-gap`            | `8px`                 |
 | `--app-page-content-gap`           | `24px`                |
 | `--app-page-title-size`            | `28px`                |
 | `--app-page-title-weight`          | `600`                 |
-| `--app-page-text-color`            | `#1f1f1f`             |
-| `--app-page-muted-text-color`      | `#707070`             |
+| `--app-page-text-color`            | `var(--app-shell-text-color, #1f1f1f)` |
+| `--app-page-muted-text-color`      | `var(--app-shell-muted-text-color, #707070)` |
 | `--app-rail-width`                 | `228px`               |
 | `--app-rail-collapsed-width`       | `56px`                |
-| `--app-rail-text-color`            | `#1f1f1f`             |
-| `--app-rail-muted-text-color`      | `rgba(0, 0, 0, 0.58)` |
-| `--app-rail-hover-bg`              | `rgba(0, 0, 0, 0.05)` |
-| `--app-rail-accent-color`          | `#115ea3`             |
-| `--app-rail-accent-bg`             | `#edf3fb`             |
+| `--app-rail-text-color`            | `var(--app-shell-text-color, #1f1f1f)` |
+| `--app-rail-muted-text-color`      | `var(--app-shell-muted-text-color, rgba(0, 0, 0, 0.58))` |
+| `--app-rail-hover-bg`              | `var(--app-shell-hover-bg, rgba(0, 0, 0, 0.05))` |
+| `--app-rail-accent-color`          | `var(--app-shell-accent-color, #115ea3)` |
+| `--app-rail-accent-bg`             | `var(--app-shell-active-bg, #edf3fb)` |
 | `--app-rail-bg`                    | `transparent`         |
 | `--app-title-bar-height`           | `40px`                |
-| `--app-title-bar-text-color`       | `#1f1f1f`             |
-| `--app-title-bar-icon-color`       | `#115ea3`             |
-| `--app-title-bar-hover-bg`         | `#d4d4d4`             |
-| `--app-title-bar-danger-bg`        | `#ef4444`             |
+| `--app-title-bar-text-color`       | `var(--app-shell-text-color, #1f1f1f)` |
+| `--app-title-bar-icon-color`       | `var(--app-shell-accent-color, #115ea3)` |
+| `--app-title-bar-hover-bg`         | `var(--app-shell-control-hover-bg, #d4d4d4)` |
+| `--app-title-bar-danger-bg`        | `var(--app-shell-danger-bg, #ef4444)` |
 | `--app-title-bar-bg`               | `transparent`         |
+
+Child components use `AppShell` theme tokens as defaults while keeping their existing component-level CSS variables customizable.
 
 ## API
 
@@ -290,6 +313,7 @@ Override variables on `.app-shell`, `.app-page`, `.app-rail`, and `.app-title-ba
 
 | Prop               | Type            | Default     | Description                                      |
 | ------------------ | --------------- | ----------- | ------------------------------------------------ |
+| `theme`            | `'system' \| 'light' \| 'dark'` | `'system'` | Controls the shell color theme. |
 | `titleBar`         | `ReactNode`     | `undefined` | Title bar content rendered above the body.       |
 | `rail`             | `ReactNode`     | `undefined` | Navigation rail content rendered beside content. |
 | `children`         | `ReactNode`     | `undefined` | Main content rendered in the scrollable area.    |
@@ -348,6 +372,8 @@ Override variables on `.app-shell`, `.app-page`, `.app-rail`, and `.app-title-ba
 ```tsx
 import type { CSSProperties, ReactNode } from 'react'
 
+export type AppTheme = 'system' | 'light' | 'dark'
+
 export type RailItem = {
   type?: 'item'
   key: string
@@ -365,6 +391,7 @@ export type RailEntry = RailItem | RailGroup
 
 ```tsx
 export interface AppShellProps {
+  theme?: AppTheme
   titleBar?: ReactNode
   rail?: ReactNode
   children?: ReactNode

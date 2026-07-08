@@ -1,5 +1,7 @@
 import type { CSSProperties, ReactNode } from 'react'
 
+export type AppTheme = 'system' | 'light' | 'dark'
+
 export type RailItem = {
   type?: 'item'
   key: string
@@ -15,6 +17,7 @@ export type RailGroup = {
 export type RailEntry = RailItem | RailGroup
 
 export interface AppShellProps {
+  theme?: AppTheme
   titleBar?: ReactNode
   rail?: ReactNode
   children?: ReactNode

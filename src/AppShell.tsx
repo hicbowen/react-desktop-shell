@@ -3,6 +3,7 @@ import type { AppShellProps } from './types'
 import './AppShell.css'
 
 export function AppShell({
+  theme = 'system',
   titleBar,
   rail,
   children,
@@ -32,7 +33,7 @@ export function AppShell({
   }, [contentClassName])
 
   return (
-    <div className={rootClassName} style={style}>
+    <div className={rootClassName} data-theme={theme} style={style}>
       {titleBar}
       <div className="app-shell__body">
         {rail}

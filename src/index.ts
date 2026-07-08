@@ -8,6 +8,7 @@ export type {
   AppRailProps,
   AppShellProps,
   AppTitleBarProps,
+  AppTheme,
   RailEntry,
   RailGroup,
   RailItem,

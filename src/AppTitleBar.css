@@ -1,9 +1,9 @@
 .app-title-bar {
   --app-title-bar-height: 40px;
-  --app-title-bar-text-color: #1f1f1f;
-  --app-title-bar-icon-color: #115ea3;
-  --app-title-bar-hover-bg: #d4d4d4;
-  --app-title-bar-danger-bg: #ef4444;
+  --app-title-bar-text-color: var(--app-shell-text-color, #1f1f1f);
+  --app-title-bar-icon-color: var(--app-shell-accent-color, #115ea3);
+  --app-title-bar-hover-bg: var(--app-shell-control-hover-bg, #d4d4d4);
+  --app-title-bar-danger-bg: var(--app-shell-danger-bg, #ef4444);
   --app-title-bar-bg: transparent;
 
   height: var(--app-title-bar-height);

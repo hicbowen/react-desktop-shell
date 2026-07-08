@@ -7,7 +7,7 @@ import {
   Settings,
   Wrench,
 } from 'lucide-react'
-import { AppPage, AppRail, AppShell, AppTitleBar } from '../../src'
+import { AppPage, AppRail, AppShell, AppTitleBar, type AppTheme } from '../../src'
 
 const pages = {
   home: {
@@ -29,11 +29,15 @@ const pages = {
   },
   settings: {
     title: 'Settings',
-    description: 'Manage application preferences and account options.',
+    description: 'Customize the desktop shell experience.',
   },
 }
 
-function renderPageContent(active: string) {
+function renderPageContent(
+  active: string,
+  theme: AppTheme,
+  setTheme: (theme: AppTheme) => void,
+) {
   if (active === 'files') {
     return (
       <div className="example-file-list">
@@ -73,12 +77,33 @@ function renderPageContent(active: string) {
   if (active === 'settings') {
     return (
       <div className="example-settings-list">
-        <label>
-          <span>Launch on startup</span>
+        <label className="example-settings-row">
+          <span className="example-settings-copy">
+            <span>Theme</span>
+            <small>Choose how the application shell looks.</small>
+          </span>
+          <select
+            className="example-settings-select"
+            value={theme}
+            onChange={(event) => setTheme(event.target.value as AppTheme)}
+          >
+            <option value="system">System</option>
+            <option value="light">Light</option>
+            <option value="dark">Dark</option>
+          </select>
+        </label>
+        <label className="example-settings-row">
+          <span className="example-settings-copy">
+            <span>Launch on startup</span>
+            <small>Open FlowGo automatically when you sign in.</small>
+          </span>
           <input type="checkbox" />
         </label>
-        <label>
-          <span>Show compact navigation</span>
+        <label className="example-settings-row">
+          <span className="example-settings-copy">
+            <span>Show compact navigation</span>
+            <small>Reduce the navigation rail to icon-only mode.</small>
+          </span>
           <input type="checkbox" />
         </label>
       </div>
@@ -113,10 +138,12 @@ function renderPageContent(active: string) {
 export function ExampleApp() {
   const [active, setActive] = useState('home')
   const [maximized, setMaximized] = useState(false)
+  const [theme, setTheme] = useState<AppTheme>('system')
   const currentPage = pages[active as keyof typeof pages]
 
   return (
     <AppShell
+      theme={theme}
       titleBar={
         <AppTitleBar
           title="FlowGo"
@@ -174,7 +201,7 @@ export function ExampleApp() {
         description={currentPage.description}
         actions={currentPage.actions}
       >
-        {renderPageContent(active)}
+        {renderPageContent(active, theme, setTheme)}
       </AppPage>
     </AppShell>
   )

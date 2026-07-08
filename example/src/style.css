@@ -34,7 +34,7 @@ body {
 }
 
 .example-title-action:hover {
-  background: rgba(0, 0, 0, 0.05);
+  background: var(--app-shell-hover-bg);
 }
 
 .example-content {
@@ -44,11 +44,11 @@ body {
 .example-page-action {
   height: 32px;
   padding: 0 12px;
-  color: #fff;
+  color: var(--app-shell-content-bg);
   font: inherit;
   font-size: 13px;
   font-weight: 600;
-  background: #115ea3;
+  background: var(--app-shell-accent-color);
   border: 0;
   border-radius: 6px;
   cursor: default;
@@ -66,9 +66,9 @@ body {
 .example-file-row,
 .example-tool-tile,
 .example-settings-list {
-  border: 1px solid #e1e1e1;
+  border: 1px solid var(--app-shell-border-color);
   border-radius: 8px;
-  background: #fff;
+  background: var(--app-shell-chrome-bg);
 }
 
 .example-stat {
@@ -77,8 +77,9 @@ body {
 
 .example-stat span,
 .example-file-main span,
-.example-activity span {
-  color: rgba(0, 0, 0, 0.58);
+.example-activity span,
+.example-settings-copy small {
+  color: var(--app-shell-muted-text-color);
   font-size: 13px;
 }
 
@@ -113,10 +114,10 @@ body {
 .example-file-list {
   display: flex;
   flex-direction: column;
-  border: 1px solid #e1e1e1;
+  border: 1px solid var(--app-shell-border-color);
   border-radius: 8px;
   overflow: hidden;
-  background: #fff;
+  background: var(--app-shell-chrome-bg);
 }
 
 .example-file-row {
@@ -127,6 +128,7 @@ body {
   gap: 14px;
   border-width: 0 0 1px;
   border-radius: 0;
+  background: var(--app-shell-chrome-bg);
 }
 
 .example-file-row:last-child {
@@ -140,15 +142,15 @@ body {
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  color: #115ea3;
+  color: var(--app-shell-accent-color);
   border-radius: 6px;
-  background: #edf3fb;
+  background: var(--app-shell-active-bg);
 }
 
 .example-file-tag {
   margin-left: auto;
   flex-shrink: 0;
-  color: rgba(0, 0, 0, 0.58);
+  color: var(--app-shell-muted-text-color);
   font-size: 12px;
 }
 
@@ -167,7 +169,7 @@ body {
 }
 
 .example-tool-tile:hover {
-  background: #f7f7f7;
+  background: var(--app-shell-hover-bg);
 }
 
 .example-settings-list {
@@ -175,15 +177,34 @@ body {
   flex-direction: column;
 }
 
-.example-settings-list label {
-  min-height: 56px;
+.example-settings-row {
+  min-height: 64px;
   padding: 0 16px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-bottom: 1px solid #e1e1e1;
+  gap: 16px;
+  border-bottom: 1px solid var(--app-shell-border-color);
 }
 
-.example-settings-list label:last-child {
+.example-settings-row:last-child {
   border-bottom: 0;
+}
+
+.example-settings-copy {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.example-settings-select {
+  min-width: 148px;
+  height: 32px;
+  color: var(--app-shell-text-color);
+  font: inherit;
+  background: var(--app-shell-content-bg);
+  border: 1px solid var(--app-shell-border-color);
+  border-radius: 6px;
+  padding: 0 10px;
 }

@@ -1,11 +1,14 @@
 .app-rail {
   --app-rail-width: 228px;
   --app-rail-collapsed-width: 56px;
-  --app-rail-text-color: #1f1f1f;
-  --app-rail-muted-text-color: rgba(0, 0, 0, 0.58);
-  --app-rail-hover-bg: rgba(0, 0, 0, 0.05);
-  --app-rail-accent-color: #115ea3;
-  --app-rail-accent-bg: #edf3fb;
+  --app-rail-text-color: var(--app-shell-text-color, #1f1f1f);
+  --app-rail-muted-text-color: var(
+    --app-shell-muted-text-color,
+    rgba(0, 0, 0, 0.58)
+  );
+  --app-rail-hover-bg: var(--app-shell-hover-bg, rgba(0, 0, 0, 0.05));
+  --app-rail-accent-color: var(--app-shell-accent-color, #115ea3);
+  --app-rail-accent-bg: var(--app-shell-active-bg, #edf3fb);
   --app-rail-bg: transparent;
 
   width: var(--app-rail-width);
