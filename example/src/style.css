@@ -38,30 +38,152 @@ body {
 }
 
 .example-content {
-  padding: 24px;
-  border-top: 1px solid #e1e1e1;
-  border-left: 1px solid #e1e1e1;
-  border-top-left-radius: 10px;
+  background: var(--app-shell-content-bg);
+}
+
+.example-page-action {
+  height: 32px;
+  padding: 0 12px;
+  color: #fff;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  background: #115ea3;
+  border: 0;
+  border-radius: 6px;
+  cursor: default;
+}
+
+.example-overview,
+.example-tool-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+}
+
+.example-stat,
+.example-activity,
+.example-file-row,
+.example-tool-tile,
+.example-settings-list {
+  border: 1px solid #e1e1e1;
+  border-radius: 8px;
   background: #fff;
 }
 
-.example-kicker {
-  margin: 0 0 8px;
-  color: #115ea3;
-  font-size: 12px;
-  font-weight: 700;
-  text-transform: uppercase;
+.example-stat {
+  padding: 18px;
 }
 
-.example-content h1 {
-  margin: 0 0 12px;
-  font-size: 28px;
-  line-height: 1.2;
-  text-transform: capitalize;
-}
-
-.example-content p {
-  margin: 0;
+.example-stat span,
+.example-file-main span,
+.example-activity span {
   color: rgba(0, 0, 0, 0.58);
-  line-height: 1.7;
+  font-size: 13px;
+}
+
+.example-stat strong {
+  display: block;
+  margin-top: 8px;
+  font-size: 28px;
+  line-height: 1.1;
+}
+
+.example-activity {
+  grid-column: 1 / -1;
+  padding: 18px;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.example-activity div,
+.example-file-main {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.example-file-list,
+.example-settings-list {
+  max-width: 880px;
+}
+
+.example-file-list {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #e1e1e1;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #fff;
+}
+
+.example-file-row {
+  min-height: 64px;
+  padding: 0 16px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  border-width: 0 0 1px;
+  border-radius: 0;
+}
+
+.example-file-row:last-child {
+  border-bottom: 0;
+}
+
+.example-file-icon {
+  width: 36px;
+  height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: #115ea3;
+  border-radius: 6px;
+  background: #edf3fb;
+}
+
+.example-file-tag {
+  margin-left: auto;
+  flex-shrink: 0;
+  color: rgba(0, 0, 0, 0.58);
+  font-size: 12px;
+}
+
+.example-tool-tile {
+  min-height: 96px;
+  padding: 18px;
+  display: flex;
+  align-items: flex-start;
+  flex-direction: column;
+  gap: 14px;
+  color: inherit;
+  font: inherit;
+  font-weight: 600;
+  text-align: left;
+  cursor: default;
+}
+
+.example-tool-tile:hover {
+  background: #f7f7f7;
+}
+
+.example-settings-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.example-settings-list label {
+  min-height: 56px;
+  padding: 0 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #e1e1e1;
+}
+
+.example-settings-list label:last-child {
+  border-bottom: 0;
 }

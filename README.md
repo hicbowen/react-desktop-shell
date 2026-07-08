@@ -14,7 +14,7 @@ npm install react-desktop-shell
 import { useState } from 'react'
 import { FileText, Home, Settings } from 'lucide-react'
 
-import { AppRail, AppShell, AppTitleBar } from 'react-desktop-shell'
+import { AppPage, AppRail, AppShell, AppTitleBar } from 'react-desktop-shell'
 import 'react-desktop-shell/style.css'
 
 function App() {
@@ -63,7 +63,14 @@ function App() {
         />
       }
     >
-      <main>Current page: {active}</main>
+      <AppPage
+        key={active}
+        title={currentPage.title}
+        description={currentPage.description}
+        actions={currentPage.actions}
+      >
+        <CurrentPage />
+      </AppPage>
     </AppShell>
   )
 }
@@ -80,6 +87,50 @@ function App() {
 >
   <HomePage />
 </AppShell>
+```
+
+## App Page
+
+`AppPage` provides a consistent content-page layout with a title, description, actions area, and a subtle enter animation.
+
+```tsx
+<AppPage
+  title="Settings"
+  description="Manage application preferences."
+>
+  <SettingsPanel />
+</AppPage>
+```
+
+Use `actions` for page-level commands rendered in the top-right of the page header.
+
+```tsx
+<AppPage
+  title="Students"
+  actions={<button>Add student</button>}
+>
+  <StudentList />
+</AppPage>
+```
+
+`AppPage` plays a subtle fade-and-rise enter animation by default and respects `prefers-reduced-motion`. Pass `animated={false}` to disable it.
+
+```tsx
+<AppPage animated={false}>
+  <StaticContent />
+</AppPage>
+```
+
+CSS animations replay when React remounts the page. Use a `key` when switching pages.
+
+```tsx
+<AppPage
+  key={activePage}
+  title={currentPage.title}
+  description={currentPage.description}
+>
+  {renderPage(activePage)}
+</AppPage>
 ```
 
 ## Title Bar
@@ -152,12 +203,18 @@ Pass `collapsed` to fully control the collapsed state.
 
 ## CSS Variables
 
-Override variables on `.app-shell`, `.app-rail`, and `.app-title-bar` to customize the components.
+Override variables on `.app-shell`, `.app-page`, `.app-rail`, and `.app-title-bar` to customize the components.
 
 ```css
 .app-shell {
   --app-shell-chrome-bg: #f3f3f3;
-  --app-shell-content-bg: #ffffff;
+  --app-shell-content-bg: #f7f8fa;
+  --app-shell-content-margin: 0 8px 8px 0;
+  --app-shell-content-radius: 10px;
+}
+
+.app-page {
+  --app-page-padding: 32px;
 }
 
 .app-rail {
@@ -173,7 +230,17 @@ Override variables on `.app-shell`, `.app-rail`, and `.app-title-bar` to customi
 | Variable                      | Default               |
 | ----------------------------- | --------------------- |
 | `--app-shell-chrome-bg`       | `#f3f3f3`             |
-| `--app-shell-content-bg`      | `#ffffff`             |
+| `--app-shell-content-bg`      | `#f7f8fa`             |
+| `--app-shell-content-margin`  | `0 8px 8px 0`         |
+| `--app-shell-content-radius`  | `10px`                |
+| `--app-shell-content-border-color` | `#e1e1e1`       |
+| `--app-page-padding`          | `24px`                |
+| `--app-page-header-gap`       | `8px`                 |
+| `--app-page-content-gap`      | `24px`                |
+| `--app-page-title-size`       | `28px`                |
+| `--app-page-title-weight`     | `600`                 |
+| `--app-page-text-color`       | `#1f1f1f`             |
+| `--app-page-muted-text-color` | `#707070`             |
 | `--app-rail-width`            | `228px`               |
 | `--app-rail-collapsed-width`  | `56px`                |
 | `--app-rail-text-color`       | `#1f1f1f`             |
@@ -198,6 +265,20 @@ Override variables on `.app-shell`, `.app-rail`, and `.app-title-bar` to customi
 | `titleBar`           | `ReactNode`     | `undefined` | Title bar content rendered above the body.       |
 | `rail`               | `ReactNode`     | `undefined` | Navigation rail content rendered beside content. |
 | `children`           | `ReactNode`     | `undefined` | Main content rendered in the scrollable area.    |
+| `className`          | `string`        | `undefined` | Additional class name for the root element.      |
+| `style`              | `CSSProperties` | `undefined` | Inline styles for the root element.              |
+| `contentClassName`   | `string`        | `undefined` | Additional class name for the content element.   |
+| `contentStyle`       | `CSSProperties` | `undefined` | Inline styles for the content element.           |
+
+### AppPageProps
+
+| Prop                 | Type            | Default     | Description                                      |
+| -------------------- | --------------- | ----------- | ------------------------------------------------ |
+| `title`              | `ReactNode`     | `undefined` | Page title rendered in the header.               |
+| `description`        | `ReactNode`     | `undefined` | Supporting text rendered below the title.        |
+| `actions`            | `ReactNode`     | `undefined` | Page-level actions rendered on the top right.    |
+| `children`           | `ReactNode`     | `undefined` | Page content rendered below the header.          |
+| `animated`           | `boolean`       | `true`      | Enables the subtle fade-and-rise enter animation. |
 | `className`          | `string`        | `undefined` | Additional class name for the root element.      |
 | `style`              | `CSSProperties` | `undefined` | Inline styles for the root element.              |
 | `contentClassName`   | `string`        | `undefined` | Additional class name for the content element.   |
@@ -237,7 +318,7 @@ Override variables on `.app-shell`, `.app-rail`, and `.app-title-bar` to customi
 ## Types
 
 ```tsx
-import type { ReactNode } from 'react'
+import type { CSSProperties, ReactNode } from 'react'
 
 export type RailItem = {
   type?: 'item'
@@ -259,6 +340,20 @@ export interface AppShellProps {
   titleBar?: ReactNode
   rail?: ReactNode
   children?: ReactNode
+  className?: string
+  style?: CSSProperties
+  contentClassName?: string
+  contentStyle?: CSSProperties
+}
+```
+
+```tsx
+export interface AppPageProps {
+  title?: ReactNode
+  description?: ReactNode
+  actions?: ReactNode
+  children?: ReactNode
+  animated?: boolean
   className?: string
   style?: CSSProperties
   contentClassName?: string

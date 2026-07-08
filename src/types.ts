@@ -24,6 +24,18 @@ export interface AppShellProps {
   contentStyle?: CSSProperties
 }
 
+export interface AppPageProps {
+  title?: ReactNode
+  description?: ReactNode
+  actions?: ReactNode
+  children?: ReactNode
+  animated?: boolean
+  className?: string
+  style?: CSSProperties
+  contentClassName?: string
+  contentStyle?: CSSProperties
+}
+
 export interface AppRailProps {
   value?: string
   items: RailEntry[]
