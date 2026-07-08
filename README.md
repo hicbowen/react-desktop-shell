@@ -14,7 +14,7 @@ npm install react-desktop-shell
 import { useState } from 'react'
 import { FileText, Home, Settings } from 'lucide-react'
 
-import { AppRail, AppTitleBar } from 'react-desktop-shell'
+import { AppRail, AppShell, AppTitleBar } from 'react-desktop-shell'
 import 'react-desktop-shell/style.css'
 
 function App() {
@@ -22,16 +22,18 @@ function App() {
   const [maximized, setMaximized] = useState(false)
 
   return (
-    <div style={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
-      <AppTitleBar
-        title="My App"
-        onMinimize={handleMinimize}
-        maximized={maximized}
-        onToggleMaximize={() => setMaximized((current) => !current)}
-        onClose={handleClose}
-      />
-
-      <div style={{ flex: 1, minHeight: 0, display: 'flex' }}>
+    <AppShell
+      titleBar={
+        <AppTitleBar
+          title="My App"
+          actions={<ToolbarActions />}
+          onMinimize={handleMinimize}
+          maximized={maximized}
+          onToggleMaximize={() => setMaximized((current) => !current)}
+          onClose={handleClose}
+        />
+      }
+      rail={
         <AppRail
           value={active}
           onChange={setActive}
@@ -59,10 +61,25 @@ function App() {
             },
           ]}
         />
-      </div>
-    </div>
+      }
+    >
+      <main>Current page: {active}</main>
+    </AppShell>
   )
 }
+```
+
+## App Shell
+
+`AppShell` composes the title bar, navigation rail, and content area into a full-height desktop shell. The shell owns layout, content scrolling, and the background split between app chrome and page content.
+
+```tsx
+<AppShell
+  titleBar={<AppTitleBar title="My App" />}
+  rail={<AppRail value={active} items={items} onChange={setActive} />}
+>
+  <HomePage />
+</AppShell>
 ```
 
 ## Title Bar
@@ -73,6 +90,7 @@ function App() {
 <AppTitleBar
   title="My App"
   icon={<AppIcon />}
+  actions={<ToolbarActions />}
   onMinimize={handleMinimize}
   maximized={maximized}
   onToggleMaximize={handleToggleMaximize}
@@ -80,7 +98,7 @@ function App() {
 />
 ```
 
-If `onMinimize`, `onToggleMaximize`, or `onClose` are omitted, clicking the matching button is a safe no-op. Pass `maximized` to switch the maximize button into its restore state.
+If `onMinimize`, `onToggleMaximize`, or `onClose` are omitted, clicking the matching button is a safe no-op. Pass `maximized` to switch the maximize button into its restore state. Use `actions` for custom title bar controls rendered to the left of the window buttons.
 
 ## Groups
 
@@ -134,9 +152,14 @@ Pass `collapsed` to fully control the collapsed state.
 
 ## CSS Variables
 
-Override variables on `.app-rail` and `.app-title-bar` to customize the components.
+Override variables on `.app-shell`, `.app-rail`, and `.app-title-bar` to customize the components.
 
 ```css
+.app-shell {
+  --app-shell-chrome-bg: #f3f3f3;
+  --app-shell-content-bg: #ffffff;
+}
+
 .app-rail {
   --app-rail-width: 240px;
   --app-rail-accent-color: #ff4d4f;
@@ -149,6 +172,8 @@ Override variables on `.app-rail` and `.app-title-bar` to customize the componen
 
 | Variable                      | Default               |
 | ----------------------------- | --------------------- |
+| `--app-shell-chrome-bg`       | `#f3f3f3`             |
+| `--app-shell-content-bg`      | `#ffffff`             |
 | `--app-rail-width`            | `228px`               |
 | `--app-rail-collapsed-width`  | `56px`                |
 | `--app-rail-text-color`       | `#1f1f1f`             |
@@ -156,13 +181,27 @@ Override variables on `.app-rail` and `.app-title-bar` to customize the componen
 | `--app-rail-hover-bg`         | `rgba(0, 0, 0, 0.05)` |
 | `--app-rail-accent-color`     | `#115ea3`             |
 | `--app-rail-accent-bg`        | `#edf3fb`             |
+| `--app-rail-bg`               | `transparent`         |
 | `--app-title-bar-height`      | `40px`                |
 | `--app-title-bar-text-color`  | `#1f1f1f`             |
 | `--app-title-bar-icon-color`  | `#115ea3`             |
 | `--app-title-bar-hover-bg`    | `#d4d4d4`             |
 | `--app-title-bar-danger-bg`   | `#ef4444`             |
+| `--app-title-bar-bg`          | `transparent`         |
 
 ## API
+
+### AppShellProps
+
+| Prop                 | Type            | Default     | Description                                      |
+| -------------------- | --------------- | ----------- | ------------------------------------------------ |
+| `titleBar`           | `ReactNode`     | `undefined` | Title bar content rendered above the body.       |
+| `rail`               | `ReactNode`     | `undefined` | Navigation rail content rendered beside content. |
+| `children`           | `ReactNode`     | `undefined` | Main content rendered in the scrollable area.    |
+| `className`          | `string`        | `undefined` | Additional class name for the root element.      |
+| `style`              | `CSSProperties` | `undefined` | Inline styles for the root element.              |
+| `contentClassName`   | `string`        | `undefined` | Additional class name for the content element.   |
+| `contentStyle`       | `CSSProperties` | `undefined` | Inline styles for the content element.           |
 
 ### AppRailProps
 
@@ -184,6 +223,7 @@ Override variables on `.app-rail` and `.app-title-bar` to customize the componen
 | -------------------- | --------------- | ----------- | ----------------------------------------------------- |
 | `title`              | `ReactNode`     | `undefined` | App title content.                                    |
 | `icon`               | `ReactNode`     | `undefined` | App icon content.                                     |
+| `actions`            | `ReactNode`     | `undefined` | Custom controls rendered before the window buttons.   |
 | `onMinimize`         | `() => void`    | `undefined` | Called when the minimize button is clicked.           |
 | `maximized`          | `boolean`       | `false`     | Switches the maximize button into its restore state.  |
 | `onToggleMaximize`   | `() => void`    | `undefined` | Called when the maximize or restore button is clicked. |
@@ -215,9 +255,22 @@ export type RailEntry = RailItem | RailGroup
 ```
 
 ```tsx
+export interface AppShellProps {
+  titleBar?: ReactNode
+  rail?: ReactNode
+  children?: ReactNode
+  className?: string
+  style?: CSSProperties
+  contentClassName?: string
+  contentStyle?: CSSProperties
+}
+```
+
+```tsx
 export interface AppTitleBarProps {
   title?: ReactNode
   icon?: ReactNode
+  actions?: ReactNode
   onMinimize?: () => void
   maximized?: boolean
   onToggleMaximize?: () => void

@@ -14,6 +14,16 @@ export type RailGroup = {
 
 export type RailEntry = RailItem | RailGroup
 
+export interface AppShellProps {
+  titleBar?: ReactNode
+  rail?: ReactNode
+  children?: ReactNode
+  className?: string
+  style?: CSSProperties
+  contentClassName?: string
+  contentStyle?: CSSProperties
+}
+
 export interface AppRailProps {
   value?: string
   items: RailEntry[]
@@ -29,6 +39,7 @@ export interface AppRailProps {
 export interface AppTitleBarProps {
   title?: ReactNode
   icon?: ReactNode
+  actions?: ReactNode
   onMinimize?: () => void
   maximized?: boolean
   onToggleMaximize?: () => void

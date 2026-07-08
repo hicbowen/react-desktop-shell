@@ -4,12 +4,14 @@
   --app-title-bar-icon-color: #115ea3;
   --app-title-bar-hover-bg: #d4d4d4;
   --app-title-bar-danger-bg: #ef4444;
+  --app-title-bar-bg: transparent;
 
   height: var(--app-title-bar-height);
   display: flex;
   flex-shrink: 0;
   justify-content: space-between;
   color: var(--app-title-bar-text-color);
+  background: var(--app-title-bar-bg);
   font: inherit;
   user-select: none;
   -webkit-user-select: none;
@@ -50,6 +52,22 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.app-title-bar__right {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.app-title-bar__actions {
+  height: var(--app-title-bar-height);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+  -webkit-app-region: no-drag;
 }
 
 .app-title-bar__controls {

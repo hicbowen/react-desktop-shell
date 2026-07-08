@@ -1,23 +1,29 @@
 import { useState } from 'react'
 import { FileText, Home, LayoutGrid, Settings, Wrench } from 'lucide-react'
-import { AppRail, AppTitleBar } from '../../src'
+import { AppRail, AppShell, AppTitleBar } from '../../src'
 
 export function ExampleApp() {
   const [active, setActive] = useState('home')
   const [maximized, setMaximized] = useState(false)
 
   return (
-    <div className="example-app">
-      <AppTitleBar
-        title="FlowGo"
-        icon={<LayoutGrid size={22} />}
-        onMinimize={() => undefined}
-        maximized={maximized}
-        onToggleMaximize={() => setMaximized((current) => !current)}
-        onClose={() => undefined}
-      />
-
-      <div className="example-body">
+    <AppShell
+      titleBar={
+        <AppTitleBar
+          title="FlowGo"
+          icon={<LayoutGrid size={22} />}
+          actions={
+            <button className="example-title-action" type="button">
+              <Settings size={15} />
+            </button>
+          }
+          onMinimize={() => undefined}
+          maximized={maximized}
+          onToggleMaximize={() => setMaximized((current) => !current)}
+          onClose={() => undefined}
+        />
+      }
+      rail={
         <AppRail
           value={active}
           onChange={setActive}
@@ -50,16 +56,15 @@ export function ExampleApp() {
             },
           ]}
         />
-
-        <main className="example-content">
-          <p className="example-kicker">Active item</p>
-          <h1>{active}</h1>
-          <p>
-            The example keeps the original desktop shell shape while using the
-            exported title bar and rail components.
-          </p>
-        </main>
-      </div>
-    </div>
+      }
+      contentClassName="example-content"
+    >
+      <p className="example-kicker">Active item</p>
+      <h1>{active}</h1>
+      <p>
+        The example keeps the desktop shell layout in the exported AppShell
+        component while AppTitleBar and AppRail stay focused on their own UI.
+      </p>
+    </AppShell>
   )
 }

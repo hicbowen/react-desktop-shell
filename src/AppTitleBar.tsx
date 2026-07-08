@@ -93,6 +93,7 @@ function CloseIcon() {
 export function AppTitleBar({
   title,
   icon,
+  actions,
   onMinimize,
   maximized = false,
   onToggleMaximize,
@@ -120,37 +121,41 @@ export function AppTitleBar({
         {title && <span className="app-title-bar__title">{title}</span>}
       </div>
 
-      <div className="app-title-bar__controls">
-        {showMinimize && (
-          <button
-            aria-label="Minimize window"
-            className="app-title-bar__button"
-            onClick={() => onMinimize?.()}
-            type="button"
-          >
-            <MinimizeIcon />
-          </button>
-        )}
-        {showMaximize && (
-          <button
-            aria-label={maximized ? 'Restore window' : 'Maximize window'}
-            className="app-title-bar__button"
-            onClick={() => onToggleMaximize?.()}
-            type="button"
-          >
-            {maximized ? <RestoreIcon /> : <MaximizeIcon />}
-          </button>
-        )}
-        {showClose && (
-          <button
-            aria-label="Close window"
-            className="app-title-bar__button app-title-bar__button--danger"
-            onClick={() => onClose?.()}
-            type="button"
-          >
-            <CloseIcon />
-          </button>
-        )}
+      <div className="app-title-bar__right">
+        {actions && <div className="app-title-bar__actions">{actions}</div>}
+
+        <div className="app-title-bar__controls">
+          {showMinimize && (
+            <button
+              aria-label="Minimize window"
+              className="app-title-bar__button"
+              onClick={() => onMinimize?.()}
+              type="button"
+            >
+              <MinimizeIcon />
+            </button>
+          )}
+          {showMaximize && (
+            <button
+              aria-label={maximized ? 'Restore window' : 'Maximize window'}
+              className="app-title-bar__button"
+              onClick={() => onToggleMaximize?.()}
+              type="button"
+            >
+              {maximized ? <RestoreIcon /> : <MaximizeIcon />}
+            </button>
+          )}
+          {showClose && (
+            <button
+              aria-label="Close window"
+              className="app-title-bar__button app-title-bar__button--danger"
+              onClick={() => onClose?.()}
+              type="button"
+            >
+              <CloseIcon />
+            </button>
+          )}
+        </div>
       </div>
     </header>
   )

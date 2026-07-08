@@ -6,6 +6,7 @@
   --app-rail-hover-bg: rgba(0, 0, 0, 0.05);
   --app-rail-accent-color: #115ea3;
   --app-rail-accent-bg: #edf3fb;
+  --app-rail-bg: transparent;
 
   width: var(--app-rail-width);
   height: 100%;
@@ -14,6 +15,7 @@
   flex-direction: column;
   overflow: hidden;
   color: var(--app-rail-text-color);
+  background: var(--app-rail-bg);
   font: inherit;
   user-select: none;
   -webkit-user-select: none;
