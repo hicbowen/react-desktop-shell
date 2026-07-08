@@ -1,6 +1,6 @@
 {
   "name": "react-desktop-shell",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "type": "module",
   "description": "A lightweight native-like desktop app shell for React, featuring a custom title bar and navigation rail.",
   "license": "MIT",
