@@ -261,7 +261,7 @@ Override variables on `.app-shell`, `.app-page`, `.app-rail`, and `.app-title-ba
 | `--app-shell-content-bg`           | `#f7f8fa`             |
 | `--app-shell-content-margin`       | `0 5px 5px 0`         |
 | `--app-shell-content-radius`       | `10px`                |
-| `--app-shell-content-border-color` | `#e1e1e1`             |
+| `--app-shell-content-border-color` | `#e6e6e6`             |
 | `--app-page-padding`               | `24px`                |
 | `--app-page-header-gap`            | `8px`                 |
 | `--app-page-content-gap`           | `24px`                |
