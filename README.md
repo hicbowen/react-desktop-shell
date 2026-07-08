@@ -133,6 +133,30 @@ CSS animations replay when React remounts the page. Use a `key` when switching p
 </AppPage>
 ```
 
+### Preserving Page State
+
+With React 19.2+, `AppPage` works well with React `Activity` for desktop-style page navigation. `Activity` can preserve page UI, DOM state, and internal component state while a page is hidden, while `AppPage` continues to provide the visible page layout and enter animation.
+
+```tsx
+import { Activity } from 'react'
+
+{pages.map((page) => (
+  <Activity
+    key={page.key}
+    mode={activePage === page.key ? 'visible' : 'hidden'}
+  >
+    <AppPage
+      title={page.title}
+      description={page.description}
+    >
+      {renderPage(page.key)}
+    </AppPage>
+  </Activity>
+))}
+```
+
+The enter animation may replay when an `Activity` becomes visible, depending on browser animation behavior. `AppPage` also continues to support `prefers-reduced-motion`.
+
 ## Title Bar
 
 `AppTitleBar` renders the custom title bar UI. Window actions are provided by the host application through callbacks, making it compatible with Wails, Electron, Tauri, or other desktop runtimes.
