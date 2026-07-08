@@ -1,39 +1,216 @@
-# react-app-rail
+# react-desktop-shell
 
-一个轻量的 React/Vite 前端壳模板，适合作为 Wails 工具类应用的起点。它提供原生应用风格标题栏、侧边导航、内容区布局、暗色模式和窗口控制适配层。
+A lightweight native-like navigation rail component for React, inspired by Fluent UI.
 
-## 最小改动入口
-
-新建工具应用时，通常只需要改这些位置：
-
-- `src/app.config.ts`：应用名、图标、默认页面、侧边栏菜单、页脚菜单、页面映射。
-- `src/pages/*`：替换或新增实际页面内容。
-- `src/platform/windowControls.ts`：接入 Wails runtime 的最小化、最大化/还原、关闭窗口 API。
-- `src/App.css`：通过顶部 CSS 变量调整尺寸、颜色、边框和主题色。
-
-## 新增页面
-
-1. 在 `src/pages` 下创建页面组件。
-2. 在 `src/app.config.ts` 的 `RouteId` 中新增页面 ID。
-3. 将页面加入 `routeComponents`。
-4. 在 `navItems` 或 `footerItems` 中加入对应菜单项。
-
-模板使用配置驱动的内存路由，不依赖 React Router，方便桌面工具应用保持轻量。
-
-## Wails 窗口按钮
-
-`src/platform/windowControls.ts` 默认是浏览器/Vite 环境下安全的 no-op。接入 Wails 时，只需要把这里的三个方法替换成 Wails runtime 调用：
-
-- `minimizeWindow`
-- `toggleMaximizeWindow`
-- `closeWindow`
-
-其他组件不需要知道具体运行环境。
-
-## Scripts
+## Installation
 
 ```bash
-npm run dev
-npm run build
-npm run lint
+npm install react-desktop-shell
+```
+
+## Basic Usage
+
+```tsx
+import { useState } from 'react'
+import { FileText, Home, Settings } from 'lucide-react'
+
+import { AppRail, AppTitleBar } from 'react-desktop-shell'
+import 'react-desktop-shell/style.css'
+
+function App() {
+  const [active, setActive] = useState('home')
+
+  return (
+    <div style={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
+      <AppTitleBar
+        title="My App"
+        onMinimize={handleMinimize}
+        onMaximize={handleMaximize}
+        onClose={handleClose}
+      />
+
+      <div style={{ flex: 1, minHeight: 0, display: 'flex' }}>
+        <AppRail
+          value={active}
+          onChange={setActive}
+          items={[
+            {
+              key: 'home',
+              label: 'Home',
+              icon: <Home size={16} />,
+            },
+            {
+              type: 'group',
+              label: 'Workspace',
+            },
+            {
+              key: 'files',
+              label: 'Files',
+              icon: <FileText size={16} />,
+            },
+          ]}
+          footerItems={[
+            {
+              key: 'settings',
+              label: 'Settings',
+              icon: <Settings size={16} />,
+            },
+          ]}
+        />
+      </div>
+    </div>
+  )
+}
+```
+
+## Title Bar
+
+`AppTitleBar` renders the custom title bar UI. Window actions are provided by the host application through callbacks, making it compatible with Wails, Electron, Tauri, or other desktop runtimes.
+
+```tsx
+<AppTitleBar
+  title="My App"
+  icon={<AppIcon />}
+  onMinimize={handleMinimize}
+  onMaximize={handleMaximize}
+  onClose={handleClose}
+/>
+```
+
+If `onMinimize`, `onMaximize`, or `onClose` are omitted, clicking the matching button is a safe no-op.
+
+## Groups
+
+Use group entries to separate related navigation items. Group labels are hidden while the rail is collapsed.
+
+```tsx
+{
+  type: 'group',
+  label: 'Workspace',
+}
+```
+
+## Footer Items
+
+Footer items stay pinned to the bottom of the rail.
+
+```tsx
+<AppRail
+  value={active}
+  onChange={setActive}
+  items={items}
+  footerItems={[
+    {
+      key: 'settings',
+      label: 'Settings',
+      icon: <Settings size={16} />,
+    },
+  ]}
+/>
+```
+
+## Controlled Collapse
+
+`AppRail` automatically collapses when the viewport width is below `collapseBreakpoint`, which defaults to `700`. Pass `collapsed` to fully control the collapsed state.
+
+```tsx
+<AppRail
+  collapsed={collapsed}
+  onCollapsedChange={setCollapsed}
+  items={items}
+/>
+```
+
+## CSS Variables
+
+Override variables on `.app-rail` and `.app-title-bar` to customize the components.
+
+```css
+.app-rail {
+  --app-rail-width: 240px;
+  --app-rail-accent-color: #ff4d4f;
+}
+
+.app-title-bar {
+  --app-title-bar-height: 44px;
+}
+```
+
+| Variable | Default |
+| --- | --- |
+| `--app-rail-width` | `228px` |
+| `--app-rail-collapsed-width` | `56px` |
+| `--app-rail-text-color` | `#1f1f1f` |
+| `--app-rail-muted-text-color` | `rgba(0, 0, 0, 0.58)` |
+| `--app-rail-hover-bg` | `rgba(0, 0, 0, 0.05)` |
+| `--app-rail-accent-color` | `#115ea3` |
+| `--app-rail-accent-bg` | `#edf3fb` |
+| `--app-title-bar-height` | `40px` |
+| `--app-title-bar-text-color` | `#1f1f1f` |
+| `--app-title-bar-icon-color` | `#115ea3` |
+| `--app-title-bar-hover-bg` | `#d4d4d4` |
+| `--app-title-bar-danger-bg` | `#ef4444` |
+
+## API
+
+### AppRailProps
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `value` | `string` | `undefined` | The active item key. |
+| `items` | `RailEntry[]` | Required | Main rail entries. |
+| `footerItems` | `RailItem[]` | `[]` | Items pinned to the bottom of the rail. |
+| `onChange` | `(key: string) => void` | `undefined` | Called when a navigation item is clicked. |
+| `collapsed` | `boolean` | `undefined` | Controls the collapsed state when provided. |
+| `collapseBreakpoint` | `number` | `700` | Viewport width below which the rail auto-collapses. |
+| `onCollapsedChange` | `(collapsed: boolean) => void` | `undefined` | Called when the effective collapsed state changes. |
+| `className` | `string` | `undefined` | Additional class name for the root element. |
+| `style` | `CSSProperties` | `undefined` | Inline styles for the root element. |
+
+### AppTitleBarProps
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `title` | `ReactNode` | `undefined` | App title content. |
+| `icon` | `ReactNode` | `undefined` | App icon content. |
+| `onMinimize` | `() => void` | `undefined` | Called when the minimize button is clicked. |
+| `onMaximize` | `() => void` | `undefined` | Called when the maximize button is clicked. |
+| `onClose` | `() => void` | `undefined` | Called when the close button is clicked. |
+| `showMinimize` | `boolean` | `true` | Shows the minimize button. |
+| `showMaximize` | `boolean` | `true` | Shows the maximize button. |
+| `showClose` | `boolean` | `true` | Shows the close button. |
+| `className` | `string` | `undefined` | Additional class name for the root element. |
+| `style` | `CSSProperties` | `undefined` | Inline styles for the root element. |
+
+## Types
+
+```tsx
+import type { ReactNode } from 'react'
+
+export type RailItem = {
+  type?: 'item'
+  key: string
+  label: string
+  icon?: ReactNode
+}
+
+export type RailGroup = {
+  type: 'group'
+  label: string
+}
+
+export type RailEntry = RailItem | RailGroup
+```
+
+```tsx
+export interface AppTitleBarProps {
+  title?: ReactNode
+  icon?: ReactNode
+  onMinimize?: () => void
+  onMaximize?: () => void
+  onClose?: () => void
+  showMinimize?: boolean
+  showMaximize?: boolean
+  showClose?: boolean
+}
 ```
