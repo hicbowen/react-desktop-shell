@@ -175,6 +175,10 @@ The enter animation may replay when an `Activity` becomes visible, depending on 
 
 If `onMinimize`, `onToggleMaximize`, or `onClose` are omitted, clicking the matching button is a safe no-op. Pass `maximized` to switch the maximize button into its restore state. Use `actions` for custom title bar controls rendered to the left of the window buttons.
 
+## Rail
+
+`AppRail` renders the navigation surface and includes a subtle direction-aware selection indicator animation.
+
 ## Groups
 
 Use group entries to separate related navigation items. Group labels are hidden while the rail is collapsed.

@@ -4,11 +4,52 @@ import './AppRail.css'
 
 const DEFAULT_COLLAPSE_BREAKPOINT = 700
 
+type SelectionDirection = 'up' | 'down' | null
+
+type SelectionTransition = {
+  value?: string
+  direction: SelectionDirection
+}
+
 function getAutoCollapsed(collapseBreakpoint: number) {
   return (
     typeof window !== 'undefined' &&
     window.innerWidth < collapseBreakpoint
   )
+}
+
+function getRailItemOrder(items: AppRailProps['items'], footerItems: RailItem[]) {
+  return [
+    ...items.flatMap((item) => (item.type === 'group' ? [] : [item.key])),
+    ...footerItems.map((item) => item.key),
+  ]
+}
+
+function getSelectionDirection(
+  previousValue: string | undefined,
+  currentValue: string | undefined,
+  navigationOrder: string[],
+): SelectionDirection {
+  if (!previousValue || !currentValue || previousValue === currentValue) {
+    return null
+  }
+
+  const previousIndex = navigationOrder.indexOf(previousValue)
+  const currentIndex = navigationOrder.indexOf(currentValue)
+
+  if (previousIndex === -1 || currentIndex === -1) {
+    return null
+  }
+
+  if (currentIndex > previousIndex) {
+    return 'down'
+  }
+
+  if (currentIndex < previousIndex) {
+    return 'up'
+  }
+
+  return null
 }
 
 export function AppRail({
@@ -26,6 +67,26 @@ export function AppRail({
   const [autoCollapsed, setAutoCollapsed] = useState(false)
   const isCollapsed = isControlled ? collapsed : autoCollapsed
   const previousCollapsed = useRef(isCollapsed)
+  const [selectionTransition, setSelectionTransition] =
+    useState<SelectionTransition>({
+      value: undefined,
+      direction: null,
+    })
+  const navigationOrder = useMemo(
+    () => getRailItemOrder(items, footerItems),
+    [footerItems, items],
+  )
+  const selectionDirection =
+    selectionTransition.value === value ? selectionTransition.direction : null
+
+  const handleItemChange = (nextValue: string) => {
+    setSelectionTransition({
+      value: nextValue,
+      direction: getSelectionDirection(value, nextValue, navigationOrder),
+    })
+
+    onChange?.(nextValue)
+  }
 
   useEffect(() => {
     if (isControlled || typeof window === 'undefined') {
@@ -69,20 +130,33 @@ export function AppRail({
     return classes.join(' ')
   }, [className, isCollapsed])
 
-  const renderItem = (item: RailItem) => (
-    <button
-      key={item.key}
-      className={`app-rail__item ${
-        value === item.key ? 'app-rail__item--active' : ''
-      }`}
-      onClick={() => onChange?.(item.key)}
-      title={isCollapsed ? item.label : undefined}
-      type="button"
-    >
-      {item.icon && <span className="app-rail__icon">{item.icon}</span>}
-      {!isCollapsed && <span className="app-rail__label">{item.label}</span>}
-    </button>
-  )
+  const renderItem = (item: RailItem) => {
+    const isActive = value === item.key
+    const itemClassNames = ['app-rail__item']
+
+    if (isActive) {
+      itemClassNames.push('app-rail__item--active')
+
+      if (selectionDirection) {
+        itemClassNames.push(
+          `app-rail__item--indicator-enter-${selectionDirection}`,
+        )
+      }
+    }
+
+    return (
+      <button
+        key={item.key}
+        className={itemClassNames.join(' ')}
+        onClick={() => handleItemChange(item.key)}
+        title={isCollapsed ? item.label : undefined}
+        type="button"
+      >
+        {item.icon && <span className="app-rail__icon">{item.icon}</span>}
+        {!isCollapsed && <span className="app-rail__label">{item.label}</span>}
+      </button>
+    )
+  }
 
   return (
     <aside className={rootClassName} style={style}>
