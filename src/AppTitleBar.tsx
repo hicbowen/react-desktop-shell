@@ -43,6 +43,34 @@ function MaximizeIcon() {
   )
 }
 
+function RestoreIcon() {
+  return (
+    <svg
+      aria-hidden="true"
+      fill="none"
+      height="13"
+      viewBox="0 0 13 13"
+      width="13"
+    >
+      <path
+        d="M4.5 3.5v-1h6v6h-1"
+        stroke="currentColor"
+        strokeLinejoin="round"
+        strokeWidth="1.3"
+      />
+      <rect
+        height="6"
+        rx="1"
+        stroke="currentColor"
+        strokeWidth="1.3"
+        width="6"
+        x="2.5"
+        y="4.5"
+      />
+    </svg>
+  )
+}
+
 function CloseIcon() {
   return (
     <svg
@@ -66,7 +94,8 @@ export function AppTitleBar({
   title,
   icon,
   onMinimize,
-  onMaximize,
+  maximized = false,
+  onToggleMaximize,
   onClose,
   showMinimize = true,
   showMaximize = true,
@@ -104,12 +133,12 @@ export function AppTitleBar({
         )}
         {showMaximize && (
           <button
-            aria-label="Maximize or restore window"
+            aria-label={maximized ? 'Restore window' : 'Maximize window'}
             className="app-title-bar__button"
-            onClick={() => onMaximize?.()}
+            onClick={() => onToggleMaximize?.()}
             type="button"
           >
-            <MaximizeIcon />
+            {maximized ? <RestoreIcon /> : <MaximizeIcon />}
           </button>
         )}
         {showClose && (

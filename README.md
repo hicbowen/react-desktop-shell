@@ -1,6 +1,6 @@
 # react-desktop-shell
 
-A lightweight native-like navigation rail component for React, inspired by Fluent UI.
+A lightweight native-like desktop app shell for React, featuring a custom title bar and navigation rail.
 
 ## Installation
 
@@ -19,13 +19,15 @@ import 'react-desktop-shell/style.css'
 
 function App() {
   const [active, setActive] = useState('home')
+  const [maximized, setMaximized] = useState(false)
 
   return (
     <div style={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
       <AppTitleBar
         title="My App"
         onMinimize={handleMinimize}
-        onMaximize={handleMaximize}
+        maximized={maximized}
+        onToggleMaximize={() => setMaximized((current) => !current)}
         onClose={handleClose}
       />
 
@@ -72,12 +74,13 @@ function App() {
   title="My App"
   icon={<AppIcon />}
   onMinimize={handleMinimize}
-  onMaximize={handleMaximize}
+  maximized={maximized}
+  onToggleMaximize={handleToggleMaximize}
   onClose={handleClose}
 />
 ```
 
-If `onMinimize`, `onMaximize`, or `onClose` are omitted, clicking the matching button is a safe no-op.
+If `onMinimize`, `onToggleMaximize`, or `onClose` are omitted, clicking the matching button is a safe no-op. Pass `maximized` to switch the maximize button into its restore state.
 
 ## Groups
 
@@ -109,14 +112,22 @@ Footer items stay pinned to the bottom of the rail.
 />
 ```
 
-## Controlled Collapse
+## Collapse
 
-`AppRail` automatically collapses when the viewport width is below `collapseBreakpoint`, which defaults to `700`. Pass `collapsed` to fully control the collapsed state.
+`AppRail` automatically collapses when the viewport width is below `collapseBreakpoint`, which defaults to `700`. Use `onCollapsedChange` to observe uncontrolled auto-collapse changes.
+
+```tsx
+<AppRail
+  onCollapsedChange={setCollapsed}
+  items={items}
+/>
+```
+
+Pass `collapsed` to fully control the collapsed state.
 
 ```tsx
 <AppRail
   collapsed={collapsed}
-  onCollapsedChange={setCollapsed}
   items={items}
 />
 ```
@@ -136,51 +147,52 @@ Override variables on `.app-rail` and `.app-title-bar` to customize the componen
 }
 ```
 
-| Variable | Default |
-| --- | --- |
-| `--app-rail-width` | `228px` |
-| `--app-rail-collapsed-width` | `56px` |
-| `--app-rail-text-color` | `#1f1f1f` |
+| Variable                      | Default               |
+| ----------------------------- | --------------------- |
+| `--app-rail-width`            | `228px`               |
+| `--app-rail-collapsed-width`  | `56px`                |
+| `--app-rail-text-color`       | `#1f1f1f`             |
 | `--app-rail-muted-text-color` | `rgba(0, 0, 0, 0.58)` |
-| `--app-rail-hover-bg` | `rgba(0, 0, 0, 0.05)` |
-| `--app-rail-accent-color` | `#115ea3` |
-| `--app-rail-accent-bg` | `#edf3fb` |
-| `--app-title-bar-height` | `40px` |
-| `--app-title-bar-text-color` | `#1f1f1f` |
-| `--app-title-bar-icon-color` | `#115ea3` |
-| `--app-title-bar-hover-bg` | `#d4d4d4` |
-| `--app-title-bar-danger-bg` | `#ef4444` |
+| `--app-rail-hover-bg`         | `rgba(0, 0, 0, 0.05)` |
+| `--app-rail-accent-color`     | `#115ea3`             |
+| `--app-rail-accent-bg`        | `#edf3fb`             |
+| `--app-title-bar-height`      | `40px`                |
+| `--app-title-bar-text-color`  | `#1f1f1f`             |
+| `--app-title-bar-icon-color`  | `#115ea3`             |
+| `--app-title-bar-hover-bg`    | `#d4d4d4`             |
+| `--app-title-bar-danger-bg`   | `#ef4444`             |
 
 ## API
 
 ### AppRailProps
 
-| Prop | Type | Default | Description |
-| --- | --- | --- | --- |
-| `value` | `string` | `undefined` | The active item key. |
-| `items` | `RailEntry[]` | Required | Main rail entries. |
-| `footerItems` | `RailItem[]` | `[]` | Items pinned to the bottom of the rail. |
-| `onChange` | `(key: string) => void` | `undefined` | Called when a navigation item is clicked. |
-| `collapsed` | `boolean` | `undefined` | Controls the collapsed state when provided. |
-| `collapseBreakpoint` | `number` | `700` | Viewport width below which the rail auto-collapses. |
-| `onCollapsedChange` | `(collapsed: boolean) => void` | `undefined` | Called when the effective collapsed state changes. |
-| `className` | `string` | `undefined` | Additional class name for the root element. |
-| `style` | `CSSProperties` | `undefined` | Inline styles for the root element. |
+| Prop                 | Type                           | Default     | Description                                         |
+| -------------------- | ------------------------------ | ----------- | --------------------------------------------------- |
+| `value`              | `string`                       | `undefined` | The active item key.                                |
+| `items`              | `RailEntry[]`                  | Required    | Main rail entries.                                  |
+| `footerItems`        | `RailItem[]`                   | `[]`        | Items pinned to the bottom of the rail.             |
+| `onChange`           | `(key: string) => void`        | `undefined` | Called when a navigation item is clicked.           |
+| `collapsed`          | `boolean`                      | `undefined` | Controls the collapsed state when provided.         |
+| `collapseBreakpoint` | `number`                       | `700`       | Viewport width below which the rail auto-collapses. |
+| `onCollapsedChange`  | `(collapsed: boolean) => void` | `undefined` | Called when the uncontrolled auto-collapsed state changes. |
+| `className`          | `string`                       | `undefined` | Additional class name for the root element.         |
+| `style`              | `CSSProperties`                | `undefined` | Inline styles for the root element.                 |
 
 ### AppTitleBarProps
 
-| Prop | Type | Default | Description |
-| --- | --- | --- | --- |
-| `title` | `ReactNode` | `undefined` | App title content. |
-| `icon` | `ReactNode` | `undefined` | App icon content. |
-| `onMinimize` | `() => void` | `undefined` | Called when the minimize button is clicked. |
-| `onMaximize` | `() => void` | `undefined` | Called when the maximize button is clicked. |
-| `onClose` | `() => void` | `undefined` | Called when the close button is clicked. |
-| `showMinimize` | `boolean` | `true` | Shows the minimize button. |
-| `showMaximize` | `boolean` | `true` | Shows the maximize button. |
-| `showClose` | `boolean` | `true` | Shows the close button. |
-| `className` | `string` | `undefined` | Additional class name for the root element. |
-| `style` | `CSSProperties` | `undefined` | Inline styles for the root element. |
+| Prop                 | Type            | Default     | Description                                           |
+| -------------------- | --------------- | ----------- | ----------------------------------------------------- |
+| `title`              | `ReactNode`     | `undefined` | App title content.                                    |
+| `icon`               | `ReactNode`     | `undefined` | App icon content.                                     |
+| `onMinimize`         | `() => void`    | `undefined` | Called when the minimize button is clicked.           |
+| `maximized`          | `boolean`       | `false`     | Switches the maximize button into its restore state.  |
+| `onToggleMaximize`   | `() => void`    | `undefined` | Called when the maximize or restore button is clicked. |
+| `onClose`            | `() => void`    | `undefined` | Called when the close button is clicked.              |
+| `showMinimize`       | `boolean`       | `true`      | Shows the minimize button.                            |
+| `showMaximize`       | `boolean`       | `true`      | Shows the maximize button.                            |
+| `showClose`          | `boolean`       | `true`      | Shows the close button.                               |
+| `className`          | `string`        | `undefined` | Additional class name for the root element.           |
+| `style`              | `CSSProperties` | `undefined` | Inline styles for the root element.                   |
 
 ## Types
 
@@ -207,7 +219,8 @@ export interface AppTitleBarProps {
   title?: ReactNode
   icon?: ReactNode
   onMinimize?: () => void
-  onMaximize?: () => void
+  maximized?: boolean
+  onToggleMaximize?: () => void
   onClose?: () => void
   showMinimize?: boolean
   showMaximize?: boolean

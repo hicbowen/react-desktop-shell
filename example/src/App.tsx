@@ -4,6 +4,7 @@ import { AppRail, AppTitleBar } from '../../src'
 
 export function ExampleApp() {
   const [active, setActive] = useState('home')
+  const [maximized, setMaximized] = useState(false)
 
   return (
     <div className="example-app">
@@ -11,7 +12,8 @@ export function ExampleApp() {
         title="FlowGo"
         icon={<LayoutGrid size={22} />}
         onMinimize={() => undefined}
-        onMaximize={() => undefined}
+        maximized={maximized}
+        onToggleMaximize={() => setMaximized((current) => !current)}
         onClose={() => undefined}
       />
 

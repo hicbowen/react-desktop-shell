@@ -2,7 +2,29 @@
   "name": "react-desktop-shell",
   "version": "0.1.0",
   "type": "module",
-  "description": "A lightweight native-like navigation rail component for React, inspired by Fluent UI.",
+  "description": "A lightweight native-like desktop app shell for React, featuring a custom title bar and navigation rail.",
+  "license": "MIT",
+  "author": "hicbowen",
+  "keywords": [
+    "react",
+    "desktop",
+    "app-shell",
+    "titlebar",
+    "navigation",
+    "sidebar",
+    "wails",
+    "electron",
+    "tauri",
+    "fluent"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hicbowen/react-desktop-shell.git"
+  },
+  "homepage": "https://github.com/hicbowen/react-desktop-shell#readme",
+  "bugs": {
+    "url": "https://github.com/hicbowen/react-desktop-shell/issues"
+  },
   "files": [
     "dist"
   ],
@@ -24,6 +46,7 @@
     "dev": "vite --config vite.example.config.ts",
     "build": "npm run clean && vite build && tsc -p tsconfig.build.json",
     "lint": "eslint .",
+    "prepack": "npm run lint && npm run build",
     "preview": "vite preview"
   },
   "peerDependencies": {

@@ -30,7 +30,8 @@ export interface AppTitleBarProps {
   title?: ReactNode
   icon?: ReactNode
   onMinimize?: () => void
-  onMaximize?: () => void
+  maximized?: boolean
+  onToggleMaximize?: () => void
   onClose?: () => void
   showMinimize?: boolean
   showMaximize?: boolean

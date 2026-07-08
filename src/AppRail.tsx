@@ -24,8 +24,8 @@ export function AppRail({
 }: AppRailProps) {
   const isControlled = collapsed !== undefined
   const [autoCollapsed, setAutoCollapsed] = useState(false)
-  const lastReportedCollapsed = useRef<boolean | null>(null)
   const isCollapsed = isControlled ? collapsed : autoCollapsed
+  const previousCollapsed = useRef(isCollapsed)
 
   useEffect(() => {
     if (isControlled || typeof window === 'undefined') {
@@ -45,13 +45,15 @@ export function AppRail({
   }, [collapseBreakpoint, isControlled])
 
   useEffect(() => {
-    if (lastReportedCollapsed.current === isCollapsed) {
+    const previous = previousCollapsed.current
+    previousCollapsed.current = isCollapsed
+
+    if (isControlled || previous === isCollapsed) {
       return
     }
 
-    lastReportedCollapsed.current = isCollapsed
     onCollapsedChange?.(isCollapsed)
-  }, [isCollapsed, onCollapsedChange])
+  }, [isCollapsed, isControlled, onCollapsedChange])
 
   const rootClassName = useMemo(() => {
     const classes = ['app-rail']
