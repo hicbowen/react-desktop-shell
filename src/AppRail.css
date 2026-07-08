@@ -9,6 +9,10 @@
   --app-rail-hover-bg: var(--app-shell-hover-bg, rgba(0, 0, 0, 0.05));
   --app-rail-accent-color: var(--app-shell-accent-color, #115ea3);
   --app-rail-accent-bg: var(--app-shell-active-bg, #edf3fb);
+  --app-rail-disabled-text-color: var(
+    --app-shell-disabled-text-color,
+    rgb(0 0 0 / 36%)
+  );
   --app-rail-bg: transparent;
 
   width: var(--app-rail-width);
@@ -79,9 +83,23 @@
   background: var(--app-rail-hover-bg);
 }
 
+.app-rail__item:disabled {
+  color: var(--app-rail-disabled-text-color);
+  cursor: default;
+}
+
+.app-rail__item:disabled:hover {
+  background: transparent;
+}
+
 .app-rail__item--active {
   position: relative;
   color: var(--app-rail-accent-color);
+  background: var(--app-rail-accent-bg);
+}
+
+.app-rail__item--active:disabled {
+  color: var(--app-rail-disabled-text-color);
   background: var(--app-rail-accent-bg);
 }
 
@@ -93,7 +111,7 @@
   width: 4px;
   height: 16px;
   border-radius: 4px;
-  background: currentColor;
+  background: var(--app-rail-accent-color);
   transform: translateY(-50%);
 }
 

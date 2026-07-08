@@ -12,7 +12,7 @@ npm install react-desktop-shell
 
 ```tsx
 import { useState } from 'react'
-import { FileText, Home, Settings } from 'lucide-react'
+import { FileText, Home, Settings, Wrench } from 'lucide-react'
 
 import { AppPage, AppRail, AppShell, AppTitleBar } from 'react-desktop-shell'
 import 'react-desktop-shell/style.css'
@@ -51,6 +51,12 @@ function App() {
               key: 'files',
               label: 'Files',
               icon: <FileText size={16} />,
+            },
+            {
+              key: 'tools',
+              label: 'Tools',
+              icon: <Wrench size={16} />,
+              disabled: true,
             },
           ]}
           footerItems={[
@@ -192,6 +198,8 @@ If `onMinimize`, `onToggleMaximize`, or `onClose` are omitted, clicking the matc
 
 `AppRail` renders the navigation surface and includes a subtle direction-aware selection indicator animation.
 
+Disabled rail items cannot be selected and do not trigger `onChange`. A controlled `value` may still reference a disabled item; `AppRail` does not modify the host application's selection state.
+
 ## Groups
 
 Use group entries to separate related navigation items. Group labels are hidden while the rail is collapsed.
@@ -274,6 +282,7 @@ Override variables on `.app-shell`, `.app-page`, `.app-rail`, and `.app-title-ba
 | `--app-shell-content-bg`           | `#f7f8fa`             |
 | `--app-shell-text-color`           | `#1f1f1f`             |
 | `--app-shell-muted-text-color`     | `#707070`             |
+| `--app-shell-disabled-text-color`  | `rgb(0 0 0 / 36%)`   |
 | `--app-shell-hover-bg`             | `rgb(0 0 0 / 5%)`     |
 | `--app-shell-control-hover-bg`     | `#d4d4d4`             |
 | `--app-shell-active-bg`            | `#edf3fb`             |
@@ -297,6 +306,7 @@ Override variables on `.app-shell`, `.app-page`, `.app-rail`, and `.app-title-ba
 | `--app-rail-hover-bg`              | `var(--app-shell-hover-bg, rgba(0, 0, 0, 0.05))` |
 | `--app-rail-accent-color`          | `var(--app-shell-accent-color, #115ea3)` |
 | `--app-rail-accent-bg`             | `var(--app-shell-active-bg, #edf3fb)` |
+| `--app-rail-disabled-text-color`   | `var(--app-shell-disabled-text-color, rgb(0 0 0 / 36%))` |
 | `--app-rail-bg`                    | `transparent`         |
 | `--app-title-bar-height`           | `40px`                |
 | `--app-title-bar-text-color`       | `var(--app-shell-text-color, #1f1f1f)` |
@@ -379,6 +389,7 @@ export type RailItem = {
   key: string
   label: string
   icon?: ReactNode
+  disabled?: boolean
 }
 
 export type RailGroup = {

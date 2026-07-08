@@ -25,6 +25,10 @@ function getRailItemOrder(items: AppRailProps['items'], footerItems: RailItem[])
   ]
 }
 
+function isRailItem(item: AppRailProps['items'][number]): item is RailItem {
+  return item.type !== 'group'
+}
+
 function getSelectionDirection(
   previousValue: string | undefined,
   currentValue: string | undefined,
@@ -80,6 +84,14 @@ export function AppRail({
     selectionTransition.value === value ? selectionTransition.direction : null
 
   const handleItemChange = (nextValue: string) => {
+    const nextItem = [...items, ...footerItems]
+      .filter(isRailItem)
+      .find((item) => item.key === nextValue)
+
+    if (nextItem?.disabled) {
+      return
+    }
+
     setSelectionTransition({
       value: nextValue,
       direction: getSelectionDirection(value, nextValue, navigationOrder),
@@ -148,6 +160,7 @@ export function AppRail({
       <button
         key={item.key}
         className={itemClassNames.join(' ')}
+        disabled={item.disabled}
         onClick={() => handleItemChange(item.key)}
         title={isCollapsed ? item.label : undefined}
         type="button"

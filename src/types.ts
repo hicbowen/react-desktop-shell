@@ -7,6 +7,7 @@ export type RailItem = {
   key: string
   label: string
   icon?: ReactNode
+  disabled?: boolean
 }
 
 export type RailGroup = {

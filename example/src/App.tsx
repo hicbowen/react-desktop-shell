@@ -182,6 +182,7 @@ export function ExampleApp() {
               key: 'tools',
               label: 'Tools',
               icon: <Wrench size={16} />,
+              disabled: true,
             },
           ]}
           footerItems={[
