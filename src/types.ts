@@ -158,7 +158,7 @@ export interface AppToastHostOptions {
   maxVisible?: number
 }
 
-export type RailItem = {
+export type RailLinkItem = {
   type?: 'item'
   key: string
   label: string
@@ -166,12 +166,23 @@ export type RailItem = {
   disabled?: boolean
 }
 
+export type RailItem = RailLinkItem
+
+export type RailSubmenu = {
+  type: 'submenu'
+  key: string
+  label: string
+  icon?: ReactNode
+  disabled?: boolean
+  children: RailLinkItem[]
+}
+
 export type RailGroup = {
   type: 'group'
   label: string
 }
 
-export type RailEntry = RailItem | RailGroup
+export type RailEntry = RailLinkItem | RailSubmenu | RailGroup
 
 export interface AppShellProps {
   theme?: AppTheme

@@ -5,6 +5,7 @@
 
   --app-shell-chrome-bg: #f3f3f3;
   --app-shell-content-bg: #f7f8fa;
+  --app-shell-surface-bg: #ffffff;
   --app-shell-text-color: #1f1f1f;
   --app-shell-muted-text-color: #707070;
   --app-shell-disabled-text-color: rgb(0 0 0 / 36%);
@@ -61,6 +62,7 @@
 
   --app-shell-chrome-bg: #202020;
   --app-shell-content-bg: #272727;
+  --app-shell-surface-bg: #2d2d2d;
   --app-shell-text-color: #ffffff;
   --app-shell-muted-text-color: #a6a6a6;
   --app-shell-disabled-text-color: rgb(255 255 255 / 36%);
@@ -119,6 +121,7 @@
 
     --app-shell-chrome-bg: #202020;
     --app-shell-content-bg: #272727;
+    --app-shell-surface-bg: #2d2d2d;
     --app-shell-text-color: #ffffff;
     --app-shell-muted-text-color: #a6a6a6;
     --app-shell-disabled-text-color: rgb(255 255 255 / 36%);

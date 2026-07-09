@@ -40,4 +40,6 @@ export type {
   RailEntry,
   RailGroup,
   RailItem,
+  RailLinkItem,
+  RailSubmenu,
 } from './types'

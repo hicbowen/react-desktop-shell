@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import {
+  BookOpen,
   Clock,
   Copy,
   FileText,
@@ -40,6 +41,14 @@ const pages = {
         New file
       </button>
     ),
+  },
+  students: {
+    title: 'Students',
+    description: 'Review learner records and classroom activity.',
+  },
+  classes: {
+    title: 'Classes',
+    description: 'Manage cohorts, schedules, and shared resources.',
   },
   tools: {
     title: 'Tools',
@@ -603,6 +612,24 @@ function renderPageContent(
     )
   }
 
+  if (active === 'students' || active === 'classes') {
+    return (
+      <div className="example-tool-grid">
+        {[
+          active === 'students' ? 'Student roster' : 'Class roster',
+          'Attendance',
+          'Progress',
+          'Notes',
+        ].map((item) => (
+          <button className="example-tool-tile" key={item} type="button">
+            <BookOpen size={18} />
+            <span>{item}</span>
+          </button>
+        ))}
+      </div>
+    )
+  }
+
   if (active === 'settings') {
     return (
       <div className="example-settings-list">
@@ -717,15 +744,30 @@ export function ExampleApp() {
               label: 'Workspace',
             },
             {
+              type: 'submenu',
+              key: 'teaching',
+              label: 'Teaching',
+              icon: <BookOpen size={16} />,
+              children: [
+                {
+                  key: 'students',
+                  label: 'Students',
+                },
+                {
+                  key: 'classes',
+                  label: 'Classes',
+                },
+                {
+                  key: 'tools',
+                  label: 'Tools',
+                  disabled: true,
+                },
+              ],
+            },
+            {
               key: 'files',
               label: 'Files',
               icon: <FileText size={16} />,
-            },
-            {
-              key: 'tools',
-              label: 'Tools',
-              icon: <Wrench size={16} />,
-              disabled: true,
             },
           ]}
           footerItems={[

@@ -248,6 +248,36 @@ Use group entries to separate related navigation items. Group labels are hidden 
 }
 ```
 
+## Hierarchical Navigation
+
+Use submenu entries for one level of native-like hierarchy. Submenu parents toggle expansion and do not call `onChange`; submenu children call `onChange(child.key)`.
+
+```tsx
+<AppRail
+  value={active}
+  onChange={setActive}
+  items={[
+    {
+      key: 'home',
+      label: 'Home',
+      icon: <Home />,
+    },
+    {
+      type: 'submenu',
+      key: 'workspace',
+      label: 'Workspace',
+      icon: <Folder />,
+      children: [
+        { key: 'files', label: 'Files' },
+        { key: 'recent', label: 'Recent' },
+      ],
+    },
+  ]}
+/>
+```
+
+`AppRail` currently supports one level of submenu nesting. Active children automatically expand their parent when `value` changes. While collapsed, submenu children are shown in a flyout instead of inline.
+
 ## Footer Items
 
 Footer items stay pinned to the bottom of the rail.
@@ -317,6 +347,7 @@ Override variables on `.app-shell`, `.app-page`, `.app-rail`, and `.app-title-ba
 | ---------------------------------- | --------------------- |
 | `--app-shell-chrome-bg`            | `#f3f3f3`             |
 | `--app-shell-content-bg`           | `#f7f8fa`             |
+| `--app-shell-surface-bg`           | `#ffffff`             |
 | `--app-shell-text-color`           | `#1f1f1f`             |
 | `--app-shell-muted-text-color`     | `#707070`             |
 | `--app-shell-disabled-text-color`  | `rgb(0 0 0 / 36%)`   |
@@ -345,6 +376,9 @@ Override variables on `.app-shell`, `.app-page`, `.app-rail`, and `.app-title-ba
 | `--app-rail-accent-bg`             | `var(--app-shell-active-bg, #edf3fb)` |
 | `--app-rail-disabled-text-color`   | `var(--app-shell-disabled-text-color, rgb(0 0 0 / 36%))` |
 | `--app-rail-bg`                    | `transparent`         |
+| `--app-rail-flyout-bg`             | `var(--app-shell-surface-bg, #ffffff)` |
+| `--app-rail-flyout-border-color`   | `var(--app-shell-border-color, rgb(0 0 0 / 10%))` |
+| `--app-rail-flyout-shadow`         | `0 8px 24px rgb(0 0 0 / 16%)` |
 | `--app-title-bar-height`           | `40px`                |
 | `--app-title-bar-text-color`       | `var(--app-shell-text-color, #1f1f1f)` |
 | `--app-title-bar-icon-color`       | `var(--app-shell-accent-color, #115ea3)` |
@@ -635,7 +669,7 @@ import type { CSSProperties, ReactNode } from 'react'
 
 export type AppTheme = 'system' | 'light' | 'dark'
 
-export type RailItem = {
+export type RailLinkItem = {
   type?: 'item'
   key: string
   label: string
@@ -643,12 +677,23 @@ export type RailItem = {
   disabled?: boolean
 }
 
+export type RailItem = RailLinkItem
+
+export type RailSubmenu = {
+  type: 'submenu'
+  key: string
+  label: string
+  icon?: ReactNode
+  disabled?: boolean
+  children: RailLinkItem[]
+}
+
 export type RailGroup = {
   type: 'group'
   label: string
 }
 
-export type RailEntry = RailItem | RailGroup
+export type RailEntry = RailLinkItem | RailSubmenu | RailGroup
 ```
 
 ```tsx
