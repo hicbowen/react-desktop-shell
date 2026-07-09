@@ -6,6 +6,18 @@ import {
 } from './AppContextMenuContext'
 import { AppContextMenuLayer, type AppContextMenuState } from './AppContextMenuLayer'
 import {
+  AppDialogContext,
+  type AppDialogRegistration,
+} from './AppDialogContext'
+import { AppDialogLayer } from './AppDialogLayer'
+import { AppMessageBoxContext } from './AppMessageBoxContext'
+import {
+  defaultMessageBoxLocale,
+  renderMessageBoxActions,
+  renderMessageBoxContent,
+  useMessageBoxQueue,
+} from './AppMessageBoxHost'
+import {
   createEditableMenuItems,
   createSelectionMenuItems,
   defaultClipboardAdapter,
@@ -15,12 +27,14 @@ import {
 } from './AppContextMenuTextActions'
 import type { AppContextMenuItem, AppShellProps } from './types'
 import './AppShell.css'
+import type { AppMessageBoxOptions } from './types'
 
 export function AppShell({
   theme = 'system',
   contextMenu = 'native',
   clipboard = defaultClipboardAdapter,
   contextMenuLocale,
+  messageBoxLocale,
   titleBar,
   rail,
   children,
@@ -31,11 +45,23 @@ export function AppShell({
 }: AppShellProps) {
   const rootRef = useRef<HTMLDivElement | null>(null)
   const registryRef = useRef(new Map<string, AppContextMenuRegistration>())
+  const dialogRegistryRef = useRef(new Map<string, AppDialogRegistration>())
   const restoreFocusRef = useRef<HTMLElement | null>(null)
   const [activeMenu, setActiveMenu] = useState<AppContextMenuState | null>(null)
+  const [dialogs, setDialogs] = useState<AppDialogRegistration[]>([])
+  const [messageBoxRequest, setMessageBoxRequest] =
+    useState<{
+      id: number
+      options: AppMessageBoxOptions
+      restoreFocusElement: HTMLElement | null
+    } | null>(null)
   const locale = useMemo(
     () => ({ ...defaultContextMenuLocale, ...contextMenuLocale }),
     [contextMenuLocale],
+  )
+  const resolvedMessageBoxLocale = useMemo(
+    () => ({ ...defaultMessageBoxLocale, ...messageBoxLocale }),
+    [messageBoxLocale],
   )
 
   const rootClassName = useMemo(() => {
@@ -71,6 +97,44 @@ export function AppShell({
       },
     }),
     [],
+  )
+
+  const syncDialogs = useCallback(() => {
+    setDialogs(Array.from(dialogRegistryRef.current.values()))
+  }, [])
+
+  const dialogRegistry = useMemo(
+    () => ({
+      register(dialog: AppDialogRegistration) {
+        dialogRegistryRef.current.set(dialog.id, dialog)
+        setActiveMenu(null)
+        syncDialogs()
+      },
+      unregister(id: string) {
+        dialogRegistryRef.current.delete(id)
+        syncDialogs()
+      },
+    }),
+    [syncDialogs],
+  )
+
+  const { messageBox, completeCurrent } = useMessageBoxQueue(
+    resolvedMessageBoxLocale,
+    useCallback((request) => {
+      if (request) {
+        setActiveMenu(null)
+      }
+
+      setMessageBoxRequest(
+        request
+          ? {
+              id: request.id,
+              options: request.options,
+              restoreFocusElement: request.restoreFocusElement,
+            }
+          : null,
+      )
+    }, []),
   )
 
   const closeMenu = useCallback(() => {
@@ -249,25 +313,75 @@ export function AppShell({
   )
 
   return (
-    <AppContextMenuContext.Provider value={registry}>
-      <div
-        ref={rootRef}
-        className={rootClassName}
-        data-theme={theme}
-        style={style}
-        onMouseDownCapture={handleMouseDown}
-        onContextMenuCapture={handleContextMenu}
-        onKeyDownCapture={handleKeyDown}
-      >
-        {titleBar}
-        <div className="app-shell__body">
-          {rail}
-          <div className={contentClassNames} style={contentStyle}>
-            {children}
+    <AppMessageBoxContext.Provider value={messageBox}>
+      <AppDialogContext.Provider value={dialogRegistry}>
+        <AppContextMenuContext.Provider value={registry}>
+          <div
+            ref={rootRef}
+            className={rootClassName}
+            data-theme={theme}
+            style={style}
+            onMouseDownCapture={handleMouseDown}
+            onContextMenuCapture={handleContextMenu}
+            onKeyDownCapture={handleKeyDown}
+          >
+            {titleBar}
+            <div className="app-shell__body">
+              {rail}
+              <div className={contentClassNames} style={contentStyle}>
+                {children}
+              </div>
+            </div>
+            <AppDialogLayer
+              dialogs={[
+                ...dialogs,
+                ...(messageBoxRequest
+                  ? [
+                      {
+                        id: `app-message-box-${messageBoxRequest.id}`,
+                        open: true,
+                        title: undefined,
+                        children: renderMessageBoxContent(
+                          messageBoxRequest.options,
+                        ),
+                        actions: renderMessageBoxActions(
+                          messageBoxRequest.options.buttons,
+                          completeCurrent,
+                        ),
+                        width: 420,
+                        closeOnEscape:
+                          messageBoxRequest.options.closeOnEscape ?? true,
+                        closeOnOverlayClick: false,
+                        onOpenChange: (open) => {
+                          if (!open) {
+                            completeCurrent(
+                              messageBoxRequest.options.cancelButton,
+                            )
+                          }
+                        },
+                        onDefaultAction: () => {
+                          const defaultButton =
+                            messageBoxRequest.options.defaultButton
+                          const button =
+                            messageBoxRequest.options.buttons.find(
+                              (item) => item.key === defaultButton,
+                            )
+
+                          if (button && !button.disabled) {
+                            completeCurrent(button.key)
+                          }
+                        },
+                        restoreFocusElement:
+                          messageBoxRequest.restoreFocusElement,
+                      } satisfies AppDialogRegistration,
+                    ]
+                  : []),
+              ]}
+            />
+            <AppContextMenuLayer menu={activeMenu} onClose={closeMenu} />
           </div>
-        </div>
-        <AppContextMenuLayer menu={activeMenu} onClose={closeMenu} />
-      </div>
-    </AppContextMenuContext.Provider>
+        </AppContextMenuContext.Provider>
+      </AppDialogContext.Provider>
+    </AppMessageBoxContext.Provider>
   )
 }

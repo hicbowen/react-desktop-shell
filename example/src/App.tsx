@@ -15,11 +15,13 @@ import {
   Wrench,
 } from 'lucide-react'
 import {
+  AppDialog,
   AppContextMenu,
   AppPage,
   AppRail,
   AppShell,
   AppTitleBar,
+  useAppMessageBox,
   type AppTheme,
 } from '../../src'
 
@@ -57,6 +59,160 @@ function renderFileIcon(tag: string, size = 16) {
   }
 
   return <FileText size={size} />
+}
+
+function DialogMessageBoxDemo() {
+  const messageBox = useAppMessageBox()
+  const [profileOpen, setProfileOpen] = useState(false)
+  const [longOpen, setLongOpen] = useState(false)
+  const [result, setResult] = useState('No result yet')
+
+  const runConfirm = async () => {
+    const confirmed = await messageBox.confirm({
+      title: 'Delete item?',
+      message: 'This action cannot be undone.',
+      confirmText: 'Delete',
+      cancelText: 'Cancel',
+      danger: true,
+    })
+
+    setResult(`Confirm: ${confirmed ? 'delete' : 'cancel'}`)
+  }
+
+  const runShow = async () => {
+    const value = await messageBox.show({
+      title: 'Save changes?',
+      message: 'The document has unsaved changes.',
+      buttons: [
+        { key: 'cancel', label: 'Cancel' },
+        { key: 'discard', label: 'Discard', danger: true },
+        { key: 'save', label: 'Save', primary: true },
+      ],
+      defaultButton: 'save',
+      cancelButton: 'cancel',
+    })
+
+    setResult(`Result: ${value ?? 'undefined'}`)
+  }
+
+  const runQueue = () => {
+    void Promise.all([
+      messageBox.confirm({
+        title: 'Queue step 1',
+        message: 'First confirmation in the queue.',
+      }),
+      messageBox.confirm({
+        title: 'Queue step 2',
+        message: 'Second confirmation waits for the first.',
+      }),
+      messageBox.show({
+        title: 'Queue step 3',
+        message: 'The final message box opens last.',
+        buttons: [
+          { key: 'cancel', label: 'Cancel' },
+          { key: 'done', label: 'Done', primary: true },
+        ],
+        defaultButton: 'done',
+        cancelButton: 'cancel',
+      }),
+    ]).then(([first, second, third]) => {
+      setResult(`Queue: ${String(first)}, ${String(second)}, ${third}`)
+    })
+  }
+
+  return (
+    <div className="example-dialog-demo">
+      <div className="example-dialog-actions">
+        <button type="button" onClick={() => setProfileOpen(true)}>
+          Open dialog
+        </button>
+        <button type="button" onClick={() => setLongOpen(true)}>
+          Open long dialog
+        </button>
+        <button type="button" onClick={runConfirm}>
+          Confirm delete
+        </button>
+        <button type="button" onClick={runShow}>
+          Save changes
+        </button>
+        <button type="button" onClick={runQueue}>
+          Open message box queue
+        </button>
+      </div>
+      <div className="example-dialog-result">{result}</div>
+
+      <AppDialog
+        open={profileOpen}
+        onOpenChange={setProfileOpen}
+        title="Edit profile"
+        description="Update the information used in this workspace."
+        actions={
+          <>
+            <button type="button" onClick={() => setProfileOpen(false)}>
+              Cancel
+            </button>
+            <button
+              className="example-primary-action"
+              type="button"
+              onClick={() => setProfileOpen(false)}
+            >
+              Save
+            </button>
+          </>
+        }
+      >
+        <div className="example-dialog-form">
+          <label>
+            <span>Name</span>
+            <input defaultValue="Casey Chen" />
+          </label>
+          <label>
+            <span>Role</span>
+            <select defaultValue="designer">
+              <option value="designer">Designer</option>
+              <option value="engineer">Engineer</option>
+              <option value="manager">Manager</option>
+            </select>
+          </label>
+          <label>
+            <span>Notes</span>
+            <textarea defaultValue="Right click works here too." rows={3} />
+          </label>
+        </div>
+      </AppDialog>
+
+      <AppDialog
+        open={longOpen}
+        onOpenChange={setLongOpen}
+        title="Long content dialog"
+        description="The header and actions stay fixed while the content scrolls."
+        width={520}
+        actions={
+          <>
+            <button type="button" onClick={() => setLongOpen(false)}>
+              Cancel
+            </button>
+            <button
+              className="example-primary-action"
+              type="button"
+              onClick={() => setLongOpen(false)}
+            >
+              Done
+            </button>
+          </>
+        }
+      >
+        <div className="example-long-dialog-content">
+          {Array.from({ length: 14 }).map((_, index) => (
+            <p key={index}>
+              Dialog content line {index + 1}. This area scrolls independently
+              when the dialog becomes taller than the viewport.
+            </p>
+          ))}
+        </div>
+      </AppDialog>
+    </div>
+  )
 }
 
 function renderPageContent(
@@ -226,6 +382,7 @@ function renderPageContent(
           <span>Three files changed since your last session.</span>
         </div>
       </div>
+      <DialogMessageBoxDemo />
     </div>
   )
 }
@@ -239,6 +396,10 @@ export function ExampleApp() {
   return (
     <AppShell
       contextMenu="app"
+      messageBoxLocale={{
+        confirm: '确定',
+        cancel: '取消',
+      }}
       theme={theme}
       titleBar={
         <AppTitleBar
@@ -296,7 +457,7 @@ export function ExampleApp() {
         key={active}
         title={currentPage.title}
         description={currentPage.description}
-        actions={currentPage.actions}
+        actions={'actions' in currentPage ? currentPage.actions : undefined}
       >
         {renderPageContent(active, theme, setTheme)}
       </AppPage>

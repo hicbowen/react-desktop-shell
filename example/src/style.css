@@ -98,6 +98,90 @@ body {
   gap: 12px;
 }
 
+.example-dialog-demo {
+  grid-column: 1 / -1;
+  padding: 16px;
+  display: grid;
+  gap: 12px;
+  border: 1px solid var(--app-shell-border-color);
+  border-radius: 8px;
+  background: var(--app-shell-chrome-bg);
+}
+
+.example-dialog-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.example-dialog-actions button,
+.app-dialog__actions button {
+  min-width: 76px;
+  height: 32px;
+  padding: 0 12px;
+  color: var(--app-shell-text-color);
+  font: inherit;
+  font-size: 13px;
+  background: var(--app-shell-content-bg);
+  border: 1px solid var(--app-shell-border-color);
+  border-radius: 6px;
+  cursor: default;
+}
+
+.example-dialog-actions button:hover,
+.app-dialog__actions button:hover {
+  background: var(--app-shell-hover-bg);
+}
+
+.app-dialog__actions .example-primary-action {
+  color: var(--app-shell-dialog-primary-fg);
+  background: var(--app-shell-accent-color);
+  border-color: transparent;
+}
+
+.example-dialog-result {
+  color: var(--app-shell-muted-text-color);
+  font-size: 13px;
+}
+
+.example-dialog-form {
+  display: grid;
+  gap: 12px;
+}
+
+.example-dialog-form label {
+  display: grid;
+  gap: 6px;
+  color: var(--app-shell-muted-text-color);
+  font-size: 13px;
+}
+
+.example-dialog-form input,
+.example-dialog-form select,
+.example-dialog-form textarea {
+  box-sizing: border-box;
+  width: 100%;
+  color: var(--app-shell-text-color);
+  font: inherit;
+  background: var(--app-shell-content-bg);
+  border: 1px solid var(--app-shell-border-color);
+  border-radius: 6px;
+  padding: 7px 9px;
+}
+
+.example-long-dialog-content {
+  display: grid;
+  gap: 10px;
+}
+
+.example-long-dialog-content p {
+  margin: 0;
+  padding: 10px;
+  border: 1px solid var(--app-shell-border-color);
+  border-radius: 6px;
+  background: var(--app-shell-content-bg);
+}
+
 .example-activity div,
 .example-file-main {
   min-width: 0;

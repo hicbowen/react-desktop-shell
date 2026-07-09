@@ -1,0 +1,218 @@
+.app-dialog-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 1100;
+  pointer-events: none;
+}
+
+.app-dialog-overlay {
+  position: fixed;
+  inset: 0;
+  box-sizing: border-box;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: auto;
+  background: var(--app-shell-dialog-overlay-bg);
+  animation: app-dialog-overlay-enter var(--rds-motion-normal)
+    var(--rds-ease-standard);
+}
+
+.app-dialog-overlay--exit {
+  animation: app-dialog-overlay-exit var(--rds-motion-normal)
+    var(--rds-ease-exit) forwards;
+}
+
+.app-dialog {
+  width: var(--app-dialog-width);
+  max-width: calc(100vw - 32px);
+  max-height: calc(100vh - 32px);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  color: var(--app-shell-text-color);
+  background: var(--app-shell-dialog-bg);
+  border: 1px solid var(--app-shell-dialog-border-color);
+  border-radius: 10px;
+  box-shadow: var(--app-shell-dialog-shadow);
+  outline: 0;
+  animation: app-dialog-enter var(--rds-motion-normal) var(--rds-ease-enter);
+}
+
+.app-dialog--exit {
+  animation: app-dialog-exit var(--rds-motion-normal) var(--rds-ease-exit)
+    forwards;
+}
+
+.app-dialog__header {
+  padding: 20px 22px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.app-dialog__title {
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.app-dialog__description {
+  color: var(--app-shell-muted-text-color);
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.app-dialog__content {
+  min-height: 0;
+  padding: 10px 22px 18px;
+  overflow: auto;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.app-dialog__actions {
+  padding: 14px 22px 18px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  flex-shrink: 0;
+  border-top: 1px solid var(--app-shell-border-color);
+}
+
+.app-dialog__button {
+  min-width: 78px;
+  height: 32px;
+  padding: 0 14px;
+  color: var(--app-shell-text-color);
+  font: inherit;
+  font-size: 13px;
+  background: var(--app-shell-dialog-button-bg);
+  border: 1px solid var(--app-shell-dialog-button-border-color);
+  border-radius: 6px;
+  cursor: default;
+}
+
+.app-dialog__button:hover {
+  background: var(--app-shell-hover-bg);
+}
+
+.app-dialog__button:disabled {
+  color: var(--app-shell-disabled-text-color);
+}
+
+.app-dialog__button--primary {
+  color: var(--app-shell-dialog-primary-fg);
+  background: var(--app-shell-accent-color);
+  border-color: transparent;
+}
+
+.app-dialog__button--primary:hover {
+  filter: brightness(0.96);
+}
+
+.app-dialog__button--danger {
+  color: var(--app-shell-danger-fg);
+}
+
+.app-dialog__button--danger:hover {
+  background: var(--app-shell-danger-subtle-bg);
+}
+
+.app-dialog__button--danger.app-dialog__button--primary {
+  color: var(--app-shell-dialog-primary-fg);
+  background: var(--app-shell-danger-bg);
+}
+
+.app-message-box {
+  display: grid;
+  gap: 6px;
+}
+
+.app-message-box--with-icon {
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 0 14px;
+}
+
+.app-message-box__icon {
+  grid-row: 1 / span 2;
+  width: 28px;
+  min-height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--app-shell-accent-color);
+}
+
+.app-message-box__title {
+  font-size: 17px;
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+.app-message-box--with-icon .app-message-box__title,
+.app-message-box--with-icon .app-message-box__message {
+  grid-column: 2;
+}
+
+.app-message-box__message {
+  margin-top: 6px;
+  color: var(--app-shell-muted-text-color);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+@keyframes app-dialog-overlay-enter {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes app-dialog-overlay-exit {
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes app-dialog-enter {
+  from {
+    opacity: 0;
+    transform: translateY(4px) scale(0.97);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes app-dialog-exit {
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+
+  to {
+    opacity: 0;
+    transform: translateY(4px) scale(0.98);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .app-dialog,
+  .app-dialog--exit,
+  .app-dialog-overlay,
+  .app-dialog-overlay--exit {
+    animation-duration: 1ms;
+  }
+}

@@ -1,8 +1,10 @@
 export { AppShell } from './AppShell'
 export { AppContextMenu } from './AppContextMenu'
+export { AppDialog } from './AppDialog'
 export { AppPage } from './AppPage'
 export { AppRail } from './AppRail'
 export { AppTitleBar } from './AppTitleBar'
+export { useAppMessageBox } from './AppMessageBoxContext'
 
 export type {
   AppClipboardAdapter,
@@ -12,6 +14,12 @@ export type {
   AppContextMenuMode,
   AppContextMenuProps,
   AppContextMenuSeparatorItem,
+  AppDialogProps,
+  AppMessageBox,
+  AppMessageBoxButton,
+  AppMessageBoxConfirmOptions,
+  AppMessageBoxLocale,
+  AppMessageBoxOptions,
   AppPageProps,
   AppRailProps,
   AppShellProps,

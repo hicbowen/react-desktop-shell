@@ -371,6 +371,63 @@ The built-in editable menu includes Undo, Cut, Copy, Paste, Delete, and Select a
 
 This is intended for Wails, Electron, Tauri, or other hosts that want to bridge native clipboard APIs without adding a runtime dependency to `react-desktop-shell`.
 
+## Dialog
+
+`AppDialog` is a controlled, shell-managed modal dialog. It renders into the shell overlay layer, traps focus while open, restores focus on close, and closes on Escape by default. Overlay clicks do not close the dialog unless opted in.
+
+```tsx
+<AppDialog
+  open={open}
+  onOpenChange={setOpen}
+  title="Edit student"
+  description="Update this student's profile."
+  actions={
+    <>
+      <button onClick={() => setOpen(false)}>Cancel</button>
+      <button onClick={save}>Save</button>
+    </>
+  }
+>
+  <StudentForm />
+</AppDialog>
+```
+
+Use `closeOnEscape={false}` to keep Escape from closing, `closeOnOverlayClick` to opt into overlay-click closing, `initialFocus` to choose the first focused element, and `width` to set the dialog width.
+
+## Message box
+
+`useAppMessageBox` provides a Promise-based command API bound to the current `AppShell`. It reuses the dialog system and queues multiple requests so only one message box is visible at a time.
+
+```tsx
+const messageBox = useAppMessageBox()
+
+const confirmed = await messageBox.confirm({
+  title: 'Delete student?',
+  message: 'This action cannot be undone.',
+  confirmText: 'Delete',
+  cancelText: 'Cancel',
+  danger: true,
+})
+```
+
+For custom button sets, use `show`.
+
+```tsx
+const result = await messageBox.show({
+  title: 'Save changes?',
+  message: 'The document has unsaved changes.',
+  buttons: [
+    { key: 'cancel', label: 'Cancel' },
+    { key: 'discard', label: 'Discard', danger: true },
+    { key: 'save', label: 'Save', primary: true },
+  ],
+  defaultButton: 'save',
+  cancelButton: 'cancel',
+})
+```
+
+`show` resolves to the clicked button key. Escape resolves to `cancelButton` when one is provided, or `undefined` otherwise. `confirm` resolves to `true` for confirm and `false` for cancel or Escape.
+
 ## API
 
 ### AppShellProps
@@ -381,6 +438,7 @@ This is intended for Wails, Electron, Tauri, or other hosts that want to bridge 
 | `contextMenu`      | `'native' \| 'app'` | `'native'` | Controls whether native or shell-managed context menus are used. |
 | `clipboard`        | `AppClipboardAdapter` | Web Clipboard API | Optional clipboard bridge used by shell-managed menus. |
 | `contextMenuLocale` | `Partial<AppContextMenuLocale>` | English labels | Optional labels for built-in context menu items. |
+| `messageBoxLocale` | `Partial<AppMessageBoxLocale>` | English labels | Optional default confirm/cancel labels for message boxes. |
 | `titleBar`         | `ReactNode`     | `undefined` | Title bar content rendered above the body.       |
 | `rail`             | `ReactNode`     | `undefined` | Navigation rail content rendered beside content. |
 | `children`         | `ReactNode`     | `undefined` | Main content rendered in the scrollable area.    |
