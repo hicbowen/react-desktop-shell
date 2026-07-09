@@ -1,6 +1,6 @@
 # react-desktop-shell
 
-A lightweight native-like desktop app shell for React, featuring a custom title bar and navigation rail.
+A lightweight native-like desktop app shell for building React desktop applications.
 
 ## Installation
 
