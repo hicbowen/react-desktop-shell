@@ -7,7 +7,6 @@ import {
   Folder,
   Home,
   Image,
-  LayoutGrid,
   Pencil,
   Plus,
   RefreshCw,
@@ -25,6 +24,7 @@ import {
   AppTitleBar,
   useAppMessageBox,
   useAppToast,
+  type PaneDisplayMode,
   type AppTheme,
 } from '../../src'
 
@@ -462,6 +462,8 @@ function renderPageContent(
   active: string,
   theme: AppTheme,
   setTheme: (theme: AppTheme) => void,
+  displayMode: PaneDisplayMode,
+  setDisplayMode: (displayMode: PaneDisplayMode) => void,
   sidePaneOpen: boolean,
   sidePaneWidth: number,
   setSidePaneOpen: (open: boolean) => void,
@@ -650,6 +652,24 @@ function renderPageContent(
         </label>
         <label className="example-settings-row">
           <span className="example-settings-copy">
+            <span>Navigation mode</span>
+            <small>Choose how the Navigation Pane is presented.</small>
+          </span>
+          <select
+            className="example-settings-select"
+            value={displayMode}
+            onChange={(event) =>
+              setDisplayMode(event.target.value as PaneDisplayMode)
+            }
+          >
+            <option value="auto">Auto</option>
+            <option value="expanded">Expanded</option>
+            <option value="compact">Compact</option>
+            <option value="minimal">Minimal</option>
+          </select>
+        </label>
+        <label className="example-settings-row">
+          <span className="example-settings-copy">
             <span>Launch on startup</span>
             <small>Open FlowGo automatically when you sign in.</small>
           </span>
@@ -699,9 +719,10 @@ function renderPageContent(
 }
 
 export function ExampleApp() {
-  const [active, setActive] = useState('home')
+  const [active, setActive] = useState('students')
   const [maximized, setMaximized] = useState(false)
   const [theme, setTheme] = useState<AppTheme>('system')
+  const [displayMode, setDisplayMode] = useState<PaneDisplayMode>('auto')
   const [sidePaneOpen, setSidePaneOpen] = useState(false)
   const [sidePaneWidth, setSidePaneWidth] = useState(380)
   const currentPage = pages[active as keyof typeof pages]
@@ -713,11 +734,15 @@ export function ExampleApp() {
         confirm: '确定',
         cancel: '取消',
       }}
+      title="FlowGo"
+      sidebar={{
+        displayMode,
+        onDisplayModeChange: setDisplayMode,
+        expandedWidth: 316,
+      }}
       theme={theme}
       titleBar={
         <AppTitleBar
-          title="FlowGo"
-          icon={<LayoutGrid size={22} />}
           actions={
             <button className="example-title-action" type="button">
               <Settings size={15} />
@@ -801,6 +826,8 @@ export function ExampleApp() {
           active,
           theme,
           setTheme,
+          displayMode,
+          setDisplayMode,
           sidePaneOpen,
           sidePaneWidth,
           setSidePaneOpen,

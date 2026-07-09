@@ -2,6 +2,7 @@ import type { CSSProperties, ReactElement, ReactNode } from 'react'
 
 export type AppTheme = 'system' | 'light' | 'dark'
 export type AppContextMenuMode = 'native' | 'app'
+export type PaneDisplayMode = 'expanded' | 'compact' | 'minimal' | 'auto'
 
 export interface AppClipboardAdapter {
   readText(): Promise<string>
@@ -192,6 +193,10 @@ export interface AppShellProps {
   messageBoxLocale?: Partial<AppMessageBoxLocale>
   toastLocale?: Partial<AppToastLocale>
   toastOptions?: AppToastHostOptions
+  title?: ReactNode
+  icon?: ReactNode
+  sidebar?: AppShellSidebarOptions
+  sidebarHeader?: ReactNode
   titleBar?: ReactNode
   rail?: ReactNode
   children?: ReactNode
@@ -199,6 +204,32 @@ export interface AppShellProps {
   style?: CSSProperties
   contentClassName?: string
   contentStyle?: CSSProperties
+}
+
+export interface AppShellSidebarOptions {
+  collapsible?: boolean
+  displayMode?: PaneDisplayMode
+  defaultDisplayMode?: PaneDisplayMode
+  onDisplayModeChange?: (mode: PaneDisplayMode) => void
+  isPaneOpen?: boolean
+  defaultPaneOpen?: boolean
+  onPaneOpenChange?: (open: boolean) => void
+  expandedBreakpoint?: number
+  compactBreakpoint?: number
+  /**
+   * @deprecated Use displayMode instead.
+   */
+  collapsed?: boolean
+  /**
+   * @deprecated Use defaultDisplayMode instead.
+   */
+  defaultCollapsed?: boolean
+  /**
+   * @deprecated Use onDisplayModeChange instead.
+   */
+  onCollapsedChange?: (collapsed: boolean) => void
+  expandedWidth?: number
+  compactWidth?: number
 }
 
 export interface AppPageProps {

@@ -1,5 +1,5 @@
 .app-title-bar {
-  --app-title-bar-height: 40px;
+  --app-title-bar-height: var(--app-titlebar-height, 36px);
   --app-title-bar-text-color: var(--app-shell-text-color, #1f1f1f);
   --app-title-bar-icon-color: var(--app-shell-accent-color, #115ea3);
   --app-title-bar-hover-bg: var(--app-shell-control-hover-bg, #d4d4d4);

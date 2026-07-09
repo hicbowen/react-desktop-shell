@@ -1,4 +1,13 @@
-import { useCallback, useMemo, useRef, useState } from 'react'
+import {
+  cloneElement,
+  isValidElement,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react'
+import type { CSSProperties, ReactElement, ReactNode } from 'react'
 import {
   APP_CONTEXT_MENU_ATTRIBUTE,
   AppContextMenuContext,
@@ -31,9 +40,117 @@ import {
   getEditableElement,
   hasEditableSelection,
 } from './AppContextMenuTextActions'
-import type { AppContextMenuItem, AppShellProps } from './types'
+import type {
+  AppContextMenuItem,
+  AppRailProps,
+  AppShellProps,
+  PaneDisplayMode,
+} from './types'
 import './AppShell.css'
 import type { AppMessageBoxOptions } from './types'
+
+const DEFAULT_SIDEBAR_EXPANDED_WIDTH = 316
+const DEFAULT_SIDEBAR_COMPACT_WIDTH = 56
+const DEFAULT_EXPANDED_BREAKPOINT = 1008
+const DEFAULT_COMPACT_BREAKPOINT = 640
+
+type ResolvedPaneDisplayMode = Exclude<PaneDisplayMode, 'auto'>
+type NavigationPresentation = 'inline' | 'compact-flyout'
+
+function resolvePaneDisplayMode(
+  width: number,
+  expandedBreakpoint: number,
+  compactBreakpoint: number,
+): ResolvedPaneDisplayMode {
+  if (width >= expandedBreakpoint) {
+    return 'expanded'
+  }
+
+  if (width >= compactBreakpoint) {
+    return 'compact'
+  }
+
+  return 'minimal'
+}
+
+function displayModeFromCollapsed(collapsed: boolean): ResolvedPaneDisplayMode {
+  return collapsed ? 'compact' : 'expanded'
+}
+
+function MenuIcon() {
+  return (
+    <svg
+      aria-hidden="true"
+      fill="none"
+      height="18"
+      viewBox="0 0 18 18"
+      width="18"
+    >
+      <path
+        d="M3 5h12M3 9h12M3 13h12"
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeWidth="1.5"
+      />
+    </svg>
+  )
+}
+
+function PaneToggleButton({
+  ariaLabel,
+  expanded,
+  onToggle,
+}: {
+  ariaLabel: string
+  expanded: boolean
+  onToggle: () => void
+}) {
+  return (
+    <button
+      aria-expanded={expanded}
+      aria-label={ariaLabel}
+      className="app-shell__pane-toggle"
+      onClick={onToggle}
+      type="button"
+    >
+      <MenuIcon />
+    </button>
+  )
+}
+
+function SidebarHeader({
+  appTitle,
+  ariaLabel,
+  compact,
+  icon,
+  onToggle,
+  showToggle,
+}: {
+  appTitle?: ReactNode
+  ariaLabel: string
+  compact: boolean
+  icon?: ReactNode
+  onToggle: () => void
+  showToggle: boolean
+}) {
+  return (
+    <div className="app-shell__sidebar-header">
+      {showToggle && (
+        <PaneToggleButton
+          ariaLabel={ariaLabel}
+          expanded={!compact}
+          onToggle={onToggle}
+        />
+      )}
+      {!compact && icon && (
+        <span className="app-shell__sidebar-icon">{icon}</span>
+      )}
+      {!compact && appTitle && (
+        <span className="app-shell__sidebar-title">{appTitle}</span>
+      )}
+    </div>
+  )
+}
 
 export function AppShell({
   theme = 'system',
@@ -43,6 +160,10 @@ export function AppShell({
   messageBoxLocale,
   toastLocale,
   toastOptions,
+  title,
+  icon,
+  sidebar,
+  sidebarHeader,
   titleBar,
   rail,
   children,
@@ -55,6 +176,29 @@ export function AppShell({
   const registryRef = useRef(new Map<string, AppContextMenuRegistration>())
   const dialogRegistryRef = useRef(new Map<string, AppDialogRegistration>())
   const restoreFocusRef = useRef<HTMLElement | null>(null)
+  const displayModeControlled = sidebar?.displayMode !== undefined
+  const collapsedControlled =
+    !displayModeControlled && sidebar?.collapsed !== undefined
+  const defaultDisplayMode =
+    sidebar === undefined
+      ? 'expanded'
+      : (sidebar.defaultDisplayMode ??
+        (sidebar.defaultCollapsed !== undefined
+          ? displayModeFromCollapsed(sidebar.defaultCollapsed)
+          : 'auto'))
+  const [uncontrolledDisplayMode, setUncontrolledDisplayMode] =
+    useState<PaneDisplayMode>(defaultDisplayMode)
+  const [autoResolvedDisplayMode, setAutoResolvedDisplayMode] =
+    useState<ResolvedPaneDisplayMode>('expanded')
+  const previousAutoResolvedMode = useRef(autoResolvedDisplayMode)
+  const paneTransitionTimeout = useRef<number | undefined>(undefined)
+  const [suppressPaneTransition, setSuppressPaneTransition] = useState(false)
+  const [autoPaneOverride, setAutoPaneOverride] =
+    useState<Exclude<ResolvedPaneDisplayMode, 'minimal'> | null>(null)
+  const paneOpenControlled = sidebar?.isPaneOpen !== undefined
+  const [uncontrolledPaneOpen, setUncontrolledPaneOpen] = useState(
+    sidebar?.defaultPaneOpen ?? false,
+  )
   const [activeMenu, setActiveMenu] = useState<AppContextMenuState | null>(null)
   const [dialogs, setDialogs] = useState<AppDialogRegistration[]>([])
   const [messageBoxRequest, setMessageBoxRequest] =
@@ -82,16 +226,219 @@ export function AppShell({
     resumeTimer,
     removeToast,
   } = useToastStore(toastOptions)
+  const sidebarCollapsible = sidebar?.collapsible ?? sidebar !== undefined
+  const displayMode = displayModeControlled
+    ? sidebar.displayMode
+    : collapsedControlled
+      ? displayModeFromCollapsed(Boolean(sidebar?.collapsed))
+      : uncontrolledDisplayMode
+  const baseResolvedDisplayMode =
+    displayMode === 'auto' ? autoResolvedDisplayMode : displayMode
+  const resolvedDisplayMode =
+    displayMode === 'auto' &&
+    baseResolvedDisplayMode !== 'minimal' &&
+    autoPaneOverride
+      ? autoPaneOverride
+      : baseResolvedDisplayMode
+  const navigationPresentation: NavigationPresentation =
+    resolvedDisplayMode === 'compact' ? 'compact-flyout' : 'inline'
+  const sidebarCollapsed = navigationPresentation === 'compact-flyout'
+  const isMinimal = resolvedDisplayMode === 'minimal'
+  const isPaneOpen = paneOpenControlled
+    ? Boolean(sidebar?.isPaneOpen)
+    : uncontrolledPaneOpen
+  const sidebarExpandedWidth =
+    sidebar?.expandedWidth ?? DEFAULT_SIDEBAR_EXPANDED_WIDTH
+  const sidebarCompactWidth =
+    sidebar?.compactWidth ?? DEFAULT_SIDEBAR_COMPACT_WIDTH
+  const expandedBreakpoint =
+    sidebar?.expandedBreakpoint ?? DEFAULT_EXPANDED_BREAKPOINT
+  const compactBreakpoint =
+    sidebar?.compactBreakpoint ?? DEFAULT_COMPACT_BREAKPOINT
+  const hasSidebar = rail !== undefined || sidebarHeader !== undefined
+
+  const setPaneOpen = useCallback(
+    (open: boolean) => {
+      if (!sidebarCollapsible) {
+        return
+      }
+
+      if (!paneOpenControlled) {
+        setUncontrolledPaneOpen(open)
+      }
+
+      sidebar?.onPaneOpenChange?.(open)
+    },
+    [paneOpenControlled, sidebar, sidebarCollapsible],
+  )
+
+  const setDisplayMode = useCallback(
+    (nextDisplayMode: PaneDisplayMode) => {
+      if (!sidebarCollapsible) {
+        return
+      }
+
+      if (displayMode === 'auto') {
+        if (nextDisplayMode === 'expanded' || nextDisplayMode === 'compact') {
+          setAutoPaneOverride(nextDisplayMode)
+        }
+        return
+      }
+
+      if (!displayModeControlled && !collapsedControlled) {
+        setUncontrolledDisplayMode(nextDisplayMode)
+      }
+
+      sidebar?.onDisplayModeChange?.(nextDisplayMode)
+
+      if (collapsedControlled || sidebar?.onCollapsedChange) {
+        sidebar?.onCollapsedChange?.(nextDisplayMode === 'compact')
+      }
+    },
+    [
+      collapsedControlled,
+      displayMode,
+      displayModeControlled,
+      sidebar,
+      sidebarCollapsible,
+    ],
+  )
+
+  const toggleSidebar = useCallback(() => {
+    if (isMinimal) {
+      setPaneOpen(!isPaneOpen)
+      return
+    }
+
+    setDisplayMode(
+      resolvedDisplayMode === 'expanded' ? 'compact' : 'expanded',
+    )
+  }, [
+    isMinimal,
+    isPaneOpen,
+    resolvedDisplayMode,
+    setDisplayMode,
+    setPaneOpen,
+  ])
+
+  const closePane = useCallback(() => {
+    setPaneOpen(false)
+  }, [setPaneOpen])
+
+  useEffect(() => {
+    const root = rootRef.current
+
+    if (
+      !root ||
+      typeof ResizeObserver === 'undefined' ||
+      displayMode !== 'auto'
+    ) {
+      return
+    }
+
+    const updateAutoMode = (width: number) => {
+      const nextMode = resolvePaneDisplayMode(
+        width,
+        expandedBreakpoint,
+        compactBreakpoint,
+      )
+
+      const previousMode = previousAutoResolvedMode.current
+
+      if (previousMode === nextMode) {
+        return
+      }
+
+      if (previousMode === 'minimal' || nextMode === 'minimal') {
+        window.clearTimeout(paneTransitionTimeout.current)
+        setSuppressPaneTransition(true)
+        paneTransitionTimeout.current = window.setTimeout(() => {
+          setSuppressPaneTransition(false)
+        }, 180)
+      }
+
+      previousAutoResolvedMode.current = nextMode
+      setAutoResolvedDisplayMode(nextMode)
+      setAutoPaneOverride(null)
+
+      if (nextMode === 'minimal') {
+        setPaneOpen(false)
+      }
+    }
+
+    updateAutoMode(root.getBoundingClientRect().width)
+
+    const observer = new ResizeObserver((entries) => {
+      const entry = entries[0]
+
+      if (entry) {
+        updateAutoMode(entry.contentRect.width)
+      }
+    })
+
+    observer.observe(root)
+    return () => {
+      observer.disconnect()
+      window.clearTimeout(paneTransitionTimeout.current)
+    }
+  }, [compactBreakpoint, displayMode, expandedBreakpoint, setPaneOpen])
+
+  useEffect(() => {
+    if (isMinimal || !isPaneOpen) {
+      return
+    }
+
+    const timeout = window.setTimeout(closePane, 0)
+    return () => window.clearTimeout(timeout)
+  }, [closePane, isMinimal, isPaneOpen])
+
+  useEffect(() => {
+    if (!isMinimal || !isPaneOpen) {
+      return
+    }
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key !== 'Escape') {
+        return
+      }
+
+      event.preventDefault()
+      closePane()
+    }
+
+    document.addEventListener('keydown', handleKeyDown, true)
+    return () => document.removeEventListener('keydown', handleKeyDown, true)
+  }, [closePane, isMinimal, isPaneOpen])
 
   const rootClassName = useMemo(() => {
     const classes = ['app-shell']
+
+    if (!hasSidebar) {
+      classes.push('app-shell--no-sidebar')
+    }
+
+    if (isMinimal) {
+      classes.push('app-shell--pane-minimal')
+    } else if (sidebarCollapsed) {
+      classes.push('app-shell--sidebar-collapsed')
+    }
+
+    if (suppressPaneTransition) {
+      classes.push('app-shell--pane-transition-suppressed')
+    }
 
     if (className) {
       classes.push(className)
     }
 
     return classes.join(' ')
-  }, [className])
+  }, [
+    className,
+    hasSidebar,
+    isMinimal,
+    sidebarCollapsed,
+    suppressPaneTransition,
+  ])
 
   const contentClassNames = useMemo(() => {
     const classes = ['app-shell__content']
@@ -102,6 +449,66 @@ export function AppShell({
 
     return classes.join(' ')
   }, [contentClassName])
+
+  const shellStyle = useMemo(
+    () =>
+      ({
+        '--app-sidebar-expanded-width': `${sidebarExpandedWidth}px`,
+        '--app-sidebar-compact-width': `${sidebarCompactWidth}px`,
+        '--app-sidebar-width': sidebarCollapsed
+          ? `${sidebarCompactWidth}px`
+          : isMinimal
+            ? '0px'
+            : `${sidebarExpandedWidth}px`,
+        ...style,
+      }) as CSSProperties,
+    [
+      isMinimal,
+      sidebarCollapsed,
+      sidebarCompactWidth,
+      sidebarExpandedWidth,
+      style,
+    ],
+  )
+
+  const renderedRail = useMemo(() => {
+    if (!rail) {
+      return null
+    }
+
+    if (!sidebarCollapsible || !isValidElement(rail)) {
+      return rail
+    }
+
+    const railElement = rail as ReactElement<Partial<AppRailProps>>
+
+    return cloneElement(railElement, {
+      collapsed: sidebarCollapsed,
+      onCollapsedChange: sidebar?.onCollapsedChange,
+    })
+  }, [rail, sidebar?.onCollapsedChange, sidebarCollapsed, sidebarCollapsible])
+
+  const renderedOverlayRail = useMemo(() => {
+    if (!rail) {
+      return null
+    }
+
+    if (!isValidElement(rail)) {
+      return rail
+    }
+
+    const railElement = rail as ReactElement<Partial<AppRailProps>>
+    const originalOnChange = railElement.props.onChange
+
+    return cloneElement(railElement, {
+      collapsed: false,
+      onChange: (key: string) => {
+        originalOnChange?.(key)
+        closePane()
+      },
+      onCollapsedChange: undefined,
+    })
+  }, [closePane, rail])
 
   const registry = useMemo(
     () => ({
@@ -332,6 +739,13 @@ export function AppShell({
   )
 
   const hasModalDialog = dialogs.length > 0 || messageBoxRequest !== null
+  const paneToggleAriaLabel = isMinimal
+    ? isPaneOpen
+      ? 'Close navigation'
+      : 'Open navigation'
+    : sidebarCollapsed
+      ? 'Expand navigation'
+      : 'Collapse navigation'
 
   return (
     <AppToastContext.Provider value={toast}>
@@ -341,19 +755,75 @@ export function AppShell({
             <div
               ref={rootRef}
               className={rootClassName}
+              data-pane-mode={resolvedDisplayMode}
               data-theme={theme}
-              style={style}
+              style={shellStyle}
               onMouseDownCapture={handleMouseDown}
               onContextMenuCapture={handleContextMenu}
               onKeyDownCapture={handleKeyDown}
             >
-              {titleBar}
+              {hasSidebar && !isMinimal && (
+                sidebarHeader ?? (
+                  <SidebarHeader
+                    appTitle={title}
+                    ariaLabel={paneToggleAriaLabel}
+                    compact={sidebarCollapsed}
+                    icon={icon}
+                    onToggle={toggleSidebar}
+                    showToggle={sidebarCollapsible}
+                  />
+                )
+              )}
+              <div className="app-shell__titlebar">
+                {hasSidebar && isMinimal && sidebarCollapsible && !isPaneOpen && (
+                  <div className="app-shell__titlebar-leading">
+                    <PaneToggleButton
+                      ariaLabel={paneToggleAriaLabel}
+                      expanded={isPaneOpen}
+                      onToggle={toggleSidebar}
+                    />
+                  </div>
+                )}
+                <div className="app-shell__titlebar-main">{titleBar}</div>
+              </div>
+              {hasSidebar && !isMinimal && (
+                <div className="app-shell__sidebar">{renderedRail}</div>
+              )}
               <div className="app-shell__body">
-                {rail}
                 <div className={contentClassNames} style={contentStyle}>
                   {children}
                 </div>
               </div>
+              {hasSidebar && isMinimal && isPaneOpen && (
+                <div className="app-shell__pane-layer">
+                  <button
+                    aria-label="Close navigation"
+                    className="app-shell__pane-backdrop"
+                    onClick={closePane}
+                    type="button"
+                  />
+                  <div
+                    className="app-shell__pane-overlay"
+                    style={{
+                      width: sidebarExpandedWidth,
+                    }}
+                  >
+                    {sidebarHeader ?? (
+                      <SidebarHeader
+                        appTitle={title}
+                        ariaLabel={paneToggleAriaLabel}
+                        compact={false}
+                        icon={icon}
+                        onToggle={toggleSidebar}
+                        showToggle={sidebarCollapsible}
+                      />
+                    )}
+                    <div className="app-shell__pane-overlay-sidebar">
+                      {renderedOverlayRail}
+                    </div>
+                  </div>
+                </div>
+              )}
               <AppDialogLayer
                 dialogs={[
                   ...dialogs,

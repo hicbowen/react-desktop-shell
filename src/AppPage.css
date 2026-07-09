@@ -1,8 +1,8 @@
 .app-page {
-  --app-page-padding: 24px;
+  --app-page-padding: 20px;
   --app-page-header-gap: 8px;
-  --app-page-content-gap: 24px;
-  --app-page-title-size: 28px;
+  --app-page-content-gap: 20px;
+  --app-page-title-size: 26px;
   --app-page-title-weight: 600;
   --app-page-text-color: var(--app-shell-text-color, #1f1f1f);
   --app-page-muted-text-color: var(--app-shell-muted-text-color, #707070);

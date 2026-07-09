@@ -23,9 +23,12 @@ function App() {
 
   return (
     <AppShell
+      title="My App"
+      sidebar={{
+        displayMode: 'auto',
+      }}
       titleBar={
         <AppTitleBar
-          title="My App"
           actions={<ToolbarActions />}
           onMinimize={handleMinimize}
           maximized={maximized}
@@ -84,12 +87,14 @@ function App() {
 
 ## App Shell
 
-`AppShell` composes the title bar, navigation rail, and content area into a full-height desktop shell. The shell owns layout, content scrolling, and the background split between app chrome and page content.
+`AppShell` composes the sidebar header, title bar, navigation rail, and content area into a full-height desktop shell. The sidebar starts at the top of the window, while the title bar belongs to the main content area.
 
 ```tsx
 <AppShell
   theme="system"
-  titleBar={<AppTitleBar title="My App" />}
+  title="My App"
+  sidebar={{ displayMode: 'auto' }}
+  titleBar={<AppTitleBar />}
   rail={<AppRail value={active} items={items} onChange={setActive} />}
 >
   <HomePage />
@@ -297,9 +302,40 @@ Footer items stay pinned to the bottom of the rail.
 />
 ```
 
-## Collapse
+## Pane Display Mode
 
-`AppRail` automatically collapses when the viewport width is below `collapseBreakpoint`, which defaults to `700`. Use `onCollapsedChange` to observe uncontrolled auto-collapse changes.
+Prefer `AppShell` for WinUI-style pane display. `displayMode` controls how the Navigation Pane is presented: `expanded` shows the full pane, `compact` shows the icon rail, `minimal` hides the pane until the hamburger opens an overlay, and `auto` resolves from the actual `AppShell` width.
+
+```tsx
+<AppShell
+  title="FlowGo"
+  sidebar={{
+    displayMode: 'auto',
+    expandedWidth: 316,
+    compactWidth: 56,
+    expandedBreakpoint: 1008,
+    compactBreakpoint: 640,
+  }}
+  rail={<AppRail value={active} items={items} onChange={setActive} />}
+/>
+```
+
+`displayMode` and pane open state are separate. `isPaneOpen` only applies to the minimal overlay pane.
+
+```tsx
+<AppShell
+  sidebar={{
+    displayMode,
+    onDisplayModeChange: setDisplayMode,
+    isPaneOpen,
+    onPaneOpenChange: setPaneOpen,
+  }}
+/>
+```
+
+The older `collapsed`, `defaultCollapsed`, and `onCollapsedChange` sidebar options are still supported for compatibility. `collapsed={false}` maps to `expanded`, and `collapsed={true}` maps to `compact`; `displayMode` takes priority when both are supplied.
+
+`AppRail` can still collapse by itself when the viewport width is below `collapseBreakpoint`, which defaults to `700`. Use `onCollapsedChange` to observe uncontrolled auto-collapse changes.
 
 ```tsx
 <AppRail
@@ -325,21 +361,21 @@ Override variables on `.app-shell`, `.app-page`, `.app-rail`, and `.app-title-ba
 .app-shell {
   --app-shell-chrome-bg: #f3f3f3;
   --app-shell-content-bg: #f7f8fa;
-  --app-shell-content-margin: 0 5px 5px 0;
-  --app-shell-content-radius: 10px;
+  --app-shell-content-margin: 0;
+  --app-shell-content-radius: 10px 0 0 0;
 }
 
 .app-page {
-  --app-page-padding: 32px;
+  --app-page-padding: 20px;
 }
 
 .app-rail {
-  --app-rail-width: 240px;
+  --app-rail-width: 316px;
   --app-rail-accent-color: #ff4d4f;
 }
 
 .app-title-bar {
-  --app-title-bar-height: 44px;
+  --app-title-bar-height: 36px;
 }
 ```
 
@@ -357,17 +393,17 @@ Override variables on `.app-shell`, `.app-page`, `.app-rail`, and `.app-title-ba
 | `--app-shell-border-color`         | `rgb(0 0 0 / 8%)`     |
 | `--app-shell-accent-color`         | `#115ea3`             |
 | `--app-shell-danger-bg`            | `#ef4444`             |
-| `--app-shell-content-margin`       | `0 5px 5px 0`         |
-| `--app-shell-content-radius`       | `10px`                |
+| `--app-shell-content-margin`       | `0`                   |
+| `--app-shell-content-radius`       | `10px 0 0 0`          |
 | `--app-shell-content-border-color` | `var(--app-shell-border-color)` |
-| `--app-page-padding`               | `24px`                |
+| `--app-page-padding`               | `20px`                |
 | `--app-page-header-gap`            | `8px`                 |
-| `--app-page-content-gap`           | `24px`                |
-| `--app-page-title-size`            | `28px`                |
+| `--app-page-content-gap`           | `20px`                |
+| `--app-page-title-size`            | `26px`                |
 | `--app-page-title-weight`          | `600`                 |
 | `--app-page-text-color`            | `var(--app-shell-text-color, #1f1f1f)` |
 | `--app-page-muted-text-color`      | `var(--app-shell-muted-text-color, #707070)` |
-| `--app-rail-width`                 | `228px`               |
+| `--app-rail-width`                 | `316px`               |
 | `--app-rail-collapsed-width`       | `56px`                |
 | `--app-rail-text-color`            | `var(--app-shell-text-color, #1f1f1f)` |
 | `--app-rail-muted-text-color`      | `var(--app-shell-muted-text-color, rgba(0, 0, 0, 0.58))` |
@@ -379,7 +415,7 @@ Override variables on `.app-shell`, `.app-page`, `.app-rail`, and `.app-title-ba
 | `--app-rail-flyout-bg`             | `var(--app-shell-surface-bg, #ffffff)` |
 | `--app-rail-flyout-border-color`   | `var(--app-shell-border-color, rgb(0 0 0 / 10%))` |
 | `--app-rail-flyout-shadow`         | `0 8px 24px rgb(0 0 0 / 16%)` |
-| `--app-title-bar-height`           | `40px`                |
+| `--app-title-bar-height`           | `var(--app-titlebar-height, 36px)` |
 | `--app-title-bar-text-color`       | `var(--app-shell-text-color, #1f1f1f)` |
 | `--app-title-bar-icon-color`       | `var(--app-shell-accent-color, #115ea3)` |
 | `--app-title-bar-hover-bg`         | `var(--app-shell-control-hover-bg, #d4d4d4)` |
@@ -590,13 +626,35 @@ Calling `show` again with the same id updates the existing toast. At most four t
 | `messageBoxLocale` | `Partial<AppMessageBoxLocale>` | English labels | Optional default confirm/cancel labels for message boxes. |
 | `toastLocale`      | `Partial<AppToastLocale>` | English labels | Optional labels for toast controls. |
 | `toastOptions`     | `AppToastHostOptions` | `{ maxVisible: 4 }` | Optional toast host options. |
-| `titleBar`         | `ReactNode`     | `undefined` | Title bar content rendered above the body.       |
+| `title`            | `ReactNode`     | `undefined` | App title rendered in the default sidebar header. |
+| `icon`             | `ReactNode`     | `undefined` | Optional app icon rendered before the sidebar title. |
+| `sidebar`          | `AppShellSidebarOptions` | `undefined` | Controls shell-owned sidebar collapse and widths. |
+| `sidebarHeader`    | `ReactNode`     | `undefined` | Optional custom sidebar header slot. |
+| `titleBar`         | `ReactNode`     | `undefined` | Main-area title bar content. |
 | `rail`             | `ReactNode`     | `undefined` | Navigation rail content rendered beside content. |
 | `children`         | `ReactNode`     | `undefined` | Main content rendered in the scrollable area.    |
 | `className`        | `string`        | `undefined` | Additional class name for the root element.      |
 | `style`            | `CSSProperties` | `undefined` | Inline styles for the root element.              |
 | `contentClassName` | `string`        | `undefined` | Additional class name for the content element.   |
 | `contentStyle`     | `CSSProperties` | `undefined` | Inline styles for the content element.           |
+
+### AppShellSidebarOptions
+
+| Prop                  | Type                           | Default | Description |
+| --------------------- | ------------------------------ | ------- | ----------- |
+| `displayMode`         | `PaneDisplayMode`              | `undefined` | Controlled pane display mode. |
+| `defaultDisplayMode`  | `PaneDisplayMode`              | `'auto'` when `sidebar` is provided | Initial uncontrolled pane display mode. |
+| `onDisplayModeChange` | `(mode: PaneDisplayMode) => void` | `undefined` | Called when the pane toggle changes explicit expanded/compact mode. |
+| `isPaneOpen`          | `boolean`                      | `undefined` | Controls whether the minimal overlay pane is open. |
+| `defaultPaneOpen`     | `boolean`                      | `false` | Initial uncontrolled minimal overlay open state. |
+| `onPaneOpenChange`    | `(open: boolean) => void`      | `undefined` | Called when the minimal overlay opens or closes. |
+| `expandedWidth`       | `number`                       | `316` | Expanded pane width in pixels. |
+| `compactWidth`        | `number`                       | `56` | Compact rail width in pixels. |
+| `expandedBreakpoint`  | `number`                       | `1008` | Auto mode width at which the pane resolves to expanded. |
+| `compactBreakpoint`   | `number`                       | `640` | Auto mode width at which the pane resolves to compact instead of minimal. |
+| `collapsed`           | `boolean`                      | `undefined` | Deprecated compatibility field. Use `displayMode`. |
+| `defaultCollapsed`    | `boolean`                      | `undefined` | Deprecated compatibility field. Use `defaultDisplayMode`. |
+| `onCollapsedChange`   | `(collapsed: boolean) => void` | `undefined` | Deprecated compatibility callback. Use `onDisplayModeChange`. |
 
 ### AppPageProps
 
@@ -668,6 +726,7 @@ Calling `show` again with the same id updates the existing toast. At most four t
 import type { CSSProperties, ReactNode } from 'react'
 
 export type AppTheme = 'system' | 'light' | 'dark'
+export type PaneDisplayMode = 'expanded' | 'compact' | 'minimal' | 'auto'
 
 export type RailLinkItem = {
   type?: 'item'
@@ -699,6 +758,10 @@ export type RailEntry = RailLinkItem | RailSubmenu | RailGroup
 ```tsx
 export interface AppShellProps {
   theme?: AppTheme
+  title?: ReactNode
+  icon?: ReactNode
+  sidebar?: AppShellSidebarOptions
+  sidebarHeader?: ReactNode
   titleBar?: ReactNode
   rail?: ReactNode
   children?: ReactNode
@@ -706,6 +769,32 @@ export interface AppShellProps {
   style?: CSSProperties
   contentClassName?: string
   contentStyle?: CSSProperties
+}
+
+export interface AppShellSidebarOptions {
+  collapsible?: boolean
+  displayMode?: PaneDisplayMode
+  defaultDisplayMode?: PaneDisplayMode
+  onDisplayModeChange?: (mode: PaneDisplayMode) => void
+  isPaneOpen?: boolean
+  defaultPaneOpen?: boolean
+  onPaneOpenChange?: (open: boolean) => void
+  expandedBreakpoint?: number
+  compactBreakpoint?: number
+  /**
+   * @deprecated Use displayMode instead.
+   */
+  collapsed?: boolean
+  /**
+   * @deprecated Use defaultDisplayMode instead.
+   */
+  defaultCollapsed?: boolean
+  /**
+   * @deprecated Use onDisplayModeChange instead.
+   */
+  onCollapsedChange?: (collapsed: boolean) => void
+  expandedWidth?: number
+  compactWidth?: number
 }
 ```
 

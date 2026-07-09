@@ -388,12 +388,18 @@ export function AppRail({
   useEffect(() => {
     const previous = previousCollapsed.current
     previousCollapsed.current = isCollapsed
+    const closeTimeout =
+      previous !== isCollapsed ? window.setTimeout(closeFlyout, 0) : undefined
 
-    if (isControlled || previous === isCollapsed) {
-      return
+    if (!isControlled && previous !== isCollapsed) {
+      onCollapsedChange?.(isCollapsed)
     }
 
-    onCollapsedChange?.(isCollapsed)
+    return () => {
+      if (closeTimeout !== undefined) {
+        window.clearTimeout(closeTimeout)
+      }
+    }
   }, [isCollapsed, isControlled, onCollapsedChange])
 
   useEffect(() => {
