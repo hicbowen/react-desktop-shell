@@ -376,6 +376,14 @@ Custom menus are data-driven and can wrap any single React element without chang
 <AppContextMenu
   items={[
     { key: 'open', label: 'Open', onClick: openItem },
+    {
+      key: 'open-with',
+      label: 'Open with',
+      submenu: [
+        { key: 'editor', label: 'Editor', onClick: openEditor },
+        { key: 'preview', label: 'Preview', onClick: openPreview },
+      ],
+    },
     { key: 'copy', label: 'Copy', shortcut: 'Ctrl+C', onClick: copyItem },
     { type: 'separator' },
     { key: 'delete', label: 'Delete', danger: true, onClick: deleteItem },

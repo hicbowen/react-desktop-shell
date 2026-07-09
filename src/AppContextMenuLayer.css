@@ -45,7 +45,8 @@
 }
 
 .app-context-menu__item:hover,
-.app-context-menu__item:focus-visible {
+.app-context-menu__item:focus-visible,
+.app-context-menu__item--active {
   background: var(--app-shell-hover-bg);
   outline: 0;
 }
@@ -69,7 +70,8 @@
 }
 
 .app-context-menu__item--danger:hover,
-.app-context-menu__item--danger:focus-visible {
+.app-context-menu__item--danger:focus-visible,
+.app-context-menu__item--danger.app-context-menu__item--active {
   background: var(--app-shell-danger-subtle-bg);
 }
 
@@ -103,6 +105,21 @@
   color: var(--app-shell-muted-text-color);
   font-size: 12px;
   white-space: nowrap;
+}
+
+.app-context-menu__submenu-indicator {
+  width: 16px;
+  height: 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--app-shell-muted-text-color);
+}
+
+.app-context-menu__submenu-indicator > svg {
+  width: 16px;
+  height: 16px;
+  display: block;
 }
 
 .app-context-menu__separator {

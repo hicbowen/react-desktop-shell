@@ -499,6 +499,47 @@ function renderPageContent(
                     shortcut: 'Enter',
                   },
                   {
+                    key: 'open-with',
+                    label: 'Open with',
+                    icon: <Wrench />,
+                    submenu: [
+                      {
+                        key: 'editor',
+                        label: 'Editor',
+                        icon: <FileText />,
+                        submenu: [
+                          {
+                            key: 'vscode',
+                            label: 'Visual Studio Code',
+                          },
+                          {
+                            key: 'notepad',
+                            label: 'Notepad',
+                          },
+                          {
+                            key: 'advanced-editors',
+                            label: 'Advanced',
+                            submenu: [
+                              {
+                                key: 'compare',
+                                label: 'Compare with saved copy',
+                              },
+                              {
+                                key: 'open-readonly',
+                                label: 'Open read-only',
+                              },
+                            ],
+                          },
+                        ],
+                      },
+                      {
+                        key: 'preview',
+                        label: 'Preview',
+                        icon: <Image />,
+                      },
+                    ],
+                  },
+                  {
                     key: 'rename',
                     label: 'Rename',
                     icon: <Pencil />,

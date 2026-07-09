@@ -27,12 +27,22 @@ export interface AppContextMenuActionItem {
   onClick?: () => void
 }
 
+export interface AppContextMenuSubmenuItem {
+  key: string
+  label: ReactNode
+  icon?: ReactNode
+  disabled?: boolean
+  danger?: boolean
+  submenu: AppContextMenuItem[]
+}
+
 export interface AppContextMenuSeparatorItem {
   type: 'separator'
 }
 
 export type AppContextMenuItem =
   | AppContextMenuActionItem
+  | AppContextMenuSubmenuItem
   | AppContextMenuSeparatorItem
 
 export interface AppContextMenuProps {
