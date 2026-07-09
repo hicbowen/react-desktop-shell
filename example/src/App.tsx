@@ -22,6 +22,7 @@ import {
   AppShell,
   AppTitleBar,
   useAppMessageBox,
+  useAppToast,
   type AppTheme,
 } from '../../src'
 
@@ -63,6 +64,7 @@ function renderFileIcon(tag: string, size = 16) {
 
 function DialogMessageBoxDemo() {
   const messageBox = useAppMessageBox()
+  const toast = useAppToast()
   const [profileOpen, setProfileOpen] = useState(false)
   const [longOpen, setLongOpen] = useState(false)
   const [result, setResult] = useState('No result yet')
@@ -154,7 +156,10 @@ function DialogMessageBoxDemo() {
             <button
               className="example-primary-action"
               type="button"
-              onClick={() => setProfileOpen(false)}
+              onClick={() => {
+                toast.success('Saved successfully')
+                setProfileOpen(false)
+              }}
             >
               Save
             </button>
@@ -211,6 +216,137 @@ function DialogMessageBoxDemo() {
           ))}
         </div>
       </AppDialog>
+    </div>
+  )
+}
+
+function ToastDemo() {
+  const toast = useAppToast()
+  const [undoResult, setUndoResult] = useState('No toast action yet')
+  const [networkOnline, setNetworkOnline] = useState(true)
+
+  const showLoadingToast = () => {
+    const id = toast.show({
+      title: 'Importing students',
+      message: '0 / 100',
+      status: 'loading',
+      duration: 0,
+    })
+    const steps = [20, 40, 60, 80, 100]
+
+    steps.forEach((step, index) => {
+      window.setTimeout(() => {
+        if (step < 100) {
+          toast.update(id, {
+            message: `${step} / 100`,
+          })
+          return
+        }
+
+        toast.update(id, {
+          title: 'Import complete',
+          message: '100 students imported',
+          status: 'success',
+          duration: 3000,
+        })
+      }, (index + 1) * 500)
+    })
+  }
+
+  const toggleNetworkStatus = () => {
+    const nextOnline = !networkOnline
+
+    setNetworkOnline(nextOnline)
+    toast.show({
+      id: 'network-status',
+      title: nextOnline ? 'Network restored' : 'Network disconnected',
+      status: nextOnline ? 'success' : 'error',
+      duration: nextOnline ? 3000 : 0,
+    })
+  }
+
+  return (
+    <div className="example-toast-demo">
+      <div className="example-section-heading">
+        <strong>Toast</strong>
+        <span>{undoResult}</span>
+      </div>
+      <div className="example-dialog-actions">
+        <button
+          type="button"
+          onClick={() => toast.show({ title: 'Settings updated' })}
+        >
+          Show toast
+        </button>
+        <button type="button" onClick={() => toast.success('Saved successfully')}>
+          Success
+        </button>
+        <button type="button" onClick={() => toast.error('Failed to save')}>
+          Error
+        </button>
+        <button
+          type="button"
+          onClick={() => toast.warning('Network is unstable')}
+        >
+          Warning
+        </button>
+        <button type="button" onClick={() => toast.info('Sync started')}>
+          Info
+        </button>
+        <button
+          type="button"
+          onClick={() =>
+            toast.success('Import complete', {
+              message: '100 students were imported successfully.',
+            })
+          }
+        >
+          With message
+        </button>
+        <button
+          type="button"
+          onClick={() =>
+            toast.show({
+              title: 'Student deleted',
+              action: {
+                label: 'Undo',
+                onClick: () => setUndoResult('Undo clicked'),
+              },
+            })
+          }
+        >
+          With action
+        </button>
+        <button type="button" onClick={showLoadingToast}>
+          Loading to success
+        </button>
+        <button type="button" onClick={toggleNetworkStatus}>
+          Toggle network status
+        </button>
+        <button
+          type="button"
+          onClick={() => {
+            Array.from({ length: 8 }).forEach((_, index) => {
+              toast.info(`Queued toast ${index + 1}`, {
+                message: 'Only four are visible at once.',
+              })
+            })
+          }}
+        >
+          Show 8 toasts
+        </button>
+        <button
+          type="button"
+          onClick={() =>
+            toast.info('Hover to pause this toast', {
+              message: 'The remaining duration resumes on mouse leave.',
+              duration: 8000,
+            })
+          }
+        >
+          Hover pause
+        </button>
+      </div>
     </div>
   )
 }
@@ -382,6 +518,7 @@ function renderPageContent(
           <span>Three files changed since your last session.</span>
         </div>
       </div>
+      <ToastDemo />
       <DialogMessageBoxDemo />
     </div>
   )

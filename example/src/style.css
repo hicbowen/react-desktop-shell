@@ -108,6 +108,29 @@ body {
   background: var(--app-shell-chrome-bg);
 }
 
+.example-toast-demo {
+  grid-column: 1 / -1;
+  padding: 16px;
+  display: grid;
+  gap: 12px;
+  border: 1px solid var(--app-shell-border-color);
+  border-radius: 8px;
+  background: var(--app-shell-chrome-bg);
+}
+
+.example-section-heading {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  color: var(--app-shell-muted-text-color);
+  font-size: 13px;
+}
+
+.example-section-heading strong {
+  color: var(--app-shell-text-color);
+  font-size: 14px;
+}
+
 .example-dialog-actions {
   display: flex;
   flex-wrap: wrap;

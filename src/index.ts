@@ -5,6 +5,7 @@ export { AppPage } from './AppPage'
 export { AppRail } from './AppRail'
 export { AppTitleBar } from './AppTitleBar'
 export { useAppMessageBox } from './AppMessageBoxContext'
+export { useAppToast } from './AppToastContext'
 
 export type {
   AppClipboardAdapter,
@@ -25,6 +26,15 @@ export type {
   AppShellProps,
   AppTitleBarProps,
   AppTheme,
+  AppToast,
+  AppToastAction,
+  AppToastHostOptions,
+  AppToastId,
+  AppToastLocale,
+  AppToastOptions,
+  AppToastShortcutOptions,
+  AppToastStatus,
+  AppToastUpdateOptions,
   RailEntry,
   RailGroup,
   RailItem,

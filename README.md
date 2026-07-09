@@ -428,6 +428,76 @@ const result = await messageBox.show({
 
 `show` resolves to the clicked button key. Escape resolves to `cancelButton` when one is provided, or `undefined` otherwise. `confirm` resolves to `true` for confirm and `false` for cancel or Escape.
 
+## Toast
+
+`useAppToast` provides short in-app notifications bound to the current `AppShell`. No extra provider is required.
+
+```tsx
+const toast = useAppToast()
+
+toast.success('Saved successfully')
+```
+
+Use `show` for the full toast shape.
+
+```tsx
+toast.show({
+  title: 'Student imported',
+  message: '100 students were imported.',
+  status: 'success',
+})
+```
+
+Loading toasts default to `duration: 0`, so they stay visible until updated or dismissed. Other statuses default to `4000` milliseconds. Any `duration <= 0` disables auto-dismiss.
+
+```tsx
+const id = toast.show({
+  title: 'Importing students',
+  status: 'loading',
+  duration: 0,
+})
+
+try {
+  await importStudents()
+
+  toast.update(id, {
+    title: 'Import complete',
+    status: 'success',
+    duration: 3000,
+  })
+} catch {
+  toast.update(id, {
+    title: 'Import failed',
+    status: 'error',
+    duration: 5000,
+  })
+}
+```
+
+Toast actions run without automatically dismissing the toast.
+
+```tsx
+toast.show({
+  title: 'File deleted',
+  action: {
+    label: 'Undo',
+    onClick: restoreFile,
+  },
+})
+```
+
+Pass a stable `id` to update an existing toast instead of stacking duplicates.
+
+```tsx
+toast.show({
+  id: 'network-status',
+  title: 'Network disconnected',
+  status: 'error',
+})
+```
+
+Calling `show` again with the same id updates the existing toast. At most four toasts are visible by default; extra toasts wait in FIFO order and start their duration timer only after becoming visible. Hovering a toast pauses auto-dismiss and resumes with the remaining duration.
+
 ## API
 
 ### AppShellProps
@@ -439,6 +509,8 @@ const result = await messageBox.show({
 | `clipboard`        | `AppClipboardAdapter` | Web Clipboard API | Optional clipboard bridge used by shell-managed menus. |
 | `contextMenuLocale` | `Partial<AppContextMenuLocale>` | English labels | Optional labels for built-in context menu items. |
 | `messageBoxLocale` | `Partial<AppMessageBoxLocale>` | English labels | Optional default confirm/cancel labels for message boxes. |
+| `toastLocale`      | `Partial<AppToastLocale>` | English labels | Optional labels for toast controls. |
+| `toastOptions`     | `AppToastHostOptions` | `{ maxVisible: 4 }` | Optional toast host options. |
 | `titleBar`         | `ReactNode`     | `undefined` | Title bar content rendered above the body.       |
 | `rail`             | `ReactNode`     | `undefined` | Navigation rail content rendered beside content. |
 | `children`         | `ReactNode`     | `undefined` | Main content rendered in the scrollable area.    |

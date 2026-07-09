@@ -11,6 +11,12 @@ import {
 } from './AppDialogContext'
 import { AppDialogLayer } from './AppDialogLayer'
 import { AppMessageBoxContext } from './AppMessageBoxContext'
+import { AppToastContext } from './AppToastContext'
+import {
+  AppToastHost,
+  defaultToastLocale,
+  useToastStore,
+} from './AppToastHost'
 import {
   defaultMessageBoxLocale,
   renderMessageBoxActions,
@@ -35,6 +41,8 @@ export function AppShell({
   clipboard = defaultClipboardAdapter,
   contextMenuLocale,
   messageBoxLocale,
+  toastLocale,
+  toastOptions,
   titleBar,
   rail,
   children,
@@ -63,6 +71,17 @@ export function AppShell({
     () => ({ ...defaultMessageBoxLocale, ...messageBoxLocale }),
     [messageBoxLocale],
   )
+  const resolvedToastLocale = useMemo(
+    () => ({ ...defaultToastLocale, ...toastLocale }),
+    [toastLocale],
+  )
+  const {
+    toast,
+    toasts,
+    pauseTimer,
+    resumeTimer,
+    removeToast,
+  } = useToastStore(toastOptions)
 
   const rootClassName = useMemo(() => {
     const classes = ['app-shell']
@@ -312,76 +331,89 @@ export function AppShell({
     [contextMenu, openMenu, resolveMenu],
   )
 
-  return (
-    <AppMessageBoxContext.Provider value={messageBox}>
-      <AppDialogContext.Provider value={dialogRegistry}>
-        <AppContextMenuContext.Provider value={registry}>
-          <div
-            ref={rootRef}
-            className={rootClassName}
-            data-theme={theme}
-            style={style}
-            onMouseDownCapture={handleMouseDown}
-            onContextMenuCapture={handleContextMenu}
-            onKeyDownCapture={handleKeyDown}
-          >
-            {titleBar}
-            <div className="app-shell__body">
-              {rail}
-              <div className={contentClassNames} style={contentStyle}>
-                {children}
-              </div>
-            </div>
-            <AppDialogLayer
-              dialogs={[
-                ...dialogs,
-                ...(messageBoxRequest
-                  ? [
-                      {
-                        id: `app-message-box-${messageBoxRequest.id}`,
-                        open: true,
-                        title: undefined,
-                        children: renderMessageBoxContent(
-                          messageBoxRequest.options,
-                        ),
-                        actions: renderMessageBoxActions(
-                          messageBoxRequest.options.buttons,
-                          completeCurrent,
-                        ),
-                        width: 420,
-                        closeOnEscape:
-                          messageBoxRequest.options.closeOnEscape ?? true,
-                        closeOnOverlayClick: false,
-                        onOpenChange: (open) => {
-                          if (!open) {
-                            completeCurrent(
-                              messageBoxRequest.options.cancelButton,
-                            )
-                          }
-                        },
-                        onDefaultAction: () => {
-                          const defaultButton =
-                            messageBoxRequest.options.defaultButton
-                          const button =
-                            messageBoxRequest.options.buttons.find(
-                              (item) => item.key === defaultButton,
-                            )
+  const hasModalDialog = dialogs.length > 0 || messageBoxRequest !== null
 
-                          if (button && !button.disabled) {
-                            completeCurrent(button.key)
-                          }
-                        },
-                        restoreFocusElement:
-                          messageBoxRequest.restoreFocusElement,
-                      } satisfies AppDialogRegistration,
-                    ]
-                  : []),
-              ]}
-            />
-            <AppContextMenuLayer menu={activeMenu} onClose={closeMenu} />
-          </div>
-        </AppContextMenuContext.Provider>
-      </AppDialogContext.Provider>
-    </AppMessageBoxContext.Provider>
+  return (
+    <AppToastContext.Provider value={toast}>
+      <AppMessageBoxContext.Provider value={messageBox}>
+        <AppDialogContext.Provider value={dialogRegistry}>
+          <AppContextMenuContext.Provider value={registry}>
+            <div
+              ref={rootRef}
+              className={rootClassName}
+              data-theme={theme}
+              style={style}
+              onMouseDownCapture={handleMouseDown}
+              onContextMenuCapture={handleContextMenu}
+              onKeyDownCapture={handleKeyDown}
+            >
+              {titleBar}
+              <div className="app-shell__body">
+                {rail}
+                <div className={contentClassNames} style={contentStyle}>
+                  {children}
+                </div>
+              </div>
+              <AppDialogLayer
+                dialogs={[
+                  ...dialogs,
+                  ...(messageBoxRequest
+                    ? [
+                        {
+                          id: `app-message-box-${messageBoxRequest.id}`,
+                          open: true,
+                          title: undefined,
+                          children: renderMessageBoxContent(
+                            messageBoxRequest.options,
+                          ),
+                          actions: renderMessageBoxActions(
+                            messageBoxRequest.options.buttons,
+                            completeCurrent,
+                          ),
+                          width: 420,
+                          closeOnEscape:
+                            messageBoxRequest.options.closeOnEscape ?? true,
+                          closeOnOverlayClick: false,
+                          onOpenChange: (open) => {
+                            if (!open) {
+                              completeCurrent(
+                                messageBoxRequest.options.cancelButton,
+                              )
+                            }
+                          },
+                          onDefaultAction: () => {
+                            const defaultButton =
+                              messageBoxRequest.options.defaultButton
+                            const button =
+                              messageBoxRequest.options.buttons.find(
+                                (item) => item.key === defaultButton,
+                              )
+
+                            if (button && !button.disabled) {
+                              completeCurrent(button.key)
+                            }
+                          },
+                          restoreFocusElement:
+                            messageBoxRequest.restoreFocusElement,
+                        } satisfies AppDialogRegistration,
+                      ]
+                    : []),
+                ]}
+              />
+              <AppToastHost
+                toasts={toasts}
+                locale={resolvedToastLocale}
+                interactive={!hasModalDialog}
+                onDismiss={toast.dismiss}
+                onExited={removeToast}
+                onPause={(id) => pauseTimer(id, 'hover')}
+                onResume={(id) => resumeTimer(id, 'hover')}
+              />
+              <AppContextMenuLayer menu={activeMenu} onClose={closeMenu} />
+            </div>
+          </AppContextMenuContext.Provider>
+        </AppDialogContext.Provider>
+      </AppMessageBoxContext.Provider>
+    </AppToastContext.Provider>
   )
 }
