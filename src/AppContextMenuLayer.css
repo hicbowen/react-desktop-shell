@@ -1,0 +1,131 @@
+.app-context-menu-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  pointer-events: none;
+}
+
+.app-context-menu {
+  position: fixed;
+  min-width: 188px;
+  max-width: min(320px, calc(100vw - 16px));
+  max-height: calc(100vh - 16px);
+  box-sizing: border-box;
+  padding: 4px;
+  overflow-y: auto;
+  color: var(--app-shell-text-color);
+  background: var(--app-shell-menu-bg);
+  border: 1px solid var(--app-shell-menu-border-color);
+  border-radius: 8px;
+  box-shadow: var(--app-shell-menu-shadow);
+  outline: 0;
+  pointer-events: auto;
+  backdrop-filter: blur(24px);
+  animation: app-context-menu-enter var(--rds-motion-fast)
+    var(--rds-ease-enter);
+}
+
+.app-context-menu__item {
+  width: 100%;
+  min-height: 32px;
+  display: grid;
+  grid-template-columns: 24px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 8px;
+  padding: 0 10px 0 8px;
+  color: inherit;
+  font: inherit;
+  font-size: 13px;
+  line-height: 1.25;
+  text-align: left;
+  background: transparent;
+  border: 0;
+  border-radius: 6px;
+  cursor: default;
+}
+
+.app-context-menu__item:hover,
+.app-context-menu__item:focus-visible {
+  background: var(--app-shell-hover-bg);
+  outline: 0;
+}
+
+.app-context-menu__item:active {
+  background: var(--app-shell-active-bg);
+}
+
+.app-context-menu__item:disabled,
+.app-context-menu__item[aria-disabled='true'] {
+  color: var(--app-shell-disabled-text-color);
+}
+
+.app-context-menu__item:disabled:hover,
+.app-context-menu__item[aria-disabled='true']:hover {
+  background: transparent;
+}
+
+.app-context-menu__item--danger {
+  color: var(--app-shell-danger-fg);
+}
+
+.app-context-menu__item--danger:hover,
+.app-context-menu__item--danger:focus-visible {
+  background: var(--app-shell-danger-subtle-bg);
+}
+
+.app-context-menu__icon {
+  width: 16px;
+  height: 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: currentColor;
+}
+
+.app-context-menu__icon:empty {
+  visibility: hidden;
+}
+
+.app-context-menu__icon > svg {
+  width: 16px;
+  height: 16px;
+  display: block;
+}
+
+.app-context-menu__label {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.app-context-menu__shortcut {
+  color: var(--app-shell-muted-text-color);
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.app-context-menu__separator {
+  height: 1px;
+  margin: 4px 6px;
+  background: var(--app-shell-border-color);
+}
+
+@keyframes app-context-menu-enter {
+  from {
+    opacity: 0;
+    transform: translateY(-2px) scale(0.96);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .app-context-menu {
+    animation: none;
+  }
+}
+

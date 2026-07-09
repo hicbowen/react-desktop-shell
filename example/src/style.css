@@ -106,33 +106,41 @@ body {
   gap: 4px;
 }
 
+.example-context-demo,
 .example-file-list,
 .example-settings-list {
   max-width: 880px;
 }
 
+.example-context-demo {
+  display: grid;
+  gap: 18px;
+}
+
 .example-file-list {
+  min-height: 280px;
+  padding: 14px;
   display: flex;
-  flex-direction: column;
+  align-content: flex-start;
+  flex-wrap: wrap;
+  gap: 12px;
   border: 1px solid var(--app-shell-border-color);
   border-radius: 8px;
-  overflow: hidden;
   background: var(--app-shell-chrome-bg);
 }
 
 .example-file-row {
-  min-height: 64px;
-  padding: 0 16px;
+  width: 190px;
+  min-height: 104px;
+  box-sizing: border-box;
+  padding: 14px;
   display: flex;
-  align-items: center;
-  gap: 14px;
-  border-width: 0 0 1px;
-  border-radius: 0;
-  background: var(--app-shell-chrome-bg);
-}
-
-.example-file-row:last-child {
-  border-bottom: 0;
+  align-items: flex-start;
+  flex-direction: column;
+  gap: 12px;
+  border: 1px solid var(--app-shell-border-color);
+  border-radius: 8px;
+  background: var(--app-shell-content-bg);
 }
 
 .example-file-icon {
@@ -148,10 +156,50 @@ body {
 }
 
 .example-file-tag {
-  margin-left: auto;
-  flex-shrink: 0;
   color: var(--app-shell-muted-text-color);
   font-size: 12px;
+}
+
+.example-context-fields {
+  display: grid;
+  grid-template-columns: minmax(220px, 320px) minmax(0, 1fr);
+  gap: 18px;
+}
+
+.example-field,
+.example-selectable-copy {
+  border: 1px solid var(--app-shell-border-color);
+  border-radius: 8px;
+  background: var(--app-shell-chrome-bg);
+}
+
+.example-field {
+  min-width: 0;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  font-size: 13px;
+  color: var(--app-shell-muted-text-color);
+}
+
+.example-field input {
+  height: 34px;
+  box-sizing: border-box;
+  color: var(--app-shell-text-color);
+  font: inherit;
+  background: var(--app-shell-content-bg);
+  border: 1px solid var(--app-shell-border-color);
+  border-radius: 6px;
+  padding: 0 10px;
+}
+
+.example-selectable-copy {
+  margin: 0;
+  padding: 14px;
+  color: var(--app-shell-muted-text-color);
+  font-size: 13px;
+  line-height: 1.55;
 }
 
 .example-tool-tile {
@@ -207,4 +255,10 @@ body {
   border: 1px solid var(--app-shell-border-color);
   border-radius: 6px;
   padding: 0 10px;
+}
+
+@media (max-width: 760px) {
+  .example-context-fields {
+    grid-template-columns: 1fr;
+  }
 }

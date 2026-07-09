@@ -1,13 +1,27 @@
 import { useState } from 'react'
 import {
   Clock,
+  Copy,
   FileText,
+  Folder,
   Home,
+  Image,
   LayoutGrid,
+  Pencil,
+  Plus,
+  RefreshCw,
   Settings,
+  Trash2,
   Wrench,
 } from 'lucide-react'
-import { AppPage, AppRail, AppShell, AppTitleBar, type AppTheme } from '../../src'
+import {
+  AppContextMenu,
+  AppPage,
+  AppRail,
+  AppShell,
+  AppTitleBar,
+  type AppTheme,
+} from '../../src'
 
 const pages = {
   home: {
@@ -33,6 +47,18 @@ const pages = {
   },
 }
 
+function renderFileIcon(tag: string, size = 16) {
+  if (tag === 'Folder') {
+    return <Folder size={size} />
+  }
+
+  if (tag === 'Image') {
+    return <Image size={size} />
+  }
+
+  return <FileText size={size} />
+}
+
 function renderPageContent(
   active: string,
   theme: AppTheme,
@@ -40,23 +66,92 @@ function renderPageContent(
 ) {
   if (active === 'files') {
     return (
-      <div className="example-file-list">
-        {[
-          ['Course roadmap.pdf', 'Updated 12 minutes ago', 'Planning'],
-          ['Student progress.xlsx', 'Updated today', 'Reports'],
-          ['Workshop notes.md', 'Updated yesterday', 'Notes'],
-        ].map(([name, updated, tag]) => (
-          <div className="example-file-row" key={name}>
-            <div className="example-file-icon">
-              <FileText size={18} />
-            </div>
-            <div className="example-file-main">
-              <strong>{name}</strong>
-              <span>{updated}</span>
-            </div>
-            <span className="example-file-tag">{tag}</span>
+      <div className="example-context-demo">
+        <AppContextMenu
+          items={[
+            {
+              key: 'new',
+              label: 'New item',
+              icon: <Plus />,
+              shortcut: 'Ctrl+N',
+            },
+            {
+              key: 'paste',
+              label: 'Paste',
+              icon: <Copy />,
+              disabled: true,
+              shortcut: 'Ctrl+V',
+            },
+            { type: 'separator' },
+            {
+              key: 'refresh',
+              label: 'Refresh',
+              icon: <RefreshCw />,
+            },
+          ]}
+        >
+          <div className="example-file-list">
+            {[
+              ['Document.txt', 'Text document', 'Document'],
+              ['Image.png', 'Portable network graphic', 'Image'],
+              ['Project', 'Workspace folder', 'Folder'],
+            ].map(([name, updated, tag]) => (
+              <AppContextMenu
+                key={name}
+                items={[
+                  {
+                    key: 'open',
+                    label: 'Open',
+                    icon: renderFileIcon(tag),
+                    shortcut: 'Enter',
+                  },
+                  {
+                    key: 'rename',
+                    label: 'Rename',
+                    icon: <Pencil />,
+                    shortcut: 'F2',
+                  },
+                  { type: 'separator' },
+                  {
+                    key: 'copy',
+                    label: 'Copy',
+                    icon: <Copy />,
+                    shortcut: 'Ctrl+C',
+                  },
+                  { type: 'separator' },
+                  {
+                    key: 'delete',
+                    label: 'Delete',
+                    icon: <Trash2 />,
+                    danger: true,
+                  },
+                ]}
+              >
+                <div className="example-file-row">
+                  <div className="example-file-icon">
+                    {renderFileIcon(tag, 18)}
+                  </div>
+                  <div className="example-file-main">
+                    <strong>{name}</strong>
+                    <span>{updated}</span>
+                  </div>
+                  <span className="example-file-tag">{tag}</span>
+                </div>
+              </AppContextMenu>
+            ))}
           </div>
-        ))}
+        </AppContextMenu>
+        <div className="example-context-fields">
+          <label className="example-field">
+            <span>Editable input</span>
+            <input defaultValue="Right click to edit this text" />
+          </label>
+          <p className="example-selectable-copy">
+            Select part of this paragraph, then right click the selected text to
+            open the built-in copy menu. Custom item menus still win when they
+            are closer to the target.
+          </p>
+        </div>
       </div>
     )
   }
@@ -143,6 +238,7 @@ export function ExampleApp() {
 
   return (
     <AppShell
+      contextMenu="app"
       theme={theme}
       titleBar={
         <AppTitleBar

@@ -317,6 +317,60 @@ Override variables on `.app-shell`, `.app-page`, `.app-rail`, and `.app-title-ba
 
 Child components use `AppShell` theme tokens as defaults while keeping their existing component-level CSS variables customizable.
 
+## Context menu
+
+`AppShell` keeps the browser or WebView context menu by default.
+
+```tsx
+<AppShell contextMenu="native">...</AppShell>
+```
+
+Use `contextMenu="app"` to let the shell own right-click behavior and render a consistent desktop menu layer.
+
+```tsx
+<AppShell contextMenu="app">
+  <Workspace />
+</AppShell>
+```
+
+Custom menus are data-driven and can wrap any single React element without changing its semantics.
+
+```tsx
+<AppContextMenu
+  items={[
+    { key: 'open', label: 'Open', onClick: openItem },
+    { key: 'copy', label: 'Copy', shortcut: 'Ctrl+C', onClick: copyItem },
+    { type: 'separator' },
+    { key: 'delete', label: 'Delete', danger: true, onClick: deleteItem },
+  ]}
+>
+  <Item />
+</AppContextMenu>
+```
+
+When `contextMenu="app"` is enabled, the shell resolves menus in this order:
+
+1. The nearest enabled `AppContextMenu`
+2. Built-in editable element menu for `input`, `textarea`, and `contenteditable`
+3. Built-in selected text menu
+4. No menu
+
+The built-in editable menu includes Undo, Cut, Copy, Paste, Delete, and Select all. Clipboard access uses the Web Clipboard API by default, and failures are handled without crashing the menu. Desktop hosts can provide their own adapter.
+
+```tsx
+<AppShell
+  contextMenu="app"
+  clipboard={{
+    readText,
+    writeText,
+  }}
+>
+  <App />
+</AppShell>
+```
+
+This is intended for Wails, Electron, Tauri, or other hosts that want to bridge native clipboard APIs without adding a runtime dependency to `react-desktop-shell`.
+
 ## API
 
 ### AppShellProps
@@ -324,6 +378,9 @@ Child components use `AppShell` theme tokens as defaults while keeping their exi
 | Prop               | Type            | Default     | Description                                      |
 | ------------------ | --------------- | ----------- | ------------------------------------------------ |
 | `theme`            | `'system' \| 'light' \| 'dark'` | `'system'` | Controls the shell color theme. |
+| `contextMenu`      | `'native' \| 'app'` | `'native'` | Controls whether native or shell-managed context menus are used. |
+| `clipboard`        | `AppClipboardAdapter` | Web Clipboard API | Optional clipboard bridge used by shell-managed menus. |
+| `contextMenuLocale` | `Partial<AppContextMenuLocale>` | English labels | Optional labels for built-in context menu items. |
 | `titleBar`         | `ReactNode`     | `undefined` | Title bar content rendered above the body.       |
 | `rail`             | `ReactNode`     | `undefined` | Navigation rail content rendered beside content. |
 | `children`         | `ReactNode`     | `undefined` | Main content rendered in the scrollable area.    |

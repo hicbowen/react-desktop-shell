@@ -1,6 +1,45 @@
-import type { CSSProperties, ReactNode } from 'react'
+import type { CSSProperties, ReactElement, ReactNode } from 'react'
 
 export type AppTheme = 'system' | 'light' | 'dark'
+export type AppContextMenuMode = 'native' | 'app'
+
+export interface AppClipboardAdapter {
+  readText(): Promise<string>
+  writeText(text: string): Promise<void>
+}
+
+export interface AppContextMenuLocale {
+  undo: string
+  cut: string
+  copy: string
+  paste: string
+  delete: string
+  selectAll: string
+}
+
+export interface AppContextMenuActionItem {
+  key: string
+  label: ReactNode
+  icon?: ReactNode
+  shortcut?: ReactNode
+  disabled?: boolean
+  danger?: boolean
+  onClick?: () => void
+}
+
+export interface AppContextMenuSeparatorItem {
+  type: 'separator'
+}
+
+export type AppContextMenuItem =
+  | AppContextMenuActionItem
+  | AppContextMenuSeparatorItem
+
+export interface AppContextMenuProps {
+  items: AppContextMenuItem[]
+  children: ReactElement
+  disabled?: boolean
+}
 
 export type RailItem = {
   type?: 'item'
@@ -19,6 +58,9 @@ export type RailEntry = RailItem | RailGroup
 
 export interface AppShellProps {
   theme?: AppTheme
+  contextMenu?: AppContextMenuMode
+  clipboard?: AppClipboardAdapter
+  contextMenuLocale?: Partial<AppContextMenuLocale>
   titleBar?: ReactNode
   rail?: ReactNode
   children?: ReactNode
