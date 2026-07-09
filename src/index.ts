@@ -3,6 +3,7 @@ export { AppContextMenu } from './AppContextMenu'
 export { AppDialog } from './AppDialog'
 export { AppPage } from './AppPage'
 export { AppRail } from './AppRail'
+export { AppSidePane } from './AppSidePane'
 export { AppTitleBar } from './AppTitleBar'
 export { useAppMessageBox } from './AppMessageBoxContext'
 export { useAppToast } from './AppToastContext'
@@ -24,6 +25,7 @@ export type {
   AppPageProps,
   AppRailProps,
   AppShellProps,
+  AppSidePaneProps,
   AppTitleBarProps,
   AppTheme,
   AppToast,

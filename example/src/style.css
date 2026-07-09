@@ -118,6 +118,36 @@ body {
   background: var(--app-shell-chrome-bg);
 }
 
+.example-side-pane-demo {
+  grid-column: 1 / -1;
+  padding: 16px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px 16px;
+  align-items: start;
+  border: 1px solid var(--app-shell-border-color);
+  border-radius: 8px;
+  background: var(--app-shell-chrome-bg);
+}
+
+.example-side-pane-demo div {
+  min-width: 0;
+  display: grid;
+  gap: 4px;
+}
+
+.example-side-pane-demo span,
+.example-side-pane-demo p {
+  color: var(--app-shell-muted-text-color);
+  font-size: 13px;
+}
+
+.example-side-pane-demo p {
+  grid-column: 1 / -1;
+  margin: 0;
+  line-height: 1.5;
+}
+
 .example-section-heading {
   display: flex;
   justify-content: space-between;
@@ -138,6 +168,8 @@ body {
 }
 
 .example-dialog-actions button,
+.example-side-pane-demo button,
+.example-side-pane-footer button,
 .app-dialog__actions button {
   min-width: 76px;
   height: 32px;
@@ -152,14 +184,32 @@ body {
 }
 
 .example-dialog-actions button:hover,
+.example-side-pane-demo button:hover,
+.example-side-pane-footer button:hover,
 .app-dialog__actions button:hover {
   background: var(--app-shell-hover-bg);
 }
 
-.app-dialog__actions .example-primary-action {
+.app-dialog__actions .example-primary-action,
+.example-side-pane-footer .example-primary-action {
   color: var(--app-shell-dialog-primary-fg);
   background: var(--app-shell-accent-color);
   border-color: transparent;
+}
+
+.app-dialog__actions .example-primary-action:hover,
+.example-side-pane-footer .example-primary-action:hover {
+  background: var(--app-shell-accent-color);
+  filter: brightness(0.96);
+}
+
+.app-dialog__actions .app-dialog__button--danger:hover {
+  background: var(--app-shell-danger-subtle-bg);
+}
+
+.app-dialog__actions .app-dialog__button--danger.app-dialog__button--primary:hover {
+  background: var(--app-shell-danger-bg);
+  filter: brightness(0.96);
 }
 
 .example-dialog-result {
@@ -172,7 +222,19 @@ body {
   gap: 12px;
 }
 
+.example-side-pane-form {
+  display: grid;
+  gap: 12px;
+}
+
 .example-dialog-form label {
+  display: grid;
+  gap: 6px;
+  color: var(--app-shell-muted-text-color);
+  font-size: 13px;
+}
+
+.example-side-pane-form label {
   display: grid;
   gap: 6px;
   color: var(--app-shell-muted-text-color);
@@ -181,7 +243,10 @@ body {
 
 .example-dialog-form input,
 .example-dialog-form select,
-.example-dialog-form textarea {
+.example-dialog-form textarea,
+.example-side-pane-form input,
+.example-side-pane-form select,
+.example-side-pane-form textarea {
   box-sizing: border-box;
   width: 100%;
   color: var(--app-shell-text-color);
@@ -190,6 +255,12 @@ body {
   border: 1px solid var(--app-shell-border-color);
   border-radius: 6px;
   padding: 7px 9px;
+}
+
+.example-side-pane-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
 }
 
 .example-long-dialog-content {

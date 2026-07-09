@@ -20,6 +20,7 @@ import {
   AppPage,
   AppRail,
   AppShell,
+  AppSidePane,
   AppTitleBar,
   useAppMessageBox,
   useAppToast,
@@ -351,10 +352,110 @@ function ToastDemo() {
   )
 }
 
+function SidePaneDemo({
+  open,
+  width,
+  onOpen,
+}: {
+  open: boolean
+  width: number
+  onOpen: () => void
+}) {
+  return (
+    <div className="example-side-pane-demo">
+      <div>
+        <strong>Side pane</strong>
+        <span>Current width: {Math.round(width)}px</span>
+      </div>
+      <button type="button" onClick={onOpen}>
+        {open ? 'Side pane open' : 'Open side pane'}
+      </button>
+      <p>
+        The pane docks to the right edge of the page, shrinks this workspace,
+        and keeps its body scrolling independently.
+      </p>
+    </div>
+  )
+}
+
+function ExampleSidePane({
+  open,
+  width,
+  onWidthChange,
+  onClose,
+}: {
+  open: boolean
+  width: number
+  onWidthChange: (width: number) => void
+  onClose: () => void
+}) {
+  return (
+    <AppSidePane
+      open={open}
+      title="Edit class"
+      width={width}
+      minWidth={320}
+      maxWidth={560}
+      resizable
+      onWidthChange={onWidthChange}
+      onClose={onClose}
+      footer={
+        <div className="example-side-pane-footer">
+          <button type="button" onClick={onClose}>
+            Cancel
+          </button>
+          <button
+            className="example-primary-action"
+            type="button"
+            onClick={onClose}
+          >
+            Save
+          </button>
+        </div>
+      }
+    >
+      <div className="example-side-pane-form">
+        <label>
+          <span>Class name</span>
+          <input defaultValue="Product design cohort" />
+        </label>
+        <label>
+          <span>Owner</span>
+          <input defaultValue="Casey Chen" />
+        </label>
+        <label>
+          <span>Status</span>
+          <select defaultValue="active">
+            <option value="active">Active</option>
+            <option value="paused">Paused</option>
+            <option value="archived">Archived</option>
+          </select>
+        </label>
+        <label>
+          <span>Notes</span>
+          <textarea
+            rows={5}
+            defaultValue="Use the resize edge to adjust the pane while keeping the main page usable."
+          />
+        </label>
+        {Array.from({ length: 12 }).map((_, index) => (
+          <label key={index}>
+            <span>Property {index + 1}</span>
+            <input defaultValue={`Value ${index + 1}`} />
+          </label>
+        ))}
+      </div>
+    </AppSidePane>
+  )
+}
+
 function renderPageContent(
   active: string,
   theme: AppTheme,
   setTheme: (theme: AppTheme) => void,
+  sidePaneOpen: boolean,
+  sidePaneWidth: number,
+  setSidePaneOpen: (open: boolean) => void,
 ) {
   if (active === 'files') {
     return (
@@ -519,6 +620,11 @@ function renderPageContent(
         </div>
       </div>
       <ToastDemo />
+      <SidePaneDemo
+        open={sidePaneOpen}
+        width={sidePaneWidth}
+        onOpen={() => setSidePaneOpen(true)}
+      />
       <DialogMessageBoxDemo />
     </div>
   )
@@ -528,6 +634,8 @@ export function ExampleApp() {
   const [active, setActive] = useState('home')
   const [maximized, setMaximized] = useState(false)
   const [theme, setTheme] = useState<AppTheme>('system')
+  const [sidePaneOpen, setSidePaneOpen] = useState(false)
+  const [sidePaneWidth, setSidePaneWidth] = useState(380)
   const currentPage = pages[active as keyof typeof pages]
 
   return (
@@ -595,8 +703,25 @@ export function ExampleApp() {
         title={currentPage.title}
         description={currentPage.description}
         actions={'actions' in currentPage ? currentPage.actions : undefined}
+        sidePane={
+          active === 'home' ? (
+            <ExampleSidePane
+              open={sidePaneOpen}
+              width={sidePaneWidth}
+              onWidthChange={setSidePaneWidth}
+              onClose={() => setSidePaneOpen(false)}
+            />
+          ) : undefined
+        }
       >
-        {renderPageContent(active, theme, setTheme)}
+        {renderPageContent(
+          active,
+          theme,
+          setTheme,
+          sidePaneOpen,
+          sidePaneWidth,
+          setSidePaneOpen,
+        )}
       </AppPage>
     </AppShell>
   )

@@ -185,11 +185,28 @@ export interface AppPageProps {
   description?: ReactNode
   actions?: ReactNode
   children?: ReactNode
+  sidePane?: ReactNode
   animated?: boolean
   className?: string
   style?: CSSProperties
   contentClassName?: string
   contentStyle?: CSSProperties
+}
+
+export interface AppSidePaneProps {
+  open: boolean
+  title?: ReactNode
+  children: ReactNode
+  width?: number
+  defaultWidth?: number
+  minWidth?: number
+  maxWidth?: number
+  resizable?: boolean
+  onWidthChange?: (width: number) => void
+  onClose?: () => void
+  footer?: ReactNode
+  className?: string
+  style?: CSSProperties
 }
 
 export interface AppRailProps {

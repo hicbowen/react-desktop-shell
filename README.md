@@ -148,9 +148,46 @@ CSS animations replay when React remounts the page. Use a `key` when switching p
   title={currentPage.title}
   description={currentPage.description}
 >
-  {renderPage(activePage)}
+{renderPage(activePage)}
 </AppPage>
 ```
+
+### Side Pane
+
+`AppSidePane` is a contextual pane docked to the right side of `AppPage`. It is suited for detail views, edit forms, properties, and contextual settings. Use `AppDialog` instead for confirmations, destructive decisions, or short modal tasks.
+
+```tsx
+const [open, setOpen] = useState(false)
+const [paneWidth, setPaneWidth] = useState(380)
+
+<AppPage
+  title="Classes"
+  sidePane={
+    <AppSidePane
+      open={open}
+      title="Edit class"
+      width={paneWidth}
+      minWidth={320}
+      maxWidth={560}
+      resizable
+      onWidthChange={setPaneWidth}
+      onClose={() => setOpen(false)}
+      footer={
+        <>
+          <button onClick={() => setOpen(false)}>Cancel</button>
+          <button onClick={save}>Save</button>
+        </>
+      }
+    >
+      <ClassForm />
+    </AppSidePane>
+  }
+>
+  <ClassList />
+</AppPage>
+```
+
+When open, the pane occupies fixed width inside the page and the main content shrinks. It does not render a mask or modal overlay. `width` makes the pane controlled; omit it to use `defaultWidth`. Resizing clamps to `minWidth`, `maxWidth`, and 55% of the available `AppPage` width.
 
 ### Preserving Page State
 
@@ -527,11 +564,30 @@ Calling `show` again with the same id updates the existing toast. At most four t
 | `description`      | `ReactNode`     | `undefined` | Supporting text rendered below the title.         |
 | `actions`          | `ReactNode`     | `undefined` | Page-level actions rendered on the top right.     |
 | `children`         | `ReactNode`     | `undefined` | Page content rendered below the header.           |
+| `sidePane`         | `ReactNode`     | `undefined` | Optional right-side contextual pane.              |
 | `animated`         | `boolean`       | `true`      | Enables the subtle fade-and-rise enter animation. |
 | `className`        | `string`        | `undefined` | Additional class name for the root element.       |
 | `style`            | `CSSProperties` | `undefined` | Inline styles for the root element.               |
 | `contentClassName` | `string`        | `undefined` | Additional class name for the content element.    |
 | `contentStyle`     | `CSSProperties` | `undefined` | Inline styles for the content element.            |
+
+### AppSidePaneProps
+
+| Prop            | Type                       | Default | Description |
+| --------------- | -------------------------- | ------- | ----------- |
+| `open`          | `boolean`                  | Required | Controls whether the pane is visible. |
+| `title`         | `ReactNode`                | `undefined` | Header title. |
+| `children`      | `ReactNode`                | Required | Scrollable pane body content. |
+| `width`         | `number`                   | `undefined` | Controlled pane width in pixels. |
+| `defaultWidth`  | `number`                   | `380` | Uncontrolled initial width. |
+| `minWidth`      | `number`                   | `320` | Minimum width in pixels. |
+| `maxWidth`      | `number`                   | `560` | Maximum width before the 55% page constraint. |
+| `resizable`     | `boolean`                  | `false` | Enables left-edge pointer resizing. |
+| `onWidthChange` | `(width: number) => void`  | `undefined` | Called when the user resizes the pane. |
+| `onClose`       | `() => void`               | `undefined` | Shows a close button and handles close clicks. |
+| `footer`        | `ReactNode`                | `undefined` | Fixed footer below the scrollable body. |
+| `className`     | `string`                   | `undefined` | Additional class name for the root element. |
+| `style`         | `CSSProperties`            | `undefined` | Inline styles for the root element. |
 
 ### AppRailProps
 
