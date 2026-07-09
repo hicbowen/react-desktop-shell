@@ -17,7 +17,7 @@
   padding: 12px;
   display: grid;
   grid-template-columns: auto minmax(0, 1fr) auto auto;
-  align-items: start;
+  align-items: center;
   gap: 10px;
   color: var(--app-shell-text-color);
   background: var(--app-shell-toast-bg);
@@ -42,7 +42,6 @@
 .app-toast__icon {
   width: 18px;
   height: 18px;
-  margin-top: 1px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
