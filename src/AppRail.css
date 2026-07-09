@@ -141,10 +141,6 @@
   transform: translateY(-50%);
 }
 
-.app-rail--collapsed .app-rail__item--active::before {
-  left: 2px;
-}
-
 .app-rail__submenu-trigger {
   width: 100%;
 }
