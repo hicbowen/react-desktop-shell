@@ -762,7 +762,7 @@ export function AppShell({
               onContextMenuCapture={handleContextMenu}
               onKeyDownCapture={handleKeyDown}
             >
-              {hasSidebar && !isMinimal && (
+              {hasSidebar && !isMinimal && !sidebarCollapsed && (
                 sidebarHeader ?? (
                   <SidebarHeader
                     appTitle={title}
@@ -775,15 +775,17 @@ export function AppShell({
                 )
               )}
               <div className="app-shell__titlebar">
-                {hasSidebar && isMinimal && sidebarCollapsible && !isPaneOpen && (
-                  <div className="app-shell__titlebar-leading">
-                    <PaneToggleButton
-                      ariaLabel={paneToggleAriaLabel}
-                      expanded={isPaneOpen}
-                      onToggle={toggleSidebar}
-                    />
-                  </div>
-                )}
+                {hasSidebar &&
+                  sidebarCollapsible &&
+                  (sidebarCollapsed || (isMinimal && !isPaneOpen)) && (
+                    <div className="app-shell__titlebar-leading">
+                      <PaneToggleButton
+                        ariaLabel={paneToggleAriaLabel}
+                        expanded={isMinimal ? isPaneOpen : false}
+                        onToggle={toggleSidebar}
+                      />
+                    </div>
+                  )}
                 <div className="app-shell__titlebar-main">{titleBar}</div>
               </div>
               {hasSidebar && !isMinimal && (

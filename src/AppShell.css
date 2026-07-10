@@ -202,7 +202,8 @@
   background: var(--app-shell-chrome-bg);
 }
 
-.app-shell--pane-minimal .app-shell__titlebar {
+.app-shell--pane-minimal .app-shell__titlebar,
+.app-shell--sidebar-collapsed .app-shell__titlebar {
   grid-column: 1 / -1;
 }
 
