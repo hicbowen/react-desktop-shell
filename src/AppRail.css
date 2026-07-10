@@ -8,7 +8,7 @@
   );
   --app-rail-hover-bg: var(--app-shell-hover-bg, rgba(0, 0, 0, 0.05));
   --app-rail-accent-color: var(--app-shell-accent-color, #115ea3);
-  --app-rail-accent-bg: var(--app-shell-active-bg, #edf3fb);
+  --app-rail-accent-bg: var(--app-shell-active-bg, rgb(17 94 163 / 8%));
   --app-rail-disabled-text-color: var(
     --app-shell-disabled-text-color,
     rgb(0 0 0 / 36%)

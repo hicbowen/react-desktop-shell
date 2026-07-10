@@ -389,7 +389,7 @@ Override variables on `.app-shell`, `.app-page`, `.app-rail`, and `.app-title-ba
 | `--app-shell-disabled-text-color`  | `rgb(0 0 0 / 36%)`   |
 | `--app-shell-hover-bg`             | `rgb(0 0 0 / 5%)`     |
 | `--app-shell-control-hover-bg`     | `#d4d4d4`             |
-| `--app-shell-active-bg`            | `#edf3fb`             |
+| `--app-shell-active-bg`            | `rgb(17 94 163 / 8%)` |
 | `--app-shell-border-color`         | `rgb(0 0 0 / 8%)`     |
 | `--app-shell-accent-color`         | `#115ea3`             |
 | `--app-shell-danger-bg`            | `#ef4444`             |
@@ -409,7 +409,7 @@ Override variables on `.app-shell`, `.app-page`, `.app-rail`, and `.app-title-ba
 | `--app-rail-muted-text-color`      | `var(--app-shell-muted-text-color, rgba(0, 0, 0, 0.58))` |
 | `--app-rail-hover-bg`              | `var(--app-shell-hover-bg, rgba(0, 0, 0, 0.05))` |
 | `--app-rail-accent-color`          | `var(--app-shell-accent-color, #115ea3)` |
-| `--app-rail-accent-bg`             | `var(--app-shell-active-bg, #edf3fb)` |
+| `--app-rail-accent-bg`             | `var(--app-shell-active-bg, rgb(17 94 163 / 8%))` |
 | `--app-rail-disabled-text-color`   | `var(--app-shell-disabled-text-color, rgb(0 0 0 / 36%))` |
 | `--app-rail-bg`                    | `transparent`         |
 | `--app-rail-flyout-bg`             | `var(--app-shell-surface-bg, #ffffff)` |
