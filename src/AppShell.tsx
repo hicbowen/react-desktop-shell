@@ -193,6 +193,7 @@ export function AppShell({
   const previousAutoResolvedMode = useRef(autoResolvedDisplayMode)
   const paneTransitionTimeout = useRef<number | undefined>(undefined)
   const [suppressPaneTransition, setSuppressPaneTransition] = useState(false)
+  const [isPaneClosing, setIsPaneClosing] = useState(false)
   const [autoPaneOverride, setAutoPaneOverride] =
     useState<Exclude<ResolvedPaneDisplayMode, 'minimal'> | null>(null)
   const paneOpenControlled = sidebar?.isPaneOpen !== undefined
@@ -304,9 +305,24 @@ export function AppShell({
     ],
   )
 
+  const closePane = useCallback(() => {
+    setPaneOpen(false)
+
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      setIsPaneClosing(false)
+      return
+    }
+
+    setIsPaneClosing(true)
+  }, [setPaneOpen])
+
   const toggleSidebar = useCallback(() => {
     if (isMinimal) {
-      setPaneOpen(!isPaneOpen)
+      if (isPaneOpen) {
+        closePane()
+      } else {
+        setPaneOpen(true)
+      }
       return
     }
 
@@ -314,16 +330,13 @@ export function AppShell({
       resolvedDisplayMode === 'expanded' ? 'compact' : 'expanded',
     )
   }, [
+    closePane,
     isMinimal,
     isPaneOpen,
     resolvedDisplayMode,
     setDisplayMode,
     setPaneOpen,
   ])
-
-  const closePane = useCallback(() => {
-    setPaneOpen(false)
-  }, [setPaneOpen])
 
   useEffect(() => {
     const root = rootRef.current
@@ -384,13 +397,19 @@ export function AppShell({
   }, [compactBreakpoint, displayMode, expandedBreakpoint, setPaneOpen])
 
   useEffect(() => {
-    if (isMinimal || !isPaneOpen) {
+    if (isMinimal) {
       return
     }
 
-    const timeout = window.setTimeout(closePane, 0)
+    const timeout = window.setTimeout(() => {
+      setIsPaneClosing(false)
+
+      if (isPaneOpen) {
+        setPaneOpen(false)
+      }
+    }, 0)
     return () => window.clearTimeout(timeout)
-  }, [closePane, isMinimal, isPaneOpen])
+  }, [isMinimal, isPaneOpen, setPaneOpen])
 
   useEffect(() => {
     if (!isMinimal || !isPaneOpen) {
@@ -796,8 +815,15 @@ export function AppShell({
                   {children}
                 </div>
               </div>
-              {hasSidebar && isMinimal && isPaneOpen && (
-                <div className="app-shell__pane-layer">
+              {hasSidebar && isMinimal && (isPaneOpen || isPaneClosing) && (
+                <div
+                  className={[
+                    'app-shell__pane-layer',
+                    isPaneClosing ? 'app-shell__pane-layer--closing' : '',
+                  ]
+                    .filter(Boolean)
+                    .join(' ')}
+                >
                   <button
                     aria-label="Close navigation"
                     className="app-shell__pane-backdrop"
@@ -806,6 +832,11 @@ export function AppShell({
                   />
                   <div
                     className="app-shell__pane-overlay"
+                    onAnimationEnd={(event) => {
+                      if (isPaneClosing && event.currentTarget === event.target) {
+                        setIsPaneClosing(false)
+                      }
+                    }}
                     style={{
                       width: sidebarExpandedWidth,
                     }}

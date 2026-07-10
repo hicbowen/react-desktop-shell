@@ -277,6 +277,7 @@
   background: var(--app-shell-pane-scrim-bg);
   border: 0;
   cursor: default;
+  animation: app-shell-pane-backdrop-enter 180ms ease;
 }
 
 .app-shell__pane-overlay {
@@ -291,6 +292,18 @@
   background: var(--app-shell-chrome-bg);
   box-shadow: 6px 0 18px rgb(0 0 0 / 10%);
   animation: app-shell-pane-overlay-enter 180ms ease;
+}
+
+.app-shell__pane-layer--closing {
+  pointer-events: none;
+}
+
+.app-shell__pane-layer--closing .app-shell__pane-backdrop {
+  animation: app-shell-pane-backdrop-exit 180ms ease forwards;
+}
+
+.app-shell__pane-layer--closing .app-shell__pane-overlay {
+  animation: app-shell-pane-overlay-exit 180ms ease forwards;
 }
 
 .app-shell__pane-overlay-sidebar {
@@ -309,11 +322,42 @@
   }
 }
 
+@keyframes app-shell-pane-overlay-exit {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(-100%);
+  }
+}
+
+@keyframes app-shell-pane-backdrop-enter {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes app-shell-pane-backdrop-exit {
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .app-shell {
     transition: none;
   }
 
+  .app-shell__pane-backdrop,
   .app-shell__pane-overlay {
     animation: none;
   }
