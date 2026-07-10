@@ -1,12 +1,13 @@
 import { useState } from 'react'
 import {
-  BookOpen,
+  Activity,
+  Boxes,
   Clock,
   Copy,
   FileText,
   Folder,
-  Home,
   Image,
+  LayoutDashboard,
   Pencil,
   Plus,
   RefreshCw,
@@ -29,34 +30,43 @@ import {
 } from '../../src'
 
 const pages = {
-  home: {
-    title: 'Home',
-    description: 'Review your workspace activity and launch common tasks.',
+  overview: {
+    title: 'Overview',
+    description: 'A neutral desktop workspace built with React Desktop Shell.',
+  },
+  projects: {
+    title: 'Projects',
+    description: 'Organize work in a responsive, desktop-style content area.',
+    actions: (
+      <button className="example-page-action" type="button">
+        New project
+      </button>
+    ),
   },
   files: {
     title: 'Files',
-    description: 'Browse recent documents and project resources.',
+    description: 'Explore nested context menus and native text actions.',
     actions: (
       <button className="example-page-action" type="button">
         New file
       </button>
     ),
   },
-  students: {
-    title: 'Students',
-    description: 'Review learner records and classroom activity.',
+  activity: {
+    title: 'Activity',
+    description: 'Present recent events and application status at a glance.',
   },
-  classes: {
-    title: 'Classes',
-    description: 'Manage cohorts, schedules, and shared resources.',
+  feedback: {
+    title: 'Feedback components',
+    description: 'Try dialogs, message boxes, and toast notifications.',
   },
-  tools: {
-    title: 'Tools',
-    description: 'Open desktop utilities and configure workflow helpers.',
+  utilities: {
+    title: 'Workspace utilities',
+    description: 'Preview a resizable side pane and common action surfaces.',
   },
   settings: {
     title: 'Settings',
-    description: 'Customize the desktop shell experience.',
+    description: 'Change the theme and navigation presentation at runtime.',
   },
 }
 
@@ -237,8 +247,8 @@ function ToastDemo() {
 
   const showLoadingToast = () => {
     const id = toast.show({
-      title: 'Importing students',
-      message: '0 / 100',
+      title: 'Syncing workspace',
+      message: '0% complete',
       status: 'loading',
       duration: 0,
     })
@@ -248,14 +258,14 @@ function ToastDemo() {
       window.setTimeout(() => {
         if (step < 100) {
           toast.update(id, {
-            message: `${step} / 100`,
+            message: `${step}% complete`,
           })
           return
         }
 
         toast.update(id, {
-          title: 'Import complete',
-          message: '100 students imported',
+          title: 'Workspace synced',
+          message: 'All changes are up to date.',
           status: 'success',
           duration: 3000,
         })
@@ -306,8 +316,8 @@ function ToastDemo() {
         <button
           type="button"
           onClick={() =>
-            toast.success('Import complete', {
-              message: '100 students were imported successfully.',
+            toast.success('Files ready', {
+              message: 'The selected files are ready to use.',
             })
           }
         >
@@ -317,7 +327,7 @@ function ToastDemo() {
           type="button"
           onClick={() =>
             toast.show({
-              title: 'Student deleted',
+              title: 'Item moved to trash',
               action: {
                 label: 'Undo',
                 onClick: () => setUndoResult('Undo clicked'),
@@ -401,7 +411,7 @@ function ExampleSidePane({
   return (
     <AppSidePane
       open={open}
-      title="Edit class"
+      title="Project details"
       width={width}
       minWidth={320}
       maxWidth={560}
@@ -425,12 +435,12 @@ function ExampleSidePane({
     >
       <div className="example-side-pane-form">
         <label>
-          <span>Class name</span>
-          <input defaultValue="Product design cohort" />
+          <span>Project name</span>
+          <input defaultValue="Desktop application" />
         </label>
         <label>
           <span>Owner</span>
-          <input defaultValue="Casey Chen" />
+          <input defaultValue="Workspace team" />
         </label>
         <label>
           <span>Status</span>
@@ -601,33 +611,77 @@ function renderPageContent(
     )
   }
 
-  if (active === 'tools') {
+  if (active === 'projects') {
     return (
       <div className="example-tool-grid">
-        {['Importer', 'Validator', 'Report builder', 'Backup'].map((tool) => (
-          <button className="example-tool-tile" key={tool} type="button">
-            <Wrench size={18} />
-            <span>{tool}</span>
+        {[
+          ['Desktop application', 'Updated a few minutes ago'],
+          ['Component library', 'Updated yesterday'],
+          ['Design resources', 'Updated last week'],
+          ['Archive', '12 items'],
+        ].map(([name, detail]) => (
+          <button className="example-tool-tile" key={name} type="button">
+            <Folder size={18} />
+            <span>{name}</span>
+            <small>{detail}</small>
           </button>
         ))}
       </div>
     )
   }
 
-  if (active === 'students' || active === 'classes') {
+  if (active === 'activity') {
     return (
-      <div className="example-tool-grid">
+      <div className="example-activity-list">
         {[
-          active === 'students' ? 'Student roster' : 'Class roster',
-          'Attendance',
-          'Progress',
-          'Notes',
-        ].map((item) => (
-          <button className="example-tool-tile" key={item} type="button">
-            <BookOpen size={18} />
-            <span>{item}</span>
-          </button>
+          ['Project created', 'Desktop application', 'Just now'],
+          ['Settings updated', 'Navigation changed to auto', '12 minutes ago'],
+          ['Files synchronized', '8 files are up to date', 'Today, 10:24'],
+          ['Workspace opened', 'Component library', 'Yesterday'],
+        ].map(([title, detail, time]) => (
+          <div className="example-activity-row" key={`${title}-${time}`}>
+            <span className="example-activity-marker">
+              <Activity size={15} />
+            </span>
+            <span className="example-activity-copy">
+              <strong>{title}</strong>
+              <small>{detail}</small>
+            </span>
+            <time>{time}</time>
+          </div>
         ))}
+      </div>
+    )
+  }
+
+  if (active === 'feedback') {
+    return (
+      <div className="example-component-stack">
+        <ToastDemo />
+        <DialogMessageBoxDemo />
+      </div>
+    )
+  }
+
+  if (active === 'utilities') {
+    return (
+      <div className="example-component-stack">
+        <SidePaneDemo
+          open={sidePaneOpen}
+          width={sidePaneWidth}
+          onOpen={() => setSidePaneOpen(true)}
+        />
+        <div className="example-tool-grid">
+          {['Command palette', 'Search', 'Quick actions', 'Shortcuts'].map(
+            (tool) => (
+              <button className="example-tool-tile" key={tool} type="button">
+                <Wrench size={18} />
+                <span>{tool}</span>
+                <small>Example surface</small>
+              </button>
+            ),
+          )}
+        </div>
       </div>
     )
   }
@@ -671,7 +725,7 @@ function renderPageContent(
         <label className="example-settings-row">
           <span className="example-settings-copy">
             <span>Launch on startup</span>
-            <small>Open FlowGo automatically when you sign in.</small>
+            <small>Open the application automatically when you sign in.</small>
           </span>
           <input type="checkbox" />
         </label>
@@ -688,38 +742,41 @@ function renderPageContent(
 
   return (
     <div className="example-overview">
+      <section className="example-welcome">
+        <div>
+          <span className="example-eyebrow">REACT DESKTOP SHELL</span>
+          <h2>A practical shell for desktop-style React applications</h2>
+          <p>
+            Resize the window, switch navigation modes, and explore the pages
+            to see the components working together in a realistic layout.
+          </p>
+        </div>
+      </section>
       <div className="example-stat">
-        <span>Open tasks</span>
-        <strong>12</strong>
+        <span>Active projects</span>
+        <strong>4</strong>
       </div>
       <div className="example-stat">
         <span>Recent files</span>
-        <strong>28</strong>
+        <strong>18</strong>
       </div>
       <div className="example-stat">
-        <span>Next review</span>
-        <strong>3 PM</strong>
+        <span>Workspace status</span>
+        <strong className="example-status-value">Ready</strong>
       </div>
       <div className="example-activity">
         <Clock size={18} />
         <div>
-          <strong>Daily summary is ready</strong>
-          <span>Three files changed since your last session.</span>
+          <strong>Your workspace is ready</strong>
+          <span>All changes are saved and components are available.</span>
         </div>
       </div>
-      <ToastDemo />
-      <SidePaneDemo
-        open={sidePaneOpen}
-        width={sidePaneWidth}
-        onOpen={() => setSidePaneOpen(true)}
-      />
-      <DialogMessageBoxDemo />
     </div>
   )
 }
 
 export function ExampleApp() {
-  const [active, setActive] = useState('students')
+  const [active, setActive] = useState('overview')
   const [maximized, setMaximized] = useState(false)
   const [theme, setTheme] = useState<AppTheme>('system')
   const [displayMode, setDisplayMode] = useState<PaneDisplayMode>('auto')
@@ -730,11 +787,7 @@ export function ExampleApp() {
   return (
     <AppShell
       contextMenu="app"
-      messageBoxLocale={{
-        confirm: '确定',
-        cancel: '取消',
-      }}
-      title="FlowGo"
+      title="Desktop Shell"
       sidebar={{
         displayMode,
         onDisplayModeChange: setDisplayMode,
@@ -744,7 +797,12 @@ export function ExampleApp() {
       titleBar={
         <AppTitleBar
           actions={
-            <button className="example-title-action" type="button">
+            <button
+              aria-label="Open settings"
+              className="example-title-action"
+              type="button"
+              onClick={() => setActive('settings')}
+            >
               <Settings size={15} />
             </button>
           }
@@ -760,39 +818,47 @@ export function ExampleApp() {
           onChange={setActive}
           items={[
             {
-              key: 'home',
-              label: 'Home',
-              icon: <Home size={16} />,
+              key: 'overview',
+              label: 'Overview',
+              icon: <LayoutDashboard size={16} />,
             },
             {
               type: 'group',
               label: 'Workspace',
             },
             {
-              type: 'submenu',
-              key: 'teaching',
-              label: 'Teaching',
-              icon: <BookOpen size={16} />,
-              children: [
-                {
-                  key: 'students',
-                  label: 'Students',
-                },
-                {
-                  key: 'classes',
-                  label: 'Classes',
-                },
-                {
-                  key: 'tools',
-                  label: 'Tools',
-                  disabled: true,
-                },
-              ],
+              key: 'projects',
+              label: 'Projects',
+              icon: <Folder size={16} />,
             },
             {
               key: 'files',
               label: 'Files',
               icon: <FileText size={16} />,
+            },
+            {
+              key: 'activity',
+              label: 'Activity',
+              icon: <Activity size={16} />,
+            },
+            {
+              type: 'group',
+              label: 'Components',
+            },
+            {
+              type: 'submenu',
+              key: 'component-demos',
+              label: 'Component demos',
+              icon: <Boxes size={16} />,
+              children: [
+                { key: 'feedback', label: 'Feedback' },
+                { key: 'utilities', label: 'Utilities' },
+                {
+                  key: 'more-components',
+                  label: 'More coming soon',
+                  disabled: true,
+                },
+              ],
             },
           ]}
           footerItems={[
@@ -812,7 +878,7 @@ export function ExampleApp() {
         description={currentPage.description}
         actions={'actions' in currentPage ? currentPage.actions : undefined}
         sidePane={
-          active === 'home' ? (
+          active === 'overview' || active === 'utilities' ? (
             <ExampleSidePane
               open={sidePaneOpen}
               width={sidePaneWidth}
