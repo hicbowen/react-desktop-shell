@@ -238,10 +238,14 @@
 }
 
 .app-rail__group-title {
+  min-width: 0;
   margin: 14px 12px 6px;
+  overflow: hidden;
   color: var(--app-rail-muted-text-color);
   font-size: 11.5px;
   font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   pointer-events: none;
 }
 
