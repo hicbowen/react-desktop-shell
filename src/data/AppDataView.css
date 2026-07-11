@@ -307,6 +307,17 @@
   background: var(--app-data-selected-bg);
 }
 
+/*
+ * Pinned cells must remain opaque while content scrolls underneath them.
+ * State colors can be translucent, so paint them over the table surface
+ * instead of replacing the pinned cell's solid background.
+ */
+.app-data-table tr[data-selected='true'] td[data-pinned] {
+  background:
+    linear-gradient(var(--app-data-selected-bg), var(--app-data-selected-bg)),
+    var(--app-data-surface-bg);
+}
+
 .app-data-table__row--clickable {
   cursor: default;
 }
@@ -315,8 +326,23 @@
   background: var(--app-data-hover-bg);
 }
 
+.app-data-table__row--clickable:hover td[data-pinned] {
+  background:
+    linear-gradient(var(--app-data-hover-bg), var(--app-data-hover-bg)),
+    var(--app-data-surface-bg);
+}
+
 .app-data-table__row--clickable[data-selected='true']:hover td {
   background: color-mix(in srgb, var(--app-data-selected-bg), var(--app-data-hover-bg));
+}
+
+.app-data-table__row--clickable[data-selected='true']:hover td[data-pinned] {
+  background:
+    linear-gradient(
+      color-mix(in srgb, var(--app-data-selected-bg), var(--app-data-hover-bg)),
+      color-mix(in srgb, var(--app-data-selected-bg), var(--app-data-hover-bg))
+    ),
+    var(--app-data-surface-bg);
 }
 
 .app-data-table td.app-data-table__state {
