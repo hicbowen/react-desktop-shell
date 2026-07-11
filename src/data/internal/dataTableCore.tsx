@@ -161,6 +161,10 @@ export function useAppDataTable<TData>({
         [APP_DATA_TABLE_SELECTION_COLUMN_ID]: true,
       }
     : resolvedColumnVisibility
+  const selectionEnabled = selection !== undefined
+  const selectAllMode = selection?.selectAllMode ?? 'filtered'
+  const selectAllAriaLabel = selection?.selectAllAriaLabel
+  const getRowAriaLabel = selection?.getRowAriaLabel
 
   const handleSortingChange: OnChangeFn<SortingState> = (updater) => {
     if (sorting === undefined) setInternalSorting(updater)
@@ -188,7 +192,7 @@ export function useAppDataTable<TData>({
   }
 
   const resolvedColumns = useMemo<ColumnDef<TData>[]>(() => {
-    if (!selection) return columns
+    if (!selectionEnabled) return columns
 
     const selectionColumn: ColumnDef<TData> = {
       id: APP_DATA_TABLE_SELECTION_COLUMN_ID,
@@ -199,18 +203,57 @@ export function useAppDataTable<TData>({
       enableHiding: false,
       enableResizing: false,
       enablePinning: true,
-      header: ({ table }) => (
-        <DataTableCheckbox
-          aria-label={selection.selectAllAriaLabel ?? 'Select all rows'}
-          checked={table.getIsAllRowsSelected()}
-          disabled={!table.getRowModel().rows.some((row) => row.getCanSelect())}
-          indeterminate={table.getIsSomeRowsSelected()}
-          onChange={table.getToggleAllRowsSelectedHandler()}
-        />
-      ),
+      header: ({ table }) => {
+        if (selectAllMode === 'all') {
+          return (
+            <DataTableCheckbox
+              aria-label={selectAllAriaLabel ?? 'Select all rows'}
+              checked={table.getIsAllRowsSelected()}
+              disabled={
+                !table.getCoreRowModel().flatRows.some((row) => row.getCanSelect())
+              }
+              indeterminate={table.getIsSomeRowsSelected()}
+              onChange={table.getToggleAllRowsSelectedHandler()}
+            />
+          )
+        }
+
+        const selectableRows = table
+          .getFilteredRowModel()
+          .flatRows.filter((row) => row.getCanSelect())
+        const selectedRowCount = selectableRows.filter((row) =>
+          row.getIsSelected(),
+        ).length
+        const allSelected =
+          selectableRows.length > 0 &&
+          selectedRowCount === selectableRows.length
+
+        return (
+          <DataTableCheckbox
+            aria-label={selectAllAriaLabel ?? 'Select all filtered rows'}
+            checked={allSelected}
+            disabled={selectableRows.length === 0}
+            indeterminate={selectedRowCount > 0 && !allSelected}
+            onChange={(event) => {
+              const shouldSelect = event.currentTarget.checked
+              table.setRowSelection((current) => {
+                const next = { ...current }
+                for (const row of selectableRows) {
+                  if (shouldSelect) {
+                    next[row.id] = true
+                  } else {
+                    delete next[row.id]
+                  }
+                }
+                return next
+              })
+            }}
+          />
+        )
+      },
       cell: ({ row }) => (
         <DataTableCheckbox
-          aria-label={selection.getRowAriaLabel?.(row) ?? `Select row ${row.id}`}
+          aria-label={getRowAriaLabel?.(row) ?? `Select row ${row.id}`}
           checked={row.getIsSelected()}
           disabled={!row.getCanSelect()}
           indeterminate={row.getIsSomeSelected()}
@@ -219,7 +262,13 @@ export function useAppDataTable<TData>({
       ),
     }
     return [selectionColumn, ...columns]
-  }, [columns, selection])
+  }, [
+    columns,
+    getRowAriaLabel,
+    selectAllAriaLabel,
+    selectAllMode,
+    selectionEnabled,
+  ])
 
   // TanStack Table intentionally exposes mutable table helpers to its renderer.
   // eslint-disable-next-line react-hooks/incompatible-library
@@ -405,6 +454,8 @@ export function DataTableFrame<TData>({
   virtualized = false,
   children,
 }: DataTableFrameProps<TData>) {
+  const tableWidth = table.getTotalSize()
+
   return (
     <div
       className={`app-data-table app-data-table--${density} ${stickyHeader ? 'app-data-table--sticky-header' : ''} ${virtualized ? 'app-data-table--virtualized' : ''} ${className ?? ''}`.trim()}
@@ -419,7 +470,7 @@ export function DataTableFrame<TData>({
           aria-busy={loading || undefined}
           aria-rowcount={ariaRowCount}
           className="app-data-table__table"
-          style={{ width: table.getTotalSize() }}
+          style={{ width: tableWidth, minWidth: tableWidth }}
         >
           <DataTableHeader
             columnResizeMode={columnResizeMode}

@@ -165,6 +165,9 @@ function DataTableDemo() {
     () => new Set(),
   )
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
+  const [selectAllMode, setSelectAllMode] = useState<'filtered' | 'all'>(
+    'filtered',
+  )
   const [sorting, setSorting] = useState<SortingState>([
     { id: 'name', desc: false },
   ])
@@ -388,6 +391,15 @@ function DataTableDemo() {
           value={overscan}
           onChange={setOverscan}
         />
+        <Select
+          aria-label="Select all mode"
+          options={[
+            { value: 'filtered', label: 'Select all: Filtered rows' },
+            { value: 'all', label: 'Select all: All rows' },
+          ]}
+          value={selectAllMode}
+          onChange={setSelectAllMode}
+        />
         <span className="example-data-table-resize-toggle">
           <Switch
             checked={stickyHeader}
@@ -606,6 +618,7 @@ function DataTableDemo() {
             selection={{
               value: rowSelection,
               onChange: setRowSelection,
+              selectAllMode,
               getRowAriaLabel: (row) => `Select ${row.original.name}`,
               selectAllAriaLabel: 'Select all students',
             }}
@@ -639,6 +652,7 @@ function DataTableDemo() {
             selection={{
               value: rowSelection,
               onChange: setRowSelection,
+              selectAllMode,
               getRowAriaLabel: (row) => `Select ${row.original.name}`,
               selectAllAriaLabel: 'Select all students',
             }}

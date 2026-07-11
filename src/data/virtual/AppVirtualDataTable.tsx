@@ -11,7 +11,7 @@ import {
   DataTableStateRow,
   DataTableVirtualSpacerRow,
   useAppDataTable,
-} from '../internal/dataTableCore.tsx'
+} from '../internal/dataTableCore'
 import type { AppVirtualDataTableProps } from './types'
 
 type VirtualTableStyle = CSSProperties & {
@@ -20,14 +20,23 @@ type VirtualTableStyle = CSSProperties & {
 
 export function AppVirtualDataTable<TData>({
   estimatedRowHeight,
-  overscan = 8,
+  overscan,
   ...tableProps
 }: AppVirtualDataTableProps<TData>) {
   const core = useAppDataTable(tableProps)
   const rows = core.table.getRowModel().rows
   const scrollContainerRef = useRef<HTMLDivElement>(null)
+  const defaultRowHeight = core.density === 'compact' ? 38 : 48
   const resolvedRowHeight =
-    estimatedRowHeight ?? (core.density === 'compact' ? 38 : 48)
+    typeof estimatedRowHeight === 'number' &&
+    Number.isFinite(estimatedRowHeight) &&
+    estimatedRowHeight > 0
+      ? estimatedRowHeight
+      : defaultRowHeight
+  const resolvedOverscan =
+    typeof overscan === 'number' && Number.isFinite(overscan)
+      ? Math.max(0, Math.floor(overscan))
+      : 8
   const getItemKey = useCallback(
     (index: number) => rows[index]?.id ?? index,
     [rows],
@@ -39,7 +48,7 @@ export function AppVirtualDataTable<TData>({
     count: core.loading ? 0 : rows.length,
     getScrollElement: () => scrollContainerRef.current,
     estimateSize: () => resolvedRowHeight,
-    overscan,
+    overscan: resolvedOverscan,
     getItemKey,
   })
 

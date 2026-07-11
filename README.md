@@ -8,6 +8,10 @@ A lightweight native-like desktop app shell for building React desktop applicati
 npm install react-desktop-shell
 ```
 
+The basic example uses `lucide-react` for icons. Install it separately with
+`npm install lucide-react`, or replace those icons with your preferred icon
+library. Lucide is not required by `react-desktop-shell`.
+
 ## Basic Usage
 
 ```tsx
@@ -190,7 +194,9 @@ and maximum widths, per-column resize control, `onEnd` and `onChange` modes,
 and double-click reset. Sticky table headers and controlled or uncontrolled
 left/right column pinning include pinned boundary shadows and compose with
 resizing and visibility. The table does not provide filtering controls,
-pagination, column order dragging, or virtualization.
+pagination, or column order dragging. The regular `AppDataTable` does not
+provide virtualization; use `AppVirtualDataTable` from
+`react-desktop-shell/data/virtual` for virtualized rows.
 
 ```tsx
 import { useState } from 'react'
@@ -214,7 +220,7 @@ const columns: ColumnDef<Student>[] = [
 
 function StudentsView({ students }: { students: Student[] }) {
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
-  const selectedCount = Object.keys(rowSelection).length
+  const selectedCount = Object.values(rowSelection).filter(Boolean).length
 
   return (
     <AppDataView
@@ -236,6 +242,7 @@ function StudentsView({ students }: { students: Student[] }) {
         selection={{
           value: rowSelection,
           onChange: setRowSelection,
+          selectAllMode: 'filtered',
         }}
       />
     </AppDataView>
@@ -245,6 +252,14 @@ function StudentsView({ students }: { students: Student[] }) {
 
 Provide a stable `getRowId` when enabling row selection, sorting, or filtering.
 The table never adds fields to or mutates input data.
+
+`selection.selectAllMode` defaults to `'filtered'`. In this mode the header
+checkbox selects or clears only selectable rows in the current filtered result.
+Use `'all'` to make it operate on all data rows instead. Changing filters does
+not automatically clear already selected rows outside the filtered result.
+
+`AppDataTable` currently supports flat leaf-column definitions. Multi-level
+grouped headers are not currently supported.
 
 ### Filtering and column visibility
 
@@ -379,6 +394,10 @@ Column visibility and sizing remain independent, so hiding and showing a column
 does not discard its stored size. Persisting `columnSizing` is the application's
 responsibility; the component does not read from or write to `localStorage`.
 
+`AppDataTable` respects the exact TanStack column sizes. When the total column
+width is smaller than the container, unused space remains as table surface
+instead of stretching columns.
+
 ### Sticky header and column pinning
 
 Sticky headers remain inside the AppDataTable scroll container. Pass a numeric
@@ -508,6 +527,15 @@ export interface AppSelectionBarProps {
   clearAriaLabel?: string
   className?: string
   style?: CSSProperties
+}
+
+export interface AppDataTableSelectionOptions<TData> {
+  value: RowSelectionState
+  onChange: OnChangeFn<RowSelectionState>
+  enableRowSelection?: TableOptions<TData>['enableRowSelection']
+  selectAllMode?: 'all' | 'filtered'
+  selectAllAriaLabel?: string
+  getRowAriaLabel?: (row: Row<TData>) => string
 }
 
 export interface AppDataTableProps<TData> {

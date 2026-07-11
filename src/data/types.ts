@@ -19,12 +19,18 @@ export interface AppDataTableSelectionOptions<TData> {
   value: RowSelectionState
   onChange: OnChangeFn<RowSelectionState>
   enableRowSelection?: TableOptions<TData>['enableRowSelection']
+  selectAllMode?: 'all' | 'filtered'
   selectAllAriaLabel?: string
   getRowAriaLabel?: (row: Row<TData>) => string
 }
 
 export interface AppDataTableProps<TData> {
   data: TData[]
+  /**
+   * Flat leaf-column definitions.
+   *
+   * Multi-level grouped headers are not currently supported.
+   */
   columns: ColumnDef<TData>[]
   getRowId?: TableOptions<TData>['getRowId']
   selection?: AppDataTableSelectionOptions<TData>

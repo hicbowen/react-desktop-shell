@@ -149,6 +149,7 @@
 .app-data-table__scroll {
   position: relative;
   overflow: auto;
+  background: var(--app-data-surface-bg);
   border-radius: inherit;
 }
 
@@ -157,9 +158,8 @@
 }
 
 .app-data-table__table {
-  width: max-content;
-  min-width: 100%;
   border-spacing: 0;
+  min-width: 0;
   table-layout: fixed;
   color: inherit;
   font-size: 13px;
