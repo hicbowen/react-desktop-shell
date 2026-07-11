@@ -30,4 +30,3 @@ export function AppContextMenu({
     [APP_CONTEXT_MENU_ATTRIBUTE]: id,
   } as Record<string, string>)
 }
-

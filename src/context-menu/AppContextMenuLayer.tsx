@@ -218,15 +218,6 @@ export function AppContextMenuLayer({
   const itemRefs = useRef<Array<Array<HTMLButtonElement | null>>>([])
   const hoverTimerRef = useRef<number | null>(null)
   const measureFrameRef = useRef<number | null>(null)
-  const latestRenderRef = useRef<{
-    menu: AppContextMenuState | null
-    panels: MenuPanel[]
-    pathKey: string
-  }>({
-    menu: null,
-    panels: [],
-    pathKey: '',
-  })
   const keyboardNavigationRef = useRef(false)
   const [layerState, setLayerState] = useState<MenuLayerState>({
     menu: null,
@@ -254,15 +245,11 @@ export function AppContextMenuLayer({
     [menu, openPath],
   )
 
-  latestRenderRef.current = {
-    menu,
-    panels,
-    pathKey,
-  }
-
-  if (menu && layerState.menu !== menu) {
-    keyboardNavigationRef.current = menu.keyboard
-  }
+  useEffect(() => {
+    if (menu && layerState.menu !== menu) {
+      keyboardNavigationRef.current = menu.keyboard
+    }
+  }, [layerState.menu, menu])
 
   const clearHoverTimer = () => {
     if (hoverTimerRef.current !== null) {
@@ -297,14 +284,12 @@ export function AppContextMenuLayer({
 
     measureFrameRef.current = window.requestAnimationFrame(() => {
       measureFrameRef.current = null
-      const latest = latestRenderRef.current
 
-      if (!latest.menu) {
+      if (!menu) {
         return
       }
 
-      const latestMenu = latest.menu
-      const placements = latest.panels.map((panel, level) => {
+      const placements = panels.map((panel, level) => {
         const node = menuRefs.current[level]
 
         if (!node) {
@@ -314,7 +299,7 @@ export function AppContextMenuLayer({
         const rect = node.getBoundingClientRect()
 
         if (level === 0) {
-          return placeRoot(latestMenu, rect)
+          return placeRoot(menu, rect)
         }
 
         const parentIndex = panel.parentIndex
@@ -332,16 +317,16 @@ export function AppContextMenuLayer({
 
       setPlacementState((current) => {
         if (
-          current.menu === latest.menu &&
-          current.pathKey === latest.pathKey &&
+          current.menu === menu &&
+          current.pathKey === pathKey &&
           samePlacements(current.placements, placements)
         ) {
           return current
         }
 
         return {
-          menu: latest.menu,
-          pathKey: latest.pathKey,
+          menu,
+          pathKey,
           placements,
         }
       })

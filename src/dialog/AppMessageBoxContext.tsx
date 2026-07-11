@@ -12,4 +12,3 @@ export function useAppMessageBox() {
 
   return messageBox
 }
-

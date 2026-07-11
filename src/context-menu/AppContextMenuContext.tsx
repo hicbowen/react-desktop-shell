@@ -21,4 +21,3 @@ export const AppContextMenuContext =
 export function useAppContextMenuRegistry() {
   return useContext(AppContextMenuContext)
 }
-

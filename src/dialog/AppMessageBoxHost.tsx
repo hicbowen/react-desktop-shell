@@ -12,7 +12,7 @@ export const defaultMessageBoxLocale: AppMessageBoxLocale = {
   cancel: 'Cancel',
 }
 
-interface MessageBoxRequest {
+export interface MessageBoxRequest {
   id: number
   options: AppMessageBoxOptions
   restoreFocusElement: HTMLElement | null

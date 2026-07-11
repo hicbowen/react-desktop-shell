@@ -1,12 +1,12 @@
-export { AppShell } from './AppShell'
-export { AppContextMenu } from './AppContextMenu'
-export { AppDialog } from './AppDialog'
+export { AppShell } from './shell/AppShell'
+export { AppContextMenu } from './context-menu/AppContextMenu'
+export { AppDialog } from './dialog/AppDialog'
 export { AppPage } from './AppPage'
-export { AppRail } from './AppRail'
+export { AppRail } from './navigation/AppRail'
 export { AppSidePane } from './AppSidePane'
 export { AppTitleBar } from './AppTitleBar'
-export { useAppMessageBox } from './AppMessageBoxContext'
-export { useAppToast } from './AppToastContext'
+export { useAppMessageBox } from './dialog/AppMessageBoxContext'
+export { useAppToast } from './toast/AppToastContext'
 
 export type {
   AppClipboardAdapter,
