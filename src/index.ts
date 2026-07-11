@@ -4,6 +4,8 @@ export { AppDialog } from './dialog/AppDialog'
 export { AppInfoBar } from './info-bar/AppInfoBar'
 export { AppPage } from './AppPage'
 export { AppRail } from './navigation/AppRail'
+export { AppSettingsGroup } from './settings/AppSettingsGroup'
+export { AppSettingsRow } from './settings/AppSettingsRow'
 export { AppSidePane } from './AppSidePane'
 export { AppTitleBar } from './AppTitleBar'
 export { useAppMessageBox } from './dialog/AppMessageBoxContext'
@@ -26,6 +28,8 @@ export type {
   AppMessageBoxLocale,
   AppMessageBoxOptions,
   AppPageProps,
+  AppSettingsGroupProps,
+  AppSettingsRowProps,
   AppShellSidebarOptions,
   AppRailProps,
   AppShellProps,

@@ -20,6 +20,10 @@ export type {
 } from './dialog/types'
 export type { AppInfoBarProps, AppInfoBarStatus } from './info-bar/types'
 export type {
+  AppSettingsGroupProps,
+  AppSettingsRowProps,
+} from './settings/types'
+export type {
   AppRailProps,
   RailEntry,
   RailGroup,

@@ -404,7 +404,7 @@ body {
 
 .example-context-demo,
 .example-file-list,
-.example-settings-list {
+.example-settings-page {
   max-width: 880px;
 }
 
@@ -516,30 +516,8 @@ body {
   background: var(--app-shell-hover-bg);
 }
 
-.example-settings-list {
-  display: flex;
-  flex-direction: column;
-}
-
-.example-settings-row {
-  min-height: 64px;
-  padding: 0 16px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  border-bottom: 1px solid var(--app-shell-border-color);
-}
-
-.example-settings-row:last-child {
-  border-bottom: 0;
-}
-
-.example-settings-copy {
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
+.example-settings-page {
+  width: 100%;
 }
 
 .example-settings-select {
@@ -551,6 +529,27 @@ body {
   border: 1px solid var(--app-shell-border-color);
   border-radius: 6px;
   padding: 0 10px;
+}
+
+.example-settings-button {
+  min-width: 88px;
+  height: 32px;
+  padding: 0 12px;
+  color: var(--app-shell-text-color);
+  font: inherit;
+  background: var(--app-shell-content-bg);
+  border: 1px solid var(--app-shell-border-color);
+  border-radius: 6px;
+  cursor: default;
+}
+
+.example-settings-button:hover {
+  background: var(--app-shell-hover-bg);
+}
+
+.example-settings-value {
+  color: var(--app-shell-muted-text-color);
+  font-size: 13px;
 }
 
 @media (max-width: 760px) {

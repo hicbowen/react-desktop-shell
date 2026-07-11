@@ -218,6 +218,38 @@ import { Activity } from 'react'
 
 The enter animation may replay when an `Activity` becomes visible, depending on browser animation behavior. `AppPage` also continues to support `prefers-reduced-motion`.
 
+## Settings Group and Row
+
+`AppSettingsGroup` and `AppSettingsRow` provide desktop-style setting groups and rows for organizing controls from any UI library. They handle the section surface, separators, labels, descriptions, optional icons, and responsive control placement without owning form state.
+
+```tsx
+<AppSettingsGroup
+  title="General"
+  description="Manage application behavior."
+>
+  <AppSettingsRow
+    title="Theme"
+    description="Choose the application appearance."
+    control={<ThemeSelect />}
+  />
+
+  <AppSettingsRow
+    title="Start at login"
+    control={<Switch />}
+  />
+</AppSettingsGroup>
+```
+
+These components do not provide controls such as `Switch` or `Select`; pass any React node through `control`. A disabled row only applies disabled text styling and `aria-disabled` to the row. It cannot safely alter an arbitrary control, so disable the actual control as well:
+
+```tsx
+<AppSettingsRow
+  title="Reminder time"
+  disabled={!reminderEnabled}
+  control={<Select disabled={!reminderEnabled} />}
+/>
+```
+
 ## Title Bar
 
 `AppTitleBar` renders the custom title bar UI. Window actions are provided by the host application through callbacks, making it compatible with Wails, Electron, Tauri, or other desktop runtimes.
@@ -685,6 +717,28 @@ Calling `show` again with the same id updates the existing toast. At most four t
 | `style`            | `CSSProperties` | `undefined` | Inline styles for the root element.               |
 | `contentClassName` | `string`        | `undefined` | Additional class name for the content element.    |
 | `contentStyle`     | `CSSProperties` | `undefined` | Inline styles for the content element.            |
+
+### AppSettingsGroupProps
+
+| Prop          | Type            | Default     | Description                                  |
+| ------------- | --------------- | ----------- | -------------------------------------------- |
+| `title`       | `ReactNode`     | `undefined` | Setting group title.                         |
+| `description` | `ReactNode`     | `undefined` | Supporting text displayed above the surface. |
+| `children`    | `ReactNode`     | Required    | Setting rows or other group content.         |
+| `className`   | `string`        | `undefined` | Additional class name for the root section.  |
+| `style`       | `CSSProperties` | `undefined` | Inline styles for the root section.          |
+
+### AppSettingsRowProps
+
+| Prop          | Type            | Default     | Description                                       |
+| ------------- | --------------- | ----------- | ------------------------------------------------- |
+| `title`       | `ReactNode`     | Required    | Setting title.                                    |
+| `description` | `ReactNode`     | `undefined` | Optional supporting text.                         |
+| `icon`        | `ReactNode`     | `undefined` | Optional decorative icon.                         |
+| `control`     | `ReactNode`     | `undefined` | Right-side control or display content.            |
+| `disabled`    | `boolean`       | `false`     | Applies disabled row styling and `aria-disabled`. |
+| `className`   | `string`        | `undefined` | Additional class name for the row.                |
+| `style`       | `CSSProperties` | `undefined` | Inline styles for the row.                        |
 
 ### AppSidePaneProps
 

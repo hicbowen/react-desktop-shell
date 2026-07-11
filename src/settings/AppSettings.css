@@ -1,0 +1,129 @@
+.app-settings-group {
+  width: 100%;
+  min-width: 0;
+  display: grid;
+  gap: 10px;
+  color: var(--app-shell-text-color, #1f1f1f);
+}
+
+.app-settings-group + .app-settings-group {
+  margin-top: 24px;
+}
+
+.app-settings-group__header {
+  min-width: 0;
+  display: grid;
+  gap: 4px;
+}
+
+.app-settings-group__title {
+  margin: 0;
+  color: var(--app-shell-text-color, #1f1f1f);
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
+.app-settings-group__description {
+  color: var(--app-shell-muted-text-color, #707070);
+  font-size: 13px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.app-settings-group__surface {
+  min-width: 0;
+  overflow: hidden;
+  background: var(--app-shell-surface-bg, #ffffff);
+  border: 1px solid var(--app-shell-border-color, rgb(0 0 0 / 8%));
+  border-radius: 8px;
+  container-type: inline-size;
+}
+
+.app-settings-group__surface > .app-settings-row + .app-settings-row {
+  border-top: 1px solid var(--app-shell-border-color, rgb(0 0 0 / 8%));
+}
+
+.app-settings-row {
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  min-height: 68px;
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  color: var(--app-shell-text-color, #1f1f1f);
+}
+
+.app-settings-row__icon {
+  width: 20px;
+  height: 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  color: var(--app-shell-muted-text-color, #707070);
+}
+
+.app-settings-row__icon > svg,
+.app-settings-row__icon > img {
+  width: 20px;
+  height: 20px;
+  display: block;
+}
+
+.app-settings-row__content {
+  min-width: 0;
+  display: grid;
+  flex: 1 1 auto;
+  gap: 3px;
+}
+
+.app-settings-row__title {
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
+.app-settings-row__description {
+  color: var(--app-shell-muted-text-color, #707070);
+  font-size: 12px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.app-settings-row__control {
+  min-width: max-content;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex: 0 0 auto;
+}
+
+.app-settings-row--disabled .app-settings-row__title,
+.app-settings-row--disabled .app-settings-row__description,
+.app-settings-row--disabled .app-settings-row__icon {
+  color: var(--app-shell-disabled-text-color, rgb(0 0 0 / 36%));
+}
+
+@container (max-width: 480px) {
+  .app-settings-row {
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .app-settings-row__control {
+    width: 100%;
+    min-width: 0;
+    padding-left: 34px;
+    justify-content: flex-start;
+  }
+
+  .app-settings-row:not(.app-settings-row--with-icon)
+    > .app-settings-row__control {
+    padding-left: 0;
+  }
+}

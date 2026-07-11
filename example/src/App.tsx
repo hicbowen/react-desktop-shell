@@ -21,6 +21,8 @@ import {
   AppInfoBar,
   AppPage,
   AppRail,
+  AppSettingsGroup,
+  AppSettingsRow,
   AppShell,
   AppSidePane,
   AppTitleBar,
@@ -67,7 +69,7 @@ const pages = {
   },
   settings: {
     title: 'Settings',
-    description: 'Change the theme and navigation presentation at runtime.',
+    description: 'Manage application appearance and behavior at runtime.',
   },
 }
 
@@ -588,6 +590,160 @@ function ExampleSidePane({
   )
 }
 
+function SettingsDemo({
+  theme,
+  setTheme,
+  displayMode,
+  setDisplayMode,
+}: {
+  theme: AppTheme
+  setTheme: (theme: AppTheme) => void
+  displayMode: PaneDisplayMode
+  setDisplayMode: (displayMode: PaneDisplayMode) => void
+}) {
+  const toast = useAppToast()
+  const [startAtLogin, setStartAtLogin] = useState(false)
+  const [alwaysOnTop, setAlwaysOnTop] = useState(false)
+  const [courseReminders, setCourseReminders] = useState(true)
+  const [reminderTime, setReminderTime] = useState('10')
+
+  return (
+    <div className="example-settings-page">
+      <AppSettingsGroup
+        title="Appearance"
+        description="Customize how the application looks."
+      >
+        <AppSettingsRow
+          title="Theme"
+          description="Choose light, dark, or system appearance."
+          control={
+            <select
+              className="example-settings-select"
+              aria-label="Theme"
+              value={theme}
+              onChange={(event) => setTheme(event.target.value as AppTheme)}
+            >
+              <option value="system">System</option>
+              <option value="light">Light</option>
+              <option value="dark">Dark</option>
+            </select>
+          }
+        />
+        <AppSettingsRow
+          title="Navigation mode"
+          description="Choose how the navigation pane is presented."
+          control={
+            <select
+              className="example-settings-select"
+              aria-label="Navigation mode"
+              value={displayMode}
+              onChange={(event) =>
+                setDisplayMode(event.target.value as PaneDisplayMode)
+              }
+            >
+              <option value="auto">Auto</option>
+              <option value="expanded">Expanded</option>
+              <option value="compact">Compact</option>
+              <option value="minimal">Minimal</option>
+            </select>
+          }
+        />
+      </AppSettingsGroup>
+
+      <AppSettingsGroup
+        title="Startup and window"
+        description="Control how the desktop application behaves."
+      >
+        <AppSettingsRow
+          title="Start at login"
+          description="Launch the application after signing in."
+          control={
+            <input
+              aria-label="Start at login"
+              checked={startAtLogin}
+              onChange={(event) => setStartAtLogin(event.target.checked)}
+              type="checkbox"
+            />
+          }
+        />
+        <AppSettingsRow
+          title="Always on top"
+          description="Keep the window above other applications."
+          control={
+            <input
+              aria-label="Always on top"
+              checked={alwaysOnTop}
+              onChange={(event) => setAlwaysOnTop(event.target.checked)}
+              type="checkbox"
+            />
+          }
+        />
+      </AppSettingsGroup>
+
+      <AppSettingsGroup
+        title="Notifications"
+        description="Configure course and application reminders."
+      >
+        <AppSettingsRow
+          title="Course reminders"
+          description="Notify before a scheduled course starts."
+          control={
+            <input
+              aria-label="Course reminders"
+              checked={courseReminders}
+              onChange={(event) => setCourseReminders(event.target.checked)}
+              type="checkbox"
+            />
+          }
+        />
+        <AppSettingsRow
+          title="Reminder time"
+          description="Choose how early the reminder appears."
+          disabled={!courseReminders}
+          control={
+            <select
+              className="example-settings-select"
+              aria-label="Reminder time"
+              disabled={!courseReminders}
+              value={reminderTime}
+              onChange={(event) => setReminderTime(event.target.value)}
+            >
+              <option value="5">5 minutes</option>
+              <option value="10">10 minutes</option>
+              <option value="15">15 minutes</option>
+              <option value="30">30 minutes</option>
+            </select>
+          }
+        />
+      </AppSettingsGroup>
+
+      <AppSettingsGroup
+        title="About"
+        description="Version and update information."
+      >
+        <AppSettingsRow
+          title="Version"
+          description="Current react-desktop-shell example version."
+          control={<span className="example-settings-value">0.5.1</span>}
+        />
+        <AppSettingsRow
+          title="Check for updates"
+          description="Look for a newer application version."
+          control={
+            <button
+              className="example-settings-button"
+              type="button"
+              onClick={() => toast.success('You are up to date')}
+            >
+              Check now
+            </button>
+          }
+        />
+      </AppSettingsGroup>
+    </div>
+  )
+}
+
 function renderPageContent(
   active: string,
   theme: AppTheme,
@@ -809,55 +965,12 @@ function renderPageContent(
 
   if (active === 'settings') {
     return (
-      <div className="example-settings-list">
-        <label className="example-settings-row">
-          <span className="example-settings-copy">
-            <span>Theme</span>
-            <small>Choose how the application shell looks.</small>
-          </span>
-          <select
-            className="example-settings-select"
-            value={theme}
-            onChange={(event) => setTheme(event.target.value as AppTheme)}
-          >
-            <option value="system">System</option>
-            <option value="light">Light</option>
-            <option value="dark">Dark</option>
-          </select>
-        </label>
-        <label className="example-settings-row">
-          <span className="example-settings-copy">
-            <span>Navigation mode</span>
-            <small>Choose how the Navigation Pane is presented.</small>
-          </span>
-          <select
-            className="example-settings-select"
-            value={displayMode}
-            onChange={(event) =>
-              setDisplayMode(event.target.value as PaneDisplayMode)
-            }
-          >
-            <option value="auto">Auto</option>
-            <option value="expanded">Expanded</option>
-            <option value="compact">Compact</option>
-            <option value="minimal">Minimal</option>
-          </select>
-        </label>
-        <label className="example-settings-row">
-          <span className="example-settings-copy">
-            <span>Launch on startup</span>
-            <small>Open the application automatically when you sign in.</small>
-          </span>
-          <input type="checkbox" />
-        </label>
-        <label className="example-settings-row">
-          <span className="example-settings-copy">
-            <span>Show compact navigation</span>
-            <small>Reduce the navigation rail to icon-only mode.</small>
-          </span>
-          <input type="checkbox" />
-        </label>
-      </div>
+      <SettingsDemo
+        theme={theme}
+        setTheme={setTheme}
+        displayMode={displayMode}
+        setDisplayMode={setDisplayMode}
+      />
     )
   }
 
