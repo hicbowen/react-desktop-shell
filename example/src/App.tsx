@@ -26,6 +26,7 @@ import {
   AppShell,
   AppSidePane,
   AppTitleBar,
+  AppToolbar,
   useAppMessageBox,
   useAppToast,
   type PaneDisplayMode,
@@ -40,11 +41,6 @@ const pages = {
   projects: {
     title: 'Projects',
     description: 'Organize work in a responsive, desktop-style content area.',
-    actions: (
-      <button className="example-page-action" type="button">
-        New project
-      </button>
-    ),
   },
   files: {
     title: 'Files',
@@ -889,20 +885,55 @@ function renderPageContent(
 
   if (active === 'projects') {
     return (
-      <div className="example-tool-grid">
-        {[
-          ['Desktop application', 'Updated a few minutes ago'],
-          ['Component library', 'Updated yesterday'],
-          ['Design resources', 'Updated last week'],
-          ['Archive', '12 items'],
-        ].map(([name, detail]) => (
-          <button className="example-tool-tile" key={name} type="button">
-            <Folder size={18} />
-            <span>{name}</span>
-            <small>{detail}</small>
-          </button>
-        ))}
-      </div>
+      <>
+        <AppToolbar
+          start={
+            <>
+              <input
+                className="example-toolbar-search"
+                aria-label="Search projects"
+                placeholder="Search projects"
+                type="search"
+              />
+              <select
+                className="example-toolbar-select"
+                aria-label="Project status"
+                defaultValue="all"
+              >
+                <option value="all">All projects</option>
+                <option value="active">Active</option>
+                <option value="archived">Archived</option>
+              </select>
+            </>
+          }
+          status={<span className="example-toolbar-status">4 projects</span>}
+          end={
+            <>
+              <button className="example-toolbar-button" type="button">
+                Import
+              </button>
+              <button className="example-page-action" type="button">
+                New project
+              </button>
+            </>
+          }
+        />
+
+        <div className="example-tool-grid">
+          {[
+            ['Desktop application', 'Updated a few minutes ago'],
+            ['Component library', 'Updated yesterday'],
+            ['Design resources', 'Updated last week'],
+            ['Archive', '12 items'],
+          ].map(([name, detail]) => (
+            <button className="example-tool-tile" key={name} type="button">
+              <Folder size={18} />
+              <span>{name}</span>
+              <small>{detail}</small>
+            </button>
+          ))}
+        </div>
+      </>
     )
   }
 

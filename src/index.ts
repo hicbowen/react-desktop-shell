@@ -8,6 +8,7 @@ export { AppSettingsGroup } from './settings/AppSettingsGroup'
 export { AppSettingsRow } from './settings/AppSettingsRow'
 export { AppSidePane } from './AppSidePane'
 export { AppTitleBar } from './AppTitleBar'
+export { AppToolbar } from './toolbar/AppToolbar'
 export { useAppMessageBox } from './dialog/AppMessageBoxContext'
 export { useAppToast } from './toast/AppToastContext'
 
@@ -45,6 +46,7 @@ export type {
   AppToastShortcutOptions,
   AppToastStatus,
   AppToastUpdateOptions,
+  AppToolbarProps,
   PaneDisplayMode,
   RailEntry,
   RailGroup,

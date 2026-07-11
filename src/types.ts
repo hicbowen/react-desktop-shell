@@ -48,6 +48,7 @@ export type {
   AppToastStatus,
   AppToastUpdateOptions,
 } from './toast/types'
+export type { AppToolbarProps } from './toolbar/types'
 
 export interface AppPageProps {
   title?: ReactNode

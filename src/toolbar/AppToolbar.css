@@ -1,0 +1,67 @@
+.app-toolbar {
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px 16px;
+  color: var(--app-shell-text-color, #1f1f1f);
+  container-type: inline-size;
+}
+
+.app-toolbar__start,
+.app-toolbar__trailing,
+.app-toolbar__status,
+.app-toolbar__end {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+}
+
+.app-toolbar__start,
+.app-toolbar__trailing {
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.app-toolbar__start {
+  flex: 1 1 auto;
+}
+
+.app-toolbar__trailing {
+  margin-left: auto;
+  flex: 0 0 auto;
+  justify-content: flex-end;
+  gap: 10px 16px;
+}
+
+.app-toolbar__status {
+  margin-right: auto;
+  flex: 0 1 auto;
+  color: var(--app-shell-muted-text-color, #707070);
+  overflow-wrap: anywhere;
+}
+
+.app-toolbar__end {
+  margin-left: auto;
+  flex: 0 0 auto;
+  justify-content: flex-end;
+  flex-wrap: nowrap;
+  gap: 8px;
+  white-space: nowrap;
+}
+
+@container (max-width: 760px) {
+  .app-toolbar__start {
+    width: 100%;
+    flex-basis: 100%;
+  }
+
+  .app-toolbar__trailing {
+    width: 100%;
+    flex: 1 1 100%;
+    margin-left: 0;
+  }
+}

@@ -54,6 +54,46 @@ body {
   cursor: default;
 }
 
+.example-toolbar-search,
+.example-toolbar-select,
+.example-toolbar-button {
+  box-sizing: border-box;
+  height: 32px;
+  color: var(--app-shell-text-color);
+  font: inherit;
+  font-size: 13px;
+  background: var(--app-shell-surface-bg);
+  border: 1px solid var(--app-shell-border-color);
+  border-radius: 6px;
+}
+
+.example-toolbar-search {
+  width: min(240px, 100%);
+  min-width: 180px;
+  padding: 0 10px;
+  flex: 1 1 200px;
+}
+
+.example-toolbar-select {
+  min-width: 132px;
+  padding: 0 10px;
+}
+
+.example-toolbar-button {
+  min-width: 76px;
+  padding: 0 12px;
+  cursor: default;
+}
+
+.example-toolbar-button:hover {
+  background: var(--app-shell-hover-bg);
+}
+
+.example-toolbar-status {
+  font-size: 12px;
+  white-space: nowrap;
+}
+
 .example-overview,
 .example-tool-grid {
   display: grid;
