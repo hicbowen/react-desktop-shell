@@ -1021,7 +1021,7 @@ export function ExampleApp() {
   return (
     <AppShell
       contextMenu="app"
-      title="Desktop Shell"
+      title="React Desktop Shell"
       sidebar={{
         displayMode,
         onDisplayModeChange: setDisplayMode,

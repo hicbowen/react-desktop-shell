@@ -108,13 +108,19 @@ body {
 }
 
 .example-component-stack {
+  box-sizing: border-box;
+  width: 100%;
   max-width: 960px;
+  margin-inline: auto;
   display: grid;
   gap: 16px;
 }
 
 .example-activity-list {
+  box-sizing: border-box;
+  width: 100%;
   max-width: 880px;
+  margin-inline: auto;
   overflow: hidden;
   border: 1px solid var(--app-shell-border-color);
   border-radius: 8px;
@@ -409,6 +415,9 @@ body {
 }
 
 .example-context-demo {
+  box-sizing: border-box;
+  width: 100%;
+  margin-inline: auto;
   display: grid;
   gap: 18px;
 }
@@ -517,7 +526,9 @@ body {
 }
 
 .example-settings-page {
+  box-sizing: border-box;
   width: 100%;
+  margin-inline: auto;
 }
 
 .example-settings-select {
