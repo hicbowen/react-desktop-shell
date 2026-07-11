@@ -1,8 +1,20 @@
 import { useEffect, useMemo, useState } from 'react'
+import type {
+  ColumnDef,
+  ColumnFiltersState,
+  ColumnPinningState,
+  ColumnResizeMode,
+  ColumnSizingState,
+  RowSelectionState,
+  SortingState,
+  VisibilityState,
+} from '@tanstack/react-table'
 import {
   Button,
+  Checkbox,
   ConfigProvider,
   DatePicker,
+  Dropdown,
   Input,
   Select,
   Switch,
@@ -45,6 +57,13 @@ import {
   createAntdTheme,
   type AntdThemeMode,
 } from '../../src/antd'
+import {
+  APP_DATA_TABLE_SELECTION_COLUMN_ID,
+  AppDataTable,
+  AppDataView,
+  AppSelectionBar,
+} from '../../src/data'
+import { AppVirtualDataTable } from '../../src/data/virtual'
 
 function getSystemTheme(): AntdThemeMode {
   if (typeof window === 'undefined') {
@@ -105,10 +124,531 @@ const pages = {
     title: 'Workspace utilities',
     description: 'Preview a resizable side pane and common action surfaces.',
   },
+  dataTable: {
+    title: 'Data table',
+    description: 'Sort, select, and act on desktop-style tabular data.',
+  },
   settings: {
     title: 'Settings',
     description: 'Manage application appearance and behavior at runtime.',
   },
+}
+
+interface Student {
+  id: string
+  name: string
+  className: string
+  status: 'Active' | 'Away' | 'Inactive'
+  lastActivity: string
+}
+
+const studentSeeds: Student[] = [
+  { id: 's-1001', name: 'Avery Chen', className: 'Grade 3 · A', status: 'Active', lastActivity: '2026-07-11T08:42:00Z' },
+  { id: 's-1002', name: 'Mia Johnson', className: 'Grade 4 · B', status: 'Active', lastActivity: '2026-07-10T14:18:00Z' },
+  { id: 's-1003', name: 'Noah Williams', className: 'Grade 3 · A', status: 'Away', lastActivity: '2026-07-09T09:05:00Z' },
+  { id: 's-1004', name: 'Isabella Brown', className: 'Grade 5 · C', status: 'Active', lastActivity: '2026-07-08T16:30:00Z' },
+  { id: 's-1005', name: 'Ethan Davis', className: 'Grade 4 · B', status: 'Inactive', lastActivity: '2026-07-07T11:12:00Z' },
+  { id: 's-1006', name: 'Sophia Wilson', className: 'Grade 5 · A', status: 'Active', lastActivity: '2026-07-06T13:47:00Z' },
+  { id: 's-1007', name: 'Lucas Martinez', className: 'Grade 3 · C', status: 'Away', lastActivity: '2026-07-05T10:20:00Z' },
+  { id: 's-1008', name: 'Amelia Anderson', className: 'Grade 4 · A', status: 'Active', lastActivity: '2026-07-04T15:54:00Z' },
+  { id: 's-1009', name: 'Oliver Taylor', className: 'Grade 5 · B', status: 'Inactive', lastActivity: '2026-07-03T07:35:00Z' },
+  { id: 's-1010', name: 'Harper Thomas', className: 'Grade 3 · B', status: 'Active', lastActivity: '2026-07-02T12:08:00Z' },
+]
+
+function DataTableDemo() {
+  const messageBox = useAppMessageBox()
+  const toast = useAppToast()
+  const [renderMode, setRenderMode] = useState<'standard' | 'virtual'>('virtual')
+  const [rowCount, setRowCount] = useState(1000)
+  const [overscan, setOverscan] = useState(8)
+  const [deletedStudentIds, setDeletedStudentIds] = useState<Set<string>>(
+    () => new Set(),
+  )
+  const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
+  const [sorting, setSorting] = useState<SortingState>([
+    { id: 'name', desc: false },
+  ])
+  const [globalFilter, setGlobalFilter] = useState('')
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
+  const [columnSizing, setColumnSizing] = useState<ColumnSizingState>({})
+  const [columnPinning, setColumnPinning] = useState<ColumnPinningState>({
+    left: [APP_DATA_TABLE_SELECTION_COLUMN_ID, 'name'],
+    right: ['actions'],
+  })
+  const [resizingEnabled, setResizingEnabled] = useState(true)
+  const [resizeMode, setResizeMode] = useState<ColumnResizeMode>('onEnd')
+  const [stickyHeader, setStickyHeader] = useState(true)
+  const [tableHeight, setTableHeight] = useState(420)
+  const [density, setDensity] = useState<'comfortable' | 'compact'>('comfortable')
+  const [loading, setLoading] = useState(false)
+  const [showEmpty, setShowEmpty] = useState(false)
+  const [focusedStudent, setFocusedStudent] = useState<Student | null>(null)
+
+  const students = useMemo(
+    () =>
+      Array.from({ length: rowCount }, (_, index) => {
+        const seed = studentSeeds[index % studentSeeds.length]!
+        const ordinal = index + 1
+        return {
+          ...seed,
+          id: `student-${ordinal}`,
+          name: `${seed.name} ${ordinal}`,
+        }
+      }).filter((student) => !deletedStudentIds.has(student.id)),
+    [deletedStudentIds, rowCount],
+  )
+  const sourceStudents = useMemo(
+    () => (renderMode === 'standard' ? students.slice(0, 100) : students),
+    [renderMode, students],
+  )
+
+  const columns = useMemo<ColumnDef<Student>[]>(
+    () => [
+      {
+        accessorKey: 'name',
+        header: 'Name',
+        size: 220,
+        minSize: 140,
+        maxSize: 400,
+        enableHiding: false,
+      },
+      {
+        accessorKey: 'className',
+        header: 'Class',
+        size: 150,
+        minSize: 100,
+        maxSize: 240,
+        enableSorting: false,
+        enableGlobalFilter: false,
+      },
+      {
+        accessorKey: 'status',
+        header: 'Status',
+        size: 110,
+        minSize: 90,
+        maxSize: 180,
+        enableSorting: false,
+        enableGlobalFilter: false,
+        filterFn: 'equalsString',
+        cell: ({ getValue }) => (
+          <span className={`example-student-status example-student-status--${String(getValue()).toLowerCase()}`}>
+            {String(getValue())}
+          </span>
+        ),
+      },
+      {
+        accessorKey: 'lastActivity',
+        header: 'Last activity',
+        size: 180,
+        minSize: 130,
+        maxSize: 280,
+        enableGlobalFilter: false,
+        cell: ({ getValue }) => new Date(String(getValue())).toLocaleString(),
+      },
+      {
+        id: 'actions',
+        header: 'Actions',
+        size: 100,
+        minSize: 100,
+        maxSize: 100,
+        enableSorting: false,
+        enableHiding: false,
+        enableGlobalFilter: false,
+        enableResizing: false,
+        enablePinning: true,
+        cell: ({ row }) => (
+          <Button
+            aria-label={`Open actions for ${row.original.name}`}
+            size="small"
+            type="text"
+            onClick={() => toast.info(`Actions for ${row.original.name}`)}
+          >
+            More
+          </Button>
+        ),
+      },
+    ],
+    [toast],
+  )
+
+  const statusFilter = String(
+    columnFilters.find((filter) => filter.id === 'status')?.value ?? 'all',
+  )
+  const hasActiveFilters = globalFilter.length > 0 || columnFilters.length > 0
+
+  const matchingStudentCount = useMemo(() => {
+    const normalizedQuery = globalFilter.trim().toLowerCase()
+    return sourceStudents.filter((student) => {
+      const matchesQuery =
+        normalizedQuery.length === 0 ||
+        student.name.toLowerCase().includes(normalizedQuery)
+      const matchesStatus =
+        statusFilter === 'all' || student.status === statusFilter
+      return matchesQuery && matchesStatus
+    }).length
+  }, [globalFilter, sourceStudents, statusFilter])
+
+  const selectedIds = Object.keys(rowSelection).filter(
+    (id) => rowSelection[id],
+  )
+  const selectedCount = selectedIds.length
+
+  const deleteSelected = async () => {
+    const confirmed = await messageBox.confirm({
+      title: `Delete ${selectedCount} students?`,
+      message: 'This removes the selected students from this local demo.',
+      confirmText: 'Delete',
+      cancelText: 'Cancel',
+      danger: true,
+    })
+
+    if (!confirmed) {
+      return
+    }
+
+    const selectedSet = new Set(selectedIds)
+    setDeletedStudentIds((current) => {
+      const next = new Set(current)
+      selectedSet.forEach((id) => next.add(id))
+      return next
+    })
+    setRowSelection({})
+    toast.success(`${selectedCount} students deleted`)
+  }
+
+  const displayedStudents = showEmpty ? [] : sourceStudents
+  const columnOptions = [
+    { id: 'className', label: 'Class' },
+    { id: 'status', label: 'Status' },
+    { id: 'lastActivity', label: 'Last activity' },
+  ]
+  const pinOptions = [
+    {
+      id: APP_DATA_TABLE_SELECTION_COLUMN_ID,
+      label: 'Selection left',
+      side: 'left' as const,
+    },
+    { id: 'name', label: 'Name left', side: 'left' as const },
+    { id: 'className', label: 'Class left', side: 'left' as const },
+    { id: 'actions', label: 'Actions right', side: 'right' as const },
+  ]
+
+  const setColumnPinned = (
+    id: string,
+    side: 'left' | 'right',
+    pinned: boolean,
+  ) => {
+    setColumnPinning((current) => {
+      const left = (current.left ?? []).filter((columnId) => columnId !== id)
+      const right = (current.right ?? []).filter((columnId) => columnId !== id)
+
+      if (pinned) {
+        if (side === 'left') {
+          left.push(id)
+        } else {
+          right.push(id)
+        }
+      }
+
+      return { left, right }
+    })
+  }
+
+  return (
+    <div className="example-data-table-demo">
+      <div className="example-data-table-switches" aria-label="Data table demo controls">
+        <Select
+          aria-label="Rendering mode"
+          options={[
+            { value: 'standard', label: 'Standard rendering' },
+            { value: 'virtual', label: 'Virtualized rendering' },
+          ]}
+          value={renderMode}
+          onChange={setRenderMode}
+        />
+        <Select
+          aria-label="Row count"
+          options={[
+            { value: 100, label: '100 rows' },
+            { value: 1000, label: '1,000 rows' },
+            { value: 10000, label: '10,000 rows' },
+          ]}
+          value={rowCount}
+          onChange={setRowCount}
+        />
+        <Select
+          aria-label="Virtual row overscan"
+          disabled={renderMode === 'standard'}
+          options={[
+            { value: 4, label: 'Overscan 4' },
+            { value: 8, label: 'Overscan 8' },
+            { value: 12, label: 'Overscan 12' },
+          ]}
+          value={overscan}
+          onChange={setOverscan}
+        />
+        <span className="example-data-table-resize-toggle">
+          <Switch
+            checked={stickyHeader}
+            size="small"
+            onChange={setStickyHeader}
+          />
+          Sticky header
+        </span>
+        <Select
+          aria-label="Table height"
+          options={[
+            { value: 320, label: 'Height 320px' },
+            { value: 420, label: 'Height 420px' },
+            { value: 520, label: 'Height 520px' },
+          ]}
+          value={tableHeight}
+          onChange={setTableHeight}
+        />
+        <Dropdown
+          trigger={['click']}
+          menu={{
+            items: pinOptions.map((option) => ({
+              key: option.id,
+              label: (
+                <Checkbox
+                  checked={(columnPinning[option.side] ?? []).includes(option.id)}
+                  onChange={(event) =>
+                    setColumnPinned(
+                      option.id,
+                      option.side,
+                      event.target.checked,
+                    )
+                  }
+                >
+                  {option.label}
+                </Checkbox>
+              ),
+            })),
+          }}
+        >
+          <Button>Pinned columns</Button>
+        </Dropdown>
+        <Button
+          disabled={
+            (columnPinning.left?.length ?? 0) === 0 &&
+            (columnPinning.right?.length ?? 0) === 0
+          }
+          onClick={() => setColumnPinning({})}
+        >
+          Reset pins
+        </Button>
+        <span className="example-data-table-resize-toggle">
+          <Switch
+            checked={resizingEnabled}
+            size="small"
+            onChange={setResizingEnabled}
+          />
+          Enable column resizing
+        </span>
+        <Select
+          aria-label="Column resize mode"
+          disabled={!resizingEnabled}
+          options={[
+            { value: 'onEnd', label: 'Resize on end' },
+            { value: 'onChange', label: 'Resize on change' },
+          ]}
+          value={resizeMode}
+          onChange={setResizeMode}
+        />
+        <Button
+          disabled={Object.keys(columnSizing).length === 0}
+          onClick={() => setColumnSizing({})}
+        >
+          Reset widths
+        </Button>
+        <Button onClick={() => setDensity((value) => value === 'comfortable' ? 'compact' : 'comfortable')}>
+          Density: {density}
+        </Button>
+        <Button onClick={() => setLoading((value) => !value)}>
+          {loading ? 'Stop loading' : 'Show loading'}
+        </Button>
+        <Button onClick={() => setShowEmpty((value) => !value)}>
+          {showEmpty ? 'Show data' : 'Show empty'}
+        </Button>
+      </div>
+
+      <AppDataView
+        toolbar={
+          <AppToolbar
+            start={
+              <>
+                <Input
+                  allowClear
+                  aria-label="Search students"
+                  placeholder="Search students"
+                  value={globalFilter}
+                  onChange={(event) => setGlobalFilter(event.target.value)}
+                />
+                <Select
+                  aria-label="Student status"
+                  options={[
+                    { value: 'all', label: 'All statuses' },
+                    { value: 'Active', label: 'Active' },
+                    { value: 'Away', label: 'Away' },
+                    { value: 'Inactive', label: 'Inactive' },
+                  ]}
+                  value={statusFilter}
+                  onChange={(value) => {
+                    setColumnFilters((current) => {
+                      const remaining = current.filter(
+                        (filter) => filter.id !== 'status',
+                      )
+                      return value === 'all'
+                        ? remaining
+                        : [...remaining, { id: 'status', value }]
+                    })
+                  }}
+                />
+                {hasActiveFilters ? (
+                  <Button
+                    onClick={() => {
+                      setGlobalFilter('')
+                      setColumnFilters([])
+                    }}
+                  >
+                    Clear filters
+                  </Button>
+                ) : null}
+              </>
+            }
+            status={<span>{showEmpty ? 0 : matchingStudentCount} students</span>}
+            end={
+              <>
+                <Dropdown
+                  trigger={['click']}
+                  menu={{
+                    items: columnOptions.map((column) => ({
+                      key: column.id,
+                      label: (
+                        <Checkbox
+                          checked={columnVisibility[column.id] !== false}
+                          onChange={(event) => {
+                            setColumnVisibility((current) => ({
+                              ...current,
+                              [column.id]: event.target.checked,
+                            }))
+                          }}
+                        >
+                          {column.label}
+                        </Checkbox>
+                      ),
+                    })),
+                  }}
+                >
+                  <Button>Columns</Button>
+                </Dropdown>
+                <Button type="primary" onClick={() => toast.success('Student form opened')}>
+                  Add student
+                </Button>
+              </>
+            }
+          />
+        }
+        selectionBar={
+          selectedCount > 0 ? (
+            <AppSelectionBar
+              actions={
+                <>
+                  <Button onClick={() => toast.success(`${selectedCount} students exported`)}>
+                    Export
+                  </Button>
+                  <Button danger onClick={() => void deleteSelected()}>
+                    Delete
+                  </Button>
+                </>
+              }
+              count={selectedCount}
+              label={`Selected ${selectedCount} students`}
+              onClear={() => setRowSelection({})}
+            />
+          ) : null
+        }
+        footer={
+          <span>
+            Showing {showEmpty ? 0 : matchingStudentCount} of {sourceStudents.length}
+            {focusedStudent ? ` · Opened ${focusedStudent.name}` : ''}
+          </span>
+        }
+      >
+        {renderMode === 'virtual' ? (
+          <AppVirtualDataTable
+            columns={columns}
+            columnFilters={columnFilters}
+            columnPinning={columnPinning}
+            columnResizeMode={resizeMode}
+            columnSizing={columnSizing}
+            columnVisibility={columnVisibility}
+            data={displayedStudents}
+            density={density}
+            emptyContent={hasActiveFilters ? 'No matching students' : 'No students'}
+            enableColumnPinning
+            enableColumnResizing={resizingEnabled}
+            estimatedRowHeight={density === 'compact' ? 38 : 48}
+            globalFilter={globalFilter}
+            getRowId={(student) => student.id}
+            loading={loading}
+            maxHeight={tableHeight}
+            onColumnFiltersChange={setColumnFilters}
+            onColumnPinningChange={setColumnPinning}
+            onColumnSizingChange={setColumnSizing}
+            onColumnVisibilityChange={setColumnVisibility}
+            onGlobalFilterChange={setGlobalFilter}
+            onRowClick={(row) => setFocusedStudent(row.original)}
+            onSortingChange={setSorting}
+            overscan={overscan}
+            selection={{
+              value: rowSelection,
+              onChange: setRowSelection,
+              getRowAriaLabel: (row) => `Select ${row.original.name}`,
+              selectAllAriaLabel: 'Select all students',
+            }}
+            stickyHeader={stickyHeader}
+            sorting={sorting}
+          />
+        ) : (
+          <AppDataTable
+            columns={columns}
+            columnFilters={columnFilters}
+            columnPinning={columnPinning}
+            columnResizeMode={resizeMode}
+            columnSizing={columnSizing}
+            columnVisibility={columnVisibility}
+            data={displayedStudents}
+            density={density}
+            emptyContent={hasActiveFilters ? 'No matching students' : 'No students'}
+            enableColumnPinning
+            enableColumnResizing={resizingEnabled}
+            globalFilter={globalFilter}
+            getRowId={(student) => student.id}
+            loading={loading}
+            maxHeight={tableHeight}
+            onColumnFiltersChange={setColumnFilters}
+            onColumnPinningChange={setColumnPinning}
+            onColumnSizingChange={setColumnSizing}
+            onColumnVisibilityChange={setColumnVisibility}
+            onGlobalFilterChange={setGlobalFilter}
+            onRowClick={(row) => setFocusedStudent(row.original)}
+            onSortingChange={setSorting}
+            selection={{
+              value: rowSelection,
+              onChange: setRowSelection,
+              getRowAriaLabel: (row) => `Select ${row.original.name}`,
+              selectAllAriaLabel: 'Select all students',
+            }}
+            stickyHeader={stickyHeader}
+            sorting={sorting}
+          />
+        )}
+      </AppDataView>
+    </div>
+  )
 }
 
 function renderFileIcon(tag: string, size = 16) {
@@ -845,6 +1385,10 @@ function renderPageContent(
   sidePaneWidth: number,
   setSidePaneOpen: (open: boolean) => void,
 ) {
+  if (active === 'dataTable') {
+    return <DataTableDemo />
+  }
+
   if (active === 'files') {
     return (
       <div className="example-context-demo">
@@ -1222,6 +1766,7 @@ export function ExampleApp() {
               children: [
                 { key: 'feedback', label: 'Feedback', badge: 'New' },
                 { key: 'utilities', label: 'Utilities' },
+                { key: 'dataTable', label: 'Data table', badge: 'New' },
                 {
                   key: 'more-components',
                   label: 'More coming soon',

@@ -1,0 +1,359 @@
+.app-data-view,
+.app-data-table {
+  --app-data-border-color: var(--app-shell-border-color, rgb(0 0 0 / 10%));
+  --app-data-surface-bg: var(--app-shell-surface-bg, #fff);
+  --app-data-text-color: var(--app-shell-text-color, #1f1f1f);
+  --app-data-muted-color: var(--app-shell-muted-text-color, #707070);
+  --app-data-hover-bg: var(--app-shell-hover-bg, rgb(0 0 0 / 5%));
+  --app-data-selected-bg: var(--app-shell-active-bg, rgb(17 94 163 / 8%));
+  --app-data-accent: var(--app-shell-accent-color, #115ea3);
+}
+
+.app-data-view {
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  color: var(--app-data-text-color);
+  background: var(--app-data-surface-bg);
+  border: 1px solid var(--app-data-border-color);
+  border-radius: 8px;
+}
+
+.app-data-view__header,
+.app-data-view__footer {
+  box-sizing: border-box;
+  padding: 12px 16px;
+}
+
+.app-data-view__header {
+  border-bottom: 1px solid var(--app-data-border-color);
+}
+
+.app-data-view__header > .app-toolbar {
+  min-height: 32px;
+  margin-bottom: 0;
+}
+
+.app-data-view__header > .app-selection-bar {
+  padding: 0;
+}
+
+.app-data-view__body {
+  min-width: 0;
+}
+
+.app-data-view__footer {
+  color: var(--app-data-muted-color);
+  font-size: 12px;
+  border-top: 1px solid var(--app-data-border-color);
+}
+
+.app-selection-bar {
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  min-height: 32px;
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px 16px;
+  color: var(--app-data-text-color, var(--app-shell-text-color, #1f1f1f));
+}
+
+.app-selection-bar__label,
+.app-selection-bar__actions {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.app-selection-bar__label {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.app-selection-bar__label > svg {
+  flex: 0 0 auto;
+  color: var(--app-data-accent, var(--app-shell-accent-color, #115ea3));
+}
+
+.app-selection-bar__actions {
+  margin-left: auto;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+}
+
+.app-selection-bar__clear {
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  color: inherit;
+  font: inherit;
+  background: transparent;
+  border: 0;
+  border-radius: 6px;
+  cursor: default;
+}
+
+.app-selection-bar__clear:hover {
+  background: var(--app-data-hover-bg, var(--app-shell-hover-bg, rgb(0 0 0 / 5%)));
+}
+
+.app-selection-bar__clear:active {
+  transform: translateY(1px);
+}
+
+.app-selection-bar__clear:focus-visible,
+.app-data-table__sort-button:focus-visible,
+.app-data-table__checkbox:focus-visible,
+.app-data-table__row--clickable:focus-visible {
+  outline: 2px solid var(--app-data-accent);
+  outline-offset: -2px;
+}
+
+.app-data-table {
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  color: var(--app-data-text-color);
+  background: var(--app-data-surface-bg);
+  border: 1px solid var(--app-data-border-color);
+  border-radius: 8px;
+}
+
+.app-data-view__body > .app-data-table {
+  border: 0;
+  border-radius: 0;
+}
+
+.app-data-table--comfortable {
+  --app-data-header-height: 44px;
+  --app-data-row-height: 48px;
+  --app-data-cell-padding: 8px 14px;
+  --app-data-sort-padding: 4px 6px;
+}
+
+.app-data-table--compact {
+  --app-data-header-height: 36px;
+  --app-data-row-height: 38px;
+  --app-data-cell-padding: 6px 10px;
+  --app-data-sort-padding: 3px 5px;
+}
+
+.app-data-table__scroll {
+  position: relative;
+  overflow: auto;
+  border-radius: inherit;
+}
+
+.app-data-view__body > .app-data-table > .app-data-table__scroll {
+  border-radius: 0;
+}
+
+.app-data-table__table {
+  width: max-content;
+  min-width: 100%;
+  border-spacing: 0;
+  table-layout: fixed;
+  color: inherit;
+  font-size: 13px;
+}
+
+.app-data-table th,
+.app-data-table td {
+  box-sizing: border-box;
+  padding: var(--app-data-cell-padding);
+  text-align: left;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  border-bottom: 1px solid var(--app-data-border-color);
+}
+
+.app-data-table th {
+  position: relative;
+  height: var(--app-data-header-height);
+  color: var(--app-data-muted-color);
+  font-size: 12px;
+  font-weight: 600;
+  background: var(--app-data-surface-bg);
+  overflow: visible;
+}
+
+.app-data-table--sticky-header th {
+  background: var(--app-data-surface-bg);
+}
+
+.app-data-table td {
+  height: var(--app-data-row-height);
+}
+
+.app-data-table [data-pinned] {
+  background: var(--app-data-surface-bg);
+}
+
+.app-data-table [data-pinned-edge='left'] {
+  box-shadow: inset -10px 0 8px -10px
+    color-mix(in srgb, var(--app-data-text-color) 30%, transparent);
+}
+
+.app-data-table [data-pinned-edge='right'] {
+  box-shadow: inset 10px 0 8px -10px
+    color-mix(in srgb, var(--app-data-text-color) 30%, transparent);
+}
+
+.app-data-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.app-data-table__header-content {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.app-data-table__sort-button {
+  width: 100%;
+  min-width: 0;
+  margin: 0;
+  padding: var(--app-data-sort-padding);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: inherit;
+  font: inherit;
+  font-weight: inherit;
+  text-align: left;
+  background: transparent;
+  border: 0;
+  border-radius: 4px;
+  cursor: default;
+}
+
+.app-data-table__sort-button:hover {
+  color: var(--app-data-text-color);
+  background: var(--app-data-hover-bg);
+}
+
+.app-data-table__sort-button > span:first-child {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.app-data-table__sort-indicator {
+  width: 10px;
+  flex: 0 0 10px;
+  color: var(--app-data-accent);
+}
+
+.app-data-table__resize-handle {
+  position: absolute;
+  z-index: 2;
+  top: 0;
+  right: -4px;
+  bottom: 0;
+  width: 8px;
+  cursor: col-resize;
+  touch-action: none;
+  user-select: none;
+}
+
+.app-data-table__resize-indicator {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 1px;
+  pointer-events: none;
+  background: var(--app-data-border-color);
+  transform: translateX(-50%);
+}
+
+.app-data-table__resize-handle:hover .app-data-table__resize-indicator {
+  width: 2px;
+  background: var(--app-data-accent);
+}
+
+.app-data-table__resize-handle[data-resizing='true'] {
+  z-index: 3;
+}
+
+.app-data-table__resize-handle[data-resizing='true'] .app-data-table__resize-indicator {
+  width: 2px;
+  background: var(--app-data-accent);
+}
+
+.app-data-table__checkbox {
+  width: 15px;
+  height: 15px;
+  margin: 0;
+  vertical-align: middle;
+  accent-color: var(--app-data-accent);
+}
+
+.app-data-table [data-column-id='__app_data_table_selection'] {
+  padding-inline: 0;
+  text-align: center;
+}
+
+.app-data-table tr[data-selected='true'] td {
+  background: var(--app-data-selected-bg);
+}
+
+.app-data-table__row--clickable {
+  cursor: default;
+}
+
+.app-data-table__row--clickable:hover td {
+  background: var(--app-data-hover-bg);
+}
+
+.app-data-table__row--clickable[data-selected='true']:hover td {
+  background: color-mix(in srgb, var(--app-data-selected-bg), var(--app-data-hover-bg));
+}
+
+.app-data-table td.app-data-table__state {
+  height: calc(var(--app-data-row-height) * 2);
+  max-width: none;
+  color: var(--app-data-muted-color);
+  text-align: center;
+}
+
+.app-data-table--virtualized tbody tr:not(.app-data-table__virtual-spacer):not(.app-data-table__state-row),
+.app-data-table--virtualized tbody tr:not(.app-data-table__virtual-spacer):not(.app-data-table__state-row) td {
+  height: var(--app-data-table-virtual-row-height);
+  max-height: var(--app-data-table-virtual-row-height);
+}
+
+.app-data-table__virtual-spacer,
+.app-data-table__virtual-spacer:hover {
+  pointer-events: none;
+  background: transparent;
+}
+
+.app-data-table__virtual-spacer td,
+.app-data-table__virtual-spacer:hover td {
+  height: 0;
+  padding: 0;
+  background: transparent;
+  border: 0;
+}
+
+@media (max-width: 560px) {
+  .app-selection-bar__actions {
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .app-selection-bar__clear:active {
+    transform: none;
+  }
+}

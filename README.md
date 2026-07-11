@@ -167,6 +167,391 @@ const themeConfig = {
 }
 ```
 
+## Optional Data View
+
+Data-view components are available from the optional `react-desktop-shell/data`
+subpath. Install TanStack Table alongside the shell when you use this entry:
+
+```bash
+npm install react-desktop-shell @tanstack/react-table
+```
+
+`AppDataView` composes the toolbar or selection bar, table, and optional footer
+into one bordered surface. `AppSelectionBar` lays out a selection count and
+consumer-provided batch actions without owning selection state. `AppDataTable`
+uses TanStack Table's `ColumnDef<TData>` directly.
+
+The data table supports client or manual sorting, global filtering, column
+filtering, manual/server-side filtering, column visibility, controlled row
+selection, loading and empty states, comfortable and compact density, row
+activation, horizontal scrolling, and opt-in column sizing. Column sizing
+supports controlled or uncontrolled state, mouse and touch resizing, minimum
+and maximum widths, per-column resize control, `onEnd` and `onChange` modes,
+and double-click reset. Sticky table headers and controlled or uncontrolled
+left/right column pinning include pinned boundary shadows and compose with
+resizing and visibility. The table does not provide filtering controls,
+pagination, column order dragging, or virtualization.
+
+```tsx
+import { useState } from 'react'
+import type { ColumnDef, RowSelectionState } from '@tanstack/react-table'
+
+import { AppToolbar } from 'react-desktop-shell'
+import {
+  AppDataTable,
+  AppDataView,
+  AppSelectionBar,
+} from 'react-desktop-shell/data'
+
+type Student = {
+  id: string
+  name: string
+}
+
+const columns: ColumnDef<Student>[] = [
+  { accessorKey: 'name', header: 'Name' },
+]
+
+function StudentsView({ students }: { students: Student[] }) {
+  const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
+  const selectedCount = Object.keys(rowSelection).length
+
+  return (
+    <AppDataView
+      toolbar={<AppToolbar status={`${students.length} students`} />}
+      selectionBar={
+        selectedCount > 0 ? (
+          <AppSelectionBar
+            count={selectedCount}
+            onClear={() => setRowSelection({})}
+          />
+        ) : null
+      }
+      footer={`Showing ${students.length} students`}
+    >
+      <AppDataTable
+        columns={columns}
+        data={students}
+        getRowId={(student) => student.id}
+        selection={{
+          value: rowSelection,
+          onChange: setRowSelection,
+        }}
+      />
+    </AppDataView>
+  )
+}
+```
+
+Provide a stable `getRowId` when enabling row selection, sorting, or filtering.
+The table never adds fields to or mutates input data.
+
+### Filtering and column visibility
+
+`AppDataTable` accepts TanStack Table state but does not render a search input,
+filter Select, or column settings menu. Put those controls in `AppToolbar` and
+pass their state into the table.
+
+Global filtering supports both TanStack built-in filter names and compatible
+custom functions through `globalFilterFn`:
+
+```tsx
+const [globalFilter, setGlobalFilter] = useState('')
+
+<AppDataTable
+  data={students}
+  columns={columns}
+  globalFilter={globalFilter}
+  onGlobalFilterChange={setGlobalFilter}
+/>
+```
+
+Column filters target stable column IDs. Custom named filter functions can be
+registered with `filterFns` and referenced by each `ColumnDef.filterFn`.
+
+```tsx
+import type { ColumnFiltersState } from '@tanstack/react-table'
+
+const [columnFilters, setColumnFilters] =
+  useState<ColumnFiltersState>([])
+
+<AppDataTable
+  data={students}
+  columns={columns}
+  columnFilters={columnFilters}
+  onColumnFiltersChange={setColumnFilters}
+/>
+```
+
+Column visibility uses TanStack column IDs. A column with
+`enableHiding: false` should not be offered by the toolbar's column menu. The
+internal selection column is always protected from hiding.
+
+```tsx
+import type { VisibilityState } from '@tanstack/react-table'
+
+const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({
+  lastActivity: false,
+})
+
+<AppDataTable
+  data={students}
+  columns={columns}
+  columnVisibility={columnVisibility}
+  onColumnVisibilityChange={setColumnVisibility}
+/>
+```
+
+Hidden columns retain their sorting and filtering state. Changing a filter also
+does not clear row selection. For server-side filtering, provide already
+filtered data and enable `manualFiltering`; the component still reports filter
+state changes but does not filter the rows again.
+
+```tsx
+<AppDataTable
+  data={serverFilteredData}
+  columns={columns}
+  columnFilters={columnFilters}
+  onColumnFiltersChange={setColumnFilters}
+  manualFiltering
+/>
+```
+
+### Column sizing
+
+Column dimensions use TanStack Table's native `ColumnDef` fields. Set `size`,
+`minSize`, and `maxSize` on each column, and use `enableResizing: false` for a
+column that must remain fixed. Resizing is disabled by default and uses the
+`onEnd` mode when enabled; `onEnd` avoids committing high-frequency width
+updates while the pointer is moving.
+
+```tsx
+const columns: ColumnDef<Student>[] = [
+  {
+    accessorKey: 'name',
+    header: 'Name',
+    size: 220,
+    minSize: 140,
+    maxSize: 400,
+  },
+  {
+    id: 'actions',
+    header: 'Actions',
+    size: 100,
+    minSize: 100,
+    maxSize: 100,
+    enableResizing: false,
+  },
+]
+
+<AppDataTable
+  data={students}
+  columns={columns}
+  enableColumnResizing
+/>
+```
+
+Pass `columnSizing` for controlled sizing, or use `defaultColumnSizing` for an
+uncontrolled initial value. Dragging supports mouse and touch input. Double-click
+a resize handle to restore that column's `ColumnDef.size` without changing other
+table state.
+
+```tsx
+import type {
+  ColumnResizeMode,
+  ColumnSizingState,
+} from '@tanstack/react-table'
+
+const [columnSizing, setColumnSizing] = useState<ColumnSizingState>({})
+const [resizeMode, setResizeMode] = useState<ColumnResizeMode>('onEnd')
+
+<AppDataTable
+  data={students}
+  columns={columns}
+  enableColumnResizing
+  columnSizing={columnSizing}
+  onColumnSizingChange={setColumnSizing}
+  columnResizeMode={resizeMode}
+/>
+```
+
+Column visibility and sizing remain independent, so hiding and showing a column
+does not discard its stored size. Persisting `columnSizing` is the application's
+responsibility; the component does not read from or write to `localStorage`.
+
+### Sticky header and column pinning
+
+Sticky headers remain inside the AppDataTable scroll container. Pass a numeric
+or CSS `maxHeight` to create vertical scrolling within that same container;
+horizontal header and body scrolling therefore stay synchronized without
+JavaScript scroll listeners.
+
+```tsx
+<AppDataTable
+  data={students}
+  columns={columns}
+  stickyHeader
+  maxHeight={480}
+/>
+```
+
+Column pinning uses stable TanStack column IDs. Offsets are derived from the
+current column sizes, so resizing a pinned column immediately updates the pinned
+layout. Boundary shadows mark only the last left-pinned and first right-pinned
+columns.
+
+```tsx
+import type { ColumnPinningState } from '@tanstack/react-table'
+
+const [columnPinning, setColumnPinning] = useState<ColumnPinningState>({
+  left: ['name'],
+  right: ['actions'],
+})
+
+<AppDataTable
+  data={students}
+  columns={columns}
+  columnPinning={columnPinning}
+  onColumnPinningChange={setColumnPinning}
+/>
+```
+
+Use the exported stable ID to pin the optional internal selection column without
+guessing implementation details:
+
+```tsx
+import {
+  APP_DATA_TABLE_SELECTION_COLUMN_ID,
+} from 'react-desktop-shell/data'
+
+<AppDataTable
+  data={students}
+  columns={columns}
+  selection={selection}
+  defaultColumnPinning={{
+    left: [APP_DATA_TABLE_SELECTION_COLUMN_ID, 'name'],
+  }}
+/>
+```
+
+Hiding a pinned column does not remove its ID from `columnPinning`; showing it
+again restores the pinned position and existing size. Pinning menus and state
+persistence belong to the application. Column order dragging and virtual rows
+are separate concerns.
+
+### Virtualized rows
+
+Large fixed-height datasets can use the optional
+`react-desktop-shell/data/virtual` entry. The regular `AppDataTable` does not
+require React Virtual; install it only when using `AppVirtualDataTable`:
+
+```bash
+npm install react-desktop-shell \
+  @tanstack/react-table \
+  @tanstack/react-virtual
+```
+
+```tsx
+import {
+  AppVirtualDataTable,
+} from 'react-desktop-shell/data/virtual'
+
+<AppVirtualDataTable
+  data={students}
+  columns={columns}
+  getRowId={(row) => row.id}
+  maxHeight={520}
+  stickyHeader
+/>
+```
+
+`maxHeight` is required because the virtualizer needs an explicit scrolling
+viewport. It accepts pixel numbers or CSS values such as `60vh` and
+`calc(100vh - 260px)`. Virtualization consumes the final filtered and sorted
+TanStack Row Model and uses each stable `row.id` as its item key.
+
+```tsx
+<AppVirtualDataTable
+  data={students}
+  columns={columns}
+  getRowId={(row) => row.id}
+  maxHeight="60vh"
+  estimatedRowHeight={40}
+  overscan={8}
+/>
+```
+
+The component supports fixed or predictably sized rows only.
+`estimatedRowHeight` controls both the virtual estimate and actual CSS row
+height; when omitted it follows the comfortable or compact density. Custom cell
+renderers should not expand the row height. Dynamic-height rows, virtual
+columns, infinite loading, pagination, and a public `scrollToIndex` API are not
+currently supported.
+
+### Data view API
+
+```tsx
+export interface AppDataViewProps {
+  toolbar?: ReactNode
+  selectionBar?: ReactNode
+  footer?: ReactNode
+  children: ReactNode
+  className?: string
+  style?: CSSProperties
+}
+
+export interface AppSelectionBarProps {
+  count: number
+  label?: ReactNode
+  actions?: ReactNode
+  onClear?: () => void
+  clearAriaLabel?: string
+  className?: string
+  style?: CSSProperties
+}
+
+export interface AppDataTableProps<TData> {
+  data: TData[]
+  columns: ColumnDef<TData>[]
+  getRowId?: TableOptions<TData>['getRowId']
+  selection?: AppDataTableSelectionOptions<TData>
+  sorting?: SortingState
+  defaultSorting?: SortingState
+  onSortingChange?: OnChangeFn<SortingState>
+  manualSorting?: boolean
+  globalFilter?: unknown
+  defaultGlobalFilter?: unknown
+  onGlobalFilterChange?: OnChangeFn<unknown>
+  globalFilterFn?: TableOptions<TData>['globalFilterFn']
+  columnFilters?: ColumnFiltersState
+  defaultColumnFilters?: ColumnFiltersState
+  onColumnFiltersChange?: OnChangeFn<ColumnFiltersState>
+  filterFns?: TableOptions<TData>['filterFns']
+  manualFiltering?: boolean
+  columnVisibility?: VisibilityState
+  defaultColumnVisibility?: VisibilityState
+  onColumnVisibilityChange?: OnChangeFn<VisibilityState>
+  enableColumnResizing?: boolean
+  columnSizing?: ColumnSizingState
+  defaultColumnSizing?: ColumnSizingState
+  onColumnSizingChange?: OnChangeFn<ColumnSizingState>
+  columnResizeMode?: ColumnResizeMode
+  stickyHeader?: boolean
+  maxHeight?: number | string
+  enableColumnPinning?: TableOptions<TData>['enableColumnPinning']
+  columnPinning?: ColumnPinningState
+  defaultColumnPinning?: ColumnPinningState
+  onColumnPinningChange?: OnChangeFn<ColumnPinningState>
+  loading?: boolean
+  loadingContent?: ReactNode
+  emptyContent?: ReactNode
+  density?: 'comfortable' | 'compact'
+  onRowClick?: (row: Row<TData>, event: MouseEvent<HTMLTableRowElement>) => void
+  className?: string
+  style?: CSSProperties
+}
+```
+
 ## App Page
 
 `AppPage` provides a consistent content-page layout with a title, description, actions area, and a subtle enter animation.

@@ -94,6 +94,67 @@ body {
   white-space: nowrap;
 }
 
+.example-data-table-demo {
+  width: 100%;
+  min-width: 0;
+  display: grid;
+  gap: 12px;
+}
+
+.example-data-table-switches {
+  display: flex;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.example-data-table-resize-toggle {
+  min-height: 32px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--app-shell-muted-text-color);
+  font-size: 13px;
+}
+
+.example-data-table-switches > .ant-select {
+  width: 164px;
+}
+
+.example-data-table-demo .app-toolbar__start .ant-input-affix-wrapper {
+  width: min(240px, 100%);
+}
+
+.example-data-table-demo .app-toolbar__start .ant-select {
+  width: 150px;
+}
+
+.example-student-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.example-student-status::before {
+  width: 7px;
+  height: 7px;
+  content: '';
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.example-student-status--active {
+  color: #16803c;
+}
+
+.example-student-status--away {
+  color: #a15c00;
+}
+
+.example-student-status--inactive {
+  color: var(--app-shell-muted-text-color);
+}
+
 .example-overview,
 .example-tool-grid {
   display: grid;
