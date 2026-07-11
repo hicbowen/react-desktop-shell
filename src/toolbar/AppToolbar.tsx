@@ -4,14 +4,12 @@ import './AppToolbar.css'
 export function AppToolbar({
   start,
   status,
-  center,
   end,
   children,
   className,
 }: AppToolbarProps) {
   const classNames = ['app-toolbar']
   const hasChildren = children !== undefined && children !== null
-  const statusContent = status ?? center
 
   if (className) {
     classNames.push(className)
@@ -26,11 +24,11 @@ export function AppToolbar({
           {start !== undefined && start !== null ? (
             <div className="app-toolbar__start">{start}</div>
           ) : null}
-          {(statusContent !== undefined && statusContent !== null) ||
+          {(status !== undefined && status !== null) ||
           (end !== undefined && end !== null) ? (
             <div className="app-toolbar__trailing">
-              {statusContent !== undefined && statusContent !== null ? (
-                <div className="app-toolbar__status">{statusContent}</div>
+              {status !== undefined && status !== null ? (
+                <div className="app-toolbar__status">{status}</div>
               ) : null}
               {end !== undefined && end !== null ? (
                 <div className="app-toolbar__end">{end}</div>

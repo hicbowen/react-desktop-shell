@@ -264,8 +264,6 @@ These components do not provide controls such as `Switch` or `Select`; pass any 
 
 The toolbar does not provide buttons, inputs, selects, or command management. Pass controls from any React component library through `start` and `end`. Use `status` for passive information such as counts, synchronization state, or the current data range. When `children` is provided, it takes precedence over the three named regions and renders as custom toolbar content.
 
-The deprecated `center` prop remains available for compatibility. When both are provided, `status` takes precedence.
-
 `AppPage.actions` places primary page actions beside the page title. `AppToolbar` belongs below the page header and organizes content tools such as search, filters, status, import, and export controls.
 
 ## Title Bar
@@ -780,7 +778,6 @@ Calling `show` again with the same id updates the existing toast. At most four t
 | ----------- | ----------- | ----------- | ------------------------------------------------ |
 | `start`     | `ReactNode` | `undefined` | Left region for search and filtering controls.   |
 | `status`    | `ReactNode` | `undefined` | Passive information such as counts or state.     |
-| `center`    | `ReactNode` | `undefined` | Deprecated compatibility alias for `status`.     |
 | `end`       | `ReactNode` | `undefined` | Right region for page tool actions.              |
 | `children`  | `ReactNode` | `undefined` | Custom content that overrides the named regions. |
 | `className` | `string`    | `undefined` | Additional class name for the toolbar.           |
