@@ -18,6 +18,7 @@ import {
 import {
   AppDialog,
   AppContextMenu,
+  AppInfoBar,
   AppPage,
   AppRail,
   AppShell,
@@ -58,7 +59,7 @@ const pages = {
   },
   feedback: {
     title: 'Feedback components',
-    description: 'Try dialogs, message boxes, and toast notifications.',
+    description: 'Compare inline info bars, toast notifications, and modal feedback.',
   },
   utilities: {
     title: 'Workspace utilities',
@@ -80,6 +81,125 @@ function renderFileIcon(tag: string, size = 16) {
   }
 
   return <FileText size={size} />
+}
+
+function InfoBarDemo() {
+  const messageBox = useAppMessageBox()
+  const toast = useAppToast()
+  const [infoVisible, setInfoVisible] = useState(true)
+  const [successVisible, setSuccessVisible] = useState(true)
+  const [errorVisible, setErrorVisible] = useState(true)
+
+  const showDetails = (title: string, message: string) => {
+    void messageBox.show({
+      title,
+      message,
+      buttons: [{ key: 'close', label: 'Close', primary: true }],
+      defaultButton: 'close',
+      cancelButton: 'close',
+    })
+  }
+
+  return (
+    <div className="example-info-bar-demo">
+      <div className="example-section-heading">
+        <strong>Info bar</strong>
+        <span>Persistent feedback inside the page layout</span>
+      </div>
+
+      <div className="example-info-bar-list">
+        {infoVisible ? (
+          <AppInfoBar
+            status="info"
+            title="Update available"
+            message="Version v0.6.0 is ready. Review the changes before updating."
+            action={
+              <button
+                className="example-info-bar-action"
+                type="button"
+                onClick={() =>
+                  showDetails(
+                    'Version v0.6.0',
+                    'This simulated update includes the next set of desktop shell components.',
+                  )
+                }
+              >
+                View update
+              </button>
+            }
+            dismissible
+            onDismiss={() => setInfoVisible(false)}
+          />
+        ) : (
+          <button
+            className="example-info-bar-restore"
+            type="button"
+            onClick={() => setInfoVisible(true)}
+          >
+            Show InfoBar
+          </button>
+        )}
+
+        {successVisible ? (
+          <AppInfoBar
+            status="success"
+            title="Student data imported"
+            message="32 students were imported successfully and 3 duplicate records were skipped."
+            action={
+              <button
+                className="example-info-bar-action"
+                type="button"
+                onClick={() =>
+                  showDetails(
+                    'Import details',
+                    '32 records were added. Three matching student records were left unchanged.',
+                  )
+                }
+              >
+                View details
+              </button>
+            }
+            dismissible
+            onDismiss={() => setSuccessVisible(false)}
+          />
+        ) : null}
+
+        <AppInfoBar
+          status="warning"
+          title="Offline mode"
+          message="Some cloud features are unavailable. Locally cached data is currently displayed."
+          action={
+            <button
+              className="example-info-bar-action"
+              type="button"
+              onClick={() => toast.info('Reconnecting to cloud services…')}
+            >
+              Reconnect
+            </button>
+          }
+        />
+
+        {errorVisible ? (
+          <AppInfoBar
+            status="error"
+            title="AI service connection failed"
+            message="The AI service could not be reached. Check the network or service configuration."
+            action={
+              <button
+                className="example-info-bar-action"
+                type="button"
+                onClick={() => toast.info('Retrying the AI service…')}
+              >
+                Retry
+              </button>
+            }
+            dismissible
+            onDismiss={() => setErrorVisible(false)}
+          />
+        ) : null}
+      </div>
+    </div>
+  )
 }
 
 function DialogMessageBoxDemo() {
@@ -657,6 +777,7 @@ function renderPageContent(
   if (active === 'feedback') {
     return (
       <div className="example-component-stack">
+        <InfoBarDemo />
         <ToastDemo />
         <DialogMessageBoxDemo />
       </div>

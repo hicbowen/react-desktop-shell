@@ -486,6 +486,21 @@ The built-in editable menu includes Undo, Cut, Copy, Paste, Delete, and Select a
 
 This is intended for Wails, Electron, Tauri, or other hosts that want to bridge native clipboard APIs without adding a runtime dependency to `react-desktop-shell`.
 
+## Info bar
+
+`AppInfoBar` provides inline persistent feedback for important application states, with semantic statuses, actions, and optional dismissal. It renders directly in the page layout and does not require a provider or global API.
+
+```tsx
+<AppInfoBar
+  status="warning"
+  title="Offline mode"
+  message="Some cloud features are currently unavailable."
+  action={<button onClick={retry}>Retry</button>}
+  dismissible
+  onDismiss={handleDismiss}
+/>
+```
+
 ## Dialog
 
 `AppDialog` is a controlled, shell-managed modal dialog. It renders into the shell overlay layer, traps focus while open, restores focus on close, and closes on Escape by default. Overlay clicks do not close the dialog unless opted in.

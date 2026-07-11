@@ -1,0 +1,114 @@
+.app-info-bar {
+  --app-info-bar-accent: var(--app-shell-info-fg);
+
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  padding: 12px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  color: var(--app-shell-text-color);
+  background: var(--app-shell-surface-bg);
+  border: 1px solid var(--app-shell-border-color);
+  border-left: 3px solid var(--app-info-bar-accent);
+  border-radius: 7px;
+}
+
+.app-info-bar--success {
+  --app-info-bar-accent: var(--app-shell-success-fg);
+}
+
+.app-info-bar--warning {
+  --app-info-bar-accent: var(--app-shell-warning-fg);
+}
+
+.app-info-bar--error {
+  --app-info-bar-accent: var(--app-shell-danger-fg);
+}
+
+.app-info-bar__icon {
+  width: 18px;
+  height: 18px;
+  align-self: start;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  color: var(--app-info-bar-accent);
+}
+
+.app-info-bar__icon > svg {
+  width: 18px;
+  height: 18px;
+  display: block;
+}
+
+.app-info-bar__content {
+  min-width: 0;
+  flex: 1 1 280px;
+  display: grid;
+  gap: 3px;
+}
+
+.app-info-bar__title {
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
+.app-info-bar__message,
+.app-info-bar__details {
+  color: var(--app-shell-muted-text-color);
+  font-size: 12px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.app-info-bar__details {
+  margin-top: 3px;
+}
+
+.app-info-bar__action {
+  min-width: max-content;
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.app-info-bar__dismiss {
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: var(--app-shell-muted-text-color);
+  font: inherit;
+  background: transparent;
+  border: 0;
+  border-radius: 6px;
+  cursor: default;
+}
+
+.app-info-bar__dismiss > svg {
+  width: 16px;
+  height: 16px;
+}
+
+.app-info-bar__dismiss:hover {
+  background: var(--app-shell-hover-bg);
+}
+
+.app-info-bar__dismiss:active {
+  background: var(--app-shell-active-bg);
+}
+
+.app-info-bar__dismiss:focus-visible {
+  outline: 2px solid var(--app-shell-accent-color);
+  outline-offset: 1px;
+}

@@ -1,6 +1,7 @@
 export { AppShell } from './shell/AppShell'
 export { AppContextMenu } from './context-menu/AppContextMenu'
 export { AppDialog } from './dialog/AppDialog'
+export { AppInfoBar } from './info-bar/AppInfoBar'
 export { AppPage } from './AppPage'
 export { AppRail } from './navigation/AppRail'
 export { AppSidePane } from './AppSidePane'
@@ -17,6 +18,8 @@ export type {
   AppContextMenuProps,
   AppContextMenuSeparatorItem,
   AppDialogProps,
+  AppInfoBarProps,
+  AppInfoBarStatus,
   AppMessageBox,
   AppMessageBoxButton,
   AppMessageBoxConfirmOptions,

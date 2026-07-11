@@ -18,6 +18,7 @@ export type {
   AppMessageBoxLocale,
   AppMessageBoxOptions,
 } from './dialog/types'
+export type { AppInfoBarProps, AppInfoBarStatus } from './info-bar/types'
 export type {
   AppRailProps,
   RailEntry,

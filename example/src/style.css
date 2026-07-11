@@ -207,6 +207,21 @@ body {
   background: var(--app-shell-chrome-bg);
 }
 
+.example-info-bar-demo {
+  grid-column: 1 / -1;
+  padding: 16px;
+  display: grid;
+  gap: 12px;
+  border: 1px solid var(--app-shell-border-color);
+  border-radius: 8px;
+  background: var(--app-shell-chrome-bg);
+}
+
+.example-info-bar-list {
+  display: grid;
+  gap: 10px;
+}
+
 .example-toast-demo {
   grid-column: 1 / -1;
   padding: 16px;
@@ -267,6 +282,8 @@ body {
 }
 
 .example-dialog-actions button,
+.example-info-bar-action,
+.example-info-bar-restore,
 .example-side-pane-demo button,
 .example-side-pane-footer button,
 .app-dialog__actions button {
@@ -283,6 +300,8 @@ body {
 }
 
 .example-dialog-actions button:hover,
+.example-info-bar-action:hover,
+.example-info-bar-restore:hover,
 .example-side-pane-demo button:hover,
 .example-side-pane-footer button:hover,
 .app-dialog__actions button:hover {
