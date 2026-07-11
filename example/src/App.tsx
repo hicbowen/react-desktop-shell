@@ -1,4 +1,13 @@
-import { useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
+import {
+  Button,
+  ConfigProvider,
+  DatePicker,
+  Input,
+  Select,
+  Switch,
+  Table,
+} from 'antd'
 import {
   Activity,
   Boxes,
@@ -32,6 +41,39 @@ import {
   type PaneDisplayMode,
   type AppTheme,
 } from '../../src'
+import {
+  createAntdTheme,
+  type AntdThemeMode,
+} from '../../src/antd'
+
+function getSystemTheme(): AntdThemeMode {
+  if (typeof window === 'undefined') {
+    return 'light'
+  }
+
+  return window.matchMedia('(prefers-color-scheme: dark)').matches
+    ? 'dark'
+    : 'light'
+}
+
+function useResolvedTheme(themeMode: AppTheme): AntdThemeMode {
+  const [systemTheme, setSystemTheme] = useState(getSystemTheme)
+
+  useEffect(() => {
+    if (themeMode !== 'system') {
+      return
+    }
+
+    const media = window.matchMedia('(prefers-color-scheme: dark)')
+    const updateTheme = () => setSystemTheme(media.matches ? 'dark' : 'light')
+
+    updateTheme()
+    media.addEventListener('change', updateTheme)
+    return () => media.removeEventListener('change', updateTheme)
+  }, [themeMode])
+
+  return themeMode === 'system' ? systemTheme : themeMode
+}
 
 const pages = {
   overview: {
@@ -515,6 +557,59 @@ function SidePaneDemo({
   )
 }
 
+function AntdThemeDemo() {
+  return (
+    <section className="example-antd-demo">
+      <div className="example-section-heading">
+        <strong>Ant Design theme preset</strong>
+        <span>Optional controls using the shared desktop visual language</span>
+      </div>
+
+      <div className="example-antd-controls">
+        <div className="example-antd-button-group">
+          <Button>Default</Button>
+          <Button type="primary">Primary</Button>
+          <Button danger>Danger</Button>
+        </div>
+        <div className="example-antd-field">
+          <Input placeholder="Input text" />
+        </div>
+        <div className="example-antd-field example-antd-field--compact">
+          <Select
+            defaultValue="active"
+            options={[
+              { value: 'active', label: 'Active' },
+              { value: 'paused', label: 'Paused' },
+            ]}
+          />
+        </div>
+        <DatePicker />
+        <Switch defaultChecked />
+      </div>
+
+      <div className="example-antd-table">
+        <Table
+          columns={[
+            { title: 'Name', dataIndex: 'name' },
+            { title: 'Status', dataIndex: 'status' },
+            { title: 'Updated', dataIndex: 'updated' },
+          ]}
+          dataSource={[
+            {
+              key: 'flowgo',
+              name: 'FlowGo',
+              status: 'Active',
+              updated: 'Today',
+            },
+          ]}
+          pagination={false}
+          size="small"
+        />
+      </div>
+    </section>
+  )
+}
+
 function ExampleSidePane({
   open,
   width,
@@ -979,6 +1074,7 @@ function renderPageContent(
           width={sidePaneWidth}
           onOpen={() => setSidePaneOpen(true)}
         />
+        <AntdThemeDemo />
         <div className="example-tool-grid">
           {['Command palette', 'Search', 'Quick actions', 'Shortcuts'].map(
             (tool) => (
@@ -1047,10 +1143,16 @@ export function ExampleApp() {
   const [displayMode, setDisplayMode] = useState<PaneDisplayMode>('auto')
   const [sidePaneOpen, setSidePaneOpen] = useState(false)
   const [sidePaneWidth, setSidePaneWidth] = useState(380)
+  const resolvedTheme = useResolvedTheme(theme)
+  const antdTheme = useMemo(
+    () => createAntdTheme({ mode: resolvedTheme }),
+    [resolvedTheme],
+  )
   const currentPage = pages[active as keyof typeof pages]
 
   return (
-    <AppShell
+    <ConfigProvider theme={antdTheme}>
+      <AppShell
       contextMenu="app"
       title="React Desktop Shell"
       sidebar={{
@@ -1166,6 +1268,7 @@ export function ExampleApp() {
           setSidePaneOpen,
         )}
       </AppPage>
-    </AppShell>
+      </AppShell>
+    </ConfigProvider>
   )
 }

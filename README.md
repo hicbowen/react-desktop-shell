@@ -113,6 +113,60 @@ function App() {
 
 `system` is the default theme and follows the operating system color scheme through `prefers-color-scheme`. The theme is scoped to `AppShell` and does not modify `html`, `body`, or global application theme state.
 
+## Optional Ant Design Integration
+
+Ant Design support is an optional theme preset. Normal `react-desktop-shell` usage does not require AntD; install it only when importing the `/antd` entry point.
+
+```bash
+npm install react-desktop-shell antd
+```
+
+The preset configures global Ant Design tokens without wrapping AntD components or adding component-specific overrides.
+
+```tsx
+import { ConfigProvider } from 'antd'
+import { createAntdTheme } from 'react-desktop-shell/antd'
+
+const themeConfig = createAntdTheme({
+  mode: 'dark',
+})
+
+<ConfigProvider theme={themeConfig}>
+  <AppShell theme="dark">
+    <App />
+  </AppShell>
+</ConfigProvider>
+```
+
+`createAntdTheme` accepts only resolved `light` or `dark` modes. Applications using the shell's `system` mode should resolve the operating-system preference in application state before creating the AntD theme; the preset does not access browser APIs or manage theme state.
+
+Override any global token when creating the preset:
+
+```tsx
+createAntdTheme({
+  mode: 'light',
+  token: {
+    colorPrimary: '#7c5cff',
+    borderRadius: 8,
+  },
+})
+```
+
+Component-level Ant Design customization remains the consumer's responsibility. Extend the returned config when a particular component needs additional tuning:
+
+```tsx
+const baseTheme = createAntdTheme({ mode: 'light' })
+
+const themeConfig = {
+  ...baseTheme,
+  components: {
+    Table: {
+      cellPaddingBlock: 8,
+    },
+  },
+}
+```
+
 ## App Page
 
 `AppPage` provides a consistent content-page layout with a title, description, actions area, and a subtle enter animation.

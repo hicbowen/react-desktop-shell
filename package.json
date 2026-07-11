@@ -33,6 +33,10 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
     },
+    "./antd": {
+      "types": "./dist/antd/index.d.ts",
+      "import": "./dist/antd/index.js"
+    },
     "./style.css": "./dist/style.css"
   },
   "main": "./dist/index.js",
@@ -50,8 +54,14 @@
     "preview": "vite preview"
   },
   "peerDependencies": {
+    "antd": ">=5.0.0 <7.0.0",
     "react": ">=18",
     "react-dom": ">=18"
+  },
+  "peerDependenciesMeta": {
+    "antd": {
+      "optional": true
+    }
   },
   "devDependencies": {
     "@eslint/js": "^9.39.1",
@@ -59,6 +69,7 @@
     "@types/react": "^19.2.5",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^5.1.1",
+    "antd": "^6.5.0",
     "eslint": "^9.39.1",
     "eslint-plugin-react-hooks": "^7.0.1",
     "eslint-plugin-react-refresh": "^0.4.24",

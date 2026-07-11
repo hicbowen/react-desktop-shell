@@ -278,6 +278,43 @@ body {
   background: var(--app-shell-chrome-bg);
 }
 
+.example-antd-demo {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 16px;
+  display: grid;
+  gap: 16px;
+  border: 1px solid var(--app-shell-border-color);
+  border-radius: 8px;
+  background: var(--app-shell-chrome-bg);
+}
+
+.example-antd-controls,
+.example-antd-button-group {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.example-antd-field {
+  width: min(220px, 100%);
+}
+
+.example-antd-field--compact {
+  width: min(150px, 100%);
+}
+
+.example-antd-field--compact > * {
+  width: 100%;
+}
+
+.example-antd-table {
+  min-width: 0;
+  overflow-x: auto;
+}
+
 .example-side-pane-demo {
   grid-column: 1 / -1;
   padding: 16px;
