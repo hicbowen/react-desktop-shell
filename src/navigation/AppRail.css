@@ -160,6 +160,7 @@
 }
 
 .app-rail__icon {
+  position: relative;
   width: var(--app-rail-item-icon-column-width);
   height: var(--app-rail-item-icon-size);
   display: inline-flex;
@@ -182,6 +183,80 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.app-rail__badge {
+  max-width: 72px;
+  min-width: 16px;
+  height: 18px;
+  box-sizing: border-box;
+  padding: 0 6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  overflow: hidden;
+  color: var(--app-rail-accent-color);
+  background: var(--app-rail-accent-bg);
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1;
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+.app-rail__badge-content {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.app-rail__badge--collapsed {
+  position: absolute;
+  top: -4px;
+  right: -6px;
+  width: 7px;
+  min-width: 0;
+  height: 7px;
+  padding: 0;
+  overflow: visible;
+  background: transparent;
+}
+
+.app-rail__badge-indicator {
+  width: 6px;
+  height: 6px;
+  display: block;
+  background: var(--app-rail-accent-color);
+  border-radius: 50%;
+  box-shadow: 0 0 0 1.5px var(--app-shell-chrome-bg, #f3f3f3);
+}
+
+.app-rail__badge-accessible {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.app-rail__item:disabled .app-rail__badge {
+  color: var(--app-rail-disabled-text-color);
+  background: var(--app-rail-hover-bg);
+}
+
+.app-rail__item:disabled .app-rail__badge--collapsed {
+  background: transparent;
+}
+
+.app-rail__item:disabled .app-rail__badge-indicator {
+  background: var(--app-rail-disabled-text-color);
 }
 
 .app-rail__submenu-chevron {
@@ -332,6 +407,11 @@
   background: transparent;
 }
 
+.app-rail-flyout__item:disabled .app-rail__badge {
+  color: var(--app-rail-disabled-text-color);
+  background: var(--app-rail-hover-bg);
+}
+
 .app-rail-flyout__item--active {
   color: var(--app-rail-accent-color);
   background: var(--app-rail-accent-bg);
@@ -353,6 +433,7 @@
 }
 
 .app-rail-flyout__label {
+  flex: 1;
   min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;

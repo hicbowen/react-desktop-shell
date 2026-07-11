@@ -1,6 +1,7 @@
 import type { RefCallback } from 'react'
 import type { RailSubmenu as RailSubmenuModel } from './types'
 import { RailItem } from './RailItem'
+import { RailBadge } from './RailBadge'
 import type { SelectionDirection } from './types'
 
 function ChevronIcon() {
@@ -59,10 +60,26 @@ export function RailSubmenu({
         aria-expanded={collapsed ? flyoutOpen : expanded}
         aria-haspopup={collapsed ? 'dialog' : undefined}
       >
-        {item.icon && <span className="app-rail__icon">{item.icon}</span>}
+        {(item.icon || collapsed) && (
+          <span className="app-rail__icon">
+            {item.icon}
+            {collapsed ? (
+              <RailBadge
+                content={item.badge}
+                ariaLabel={item.badgeAriaLabel}
+                collapsed
+              />
+            ) : null}
+          </span>
+        )}
         {!collapsed && (
           <>
             <span className="app-rail__label">{item.label}</span>
+            <RailBadge
+              content={item.badge}
+              ariaLabel={item.badgeAriaLabel}
+              collapsed={false}
+            />
             <span
               className={[
                 'app-rail__submenu-chevron',

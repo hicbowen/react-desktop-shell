@@ -1105,6 +1105,8 @@ export function ExampleApp() {
               key: 'activity',
               label: 'Activity',
               icon: <Activity size={16} />,
+              badge: 3,
+              badgeAriaLabel: '3 unread activities',
             },
             {
               type: 'group',
@@ -1116,7 +1118,7 @@ export function ExampleApp() {
               label: 'Component demos',
               icon: <Boxes size={16} />,
               children: [
-                { key: 'feedback', label: 'Feedback' },
+                { key: 'feedback', label: 'Feedback', badge: 'New' },
                 { key: 'utilities', label: 'Utilities' },
                 {
                   key: 'more-components',

@@ -5,6 +5,8 @@ export type RailLinkItem = {
   key: string
   label: string
   icon?: ReactNode
+  badge?: ReactNode
+  badgeAriaLabel?: string
   disabled?: boolean
 }
 
@@ -15,6 +17,8 @@ export type RailSubmenu = {
   key: string
   label: string
   icon?: ReactNode
+  badge?: ReactNode
+  badgeAriaLabel?: string
   disabled?: boolean
   children: RailLinkItem[]
 }

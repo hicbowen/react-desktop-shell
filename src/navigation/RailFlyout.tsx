@@ -2,6 +2,7 @@ import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import type { RailSubmenu } from './types'
 import type { FlyoutState } from './types'
+import { RailBadge } from './RailBadge'
 
 const FLYOUT_GAP = 6
 const FLYOUT_MARGIN = 8
@@ -117,6 +118,11 @@ export function RailFlyout({
               <span className="app-rail-flyout__icon">{child.icon}</span>
             ) : null}
             <span className="app-rail-flyout__label">{child.label}</span>
+            <RailBadge
+              content={child.badge}
+              ariaLabel={child.badgeAriaLabel}
+              collapsed={false}
+            />
           </button>
         ))}
       </div>

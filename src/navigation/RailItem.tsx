@@ -1,5 +1,6 @@
 import type { RailLinkItem } from './types'
 import type { SelectionDirection } from './types'
+import { RailBadge } from './RailBadge'
 
 export function RailItem({
   item,
@@ -41,11 +42,27 @@ export function RailItem({
       type="button"
     >
       {(item.icon || !nested) && (
-        <span className="app-rail__icon">{item.icon}</span>
+        <span className="app-rail__icon">
+          {item.icon}
+          {collapsed && !nested ? (
+            <RailBadge
+              content={item.badge}
+              ariaLabel={item.badgeAriaLabel}
+              collapsed
+            />
+          ) : null}
+        </span>
       )}
       {(!collapsed || nested) && (
         <span className="app-rail__label">{item.label}</span>
       )}
+      {!collapsed || nested ? (
+        <RailBadge
+          content={item.badge}
+          ariaLabel={item.badgeAriaLabel}
+          collapsed={false}
+        />
+      ) : null}
     </button>
   )
 }

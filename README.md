@@ -292,6 +292,22 @@ If `onMinimize`, `onToggleMaximize`, or `onClose` are omitted, clicking the matc
 
 Disabled rail items cannot be selected and do not trigger `onChange`. A controlled `value` may still reference a disabled item; `AppRail` does not modify the host application's selection state.
 
+Rail link items and submenu parents support passive badges for counts and short status text.
+
+```tsx
+const items = [
+  {
+    key: 'activity',
+    label: 'Activity',
+    icon: <ActivityIcon />,
+    badge: 3,
+    badgeAriaLabel: '3 unread activities',
+  },
+]
+```
+
+Badges are display-only and are not separate click targets. Use them for numbers or short text such as `New`, not buttons, inputs, or complex interactive content. In a collapsed rail, a badge becomes a small status dot on the icon; submenu flyouts continue to show the full badge. Provide `badgeAriaLabel` for complex or non-text badge content. Child badges are not automatically aggregated onto their submenu parent.
+
 ## Groups
 
 Use group entries to separate related navigation items. Group labels are hidden while the rail is collapsed.
@@ -831,6 +847,8 @@ export type RailLinkItem = {
   key: string
   label: string
   icon?: ReactNode
+  badge?: ReactNode
+  badgeAriaLabel?: string
   disabled?: boolean
 }
 
@@ -841,6 +859,8 @@ export type RailSubmenu = {
   key: string
   label: string
   icon?: ReactNode
+  badge?: ReactNode
+  badgeAriaLabel?: string
   disabled?: boolean
   children: RailLinkItem[]
 }
