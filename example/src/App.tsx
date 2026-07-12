@@ -801,7 +801,19 @@ function DialogMessageBoxDemo() {
   const toast = useAppToast()
   const [profileOpen, setProfileOpen] = useState(false)
   const [longOpen, setLongOpen] = useState(false)
+  const [updateCheckOpen, setUpdateCheckOpen] = useState(false)
+  const [updateCheckComplete, setUpdateCheckComplete] = useState(false)
   const [result, setResult] = useState('No result yet')
+
+  useEffect(() => {
+    if (!updateCheckOpen) {
+      return
+    }
+
+    const timeout = window.setTimeout(() => setUpdateCheckComplete(true), 1000)
+
+    return () => window.clearTimeout(timeout)
+  }, [updateCheckOpen])
 
   const runConfirm = async () => {
     const confirmed = await messageBox.confirm({
@@ -865,6 +877,15 @@ function DialogMessageBoxDemo() {
         <button type="button" onClick={() => setLongOpen(true)}>
           Open long dialog
         </button>
+        <button
+          type="button"
+          onClick={() => {
+            setUpdateCheckComplete(false)
+            setUpdateCheckOpen(true)
+          }}
+        >
+          Check for updates
+        </button>
         <button type="button" onClick={runConfirm}>
           Confirm delete
         </button>
@@ -918,6 +939,28 @@ function DialogMessageBoxDemo() {
             <textarea defaultValue="Right click works here too." rows={3} />
           </label>
         </div>
+      </AppDialog>
+
+      <AppDialog
+        open={updateCheckOpen}
+        onOpenChange={setUpdateCheckOpen}
+        title={updateCheckComplete ? 'Update check complete' : 'Checking for updates'}
+        description="This dialog stays open while its registered props change."
+        actions={
+          <button
+            className="example-primary-action"
+            type="button"
+            disabled={!updateCheckComplete}
+            aria-busy={!updateCheckComplete}
+            onClick={() => setUpdateCheckOpen(false)}
+          >
+            {updateCheckComplete ? 'Done' : 'Checking…'}
+          </button>
+        }
+      >
+        {updateCheckComplete
+          ? '当前已是最新版本'
+          : '正在检查更新……'}
       </AppDialog>
 
       <AppDialog

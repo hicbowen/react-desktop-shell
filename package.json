@@ -58,6 +58,7 @@
     "dev": "vite --config vite.example.config.ts",
     "build": "npm run clean && vite build && tsc -p tsconfig.build.json",
     "lint": "eslint .",
+    "test": "vitest run",
     "prepack": "npm run lint && npm run build",
     "preview": "vite preview"
   },
@@ -92,11 +93,13 @@
     "eslint-plugin-react-hooks": "^7.0.1",
     "eslint-plugin-react-refresh": "^0.4.24",
     "globals": "^16.5.0",
+    "jsdom": "^29.1.1",
     "lucide-react": "^1.16.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "typescript": "^6.0.3",
     "typescript-eslint": "^8.46.4",
-    "vite": "^8.0.14"
+    "vite": "^8.0.14",
+    "vitest": "^4.1.10"
   }
 }

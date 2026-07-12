@@ -33,6 +33,7 @@ interface RenderedDialog {
 
 export function AppDialogLayer({ dialogs }: AppDialogLayerProps) {
   const openKey = dialogs.map((dialog) => dialog.id).join('|')
+  const latestDialogs = new Map(dialogs.map((dialog) => [dialog.id, dialog]))
   const [renderState, setRenderState] = useState<{
     openKey: string
     rendered: RenderedDialog[]
@@ -49,18 +50,48 @@ export function AppDialogLayer({ dialogs }: AppDialogLayerProps) {
           !entry.exiting &&
           !dialogs.some((dialog) => dialog.id === entry.dialog.id),
       )
-      .map((entry) => ({ ...entry, exiting: true }))
+      .map((entry) => ({
+        dialog: entry.dialog,
+        exiting: true,
+      }))
 
     setRenderState({
       openKey,
       rendered: [...next, ...exiting],
     })
+  } else if (
+    renderState.rendered.some(
+      (entry) =>
+        !entry.exiting &&
+        latestDialogs.get(entry.dialog.id) !== entry.dialog,
+    )
+  ) {
+    setRenderState((current) => ({
+      ...current,
+      rendered: current.rendered.map((entry) => {
+        if (entry.exiting) {
+          return entry
+        }
+
+        const latestDialog = latestDialogs.get(entry.dialog.id)
+        return latestDialog ? { ...entry, dialog: latestDialog } : entry
+      }),
+    }))
   }
 
-  const rendered =
+  const renderedSnapshot =
     renderState.openKey === openKey
       ? renderState.rendered
       : dialogs.map((dialog) => ({ dialog, exiting: false }))
+  const rendered = renderedSnapshot.map((entry) => {
+    if (entry.exiting) {
+      return entry
+    }
+
+    const latestDialog = latestDialogs.get(entry.dialog.id)
+
+    return latestDialog ? { ...entry, dialog: latestDialog } : entry
+  })
 
   if (rendered.length === 0) {
     return null
