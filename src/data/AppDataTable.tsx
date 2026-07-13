@@ -5,6 +5,7 @@ import {
   useAppDataTable,
   APP_DATA_TABLE_SELECTION_COLUMN_ID,
 } from './internal/dataTableCore'
+import { AppDataTableControls } from './AppDataTableControls'
 import type { AppDataTableProps } from './types'
 
 export { APP_DATA_TABLE_SELECTION_COLUMN_ID }
@@ -12,11 +13,25 @@ export { APP_DATA_TABLE_SELECTION_COLUMN_ID }
 export function AppDataTable<TData>(props: AppDataTableProps<TData>) {
   const core = useAppDataTable(props)
   const rows = core.table.getRowModel().rows
+  const filterDefinitions =
+    props.controls?.filters?.filter((definition) =>
+      Boolean(core.table.getColumn(definition.columnId)),
+    ) ?? []
+  const controls =
+    props.controls &&
+    (Boolean(props.controls.search) || filterDefinitions.length > 0) ? (
+      <AppDataTableControls
+        filterDefinitions={filterDefinitions}
+        options={props.controls}
+        table={core.table}
+      />
+    ) : undefined
 
   return (
     <DataTableFrame
       className={core.className}
       columnResizeMode={core.columnResizeMode}
+      controls={controls}
       density={core.density}
       enableColumnResizing={core.enableColumnResizing}
       loading={core.loading}

@@ -27,6 +27,7 @@ import {
 } from '@tanstack/react-table'
 import { DataTableCheckbox } from '../DataTableCheckbox'
 import type { AppDataTableProps } from '../types'
+import { resolveControlFilterColumns } from './dataTableFilters'
 import '../../scroll-area/AppScrollArea.css'
 
 export const APP_DATA_TABLE_SELECTION_COLUMN_ID =
@@ -97,6 +98,7 @@ function getPinnedEdge<TData>(column: Column<TData>) {
 export function useAppDataTable<TData>({
   data,
   columns,
+  controls,
   getRowId,
   selection,
   sorting,
@@ -165,6 +167,10 @@ export function useAppDataTable<TData>({
   const selectAllMode = selection?.selectAllMode ?? 'filtered'
   const selectAllAriaLabel = selection?.selectAllAriaLabel
   const getRowAriaLabel = selection?.getRowAriaLabel
+  const columnsWithControlFilters = useMemo(
+    () => resolveControlFilterColumns(columns, controls?.filters ?? []),
+    [columns, controls?.filters],
+  )
 
   const handleSortingChange: OnChangeFn<SortingState> = (updater) => {
     if (sorting === undefined) setInternalSorting(updater)
@@ -192,7 +198,7 @@ export function useAppDataTable<TData>({
   }
 
   const resolvedColumns = useMemo<ColumnDef<TData>[]>(() => {
-    if (!selectionEnabled) return columns
+    if (!selectionEnabled) return columnsWithControlFilters
 
     const selectionColumn: ColumnDef<TData> = {
       id: APP_DATA_TABLE_SELECTION_COLUMN_ID,
@@ -261,9 +267,9 @@ export function useAppDataTable<TData>({
         />
       ),
     }
-    return [selectionColumn, ...columns]
+    return [selectionColumn, ...columnsWithControlFilters]
   }, [
-    columns,
+    columnsWithControlFilters,
     getRowAriaLabel,
     selectAllAriaLabel,
     selectAllMode,
@@ -281,7 +287,7 @@ export function useAppDataTable<TData>({
     getSortedRowModel: getSortedRowModel(),
     manualSorting,
     manualFiltering,
-    globalFilterFn,
+    ...(globalFilterFn !== undefined ? { globalFilterFn } : {}),
     filterFns,
     enableRowSelection: selection?.enableRowSelection,
     enableColumnResizing,
@@ -431,6 +437,7 @@ interface DataTableFrameProps<TData> {
   enableColumnResizing: boolean
   columnResizeMode: ColumnResizeMode
   loading: boolean
+  controls?: ReactNode
   className?: string
   style?: CSSProperties
   children: ReactNode
@@ -444,6 +451,7 @@ export function DataTableFrame<TData>({
   enableColumnResizing,
   columnResizeMode,
   loading,
+  controls,
   className,
   style,
   children,
@@ -452,9 +460,10 @@ export function DataTableFrame<TData>({
 
   return (
     <div
-      className={`app-data-table app-data-table--${density} ${stickyHeader ? 'app-data-table--sticky-header' : ''} ${className ?? ''}`.trim()}
+      className={`app-data-table app-data-table--${density} ${stickyHeader ? 'app-data-table--sticky-header' : ''} ${controls ? 'app-data-table--with-controls' : ''} ${className ?? ''}`.trim()}
       style={style}
     >
+      {controls}
       <div
         className="app-data-table__scroll app-scrollbar"
         style={{ maxHeight }}

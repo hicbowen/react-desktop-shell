@@ -1,0 +1,328 @@
+import {
+  useEffect,
+  useId,
+  useRef,
+  useState,
+  type KeyboardEvent,
+  type ReactNode,
+} from 'react'
+import type { Table } from '@tanstack/react-table'
+import type {
+  AppDataTableControlsOptions,
+  AppDataTableFilterDefinition,
+  AppDataTableSearchOptions,
+} from './types'
+
+function SearchIcon() {
+  return (
+    <svg aria-hidden="true" viewBox="0 0 16 16">
+      <circle cx="7" cy="7" r="4.25" />
+      <path d="m10.25 10.25 3 3" />
+    </svg>
+  )
+}
+
+function FilterIcon() {
+  return (
+    <svg aria-hidden="true" viewBox="0 0 16 16">
+      <path d="M2.5 3h11L9.25 8v4l-2.5 1V8z" />
+    </svg>
+  )
+}
+
+function CloseIcon() {
+  return (
+    <svg aria-hidden="true" viewBox="0 0 16 16">
+      <path d="m4.5 4.5 7 7m0-7-7 7" />
+    </svg>
+  )
+}
+
+function hasFilterValue(value: unknown) {
+  if (Array.isArray(value)) {
+    return value.length > 0
+  }
+  return value !== undefined && value !== null && value !== ''
+}
+
+function accessibleLabel(label: ReactNode, index: number) {
+  return typeof label === 'string' || typeof label === 'number'
+    ? String(label)
+    : `field ${index + 1}`
+}
+
+function activateWithKeyboard(
+  event: KeyboardEvent<HTMLButtonElement>,
+  action: () => void,
+) {
+  if (event.key !== 'Enter' && event.key !== ' ') {
+    return
+  }
+
+  event.preventDefault()
+  action()
+}
+
+interface AppDataTableControlsProps<TData> {
+  table: Table<TData>
+  options: AppDataTableControlsOptions<TData>
+  filterDefinitions: AppDataTableFilterDefinition<TData>[]
+}
+
+export function AppDataTableControls<TData>({
+  table,
+  options,
+  filterDefinitions,
+}: AppDataTableControlsProps<TData>) {
+  const [menuOpen, setMenuOpen] = useState(false)
+  const filterRootRef = useRef<HTMLDivElement | null>(null)
+  const filterButtonRef = useRef<HTMLButtonElement | null>(null)
+  const menuId = useId()
+  const searchOptions: AppDataTableSearchOptions | null = options.search
+    ? options.search === true
+      ? {}
+      : options.search
+    : null
+  const globalFilter = table.getState().globalFilter
+  const searchValue = typeof globalFilter === 'string' ? globalFilter : ''
+  const activeColumnFilters = table
+    .getState()
+    .columnFilters.filter((filter) => hasFilterValue(filter.value))
+  const activeFilterCount = activeColumnFilters.length
+  const hasActiveSearch = searchValue.length > 0
+  const hasActiveControls = hasActiveSearch || activeFilterCount > 0
+  const showFilters = filterDefinitions.length > 0
+
+  useEffect(() => {
+    if (!menuOpen) {
+      return
+    }
+
+    const handleMouseDown = (event: MouseEvent) => {
+      if (
+        event.target instanceof Node &&
+        !filterRootRef.current?.contains(event.target)
+      ) {
+        setMenuOpen(false)
+      }
+    }
+    const handleKeyDown = (event: globalThis.KeyboardEvent) => {
+      if (event.key !== 'Escape') {
+        return
+      }
+
+      event.preventDefault()
+      setMenuOpen(false)
+      filterButtonRef.current?.focus({ preventScroll: true })
+    }
+
+    document.addEventListener('mousedown', handleMouseDown)
+    document.addEventListener('keydown', handleKeyDown)
+    return () => {
+      document.removeEventListener('mousedown', handleMouseDown)
+      document.removeEventListener('keydown', handleKeyDown)
+    }
+  }, [menuOpen])
+
+  if (!searchOptions && !showFilters) {
+    return null
+  }
+
+  const clearAll = () => {
+    table.setGlobalFilter('')
+    table.setColumnFilters([])
+  }
+
+  return (
+    <div className="app-data-table__controls">
+      {searchOptions ? (
+        <div className="app-data-table__search">
+          <span className="app-data-table__search-icon">
+            <SearchIcon />
+          </span>
+          <input
+            aria-label={searchOptions.ariaLabel ?? 'Search rows'}
+            className="app-data-table__search-input"
+            placeholder={searchOptions.placeholder ?? 'Search rows'}
+            type="search"
+            value={searchValue}
+            onChange={(event) => table.setGlobalFilter(event.currentTarget.value)}
+          />
+          {hasActiveSearch ? (
+            <button
+              aria-label={searchOptions.clearAriaLabel ?? 'Clear search'}
+              className="app-data-table__search-clear"
+              type="button"
+              onClick={() => table.setGlobalFilter('')}
+            >
+              <CloseIcon />
+            </button>
+          ) : null}
+        </div>
+      ) : null}
+
+      {showFilters ? (
+        <div className="app-data-table__filter" ref={filterRootRef}>
+          <button
+            ref={filterButtonRef}
+            aria-controls={menuOpen ? menuId : undefined}
+            aria-expanded={menuOpen}
+            aria-haspopup="menu"
+            aria-label={
+              activeFilterCount > 0
+                ? `Filters, ${activeFilterCount} active`
+                : 'Filters'
+            }
+            className="app-data-table__filter-button"
+            type="button"
+            onClick={() => setMenuOpen((current) => !current)}
+            onKeyDown={(event) => {
+              if (event.key === 'ArrowDown') {
+                event.preventDefault()
+                setMenuOpen(true)
+                return
+              }
+              activateWithKeyboard(event, () =>
+                setMenuOpen((current) => !current),
+              )
+            }}
+          >
+            <FilterIcon />
+            <span>Filters</span>
+            {activeFilterCount > 0 ? (
+              <span
+                aria-hidden="true"
+                className="app-data-table__filter-count"
+              >
+                {activeFilterCount}
+              </span>
+            ) : null}
+          </button>
+
+          {menuOpen ? (
+            <div
+              aria-label="Filters"
+              className="app-data-table__filter-menu app-scrollbar"
+              id={menuId}
+              role="menu"
+            >
+              {filterDefinitions.map((definition, index) => {
+                const column = table.getColumn(definition.columnId)
+                if (!column) {
+                  return null
+                }
+
+                const mode = definition.mode ?? 'single'
+                const value = column.getFilterValue()
+                const selectedValues = Array.isArray(value)
+                  ? value.map(String)
+                  : []
+                const fieldActive = hasFilterValue(value)
+                const labelId = `${menuId}-group-${index}`
+                const label = accessibleLabel(definition.label, index)
+
+                return (
+                  <div
+                    aria-labelledby={labelId}
+                    className="app-data-table__filter-group"
+                    key={definition.columnId}
+                    role="group"
+                  >
+                    <div className="app-data-table__filter-group-header">
+                      <span id={labelId}>{definition.label}</span>
+                      {fieldActive ? (
+                        <button
+                          aria-label={`Clear ${label} filter`}
+                          className="app-data-table__filter-clear"
+                          role="menuitem"
+                          type="button"
+                          onClick={() => column.setFilterValue(undefined)}
+                        >
+                          Clear
+                        </button>
+                      ) : null}
+                    </div>
+
+                    <div className="app-data-table__filter-options">
+                      {definition.options.map((option) => {
+                        const checked =
+                          mode === 'multiple'
+                            ? selectedValues.includes(option.value)
+                            : String(value ?? '') === option.value
+                        const selectOption = () => {
+                          if (mode === 'multiple') {
+                            const next = checked
+                              ? selectedValues.filter(
+                                  (selected) => selected !== option.value,
+                                )
+                              : [...selectedValues, option.value]
+                            column.setFilterValue(
+                              next.length > 0 ? next : undefined,
+                            )
+                            return
+                          }
+
+                          column.setFilterValue(option.value)
+                        }
+
+                        return (
+                          <button
+                            aria-checked={checked}
+                            className="app-data-table__filter-option"
+                            key={option.value}
+                            role={
+                              mode === 'multiple'
+                                ? 'menuitemcheckbox'
+                                : 'menuitemradio'
+                            }
+                            type="button"
+                            onClick={selectOption}
+                            onKeyDown={(event) =>
+                              activateWithKeyboard(event, selectOption)
+                            }
+                          >
+                            <span
+                              aria-hidden="true"
+                              className="app-data-table__filter-check"
+                            >
+                              {checked ? '✓' : ''}
+                            </span>
+                            <span>{option.label}</span>
+                          </button>
+                        )
+                      })}
+                    </div>
+                  </div>
+                )
+              })}
+
+              {activeFilterCount > 0 ? (
+                <div className="app-data-table__filter-menu-footer">
+                  <button
+                    className="app-data-table__filter-clear-all"
+                    role="menuitem"
+                    type="button"
+                    onClick={() => table.setColumnFilters([])}
+                  >
+                    Clear filters
+                  </button>
+                </div>
+              ) : null}
+            </div>
+          ) : null}
+        </div>
+      ) : null}
+
+      {options.clearAll !== false && hasActiveControls ? (
+        <button
+          aria-label="Clear all search and filters"
+          className="app-data-table__controls-clear-all"
+          type="button"
+          onClick={clearAll}
+        >
+          Clear all
+        </button>
+      ) : null}
+    </div>
+  )
+}

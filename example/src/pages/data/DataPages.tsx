@@ -5,7 +5,7 @@ import { AppToolbar } from '../../../../src'
 import { AppDataTable, AppDataView, AppSelectionBar } from '../../../../src/data'
 import { DemoControls, DemoPage, DemoPreview, DemoSection } from '../../components/DemoPage'
 import { tableRows } from '../../fixtures/tableRows'
-import { columns } from './tableConfig'
+import { columns, tableControls } from './tableConfig'
 
 export function AppDataTablePage() {
   const [sorting, setSorting] = useState<SortingState>([{ id: 'name', desc: false }])
@@ -14,6 +14,7 @@ export function AppDataTablePage() {
   const [resizing, setResizing] = useState(true)
   const [fixedHeight, setFixedHeight] = useState(true)
   const [fill, setFill] = useState(false)
+  const count = Object.values(selection).filter(Boolean).length
   const handleFixedHeightChange = (next: boolean) => {
     setFixedHeight(next)
     if (next) setFill(false)
@@ -27,7 +28,7 @@ export function AppDataTablePage() {
     : fixedHeight
       ? 'demo-table-fixed'
       : ''
-  return <DemoPage className={fill ? 'demo-page--fill' : ''}><DemoControls><span><Switch checked={sticky} onChange={setSticky} /> Sticky header</span><span><Switch checked={resizing} onChange={setResizing} /> Column resizing</span><span><Switch checked={fixedHeight} onChange={handleFixedHeightChange} /> Fixed height</span><span><Switch checked={fill} onChange={handleFillChange} /> Fill remaining height</span></DemoControls><DemoSection title="Interactive table" description="Choose natural height, a fixed 390px viewport, or a table that fills the remaining page height."><div className={tableClassName}><AppDataTable columns={columns} data={tableRows} getRowId={(row) => row.id} sorting={sorting} onSortingChange={setSorting} selection={{ value: selection, onChange: setSelection, getRowAriaLabel: (row) => `Select ${row.original.name}` }} stickyHeader={sticky} enableColumnResizing={resizing} /></div></DemoSection></DemoPage>
+  return <DemoPage className={fill ? 'demo-page--fill' : ''}><DemoControls><span><Switch checked={sticky} onChange={setSticky} /> Sticky header</span><span><Switch checked={resizing} onChange={setResizing} /> Column resizing</span><span><Switch checked={fixedHeight} onChange={handleFixedHeightChange} /> Fixed height</span><span><Switch checked={fill} onChange={handleFillChange} /> Fill remaining height</span></DemoControls><DemoSection title="Interactive table" description="Search rows, combine Category and Status filters, or switch between natural, fixed, and remaining-height layouts."><div className={`demo-table-layout ${count > 0 ? 'demo-table-layout--selected' : ''} ${tableClassName}`.trim()}>{count > 0 ? <div className="demo-table-selection"><AppSelectionBar count={count} label={`${count} selected`} onClear={() => setSelection({})} actions={<Button>Apply action</Button>} /></div> : null}<AppDataTable columns={columns} controls={tableControls} data={tableRows} getRowId={(row) => row.id} sorting={sorting} onSortingChange={setSorting} selection={{ value: selection, onChange: setSelection, getRowAriaLabel: (row) => `Select ${row.original.name}` }} stickyHeader={sticky} enableColumnResizing={resizing} /></div></DemoSection></DemoPage>
 }
 
 export function AppDataViewPage() {

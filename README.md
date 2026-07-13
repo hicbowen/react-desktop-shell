@@ -385,16 +385,16 @@ into one bordered surface. `AppSelectionBar` lays out a selection count and
 consumer-provided batch actions without owning selection state. `AppDataTable`
 uses TanStack Table's `ColumnDef<TData>` directly.
 
-The data table supports client or manual sorting, global filtering, column
-filtering, manual/server-side filtering, column visibility, controlled row
-selection, loading and empty states, comfortable and compact density, row
-activation, horizontal scrolling, and opt-in column sizing. Column sizing
+The data table supports client or manual sorting, optional built-in global
+search and column filter controls, manual/server-side filtering, column
+visibility, controlled row selection, loading and empty states, comfortable
+and compact density, row activation, horizontal scrolling, and opt-in column sizing. Column sizing
 supports controlled or uncontrolled state, mouse and touch resizing, minimum
 and maximum widths, per-column resize control, `onEnd` and `onChange` modes,
 and double-click reset. Sticky table headers and controlled or uncontrolled
 left/right column pinning include pinned boundary shadows and compose with
-resizing and visibility. The table does not provide filtering controls,
-pagination, or column order dragging.
+resizing and visibility. The table does not provide pagination or column order
+dragging.
 
 ```tsx
 import { useState } from 'react'
@@ -410,10 +410,14 @@ import {
 type Student = {
   id: string
   name: string
+  category: string
+  status: string
 }
 
 const columns: ColumnDef<Student>[] = [
   { accessorKey: 'name', header: 'Name' },
+  { accessorKey: 'category', header: 'Category' },
+  { accessorKey: 'status', header: 'Status' },
 ]
 
 function StudentsView({ students }: { students: Student[] }) {
@@ -466,12 +470,51 @@ grouped headers are not currently supported.
 
 ### Filtering and column visibility
 
-`AppDataTable` accepts TanStack Table state but does not render a search input,
-filter Select, or column settings menu. Put those controls in `AppToolbar` and
-pass their state into the table.
+Pass `controls` for the optional built-in search field and unified filter menu.
+The search field writes directly to TanStack Table's `globalFilter`. Filter
+definitions write directly to `columnFilters`; single filters use one string
+value, while multiple filters use a string array. Without `controls`, no
+additional control-bar DOM is rendered.
+
+```tsx
+const categoryOptions = Array.from(
+  new Set(students.map((student) => student.category)),
+).map((value) => ({ value, label: value }))
+
+<AppDataTable
+  data={students}
+  columns={columns}
+  controls={{
+    search: { placeholder: 'Search students' },
+    filters: [
+      {
+        columnId: 'category',
+        label: 'Category',
+        options: categoryOptions,
+      },
+      {
+        columnId: 'status',
+        label: 'Status',
+        mode: 'multiple',
+        options: [
+          { value: 'Active', label: 'Active' },
+          { value: 'Paused', label: 'Paused' },
+        ],
+      },
+    ],
+  }}
+/>
+```
+
+When a filter definition does not provide `filterFn`, single mode compares the
+cell value with the selected string and multiple mode checks whether the cell
+value is included in the selected string array. A `filterFn` already declared
+on the matching `ColumnDef` takes precedence; otherwise a filter definition can
+provide its own `filterFn`.
 
 Global filtering supports both TanStack built-in filter names and compatible
-custom functions through `globalFilterFn`:
+custom functions through `globalFilterFn`. Use the existing state props to make
+the built-in controls controlled:
 
 ```tsx
 const [globalFilter, setGlobalFilter] = useState('')
@@ -523,7 +566,7 @@ const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({
 Hidden columns retain their sorting and filtering state. Changing a filter also
 does not clear row selection. For server-side filtering, provide already
 filtered data and enable `manualFiltering`; the component still reports filter
-state changes but does not filter the rows again.
+state changes from its built-in controls but does not filter the rows again.
 
 ```tsx
 <AppDataTable
@@ -534,6 +577,11 @@ state changes but does not filter the rows again.
   manualFiltering
 />
 ```
+
+`AppDataView.toolbar` remains available for advanced application-specific
+controls, actions, and status layouts. Using it together with AppDataTable's
+built-in `controls` is supported, but produces two control rows; choose one or
+both based on the page's needs.
 
 ### Column sizing
 
@@ -734,9 +782,35 @@ export interface AppDataTableSelectionOptions<TData> {
   getRowAriaLabel?: (row: Row<TData>) => string
 }
 
+export interface AppDataTableSearchOptions {
+  placeholder?: string
+  ariaLabel?: string
+  clearAriaLabel?: string
+}
+
+export interface AppDataTableFilterOption {
+  value: string
+  label: ReactNode
+}
+
+export interface AppDataTableFilterDefinition<TData> {
+  columnId: string
+  label: ReactNode
+  options: AppDataTableFilterOption[]
+  mode?: 'single' | 'multiple'
+  filterFn?: FilterFn<TData>
+}
+
+export interface AppDataTableControlsOptions<TData> {
+  search?: boolean | AppDataTableSearchOptions
+  filters?: AppDataTableFilterDefinition<TData>[]
+  clearAll?: boolean
+}
+
 export interface AppDataTableProps<TData> {
   data: TData[]
   columns: ColumnDef<TData>[]
+  controls?: AppDataTableControlsOptions<TData>
   getRowId?: TableOptions<TData>['getRowId']
   selection?: AppDataTableSelectionOptions<TData>
   sorting?: SortingState

@@ -5,6 +5,7 @@ import type {
   ColumnPinningState,
   ColumnResizeMode,
   ColumnSizingState,
+  FilterFn,
   OnChangeFn,
   Row,
   RowSelectionState,
@@ -14,6 +15,31 @@ import type {
 } from '@tanstack/react-table'
 
 export type AppDataTableColumn<TData> = ColumnDef<TData>
+
+export interface AppDataTableSearchOptions {
+  placeholder?: string
+  ariaLabel?: string
+  clearAriaLabel?: string
+}
+
+export interface AppDataTableFilterOption {
+  value: string
+  label: ReactNode
+}
+
+export interface AppDataTableFilterDefinition<TData> {
+  columnId: string
+  label: ReactNode
+  options: AppDataTableFilterOption[]
+  mode?: 'single' | 'multiple'
+  filterFn?: FilterFn<TData>
+}
+
+export interface AppDataTableControlsOptions<TData> {
+  search?: boolean | AppDataTableSearchOptions
+  filters?: AppDataTableFilterDefinition<TData>[]
+  clearAll?: boolean
+}
 
 export interface AppDataTableSelectionOptions<TData> {
   value: RowSelectionState
@@ -32,6 +58,7 @@ export interface AppDataTableProps<TData> {
    * Multi-level grouped headers are not currently supported.
    */
   columns: ColumnDef<TData>[]
+  controls?: AppDataTableControlsOptions<TData>
   getRowId?: TableOptions<TData>['getRowId']
   selection?: AppDataTableSelectionOptions<TData>
   sorting?: SortingState
