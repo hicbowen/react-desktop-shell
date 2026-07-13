@@ -35,9 +35,9 @@
 .app-settings-group__surface {
   min-width: 0;
   overflow: hidden;
-  background: var(--app-shell-surface-bg, #ffffff);
+  background: var(--app-shell-card-bg, #fbfbfb);
   border: 1px solid var(--app-shell-border-color, rgb(0 0 0 / 8%));
-  border-radius: 8px;
+  border-radius: var(--rds-radius-medium, 8px);
   container-type: inline-size;
 }
 

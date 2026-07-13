@@ -6,6 +6,9 @@
   --app-shell-chrome-bg: #f3f3f3;
   --app-shell-content-bg: #f7f8fa;
   --app-shell-surface-bg: #ffffff;
+  --app-shell-card-bg: #fbfbfb;
+  --app-shell-card-hover-bg: #f6f6f6;
+  --app-shell-card-pressed-bg: #f1f1f1;
   --app-shell-text-color: #1f1f1f;
   --app-shell-muted-text-color: #707070;
   --app-shell-disabled-text-color: rgb(0 0 0 / 36%);
@@ -52,6 +55,11 @@
   --rds-ease-standard: cubic-bezier(0.2, 0, 0, 1);
   --rds-ease-enter: cubic-bezier(0.1, 0.9, 0.2, 1);
   --rds-ease-exit: cubic-bezier(0.7, 0, 1, 0.5);
+  --rds-radius-medium: 8px;
+  --rds-space-card-compact: 12px;
+  --rds-space-card-regular: 16px;
+  --rds-space-card-gap: 12px;
+  --rds-disabled-opacity: 0.55;
 
   width: 100%;
   height: 100%;
@@ -71,6 +79,9 @@
   --app-shell-chrome-bg: #202020;
   --app-shell-content-bg: #272727;
   --app-shell-surface-bg: #2d2d2d;
+  --app-shell-card-bg: #323232;
+  --app-shell-card-hover-bg: #383838;
+  --app-shell-card-pressed-bg: #3d3d3d;
   --app-shell-text-color: #ffffff;
   --app-shell-muted-text-color: #a6a6a6;
   --app-shell-disabled-text-color: rgb(255 255 255 / 36%);
@@ -393,6 +404,9 @@
     --app-shell-chrome-bg: #202020;
     --app-shell-content-bg: #272727;
     --app-shell-surface-bg: #2d2d2d;
+    --app-shell-card-bg: #323232;
+    --app-shell-card-hover-bg: #383838;
+    --app-shell-card-pressed-bg: #3d3d3d;
     --app-shell-text-color: #ffffff;
     --app-shell-muted-text-color: #a6a6a6;
     --app-shell-disabled-text-color: rgb(255 255 255 / 36%);

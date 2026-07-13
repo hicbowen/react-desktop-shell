@@ -11,6 +11,15 @@
 .demo-hero h2 { max-width: 680px; margin: 12px 0 8px; font-size: clamp(25px, 3vw, 38px); line-height: 1.12; }
 .demo-hero p { max-width: 690px; margin: 0; line-height: 1.6; opacity: .88; }
 .demo-card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 12px; }
+.demo-card-grid--comparison { grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); }
+.demo-card-grid--states { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); margin-bottom: 12px; }
+.demo-card-tool-icon { width: 36px; height: 36px; display: inline-flex; flex: 0 0 auto; align-items: center; justify-content: center; color: var(--app-shell-accent-color); background: var(--app-shell-active-bg); border-radius: 7px; }
+.demo-card-tool-content { min-width: 0; display: grid; flex: 1 1 auto; gap: 3px; }
+.demo-card-tool-content span { color: var(--app-shell-muted-text-color); font-size: 12px; }
+.demo-card-group-label { min-width: 0; flex: 1 1 auto; }
+.demo-card-state--hover { background: var(--app-shell-card-hover-bg); }
+.demo-card-state--pressed { background: var(--app-shell-card-pressed-bg); }
+.demo-card-state--focus { outline: 2px solid var(--app-shell-accent-color); outline-offset: 2px; }
 .demo-card { padding: 18px; border: 1px solid color-mix(in srgb, currentColor 13%, transparent); border-radius: 10px; }
 .demo-card h3 { margin: 12px 0 5px; font-size: 15px; }
 .demo-shell-diagram { display: grid; grid-template: 38px 120px 38px / 100px 1fr; min-height: 230px; border: 1px solid color-mix(in srgb, currentColor 15%, transparent); }

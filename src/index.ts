@@ -1,4 +1,5 @@
 export { AppShell } from './shell/AppShell'
+export { AppCard, AppCardFooter, AppCardGroup, AppCardHeader } from './card'
 export { AppContextMenu } from './context-menu/AppContextMenu'
 export { AppDialog } from './dialog/AppDialog'
 export { AppInfoBar } from './info-bar/AppInfoBar'
@@ -15,6 +16,13 @@ export { useAppToast } from './toast/AppToastContext'
 
 export type {
   AppClipboardAdapter,
+  AppCardAppearance,
+  AppCardFooterProps,
+  AppCardGroupProps,
+  AppCardHeaderProps,
+  AppCardOrientation,
+  AppCardPadding,
+  AppCardProps,
   AppContextMenuActionItem,
   AppContextMenuItem,
   AppContextMenuLocale,

@@ -170,6 +170,94 @@ Choose the component according to the scope of the interaction:
 tabs, large filter sets, overflow menus, routing, or content-panel lifecycle
 management.
 
+## Fluent Cards
+
+`AppCard` is a low-contrast Fluent content surface for desktop tools, settings,
+status summaries, recent projects, and utility entry points. It is not a fixed
+web-dashboard panel: cards have no strong shadow or title divider by default,
+and ordinary cards are static `div` elements without hover or button semantics.
+
+Compose a card from four focused components:
+
+- `AppCard` provides one surface, border, radius, spacing, and optional
+  interaction states.
+- `AppCardHeader` arranges leading media, title, description, and a trailing
+  action. It does not provide a surface or divider.
+- `AppCardFooter` arranges supporting information and actions. It is transparent
+  and undivided by default.
+- `AppCardGroup` merges adjacent `AppCard` borders and corner radii without
+  managing selection or other business state.
+
+```tsx
+<AppCard>
+  <AppCardHeader
+    icon={<DatabaseBackup />}
+    title="Data backup"
+    description="Protect local application data"
+    action={<button aria-label="More options">...</button>}
+  />
+  <div>Last backup: today at 10:30</div>
+  <AppCardFooter
+    start={<span>24.6 MB</span>}
+    end={<button>Back up now</button>}
+  />
+</AppCard>
+```
+
+### Appearance and spacing
+
+`appearance="filled"` is the default and uses the raised content-surface token
+with a subtle border. `outlined` keeps the background transparent and relies on
+its border. `subtle` starts with a transparent background and border, revealing
+a light surface only when interactive. Padding can be `none`, `compact`, or
+`regular`; orientation can be `vertical` or `horizontal`.
+
+Horizontal orientation lays out the card's direct children in a row. Keep the
+standard Header/content/Footer composition vertical; horizontal mode is intended
+for compact custom tool rows where the icon, text, and action are direct children.
+
+### Interaction and selection
+
+Providing `onClick` makes a card interactive by default. Interactive cards use
+`role="button"`, enter the Tab order, and activate with Enter or Space. Set
+`interactive={false}` to retain a mouse handler without automatic button
+semantics or interaction styling. Explicit `interactive={true}` opts into visual,
+focus, and button semantics even without an `onClick`; applications should only
+do this when they will supply a meaningful activation behavior.
+
+`disabled` blocks mouse and keyboard activation and removes an interactive card
+from the Tab order. `selected` is controlled visual state only. Interactive
+selected cards expose `aria-pressed`; static selected cards do not acquire a
+button, radio, or checkbox role. Buttons, links, inputs, and other interactive
+descendants work normally without activating the parent card.
+
+### Footer and groups
+
+When neither `start` nor `end` is supplied, `AppCardFooter` renders `children` as
+complete custom content. Once either side is supplied, it uses a three-region
+layout: `start`, optional middle `children`, and `end`. The start and middle can
+shrink; the end action region does not. `divided` adds a single semantic top
+border and should be reserved for content that needs an explicit boundary.
+
+```tsx
+<AppCardGroup>
+  <AppCard orientation="horizontal">Theme <strong>System</strong></AppCard>
+  <AppCard orientation="horizontal">Accent <strong>Blue</strong></AppCard>
+  <AppCard orientation="horizontal">Animations <strong>On</strong></AppCard>
+</AppCardGroup>
+```
+
+`AppCardGroup` defaults to a vertical continuous group with dividers. Horizontal
+groups merge left and right corners instead. Non-Card children are rendered but
+only direct `AppCard` children receive the complete border-merging treatment.
+
+Cards primarily express Fluent surface hierarchy. Avoid putting every page
+element in a card, wrapping every ordinary list row in a separate floating card,
+or treating a card as a fixed title-bar container. Use `AppCardGroup` for
+continuous setting or property rows. Existing Settings components share the
+same card surface and radius tokens but remain purpose-built controls with their
+own public API and structure.
+
 ## Optional Ant Design Integration
 
 Ant Design support is an optional theme preset. Normal `react-desktop-shell` usage does not require AntD; install it only when importing the `/antd` entry point.

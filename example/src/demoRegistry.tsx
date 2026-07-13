@@ -1,5 +1,5 @@
 import type { ComponentType, ReactNode } from 'react'
-import { Bell, Boxes, Columns3, Database, Info, LayoutDashboard, LayoutPanelTop, Menu, MessageSquare, MousePointerClick, Navigation, PanelRight, Rows3, Settings, SlidersHorizontal, Table2, Wrench } from 'lucide-react'
+import { Bell, Boxes, Columns3, CreditCard, Database, Info, LayoutDashboard, LayoutPanelTop, Menu, MessageSquare, MousePointerClick, Navigation, PanelRight, Rows3, Settings, SlidersHorizontal, Table2, Wrench } from 'lucide-react'
 import type { RailEntry } from '../../src'
 import { OverviewPage } from './pages/OverviewPage'
 import { AppPagePage, AppShellPage, AppSidePanePage, AppTitleBarPage } from './pages/shell/ShellPages'
@@ -9,6 +9,7 @@ import { AppToolbarPage, ContextMenuPage } from './pages/actions/ActionPages'
 import { AppDataTablePage, AppDataViewPage, AppSelectionBarPage } from './pages/data/DataPages'
 import { AppSettingsGroupPage, AppSettingsRowPage, ThemeControlsPage } from './pages/settings/SettingsPages'
 import { AntdThemePage } from './pages/integrations/AntdThemePage'
+import { AppCardPage } from './pages/content/CardPages'
 
 export type DemoPageDefinition = { key: string; group: string; label: string; description: string; icon: ReactNode; component: ComponentType; layout?: 'default' | 'fill' }
 
@@ -21,6 +22,7 @@ export const demoPages: DemoPageDefinition[] = [
   { key: 'app-rail', group: 'Navigation', label: 'AppRail', description: 'Grouped navigation items, submenus, badges, and footer links.', icon: <Navigation size={16} />, component: AppRailPage },
   { key: 'app-selector-bar', group: 'Navigation', label: 'AppSelectorBar', description: 'Switch between a few mutually exclusive views within the current page.', icon: <Rows3 size={16} />, component: AppSelectorBarPage },
   { key: 'navigation-modes', group: 'Navigation', label: 'Navigation Modes', description: 'Expanded, compact, minimal, and responsive rail behavior.', icon: <Menu size={16} />, component: NavigationModesPage },
+  { key: 'app-card', group: 'Content', label: 'AppCard', description: 'Fluent content surfaces, composition, interaction states, and continuous groups.', icon: <CreditCard size={16} />, component: AppCardPage },
   { key: 'app-info-bar', group: 'Feedback', label: 'AppInfoBar', description: 'Inline informational, success, warning, and error states.', icon: <Info size={16} />, component: AppInfoBarPage },
   { key: 'app-toast', group: 'Feedback', label: 'AppToast', description: 'Transient notifications, actions, duration, and dismissal.', icon: <Bell size={16} />, component: AppToastPage },
   { key: 'app-dialog', group: 'Feedback', label: 'AppDialog', description: 'Modal content with controlled state and custom actions.', icon: <MessageSquare size={16} />, component: AppDialogPage },

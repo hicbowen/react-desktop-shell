@@ -1,6 +1,15 @@
 import type { CSSProperties, ReactNode } from 'react'
 
 export type {
+  AppCardAppearance,
+  AppCardFooterProps,
+  AppCardGroupProps,
+  AppCardHeaderProps,
+  AppCardOrientation,
+  AppCardPadding,
+  AppCardProps,
+} from './card'
+export type {
   AppClipboardAdapter,
   AppContextMenuActionItem,
   AppContextMenuItem,
