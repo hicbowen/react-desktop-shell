@@ -412,6 +412,42 @@ JavaScript scroll listeners.
 />
 ```
 
+### Fill remaining height
+
+Use `height="fill"` when a data view should occupy its parent's available
+height and give the remaining space to the table. The parent must have a
+definite height, and intermediate flex children usually need `min-height: 0`
+so they can shrink when a toolbar wraps or a selection bar appears.
+
+```tsx
+<div style={{ height: '100%', minHeight: 0 }}>
+  <AppDataView
+    height="fill"
+    toolbar={<AppToolbar status={`${students.length} students`} />}
+    selectionBar={
+      selectedCount > 0 ? (
+        <AppSelectionBar
+          count={selectedCount}
+          onClear={() => setRowSelection({})}
+        />
+      ) : null
+    }
+  >
+    <AppDataTable
+      data={students}
+      columns={columns}
+      stickyHeader
+    />
+  </AppDataView>
+</div>
+```
+
+The table's existing `.app-data-table__scroll` element remains the only
+vertical and horizontal scroll container. `height="fill"` does not read or
+derive the window height. If `maxHeight` is also provided, it remains an upper
+bound on that internal scroll area. Pages that do not have a definite parent
+height should keep the default `height="auto"` behavior.
+
 Column pinning uses stable TanStack column IDs. Offsets are derived from the
 current column sizes, so resizing a pinned column immediately updates the pinned
 layout. Boundary shadows mark only the last left-pinned and first right-pinned
@@ -460,6 +496,7 @@ are separate concerns.
 
 ```tsx
 export interface AppDataViewProps {
+  height?: 'auto' | 'fill'
   toolbar?: ReactNode
   selectionBar?: ReactNode
   footer?: ReactNode

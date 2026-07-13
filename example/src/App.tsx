@@ -141,6 +141,8 @@ interface Student {
   lastActivity: string
 }
 
+type DataTableLayoutHeight = 'auto' | 'fill'
+
 const studentSeeds: Student[] = [
   { id: 's-1001', name: 'Avery Chen', className: 'Grade 3 · A', status: 'Active', lastActivity: '2026-07-11T08:42:00Z' },
   { id: 's-1002', name: 'Mia Johnson', className: 'Grade 4 · B', status: 'Active', lastActivity: '2026-07-10T14:18:00Z' },
@@ -154,7 +156,13 @@ const studentSeeds: Student[] = [
   { id: 's-1010', name: 'Harper Thomas', className: 'Grade 3 · B', status: 'Active', lastActivity: '2026-07-02T12:08:00Z' },
 ]
 
-function DataTableDemo() {
+function DataTableDemo({
+  layoutHeight,
+  onLayoutHeightChange,
+}: {
+  layoutHeight: DataTableLayoutHeight
+  onLayoutHeightChange: (height: DataTableLayoutHeight) => void
+}) {
   const messageBox = useAppMessageBox()
   const toast = useAppToast()
   const [deletedStudentIds, setDeletedStudentIds] = useState<Set<string>>(
@@ -178,7 +186,9 @@ function DataTableDemo() {
   const [resizingEnabled, setResizingEnabled] = useState(true)
   const [resizeMode, setResizeMode] = useState<ColumnResizeMode>('onEnd')
   const [stickyHeader, setStickyHeader] = useState(true)
-  const [tableHeight, setTableHeight] = useState(420)
+  const [tableMaxHeight, setTableMaxHeight] = useState<
+    number | 'none'
+  >(420)
   const [density, setDensity] = useState<'comfortable' | 'compact'>('comfortable')
   const [loading, setLoading] = useState(false)
   const [showEmpty, setShowEmpty] = useState(false)
@@ -351,8 +361,19 @@ function DataTableDemo() {
   }
 
   return (
-    <div className="example-data-table-demo">
+    <div
+      className={`example-data-table-demo example-data-table-demo--${layoutHeight}`}
+    >
       <div className="example-data-table-switches" aria-label="Data table demo controls">
+        <Select
+          aria-label="Layout"
+          options={[
+            { value: 'auto', label: 'Auto' },
+            { value: 'fill', label: 'Fill remaining' },
+          ]}
+          value={layoutHeight}
+          onChange={onLayoutHeightChange}
+        />
         <Select
           aria-label="Select all mode"
           options={[
@@ -371,14 +392,16 @@ function DataTableDemo() {
           Sticky header
         </span>
         <Select
-          aria-label="Table height"
+          aria-label="Table max height"
+          disabled={layoutHeight === 'fill'}
           options={[
-            { value: 320, label: 'Height 320px' },
-            { value: 420, label: 'Height 420px' },
-            { value: 520, label: 'Height 520px' },
+            { value: 'none', label: 'No maximum' },
+            { value: 320, label: 'Maximum 320px' },
+            { value: 420, label: 'Maximum 420px' },
+            { value: 520, label: 'Maximum 520px' },
           ]}
-          value={tableHeight}
-          onChange={setTableHeight}
+          value={tableMaxHeight}
+          onChange={setTableMaxHeight}
         />
         <Dropdown
           trigger={['click']}
@@ -449,6 +472,7 @@ function DataTableDemo() {
       </div>
 
       <AppDataView
+        height={layoutHeight}
         toolbar={
           <AppToolbar
             start={
@@ -566,12 +590,22 @@ function DataTableDemo() {
           globalFilter={globalFilter}
           getRowId={(student) => student.id}
           loading={loading}
-          maxHeight={tableHeight}
+          maxHeight={
+            layoutHeight === 'auto' && tableMaxHeight !== 'none'
+              ? tableMaxHeight
+              : undefined
+          }
           onColumnFiltersChange={setColumnFilters}
           onColumnPinningChange={setColumnPinning}
           onColumnSizingChange={setColumnSizing}
           onColumnVisibilityChange={setColumnVisibility}
-          onGlobalFilterChange={setGlobalFilter}
+          onGlobalFilterChange={(updater) => {
+            setGlobalFilter((current) => {
+              const next =
+                typeof updater === 'function' ? updater(current) : updater
+              return typeof next === 'string' ? next : ''
+            })
+          }}
           onRowClick={(row) => setFocusedStudent(row.original)}
           onSortingChange={setSorting}
           selection={{
@@ -1365,9 +1399,16 @@ function renderPageContent(
   sidePaneOpen: boolean,
   sidePaneWidth: number,
   setSidePaneOpen: (open: boolean) => void,
+  dataTableLayoutHeight: DataTableLayoutHeight,
+  setDataTableLayoutHeight: (height: DataTableLayoutHeight) => void,
 ) {
   if (active === 'dataTable') {
-    return <DataTableDemo />
+    return (
+      <DataTableDemo
+        layoutHeight={dataTableLayoutHeight}
+        onLayoutHeightChange={setDataTableLayoutHeight}
+      />
+    )
   }
 
   if (active === 'files') {
@@ -1668,6 +1709,8 @@ export function ExampleApp() {
   const [displayMode, setDisplayMode] = useState<PaneDisplayMode>('auto')
   const [sidePaneOpen, setSidePaneOpen] = useState(false)
   const [sidePaneWidth, setSidePaneWidth] = useState(380)
+  const [dataTableLayoutHeight, setDataTableLayoutHeight] =
+    useState<DataTableLayoutHeight>('fill')
   const resolvedTheme = useResolvedTheme(theme)
   const antdTheme = useMemo(
     () => createAntdTheme({ mode: resolvedTheme }),
@@ -1768,6 +1811,16 @@ export function ExampleApp() {
       contentClassName="example-content"
     >
       <AppPage
+        className={
+          active === 'dataTable'
+            ? `example-data-page example-data-page--${dataTableLayoutHeight}`
+            : undefined
+        }
+        contentClassName={
+          active === 'dataTable' && dataTableLayoutHeight === 'fill'
+            ? 'example-data-page__content--fill'
+            : undefined
+        }
         key={active}
         title={currentPage.title}
         description={currentPage.description}
@@ -1792,6 +1845,8 @@ export function ExampleApp() {
           sidePaneOpen,
           sidePaneWidth,
           setSidePaneOpen,
+          dataTableLayoutHeight,
+          setDataTableLayoutHeight,
         )}
       </AppPage>
       </AppShell>

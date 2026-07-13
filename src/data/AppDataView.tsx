@@ -1,6 +1,7 @@
 import type { AppDataViewProps } from './types'
 
 export function AppDataView({
+  height = 'auto',
   toolbar,
   selectionBar,
   footer,
@@ -12,7 +13,13 @@ export function AppDataView({
 
   return (
     <div
-      className={`app-data-view ${className ?? ''}`.trim()}
+      className={[
+        'app-data-view',
+        `app-data-view--${height}`,
+        className ?? '',
+      ]
+        .filter(Boolean)
+        .join(' ')}
       style={style}
     >
       {header != null ? (

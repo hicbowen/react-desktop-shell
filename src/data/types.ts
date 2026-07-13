@@ -74,6 +74,7 @@ export interface AppDataTableProps<TData> {
 }
 
 export interface AppDataViewProps {
+  height?: 'auto' | 'fill'
   toolbar?: ReactNode
   selectionBar?: ReactNode
   footer?: ReactNode
