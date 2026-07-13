@@ -63,7 +63,6 @@ import {
   AppDataView,
   AppSelectionBar,
 } from '../../src/data'
-import { AppVirtualDataTable } from '../../src/data/virtual'
 
 function getSystemTheme(): AntdThemeMode {
   if (typeof window === 'undefined') {
@@ -158,9 +157,6 @@ const studentSeeds: Student[] = [
 function DataTableDemo() {
   const messageBox = useAppMessageBox()
   const toast = useAppToast()
-  const [renderMode, setRenderMode] = useState<'standard' | 'virtual'>('virtual')
-  const [rowCount, setRowCount] = useState(1000)
-  const [overscan, setOverscan] = useState(8)
   const [deletedStudentIds, setDeletedStudentIds] = useState<Set<string>>(
     () => new Set(),
   )
@@ -190,7 +186,7 @@ function DataTableDemo() {
 
   const students = useMemo(
     () =>
-      Array.from({ length: rowCount }, (_, index) => {
+      Array.from({ length: 100 }, (_, index) => {
         const seed = studentSeeds[index % studentSeeds.length]!
         const ordinal = index + 1
         return {
@@ -199,11 +195,7 @@ function DataTableDemo() {
           name: `${seed.name} ${ordinal}`,
         }
       }).filter((student) => !deletedStudentIds.has(student.id)),
-    [deletedStudentIds, rowCount],
-  )
-  const sourceStudents = useMemo(
-    () => (renderMode === 'standard' ? students.slice(0, 100) : students),
-    [renderMode, students],
+    [deletedStudentIds],
   )
 
   const columns = useMemo<ColumnDef<Student>[]>(
@@ -282,7 +274,7 @@ function DataTableDemo() {
 
   const matchingStudentCount = useMemo(() => {
     const normalizedQuery = globalFilter.trim().toLowerCase()
-    return sourceStudents.filter((student) => {
+    return students.filter((student) => {
       const matchesQuery =
         normalizedQuery.length === 0 ||
         student.name.toLowerCase().includes(normalizedQuery)
@@ -290,7 +282,7 @@ function DataTableDemo() {
         statusFilter === 'all' || student.status === statusFilter
       return matchesQuery && matchesStatus
     }).length
-  }, [globalFilter, sourceStudents, statusFilter])
+  }, [globalFilter, statusFilter, students])
 
   const selectedIds = Object.keys(rowSelection).filter(
     (id) => rowSelection[id],
@@ -320,7 +312,7 @@ function DataTableDemo() {
     toast.success(`${selectedCount} students deleted`)
   }
 
-  const displayedStudents = showEmpty ? [] : sourceStudents
+  const displayedStudents = showEmpty ? [] : students
   const columnOptions = [
     { id: 'className', label: 'Class' },
     { id: 'status', label: 'Status' },
@@ -361,36 +353,6 @@ function DataTableDemo() {
   return (
     <div className="example-data-table-demo">
       <div className="example-data-table-switches" aria-label="Data table demo controls">
-        <Select
-          aria-label="Rendering mode"
-          options={[
-            { value: 'standard', label: 'Standard rendering' },
-            { value: 'virtual', label: 'Virtualized rendering' },
-          ]}
-          value={renderMode}
-          onChange={setRenderMode}
-        />
-        <Select
-          aria-label="Row count"
-          options={[
-            { value: 100, label: '100 rows' },
-            { value: 1000, label: '1,000 rows' },
-            { value: 10000, label: '10,000 rows' },
-          ]}
-          value={rowCount}
-          onChange={setRowCount}
-        />
-        <Select
-          aria-label="Virtual row overscan"
-          disabled={renderMode === 'standard'}
-          options={[
-            { value: 4, label: 'Overscan 4' },
-            { value: 8, label: 'Overscan 8' },
-            { value: 12, label: 'Overscan 12' },
-          ]}
-          value={overscan}
-          onChange={setOverscan}
-        />
         <Select
           aria-label="Select all mode"
           options={[
@@ -584,82 +546,44 @@ function DataTableDemo() {
         }
         footer={
           <span>
-            Showing {showEmpty ? 0 : matchingStudentCount} of {sourceStudents.length}
+            Showing {showEmpty ? 0 : matchingStudentCount} of {students.length}
             {focusedStudent ? ` · Opened ${focusedStudent.name}` : ''}
           </span>
         }
       >
-        {renderMode === 'virtual' ? (
-          <AppVirtualDataTable
-            columns={columns}
-            columnFilters={columnFilters}
-            columnPinning={columnPinning}
-            columnResizeMode={resizeMode}
-            columnSizing={columnSizing}
-            columnVisibility={columnVisibility}
-            data={displayedStudents}
-            density={density}
-            emptyContent={hasActiveFilters ? 'No matching students' : 'No students'}
-            enableColumnPinning
-            enableColumnResizing={resizingEnabled}
-            estimatedRowHeight={density === 'compact' ? 38 : 48}
-            globalFilter={globalFilter}
-            getRowId={(student) => student.id}
-            loading={loading}
-            maxHeight={tableHeight}
-            onColumnFiltersChange={setColumnFilters}
-            onColumnPinningChange={setColumnPinning}
-            onColumnSizingChange={setColumnSizing}
-            onColumnVisibilityChange={setColumnVisibility}
-            onGlobalFilterChange={setGlobalFilter}
-            onRowClick={(row) => setFocusedStudent(row.original)}
-            onSortingChange={setSorting}
-            overscan={overscan}
-            selection={{
-              value: rowSelection,
-              onChange: setRowSelection,
-              selectAllMode,
-              getRowAriaLabel: (row) => `Select ${row.original.name}`,
-              selectAllAriaLabel: 'Select all students',
-            }}
-            stickyHeader={stickyHeader}
-            sorting={sorting}
-          />
-        ) : (
-          <AppDataTable
-            columns={columns}
-            columnFilters={columnFilters}
-            columnPinning={columnPinning}
-            columnResizeMode={resizeMode}
-            columnSizing={columnSizing}
-            columnVisibility={columnVisibility}
-            data={displayedStudents}
-            density={density}
-            emptyContent={hasActiveFilters ? 'No matching students' : 'No students'}
-            enableColumnPinning
-            enableColumnResizing={resizingEnabled}
-            globalFilter={globalFilter}
-            getRowId={(student) => student.id}
-            loading={loading}
-            maxHeight={tableHeight}
-            onColumnFiltersChange={setColumnFilters}
-            onColumnPinningChange={setColumnPinning}
-            onColumnSizingChange={setColumnSizing}
-            onColumnVisibilityChange={setColumnVisibility}
-            onGlobalFilterChange={setGlobalFilter}
-            onRowClick={(row) => setFocusedStudent(row.original)}
-            onSortingChange={setSorting}
-            selection={{
-              value: rowSelection,
-              onChange: setRowSelection,
-              selectAllMode,
-              getRowAriaLabel: (row) => `Select ${row.original.name}`,
-              selectAllAriaLabel: 'Select all students',
-            }}
-            stickyHeader={stickyHeader}
-            sorting={sorting}
-          />
-        )}
+        <AppDataTable
+          columns={columns}
+          columnFilters={columnFilters}
+          columnPinning={columnPinning}
+          columnResizeMode={resizeMode}
+          columnSizing={columnSizing}
+          columnVisibility={columnVisibility}
+          data={displayedStudents}
+          density={density}
+          emptyContent={hasActiveFilters ? 'No matching students' : 'No students'}
+          enableColumnPinning
+          enableColumnResizing={resizingEnabled}
+          globalFilter={globalFilter}
+          getRowId={(student) => student.id}
+          loading={loading}
+          maxHeight={tableHeight}
+          onColumnFiltersChange={setColumnFilters}
+          onColumnPinningChange={setColumnPinning}
+          onColumnSizingChange={setColumnSizing}
+          onColumnVisibilityChange={setColumnVisibility}
+          onGlobalFilterChange={setGlobalFilter}
+          onRowClick={(row) => setFocusedStudent(row.original)}
+          onSortingChange={setSorting}
+          selection={{
+            value: rowSelection,
+            onChange: setRowSelection,
+            selectAllMode,
+            getRowAriaLabel: (row) => `Select ${row.original.name}`,
+            selectAllAriaLabel: 'Select all students',
+          }}
+          stickyHeader={stickyHeader}
+          sorting={sorting}
+        />
       </AppDataView>
     </div>
   )

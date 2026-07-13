@@ -352,26 +352,6 @@
   text-align: center;
 }
 
-.app-data-table--virtualized tbody tr:not(.app-data-table__virtual-spacer):not(.app-data-table__state-row),
-.app-data-table--virtualized tbody tr:not(.app-data-table__virtual-spacer):not(.app-data-table__state-row) td {
-  height: var(--app-data-table-virtual-row-height);
-  max-height: var(--app-data-table-virtual-row-height);
-}
-
-.app-data-table__virtual-spacer,
-.app-data-table__virtual-spacer:hover {
-  pointer-events: none;
-  background: transparent;
-}
-
-.app-data-table__virtual-spacer td,
-.app-data-table__virtual-spacer:hover td {
-  height: 0;
-  padding: 0;
-  background: transparent;
-  border: 0;
-}
-
 @media (max-width: 560px) {
   .app-selection-bar__actions {
     width: 100%;

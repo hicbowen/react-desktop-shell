@@ -6,7 +6,6 @@ import {
   type KeyboardEvent,
   type MouseEvent,
   type ReactNode,
-  type Ref,
 } from 'react'
 import {
   flexRender,
@@ -433,9 +432,6 @@ interface DataTableFrameProps<TData> {
   loading: boolean
   className?: string
   style?: CSSProperties
-  scrollRef?: Ref<HTMLDivElement>
-  ariaRowCount?: number
-  virtualized?: boolean
   children: ReactNode
 }
 
@@ -449,26 +445,21 @@ export function DataTableFrame<TData>({
   loading,
   className,
   style,
-  scrollRef,
-  ariaRowCount,
-  virtualized = false,
   children,
 }: DataTableFrameProps<TData>) {
   const tableWidth = table.getTotalSize()
 
   return (
     <div
-      className={`app-data-table app-data-table--${density} ${stickyHeader ? 'app-data-table--sticky-header' : ''} ${virtualized ? 'app-data-table--virtualized' : ''} ${className ?? ''}`.trim()}
+      className={`app-data-table app-data-table--${density} ${stickyHeader ? 'app-data-table--sticky-header' : ''} ${className ?? ''}`.trim()}
       style={style}
     >
       <div
         className="app-data-table__scroll"
-        ref={scrollRef}
         style={{ maxHeight }}
       >
         <table
           aria-busy={loading || undefined}
-          aria-rowcount={ariaRowCount}
           className="app-data-table__table"
           style={{ width: tableWidth, minWidth: tableWidth }}
         >
@@ -489,14 +480,12 @@ interface DataTableRowProps<TData> {
   row: Row<TData>
   stickyHeader: boolean
   onRowClick?: AppDataTableProps<TData>['onRowClick']
-  ariaRowIndex?: number
 }
 
 export function DataTableRow<TData>({
   row,
   stickyHeader,
   onRowClick,
-  ariaRowIndex,
 }: DataTableRowProps<TData>) {
   const handleClick = (event: MouseEvent<HTMLTableRowElement>) => {
     if (!onRowClick || isInteractiveTarget(event.target)) return
@@ -512,7 +501,6 @@ export function DataTableRow<TData>({
 
   return (
     <tr
-      aria-rowindex={ariaRowIndex}
       className={onRowClick ? 'app-data-table__row--clickable' : undefined}
       data-selected={row.getIsSelected() || undefined}
       tabIndex={onRowClick ? 0 : undefined}
@@ -546,22 +534,6 @@ export function DataTableStateRow({
       <td className="app-data-table__state" colSpan={columnCount}>
         {content}
       </td>
-    </tr>
-  )
-}
-
-export function DataTableVirtualSpacerRow({
-  columnCount,
-  height,
-}: {
-  columnCount: number
-  height: number
-}) {
-  if (height <= 0) return null
-
-  return (
-    <tr aria-hidden="true" className="app-data-table__virtual-spacer">
-      <td colSpan={columnCount} style={{ height }} />
     </tr>
   )
 }

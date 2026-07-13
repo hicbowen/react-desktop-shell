@@ -194,9 +194,7 @@ and maximum widths, per-column resize control, `onEnd` and `onChange` modes,
 and double-click reset. Sticky table headers and controlled or uncontrolled
 left/right column pinning include pinned boundary shadows and compose with
 resizing and visibility. The table does not provide filtering controls,
-pagination, or column order dragging. The regular `AppDataTable` does not
-provide virtualization; use `AppVirtualDataTable` from
-`react-desktop-shell/data/virtual` for virtualized rows.
+pagination, or column order dragging.
 
 ```tsx
 import { useState } from 'react'
@@ -455,57 +453,8 @@ import {
 
 Hiding a pinned column does not remove its ID from `columnPinning`; showing it
 again restores the pinned position and existing size. Pinning menus and state
-persistence belong to the application. Column order dragging and virtual rows
+persistence belong to the application. Column order dragging and pagination
 are separate concerns.
-
-### Virtualized rows
-
-Large fixed-height datasets can use the optional
-`react-desktop-shell/data/virtual` entry. The regular `AppDataTable` does not
-require React Virtual; install it only when using `AppVirtualDataTable`:
-
-```bash
-npm install react-desktop-shell \
-  @tanstack/react-table \
-  @tanstack/react-virtual
-```
-
-```tsx
-import {
-  AppVirtualDataTable,
-} from 'react-desktop-shell/data/virtual'
-
-<AppVirtualDataTable
-  data={students}
-  columns={columns}
-  getRowId={(row) => row.id}
-  maxHeight={520}
-  stickyHeader
-/>
-```
-
-`maxHeight` is required because the virtualizer needs an explicit scrolling
-viewport. It accepts pixel numbers or CSS values such as `60vh` and
-`calc(100vh - 260px)`. Virtualization consumes the final filtered and sorted
-TanStack Row Model and uses each stable `row.id` as its item key.
-
-```tsx
-<AppVirtualDataTable
-  data={students}
-  columns={columns}
-  getRowId={(row) => row.id}
-  maxHeight="60vh"
-  estimatedRowHeight={40}
-  overscan={8}
-/>
-```
-
-The component supports fixed or predictably sized rows only.
-`estimatedRowHeight` controls both the virtual estimate and actual CSS row
-height; when omitted it follows the comfortable or compact density. Custom cell
-renderers should not expand the row height. Dynamic-height rows, virtual
-columns, infinite loading, pagination, and a public `scrollToIndex` API are not
-currently supported.
 
 ### Data view API
 

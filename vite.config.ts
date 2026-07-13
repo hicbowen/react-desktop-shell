@@ -9,10 +9,6 @@ export default defineConfig({
         index: resolve(__dirname, 'src/index.ts'),
         'antd/index': resolve(__dirname, 'src/antd/index.ts'),
         'data/index': resolve(__dirname, 'src/data/index.ts'),
-        'data/virtual/index': resolve(
-          __dirname,
-          'src/data/virtual/index.ts',
-        ),
       },
       formats: ['es'],
       fileName: (_format, entryName) => `${entryName}.js`,
@@ -25,8 +21,6 @@ export default defineConfig({
         id === 'react/jsx-runtime' ||
         id === '@tanstack/react-table' ||
         id.startsWith('@tanstack/react-table/') ||
-        id === '@tanstack/react-virtual' ||
-        id.startsWith('@tanstack/react-virtual/') ||
         id === 'antd' ||
         id.startsWith('antd/'),
     },
