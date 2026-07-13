@@ -15,10 +15,7 @@
   );
   --app-rail-bg: transparent;
   --app-rail-flyout-bg: var(--app-shell-surface-bg, #ffffff);
-  --app-rail-scroll-hint-bg: var(
-    --app-shell-chrome-bg,
-    var(--app-rail-flyout-bg)
-  );
+  --app-rail-scroll-fade-size: 28px;
   --app-rail-flyout-border-color: var(--app-shell-border-color, rgb(0 0 0 / 10%));
   --app-rail-flyout-shadow: 0 8px 24px rgb(0 0 0 / 16%);
   --app-rail-item-padding-left: 16px;
@@ -81,25 +78,21 @@
   overflow-y: auto;
 }
 
-.app-rail__scroll-hint {
-  position: absolute;
-  z-index: 1;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  height: 28px;
-  background: linear-gradient(
+.app-rail__nav--fade-bottom {
+  -webkit-mask-image: linear-gradient(
     to bottom,
-    transparent,
-    var(--app-rail-scroll-hint-bg)
+    #000 0,
+    #000 calc(100% - var(--app-rail-scroll-fade-size)),
+    transparent 100%
   );
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 150ms ease;
-}
-
-.app-rail__scroll-hint--visible {
-  opacity: 1;
+  mask-image: linear-gradient(
+    to bottom,
+    #000 0,
+    #000 calc(100% - var(--app-rail-scroll-fade-size)),
+    transparent 100%
+  );
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
 }
 
 .app-rail__footer {
@@ -505,8 +498,7 @@
 
 @media (prefers-reduced-motion: reduce) {
   .app-rail,
-  .app-rail__item,
-  .app-rail__scroll-hint {
+  .app-rail__item {
     transition: none;
   }
 

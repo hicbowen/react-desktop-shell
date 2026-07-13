@@ -10,7 +10,7 @@ const items = [
   { key: 'files', label: 'Files' },
 ]
 
-describe('AppRail scroll hint', () => {
+describe('AppRail scroll fade', () => {
   let container: HTMLDivElement
   let root: Root
   let clientHeight: number
@@ -40,36 +40,32 @@ describe('AppRail scroll hint', () => {
 
   const render = (node: ReactNode) => act(() => root.render(node))
   const nav = () => container.querySelector<HTMLElement>('.app-rail__nav')!
-  const hint = () =>
-    container.querySelector<HTMLElement>('.app-rail__scroll-hint')!
   const scroll = () =>
     act(() => nav().dispatchEvent(new Event('scroll', { bubbles: false })))
 
-  it('does not show the hint when all content fits', () => {
+  it('does not apply the fade when all content fits', () => {
     render(<AppRail items={items} />)
 
-    expect(hint().dataset.visible).toBe('false')
-    expect(hint().classList).not.toContain('app-rail__scroll-hint--visible')
+    expect(nav().classList).not.toContain('app-rail__nav--fade-bottom')
   })
 
-  it('shows the hint initially when more content is below', () => {
+  it('applies the fade initially when more content is below', () => {
     scrollHeight = 180
     render(<AppRail items={items} />)
 
-    expect(hint().dataset.visible).toBe('true')
-    expect(hint().classList).toContain('app-rail__scroll-hint--visible')
+    expect(nav().classList).toContain('app-rail__nav--fade-bottom')
   })
 
-  it('hides the hint after scrolling to the bottom', () => {
+  it('removes the fade after scrolling to the bottom', () => {
     scrollHeight = 180
     render(<AppRail items={items} />)
     nav().scrollTop = 80
     scroll()
 
-    expect(hint().dataset.visible).toBe('false')
+    expect(nav().classList).not.toContain('app-rail__nav--fade-bottom')
   })
 
-  it('shows the hint again after scrolling away from the bottom', () => {
+  it('restores the fade after scrolling away from the bottom', () => {
     scrollHeight = 180
     render(<AppRail items={items} />)
     nav().scrollTop = 80
@@ -77,16 +73,15 @@ describe('AppRail scroll hint', () => {
     nav().scrollTop = 40
     scroll()
 
-    expect(hint().dataset.visible).toBe('true')
+    expect(nav().classList).toContain('app-rail__nav--fade-bottom')
   })
 
-  it('keeps the overlay non-interactive and menu items clickable', () => {
+  it('does not render an overlay and keeps menu items clickable', () => {
     const onChange = vi.fn()
     scrollHeight = 180
     render(<AppRail items={items} onChange={onChange} />)
 
-    expect(hint().getAttribute('aria-hidden')).toBe('true')
-    expect(hint().parentElement).toBe(nav().parentElement)
+    expect(container.querySelector('.app-rail__scroll-hint')).toBeNull()
     act(() =>
       container.querySelector<HTMLButtonElement>('.app-rail__item')?.click(),
     )

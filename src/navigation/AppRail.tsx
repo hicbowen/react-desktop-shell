@@ -98,7 +98,9 @@ export function AppRail({
       <div className="app-rail__nav-region">
         <nav
           ref={navRef}
-          className="app-rail__nav app-scrollbar"
+          className={`app-rail__nav app-scrollbar${
+            canScrollDown ? ' app-rail__nav--fade-bottom' : ''
+          }`}
           aria-label="Primary"
           onScroll={updateScrollHint}
         >
@@ -156,14 +158,6 @@ export function AppRail({
             )
           })}
         </nav>
-
-        <div
-          className={`app-rail__scroll-hint${
-            canScrollDown ? ' app-rail__scroll-hint--visible' : ''
-          }`}
-          aria-hidden="true"
-          data-visible={canScrollDown}
-        />
       </div>
 
       {footerItems.length > 0 && (
