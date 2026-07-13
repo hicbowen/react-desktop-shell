@@ -151,17 +151,30 @@
   color: var(--app-shell-text-color);
   background: transparent;
   border: 0;
-  border-radius: 6px;
+  border-radius: 4px;
   cursor: default;
+  transition:
+    background-color 80ms ease,
+    color 80ms ease;
   -webkit-app-region: no-drag;
 }
 
-.app-shell__pane-toggle:hover {
-  background: var(--app-shell-hover-bg);
+.app-shell__pane-toggle:hover:not(:disabled) {
+  background: color-mix(in srgb, currentColor 4%, transparent);
 }
 
-.app-shell__pane-toggle:active {
-  background: var(--app-shell-control-hover-bg);
+.app-shell__pane-toggle:active:not(:disabled) {
+  background: color-mix(in srgb, currentColor 8%, transparent);
+}
+
+.app-shell__pane-toggle:focus-visible {
+  outline: 2px solid var(--app-shell-accent-color);
+  outline-offset: -2px;
+}
+
+.app-shell__pane-toggle:disabled {
+  color: var(--app-shell-disabled-text-color);
+  background: transparent;
 }
 
 .app-shell__sidebar-icon {
@@ -357,9 +370,19 @@
     transition: none;
   }
 
+  .app-shell__pane-toggle {
+    transition: none;
+  }
+
   .app-shell__pane-backdrop,
   .app-shell__pane-overlay {
     animation: none;
+  }
+}
+
+@media (forced-colors: active) {
+  .app-shell__pane-toggle:focus-visible {
+    outline-color: Highlight;
   }
 }
 
