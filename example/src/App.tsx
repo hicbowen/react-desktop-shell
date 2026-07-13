@@ -1,10 +1,9 @@
 import { useEffect, useMemo, useState } from 'react'
 import { ConfigProvider } from 'antd'
-import { Settings } from 'lucide-react'
 import { AppPage, AppRail, AppShell, AppTitleBar, type AppTheme, type PaneDisplayMode } from '../../src'
 import { createAntdTheme, type AntdThemeMode } from '../../src/antd'
 import { DemoShellContext } from './components/DemoShellContext'
-import { demoPages, railItems } from './demoRegistry'
+import { demoPages, railFooterItems, railItems } from './demoRegistry'
 
 function systemTheme(): AntdThemeMode {
   return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
@@ -42,14 +41,13 @@ export function ExampleApp() {
           theme={theme}
           titleBar={
             <AppTitleBar
-              actions={<button aria-label="Open settings" className="example-title-action" type="button" onClick={() => setActiveKey('app-settings-group')}><Settings size={15} /></button>}
               maximized={maximized}
               onClose={() => undefined}
               onMinimize={() => undefined}
               onToggleMaximize={() => setMaximized((value) => !value)}
             />
           }
-          rail={<AppRail value={activeKey} items={railItems} onChange={setActiveKey} />}
+          rail={<AppRail value={activeKey} items={railItems} footerItems={railFooterItems} onChange={setActiveKey} />}
           contentClassName="example-content"
         >
           <AppPage

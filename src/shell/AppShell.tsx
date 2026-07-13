@@ -15,6 +15,7 @@ import {
 } from '../context-menu/AppContextMenuTextActions'
 import type { AppShellProps } from './types'
 import './AppShell.css'
+import '../scroll-area/AppScrollArea.css'
 import {
   ShellInlinePane,
   ShellPaneLayer,
@@ -103,7 +104,7 @@ export function AppShell({
   ])
 
   const contentClassNames = useMemo(() => {
-    const classes = ['app-shell__content']
+    const classes = ['app-shell__content', 'app-scrollbar']
 
     if (contentClassName) {
       classes.push(contentClassName)

@@ -1,15 +1,16 @@
 import { useState } from 'react'
 import { Button, Input, Switch } from 'antd'
+import { Bell, Pin } from 'lucide-react'
 import { AppPage, AppSidePane, AppTitleBar } from '../../../../src'
 import { DemoControls, DemoPage, DemoPreview, DemoSection } from '../../components/DemoPage'
 
 export function AppShellPage() {
-  return <DemoPage><DemoSection title="Application frame" description="AppShell coordinates the title bar, navigation rail, content, feedback hosts, and overlays."><DemoPreview><div className="demo-shell-diagram"><span>Title bar</span><span>Rail</span><strong>Content</strong><span>Overlay layers</span></div></DemoPreview></DemoSection></DemoPage>
+  return <DemoPage><DemoSection title="Application frame" description="AppShell coordinates the title bar, navigation rail, content, feedback hosts, and overlays."><DemoPreview><div className="demo-shell-diagram"><span className="demo-shell-diagram__rail">Rail</span><span className="demo-shell-diagram__titlebar">Title bar</span><strong className="demo-shell-diagram__content">Content</strong><span className="demo-shell-diagram__overlays">Overlay layers</span></div></DemoPreview></DemoSection></DemoPage>
 }
 
 export function AppTitleBarPage() {
   const [maximized, setMaximized] = useState(false)
-  return <DemoPage><DemoSection title="Window controls" description="Use callbacks to connect native window actions in Electron, Tauri, or Wails."><DemoPreview className="demo-titlebar-preview"><AppTitleBar maximized={maximized} onMinimize={() => undefined} onToggleMaximize={() => setMaximized((v) => !v)} onClose={() => undefined} /></DemoPreview><p className="demo-note">Current preview state: {maximized ? 'maximized' : 'restored'}</p></DemoSection></DemoPage>
+  return <DemoPage><DemoSection title="Window controls" description="Custom actions are placed immediately to the left of the native window controls."><DemoPreview className="demo-titlebar-preview"><AppTitleBar actions={<><Button aria-label="Pin window" icon={<Pin size={14} />} size="small" type="text" /><Button aria-label="Notifications" icon={<Bell size={14} />} size="small" type="text" /></>} maximized={maximized} onMinimize={() => undefined} onToggleMaximize={() => setMaximized((v) => !v)} onClose={() => undefined} /></DemoPreview><p className="demo-note">Current preview state: {maximized ? 'maximized' : 'restored'}</p></DemoSection></DemoPage>
 }
 
 export function AppPagePage() {

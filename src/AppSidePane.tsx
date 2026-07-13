@@ -9,6 +9,7 @@ import {
 import type { CSSProperties } from 'react'
 import type { AppSidePaneProps } from './types'
 import './AppSidePane.css'
+import './scroll-area/AppScrollArea.css'
 
 const DEFAULT_WIDTH = 380
 const DEFAULT_MIN_WIDTH = 320
@@ -236,7 +237,7 @@ export function AppSidePane({
           ) : null}
         </header>
       )}
-      <div className="app-side-pane__body">{children}</div>
+      <div className="app-side-pane__body app-scrollbar">{children}</div>
       {footer ? <footer className="app-side-pane__footer">{footer}</footer> : null}
     </aside>
   )

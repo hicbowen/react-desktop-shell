@@ -18,6 +18,8 @@ import {
 import { useDemoShell } from '../../components/DemoShellContext'
 
 export function AppRailPage() {
+  const [selected, setSelected] = useState('first')
+
   return (
     <DemoPage>
       <DemoSection
@@ -27,8 +29,8 @@ export function AppRailPage() {
         <DemoPreview>
           <div className="demo-rail-preview">
             <AppRail
-              value="first"
-              onChange={() => undefined}
+              value={selected}
+              onChange={setSelected}
               items={[
                 { key: 'first', label: 'First item', badge: 3 },
                 { type: 'group', label: 'Group' },
@@ -67,9 +69,9 @@ export function AppSelectorBarPage() {
           <AppSelectorBar
             ariaLabel="Task status"
             items={[
-              { key: 'all', label: '全部' },
-              { key: 'open', label: '待完成' },
-              { key: 'done', label: '已完成' },
+              { key: 'all', label: 'All' },
+              { key: 'open', label: 'Open' },
+              { key: 'done', label: 'Completed' },
             ]}
             value={basicView}
             onChange={setBasicView}
@@ -83,9 +85,9 @@ export function AppSelectorBarPage() {
             ariaLabel="Collection view"
             defaultValue="recent"
             items={[
-              { key: 'recent', label: '最近', icon: <Clock3 /> },
-              { key: 'favorites', label: '收藏', icon: <Heart /> },
-              { key: 'history', label: '历史', icon: <History /> },
+              { key: 'recent', label: 'Recent', icon: <Clock3 /> },
+              { key: 'favorites', label: 'Favorites', icon: <Heart /> },
+              { key: 'history', label: 'History', icon: <History /> },
             ]}
           />
         </DemoPreview>
@@ -96,8 +98,8 @@ export function AppSelectorBarPage() {
           <AppSelectorBar
             ariaLabel="Release channel"
             items={[
-              { key: 'stable', label: '正式版本' },
-              { key: 'preview', label: '测试版本', disabled: true },
+              { key: 'stable', label: 'Stable' },
+              { key: 'preview', label: 'Preview', disabled: true },
             ]}
           />
         </DemoPreview>
@@ -109,10 +111,10 @@ export function AppSelectorBarPage() {
             ariaLabel="Quick task view"
             size="small"
             items={[
-              { key: 'inbox', icon: <Inbox />, ariaLabel: '全部任务' },
-              { key: 'today', icon: <CalendarDays />, ariaLabel: '今天' },
-              { key: 'open', icon: <ListTodo />, ariaLabel: '待完成' },
-              { key: 'done', icon: <CheckCircle2 />, ariaLabel: '已完成' },
+              { key: 'inbox', icon: <Inbox />, ariaLabel: 'All tasks' },
+              { key: 'today', icon: <CalendarDays />, ariaLabel: 'Today' },
+              { key: 'open', icon: <ListTodo />, ariaLabel: 'Open' },
+              { key: 'done', icon: <CheckCircle2 />, ariaLabel: 'Completed' },
             ]}
           />
         </DemoPreview>
@@ -124,10 +126,10 @@ export function AppSelectorBarPage() {
             <AppSelectorBar
               ariaLabel="Task data view"
               items={[
-                { key: 'all-tasks', label: '全部任务' },
-                { key: 'today', label: '今天' },
-                { key: 'open', label: '待完成' },
-                { key: 'completed', label: '已完成' },
+                { key: 'all-tasks', label: 'All tasks' },
+                { key: 'today', label: 'Today' },
+                { key: 'open', label: 'Open' },
+                { key: 'completed', label: 'Completed' },
               ]}
               value={taskView}
               onChange={setTaskView}

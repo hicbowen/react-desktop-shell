@@ -42,7 +42,19 @@
 }
 
 .app-data-view__header {
+  min-height: 57px;
+  display: flex;
+  align-items: center;
   border-bottom: 1px solid var(--app-data-border-color);
+}
+
+.app-data-view__header > .app-toolbar,
+.app-data-view__header > .app-selection-bar {
+  width: 100%;
+}
+
+.app-data-view__header > .app-toolbar {
+  min-height: 32px;
 }
 
 .app-data-view__header > .app-toolbar {
@@ -75,11 +87,12 @@
   box-sizing: border-box;
   width: 100%;
   min-width: 0;
+  height: 32px;
   min-height: 32px;
-  padding: 12px 16px;
+  padding: 0;
   display: flex;
   align-items: center;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   gap: 10px 16px;
   color: var(--app-data-text-color, var(--app-shell-text-color, #1f1f1f));
 }
@@ -93,8 +106,17 @@
 }
 
 .app-selection-bar__label {
+  flex: 1 1 auto;
+  overflow: hidden;
   font-size: 13px;
   font-weight: 600;
+  white-space: nowrap;
+}
+
+.app-selection-bar__label > span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .app-selection-bar__label > svg {
@@ -103,9 +125,10 @@
 }
 
 .app-selection-bar__actions {
+  flex: 0 0 auto;
   margin-left: auto;
   justify-content: flex-end;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
 }
 
 .app-selection-bar__clear {

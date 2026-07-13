@@ -6,6 +6,7 @@ export { AppInfoBar } from './info-bar/AppInfoBar'
 export { AppPage } from './AppPage'
 export { AppRail } from './navigation/AppRail'
 export { AppSelectorBar } from './selector-bar'
+export { AppScrollArea } from './scroll-area'
 export { AppSettingsGroup } from './settings/AppSettingsGroup'
 export { AppSettingsRow } from './settings/AppSettingsRow'
 export { AppSidePane } from './AppSidePane'
@@ -44,6 +45,10 @@ export type {
   AppRailProps,
   AppSelectorBarItem,
   AppSelectorBarProps,
+  AppScrollAreaGutter,
+  AppScrollAreaOrientation,
+  AppScrollAreaProps,
+  AppScrollAreaScrollbar,
   AppShellProps,
   AppSidePaneProps,
   AppTitleBarProps,

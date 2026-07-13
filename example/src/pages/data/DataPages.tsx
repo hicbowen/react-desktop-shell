@@ -12,8 +12,22 @@ export function AppDataTablePage() {
   const [selection, setSelection] = useState<RowSelectionState>({})
   const [sticky, setSticky] = useState(true)
   const [resizing, setResizing] = useState(true)
+  const [fixedHeight, setFixedHeight] = useState(true)
   const [fill, setFill] = useState(false)
-  return <DemoPage><DemoControls><span><Switch checked={sticky} onChange={setSticky} /> Sticky header</span><span><Switch checked={resizing} onChange={setResizing} /> Column resizing</span><span><Switch checked={fill} onChange={setFill} /> Fill height</span></DemoControls><DemoSection title="Interactive table" description="Sorting, row selection, sticky headers, and column sizing are controlled independently on this page."><div className={fill ? 'demo-table-fill' : ''}><AppDataTable columns={columns} data={tableRows} getRowId={(row) => row.id} sorting={sorting} onSortingChange={setSorting} selection={{ value: selection, onChange: setSelection, getRowAriaLabel: (row) => `Select ${row.original.name}` }} stickyHeader={sticky} enableColumnResizing={resizing} maxHeight={fill ? undefined : 390} /></div></DemoSection></DemoPage>
+  const handleFixedHeightChange = (next: boolean) => {
+    setFixedHeight(next)
+    if (next) setFill(false)
+  }
+  const handleFillChange = (next: boolean) => {
+    setFill(next)
+    if (next) setFixedHeight(false)
+  }
+  const tableClassName = fill
+    ? 'demo-table-fill'
+    : fixedHeight
+      ? 'demo-table-fixed'
+      : ''
+  return <DemoPage className={fill ? 'demo-page--fill' : ''}><DemoControls><span><Switch checked={sticky} onChange={setSticky} /> Sticky header</span><span><Switch checked={resizing} onChange={setResizing} /> Column resizing</span><span><Switch checked={fixedHeight} onChange={handleFixedHeightChange} /> Fixed height</span><span><Switch checked={fill} onChange={handleFillChange} /> Fill remaining height</span></DemoControls><DemoSection title="Interactive table" description="Choose natural height, a fixed 390px viewport, or a table that fills the remaining page height."><div className={tableClassName}><AppDataTable columns={columns} data={tableRows} getRowId={(row) => row.id} sorting={sorting} onSortingChange={setSorting} selection={{ value: selection, onChange: setSelection, getRowAriaLabel: (row) => `Select ${row.original.name}` }} stickyHeader={sticky} enableColumnResizing={resizing} /></div></DemoSection></DemoPage>
 }
 
 export function AppDataViewPage() {
@@ -27,5 +41,5 @@ export function AppDataViewPage() {
 export function AppSelectionBarPage() {
   const [count, setCount] = useState(3)
   const [disabled, setDisabled] = useState(false)
-  return <DemoPage><DemoControls><Button onClick={() => setCount((value) => value + 1)}>Increase count</Button><Button disabled={count === 0} onClick={() => setCount((value) => Math.max(0, value - 1))}>Decrease count</Button><span><Switch checked={disabled} onChange={setDisabled} /> Disabled actions</span></DemoControls><DemoSection title="Selection actions"><DemoPreview>{count > 0 ? <AppSelectionBar count={count} label={`${count} items selected`} onClear={() => setCount(0)} actions={<><Button disabled={disabled}>Primary action</Button><Button danger disabled={disabled}>Remove</Button></>} /> : <span>Selection cleared. Increase the count to restore the bar.</span>}</DemoPreview></DemoSection></DemoPage>
+  return <DemoPage><DemoControls><Button onClick={() => setCount((value) => value + 1)}>Increase count</Button><Button disabled={count === 0} onClick={() => setCount((value) => Math.max(0, value - 1))}>Decrease count</Button><span><Switch checked={disabled} onChange={setDisabled} /> Disabled actions</span></DemoControls><DemoSection title="Selection actions"><DemoPreview className="demo-selection-bar-preview"><div className="demo-selection-bar-stage">{count > 0 ? <AppSelectionBar count={count} label={`${count} items selected`} onClear={() => setCount(0)} actions={<><Button disabled={disabled}>Primary action</Button><Button danger disabled={disabled}>Remove</Button></>} /> : <span>Selection cleared. Increase the count to restore the bar.</span>}</div></DemoPreview></DemoSection></DemoPage>
 }

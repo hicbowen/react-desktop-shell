@@ -1,6 +1,6 @@
 import type { ComponentType, ReactNode } from 'react'
-import { Bell, Boxes, Columns3, CreditCard, Database, Info, LayoutDashboard, LayoutPanelTop, Menu, MessageSquare, MousePointerClick, Navigation, PanelRight, Rows3, Settings, SlidersHorizontal, Table2, Wrench } from 'lucide-react'
-import type { RailEntry } from '../../src'
+import { Bell, Boxes, Columns3, CreditCard, Database, Info, LayoutDashboard, LayoutPanelTop, Menu, MessageSquare, MousePointerClick, Navigation, PanelRight, Rows3, ScrollText, Settings, SlidersHorizontal, Table2, Wrench } from 'lucide-react'
+import type { RailEntry, RailItem } from '../../src'
 import { OverviewPage } from './pages/OverviewPage'
 import { AppPagePage, AppShellPage, AppSidePanePage, AppTitleBarPage } from './pages/shell/ShellPages'
 import { AppRailPage, AppSelectorBarPage, NavigationModesPage } from './pages/navigation/NavigationPages'
@@ -10,6 +10,7 @@ import { AppDataTablePage, AppDataViewPage, AppSelectionBarPage } from './pages/
 import { AppSettingsGroupPage, AppSettingsRowPage, ThemeControlsPage } from './pages/settings/SettingsPages'
 import { AntdThemePage } from './pages/integrations/AntdThemePage'
 import { AppCardPage } from './pages/content/CardPages'
+import { AppScrollAreaPage } from './pages/content/ScrollAreaPage'
 
 export type DemoPageDefinition = { key: string; group: string; label: string; description: string; icon: ReactNode; component: ComponentType; layout?: 'default' | 'fill' }
 
@@ -23,6 +24,7 @@ export const demoPages: DemoPageDefinition[] = [
   { key: 'app-selector-bar', group: 'Navigation', label: 'AppSelectorBar', description: 'Switch between a few mutually exclusive views within the current page.', icon: <Rows3 size={16} />, component: AppSelectorBarPage },
   { key: 'navigation-modes', group: 'Navigation', label: 'Navigation Modes', description: 'Expanded, compact, minimal, and responsive rail behavior.', icon: <Menu size={16} />, component: NavigationModesPage },
   { key: 'app-card', group: 'Content', label: 'AppCard', description: 'Fluent content surfaces, composition, interaction states, and continuous groups.', icon: <CreditCard size={16} />, component: AppCardPage },
+  { key: 'app-scroll-area', group: 'Content', label: 'AppScrollArea', description: 'Native scrolling with Fluent overflow, scrollbar, and gutter styling.', icon: <ScrollText size={16} />, component: AppScrollAreaPage },
   { key: 'app-info-bar', group: 'Feedback', label: 'AppInfoBar', description: 'Inline informational, success, warning, and error states.', icon: <Info size={16} />, component: AppInfoBarPage },
   { key: 'app-toast', group: 'Feedback', label: 'AppToast', description: 'Transient notifications, actions, duration, and dismissal.', icon: <Bell size={16} />, component: AppToastPage },
   { key: 'app-dialog', group: 'Feedback', label: 'AppDialog', description: 'Modal content with controlled state and custom actions.', icon: <MessageSquare size={16} />, component: AppDialogPage },
@@ -30,7 +32,7 @@ export const demoPages: DemoPageDefinition[] = [
   { key: 'app-toolbar', group: 'Actions', label: 'AppToolbar', description: 'Start, status, and end regions for page-level actions.', icon: <Wrench size={16} />, component: AppToolbarPage },
   { key: 'context-menu', group: 'Actions', label: 'Context Menu', description: 'Nested contextual commands and native text actions.', icon: <MousePointerClick size={16} />, component: ContextMenuPage },
   { key: 'app-data-view', group: 'Data', label: 'AppDataView', description: 'A composed toolbar, table, selection bar, and footer layout.', icon: <Database size={16} />, component: AppDataViewPage },
-  { key: 'app-data-table', group: 'Data', label: 'AppDataTable', description: 'Sorting, sizing, sticky headers, and row selection.', icon: <Table2 size={16} />, component: AppDataTablePage },
+  { key: 'app-data-table', group: 'Data', label: 'AppDataTable', description: 'Sorting, sizing, sticky headers, row selection, and remaining-height fill.', icon: <Table2 size={16} />, component: AppDataTablePage, layout: 'fill' },
   { key: 'app-selection-bar', group: 'Data', label: 'AppSelectionBar', description: 'Actions and clear behavior for selected data rows.', icon: <Rows3 size={16} />, component: AppSelectionBarPage },
   { key: 'app-settings-group', group: 'Settings', label: 'AppSettingsGroup', description: 'Headings and containers for related preference rows.', icon: <Settings size={16} />, component: AppSettingsGroupPage },
   { key: 'app-settings-row', group: 'Settings', label: 'AppSettingsRow', description: 'Aligned preference labels, descriptions, controls, and states.', icon: <Settings size={16} />, component: AppSettingsRowPage },
@@ -41,5 +43,10 @@ export const demoPages: DemoPageDefinition[] = [
 export const railItems: RailEntry[] = demoPages.flatMap((page, index) => {
   const previous = demoPages[index - 1]
   const group = page.group !== previous?.group && page.group !== 'Overview' ? [{ type: 'group' as const, label: page.group }] : []
-  return [...group, { key: page.key, label: page.label, icon: page.icon }]
+  const item = page.key === 'app-settings-group' ? [] : [{ key: page.key, label: page.label, icon: page.icon }]
+  return [...group, ...item]
 })
+
+export const railFooterItems: RailItem[] = [
+  { key: 'app-settings-group', label: 'Settings', icon: <Settings size={16} /> },
+]

@@ -1,6 +1,7 @@
 import { useMemo, useRef } from 'react'
 import type { AppRailProps } from './types'
 import './AppRail.css'
+import '../scroll-area/AppScrollArea.css'
 import { RailFlyout } from './RailFlyout'
 import { RailItem as RailItemView } from './RailItem'
 import { RailSubmenu as RailSubmenuView } from './RailSubmenu'
@@ -50,7 +51,7 @@ export function AppRail({
 
   return (
     <aside ref={railRef} className={rootClassName} style={style}>
-      <nav className="app-rail__nav" aria-label="Primary">
+      <nav className="app-rail__nav app-scrollbar" aria-label="Primary">
         {items.map((item, index) => {
           if (isRailGroup(item)) {
             if (rail.isCollapsed) {

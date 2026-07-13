@@ -1,6 +1,7 @@
 import { useMemo } from 'react'
 import type { AppPageProps } from './types'
 import './AppPage.css'
+import './scroll-area/AppScrollArea.css'
 
 export function AppPage({
   title,
@@ -31,7 +32,7 @@ export function AppPage({
   }, [className, sidePane])
 
   const innerClassName = useMemo(() => {
-    const classes = ['app-page__inner']
+    const classes = ['app-page__inner', 'app-scrollbar']
 
     if (animated) {
       classes.push('app-page--animated')

@@ -110,7 +110,10 @@
 }
 
 .app-dialog__button--primary:hover {
-  filter: brightness(0.96);
+  background: var(
+    --app-shell-accent-hover-color,
+    var(--app-shell-accent-color)
+  );
 }
 
 .app-dialog__button--danger {

@@ -27,6 +27,7 @@ import {
 } from '@tanstack/react-table'
 import { DataTableCheckbox } from '../DataTableCheckbox'
 import type { AppDataTableProps } from '../types'
+import '../../scroll-area/AppScrollArea.css'
 
 export const APP_DATA_TABLE_SELECTION_COLUMN_ID =
   '__app_data_table_selection'
@@ -455,7 +456,7 @@ export function DataTableFrame<TData>({
       style={style}
     >
       <div
-        className="app-data-table__scroll"
+        className="app-data-table__scroll app-scrollbar"
         style={{ maxHeight }}
       >
         <table

@@ -1,11 +1,12 @@
 import { useState } from 'react'
+import { Button } from 'antd'
 import { Copy, Pencil, Plus, RefreshCw, Trash2 } from 'lucide-react'
 import { AppContextMenu, AppToolbar } from '../../../../src'
 import { DemoControls, DemoPage, DemoPreview, DemoSection } from '../../components/DemoPage'
 
 export function AppToolbarPage() {
   const [compact, setCompact] = useState(false)
-  return <DemoPage><DemoControls><label><input type="checkbox" checked={compact} onChange={(event) => setCompact(event.target.checked)} /> Compact controls</label></DemoControls><DemoSection title="Three aligned regions"><DemoPreview><AppToolbar start={<><input className="demo-input" aria-label="Filter items" placeholder="Filter items" /><select className="demo-input" aria-label="Status"><option>All states</option><option>Ready</option></select></>} status={<span>24 items</span>} end={<><button type="button">Secondary</button><button className="demo-primary" type="button">Primary action</button></>} /></DemoPreview><p className="demo-note">The compact toggle is page-local: {compact ? 'on' : 'off'}.</p></DemoSection></DemoPage>
+  return <DemoPage><DemoControls><label><input type="checkbox" checked={compact} onChange={(event) => setCompact(event.target.checked)} /> Compact controls</label></DemoControls><DemoSection title="Three aligned regions"><DemoPreview><AppToolbar start={<><input className="demo-input" aria-label="Filter items" placeholder="Filter items" /><select className="demo-input" aria-label="Status"><option>All states</option><option>Ready</option></select></>} status={<span>24 items</span>} end={<><Button>Secondary</Button><Button type="primary">Primary action</Button></>} /></DemoPreview><p className="demo-note">The compact toggle is page-local: {compact ? 'on' : 'off'}.</p></DemoSection></DemoPage>
 }
 
 export function ContextMenuPage() {

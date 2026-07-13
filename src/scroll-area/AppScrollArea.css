@@ -1,0 +1,101 @@
+.app-scroll-area {
+  min-width: 0;
+  min-height: 0;
+  overscroll-behavior: auto;
+}
+
+.app-scroll-area--vertical {
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.app-scroll-area--horizontal {
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+.app-scroll-area--both {
+  overflow: auto;
+}
+
+.app-scroll-area--vertical.app-scroll-area--scrollbar-always {
+  overflow-y: scroll;
+}
+
+.app-scroll-area--horizontal.app-scroll-area--scrollbar-always {
+  overflow-x: scroll;
+}
+
+.app-scroll-area--both.app-scroll-area--scrollbar-always {
+  overflow: scroll;
+}
+
+.app-scroll-area--gutter-stable {
+  scrollbar-gutter: stable;
+}
+
+.app-scroll-area,
+.app-scrollbar {
+  scrollbar-color: var(--app-scrollbar-thumb-color, rgb(0 0 0 / 26%))
+    var(--app-scrollbar-track-color, transparent);
+  scrollbar-width: thin;
+}
+
+.app-scroll-area::-webkit-scrollbar,
+.app-scrollbar::-webkit-scrollbar {
+  width: var(--app-scrollbar-size, 12px);
+  height: var(--app-scrollbar-size, 12px);
+}
+
+.app-scroll-area::-webkit-scrollbar-track,
+.app-scrollbar::-webkit-scrollbar-track {
+  background: var(--app-scrollbar-track-color, transparent);
+}
+
+.app-scroll-area::-webkit-scrollbar-thumb,
+.app-scrollbar::-webkit-scrollbar-thumb {
+  min-width: 32px;
+  min-height: 32px;
+  background-color: var(--app-scrollbar-thumb-color, rgb(0 0 0 / 26%));
+  background-clip: padding-box;
+  border: var(--app-scrollbar-thumb-inset, 3px) solid transparent;
+  border-radius: 999px;
+}
+
+.app-scroll-area::-webkit-scrollbar-thumb:hover,
+.app-scrollbar::-webkit-scrollbar-thumb:hover {
+  background-color: var(
+    --app-scrollbar-thumb-hover-color,
+    rgb(0 0 0 / 38%)
+  );
+}
+
+.app-scroll-area::-webkit-scrollbar-thumb:active,
+.app-scrollbar::-webkit-scrollbar-thumb:active {
+  background-color: var(
+    --app-scrollbar-thumb-active-color,
+    rgb(0 0 0 / 50%)
+  );
+}
+
+.app-scroll-area::-webkit-scrollbar-corner,
+.app-scrollbar::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+.app-scroll-area::-webkit-scrollbar-button,
+.app-scrollbar::-webkit-scrollbar-button {
+  width: 0;
+  height: 0;
+  display: none;
+}
+
+.app-scroll-area--scrollbar-hidden {
+  scrollbar-width: none;
+}
+
+.app-scroll-area--scrollbar-hidden::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  display: none;
+}

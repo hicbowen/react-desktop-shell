@@ -258,6 +258,65 @@ continuous setting or property rows. Existing Settings components share the
 same card surface and radius tokens but remain purpose-built controls with their
 own public API and structure.
 
+## AppScrollArea
+
+`AppScrollArea` is a thin Fluent wrapper around a native scrolling `div`. It
+standardizes overflow behavior and scrollbar appearance while preserving the
+browser's mouse-wheel, trackpad, touch, keyboard, inertia, and platform-level
+scrolling behavior. It does not draw a custom scrollbar or manage scroll state.
+
+The component does not assign a width, height, or flex behavior. Its parent or
+the supplied style must create a constrained scrolling region:
+
+```tsx
+<AppScrollArea style={{ height: 320 }}>
+  <LongSettingsList />
+</AppScrollArea>
+```
+
+`orientation` controls native overflow:
+
+- `vertical` is the default: vertical overflow is automatic and horizontal
+  overflow is hidden.
+- `horizontal` enables horizontal overflow and hides vertical overflow.
+- `both` enables native overflow in both directions.
+
+`scrollbar` controls scrollbar visibility policy:
+
+- `auto` uses normal native behavior and is the default.
+- `always` uses `overflow: scroll` in the enabled direction. Operating systems
+  using overlay scrollbars may still choose not to show a permanent track.
+- `hidden` hides only the visual scrollbar with standard and WebKit properties;
+  wheel, trackpad, touch, keyboard, and programmatic scrolling remain available.
+
+`gutter="stable"` applies `scrollbar-gutter: stable` where supported. It can be
+useful for long lists, table-adjacent containers, settings pages, and fixed-layout
+dialogs, but is not the default because small panels should not always lose
+content width.
+
+```tsx
+<AppScrollArea
+  aria-label="Release notes"
+  gutter="stable"
+  orientation="vertical"
+  role="region"
+  style={{ maxHeight: 240 }}
+  tabIndex={0}
+>
+  <ReleaseNotes />
+</AppScrollArea>
+```
+
+Scroll areas do not receive `tabIndex` or `role="region"` automatically. Add
+`tabIndex={0}` only when users need to focus the scrolling region directly, and
+provide an accessible label with it.
+
+The Fluent scrollbar styling is scoped to `AppScrollArea` and explicit internal
+library scroll containers; it does not globally affect editors, third-party
+popups, form controls, or every element on the page. Do not wrap an existing
+scroll container in another `AppScrollArea`, use it as a substitute for virtual
+lists, or expect overflow to occur without a constrained size.
+
 ## Optional Ant Design Integration
 
 Ant Design support is an optional theme preset. Normal `react-desktop-shell` usage does not require AntD; install it only when importing the `/antd` entry point.

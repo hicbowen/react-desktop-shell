@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Button } from 'antd'
 import {
   Blend,
   CheckCircle2,
@@ -21,15 +22,15 @@ import { DemoPage, DemoPreview, DemoSection } from '../../components/DemoPage'
 
 const sameSurfaceContent = (
   <AppCardHeader
-    title="最近项目"
-    description="继续处理上次打开的工作区"
+    title="Recent project"
+    description="Continue working in your last workspace"
   />
 )
 
 export function AppCardPage() {
   const [mode, setMode] = useState('local')
   const [cardActivations, setCardActivations] = useState(0)
-  const [internalStatus, setInternalStatus] = useState('尚未执行操作')
+  const [internalStatus, setInternalStatus] = useState('No action yet')
 
   return (
     <DemoPage>
@@ -38,10 +39,10 @@ export function AppCardPage() {
           <AppCard>
             <AppCardHeader
               icon={<Users />}
-              title="学生概览"
-              description="当前班级共有 24 名学生"
+              title="Student overview"
+              description="The current class has 24 students"
             />
-            <div>本周已完成 18 份课后反馈。</div>
+            <div>18 after-class feedback reports were completed this week.</div>
           </AppCard>
         </DemoPreview>
       </DemoSection>
@@ -51,18 +52,16 @@ export function AppCardPage() {
           <AppCard>
             <AppCardHeader
               icon={<DatabaseBackup />}
-              title="数据备份"
-              description="保护应用中的本地数据"
+              title="Data backup"
+              description="Protect local application data"
               action={
-                <button aria-label="更多备份选项" type="button">
-                  <Ellipsis size={16} />
-                </button>
+                <Button aria-label="More backup options" icon={<Ellipsis size={16} />} size="small" type="text" />
               }
             />
-            <div>上次备份时间：今天 10:30</div>
+            <div>Last backup: today at 10:30</div>
             <AppCardFooter
-              start={<span>共 24.6 MB</span>}
-              end={<button type="button">立即备份</button>}
+              start={<span>24.6 MB total</span>}
+              end={<Button type="primary">Back up now</Button>}
             />
           </AppCard>
         </DemoPreview>
@@ -72,12 +71,12 @@ export function AppCardPage() {
         <DemoPreview>
           <div className="demo-card-grid demo-card-grid--comparison">
             <AppCard>
-              <div>默认 Footer</div>
-              <AppCardFooter end={<button type="button">更新</button>} start="10:30" />
+              <div>Default footer</div>
+              <AppCardFooter end={<Button>Update</Button>} start="10:30" />
             </AppCard>
             <AppCard>
               <div>Divided Footer</div>
-              <AppCardFooter divided end={<button type="button">更新</button>} start="10:30" />
+              <AppCardFooter divided end={<Button>Update</Button>} start="10:30" />
             </AppCard>
           </div>
         </DemoPreview>
@@ -98,10 +97,10 @@ export function AppCardPage() {
           <AppCard orientation="horizontal">
             <span className="demo-card-tool-icon"><FileUp /></span>
             <div className="demo-card-tool-content">
-              <strong>数据导入</strong>
-              <span>从 Excel 导入学生信息</span>
+              <strong>Data import</strong>
+              <span>Import student information from Excel</span>
             </div>
-            <button type="button">选择文件</button>
+            <Button>Select file</Button>
           </AppCard>
         </DemoPreview>
       </DemoSection>
@@ -110,22 +109,22 @@ export function AppCardPage() {
         <DemoPreview>
           <div className="demo-card-grid demo-card-grid--states">
             <AppCard onClick={() => setCardActivations((count) => count + 1)}>
-              <AppCardHeader title="正常" description="点击、悬停或按 Enter" />
+              <AppCardHeader title="Normal" description="Click, hover, or press Enter" />
             </AppCard>
             <AppCard className="demo-card-state--hover" interactive>
-              <AppCardHeader title="Hover" description="状态参考" />
+              <AppCardHeader title="Hover" description="State reference" />
             </AppCard>
             <AppCard className="demo-card-state--pressed" interactive>
-              <AppCardHeader title="Pressed" description="状态参考" />
+              <AppCardHeader title="Pressed" description="State reference" />
             </AppCard>
             <AppCard className="demo-card-state--focus" interactive>
-              <AppCardHeader title="Focus" description="状态参考" />
+              <AppCardHeader title="Focus" description="State reference" />
             </AppCard>
             <AppCard disabled onClick={() => undefined}>
-              <AppCardHeader title="Disabled" description="不可操作" />
+              <AppCardHeader title="Disabled" description="Unavailable" />
             </AppCard>
           </div>
-          <div className="demo-note">卡片激活次数：{cardActivations}</div>
+          <div className="demo-note">Card activations: {cardActivations}</div>
         </DemoPreview>
       </DemoSection>
 
@@ -133,9 +132,9 @@ export function AppCardPage() {
         <DemoPreview>
           <div className="demo-card-grid demo-card-grid--comparison">
             {[
-              { key: 'local', title: '本地模式', icon: <HardDrive /> },
-              { key: 'cloud', title: '云端模式', icon: <Cloud /> },
-              { key: 'hybrid', title: '混合模式', icon: <Blend /> },
+              { key: 'local', title: 'Local mode', icon: <HardDrive /> },
+              { key: 'cloud', title: 'Cloud mode', icon: <Cloud /> },
+              { key: 'hybrid', title: 'Hybrid mode', icon: <Blend /> },
             ].map((item) => (
               <AppCard
                 key={item.key}
@@ -154,18 +153,18 @@ export function AppCardPage() {
           <AppCardGroup>
             <AppCard orientation="horizontal" padding="compact">
               <Palette size={18} />
-              <span className="demo-card-group-label">应用主题</span>
-              <strong>跟随系统</strong>
+              <span className="demo-card-group-label">Application theme</span>
+              <strong>System</strong>
             </AppCard>
             <AppCard orientation="horizontal" padding="compact">
               <Sparkles size={18} />
-              <span className="demo-card-group-label">强调颜色</span>
-              <strong>蓝色</strong>
+              <span className="demo-card-group-label">Accent color</span>
+              <strong>Blue</strong>
             </AppCard>
             <AppCard orientation="horizontal" padding="compact">
               <CheckCircle2 size={18} />
-              <span className="demo-card-group-label">动画效果</span>
-              <strong>开启</strong>
+              <span className="demo-card-group-label">Animations</span>
+              <strong>On</strong>
             </AppCard>
           </AppCardGroup>
         </DemoPreview>
@@ -174,35 +173,34 @@ export function AppCardPage() {
       <DemoSection title="Internal actions">
         <DemoPreview>
           <AppCard
-            onClick={() => setInternalStatus('整张卡片已激活')}
+            onClick={() => setInternalStatus('The card was activated')}
           >
             <AppCardHeader
-              title="可点击工具卡片"
-              description="内部操作不会激活整张卡片"
+              title="Interactive tool card"
+              description="Internal controls do not activate the card"
               action={
-                <button
-                  type="button"
-                  onClick={() => setInternalStatus('Header 操作已执行')}
+                <Button
+                  size="small"
+                  onClick={() => setInternalStatus('Header action completed')}
                 >
-                  更多
-                </button>
+                  More
+                </Button>
               }
             />
-            <button
-              type="button"
-              onClick={() => setInternalStatus('主体操作已执行')}
+            <Button
+              onClick={() => setInternalStatus('Content action completed')}
             >
-              主体操作
-            </button>
+              Content action
+            </Button>
             <AppCardFooter
               start={internalStatus}
               end={
-                <button
-                  type="button"
-                  onClick={() => setInternalStatus('Footer 操作已执行')}
+                <Button
+                  type="primary"
+                  onClick={() => setInternalStatus('Footer action completed')}
                 >
-                  完成
-                </button>
+                  Complete
+                </Button>
               }
             />
           </AppCard>

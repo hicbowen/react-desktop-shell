@@ -5,6 +5,7 @@ import type {
   AppContextMenuSubmenuItem,
 } from './types'
 import './AppContextMenuLayer.css'
+import '../scroll-area/AppScrollArea.css'
 
 const VIEWPORT_PADDING = 8
 const SUBMENU_GAP = 4
@@ -601,7 +602,7 @@ export function AppContextMenuLayer({
             }}
             role="menu"
             tabIndex={-1}
-            className="app-context-menu"
+            className="app-context-menu app-scrollbar"
             key={`menu-${level}-${openPath.slice(0, level).join('-')}`}
             style={{
               left: placement.x,

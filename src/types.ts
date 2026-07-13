@@ -42,6 +42,12 @@ export type {
 } from './navigation/types'
 export type { AppSelectorBarItem, AppSelectorBarProps } from './selector-bar'
 export type {
+  AppScrollAreaGutter,
+  AppScrollAreaOrientation,
+  AppScrollAreaProps,
+  AppScrollAreaScrollbar,
+} from './scroll-area'
+export type {
   AppShellProps,
   AppShellSidebarOptions,
   AppTheme,
