@@ -798,6 +798,16 @@ Use `actions` for page-level commands rendered in the top-right of the page head
 </AppPage>
 ```
 
+Use `layout="fill"` when the page must occupy a constrained parent height and
+give its content the remaining space. The default `layout="flow"` keeps the
+page at its natural content height.
+
+```tsx
+<AppPage layout="fill" title="Students">
+  <StudentTable />
+</AppPage>
+```
+
 CSS animations replay when React remounts the page. Use a `key` when switching pages.
 
 ```tsx
@@ -1397,6 +1407,7 @@ Calling `show` again with the same id updates the existing toast. At most four t
 | `actions`          | `ReactNode`     | `undefined` | Page-level actions rendered on the top right.     |
 | `children`         | `ReactNode`     | `undefined` | Page content rendered below the header.           |
 | `sidePane`         | `ReactNode`     | `undefined` | Optional right-side contextual pane.              |
+| `layout`           | `'flow' \| 'fill'` | `'flow'` | Uses natural page flow or fills a constrained parent height. |
 | `animated`         | `boolean`       | `true`      | Enables the subtle fade-and-rise enter animation. |
 | `className`        | `string`        | `undefined` | Additional class name for the root element.       |
 | `style`            | `CSSProperties` | `undefined` | Inline styles for the root element.               |
@@ -1572,6 +1583,7 @@ export interface AppPageProps {
   description?: ReactNode
   actions?: ReactNode
   children?: ReactNode
+  layout?: 'flow' | 'fill'
   animated?: boolean
   className?: string
   style?: CSSProperties

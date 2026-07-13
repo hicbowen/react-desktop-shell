@@ -9,6 +9,7 @@ export function AppPage({
   actions,
   children,
   sidePane,
+  layout = 'flow',
   animated = true,
   className,
   style,
@@ -24,12 +25,16 @@ export function AppPage({
       classes.push('app-page--with-side-pane')
     }
 
+    if (layout === 'fill') {
+      classes.push('app-page--fill')
+    }
+
     if (className) {
       classes.push(className)
     }
 
     return classes.join(' ')
-  }, [className, sidePane])
+  }, [className, layout, sidePane])
 
   const innerClassName = useMemo(() => {
     const classes = ['app-page__inner', 'app-scrollbar']
@@ -53,7 +58,11 @@ export function AppPage({
 
   return (
     <div className={rootClassName} style={style}>
-      <div className={sidePane ? 'app-page__layout' : undefined}>
+      <div
+        className={`app-page__frame${
+          sidePane ? ' app-page__layout' : ''
+        }`}
+      >
         <div className={innerClassName}>
           {hasHeader && (
             <header className="app-page__header">

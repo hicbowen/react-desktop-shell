@@ -38,6 +38,7 @@ export type {
   AppMessageBoxConfirmOptions,
   AppMessageBoxLocale,
   AppMessageBoxOptions,
+  AppPageLayout,
   AppPageProps,
   AppSettingsGroupProps,
   AppSettingsRowProps,

@@ -431,7 +431,6 @@
 .demo-table-fixed {
     min-width: 0;
     min-height: 0;
-    display: flex;
 }
 
 .demo-table-fill {
@@ -444,30 +443,13 @@
 
 .demo-table-fill>.app-data-table,
 .demo-table-fixed>.app-data-table {
-    width: 100%;
     height: 100%;
-    min-width: 0;
-    min-height: 0;
-    display: flex;
-    flex: 1 1 auto;
-    flex-direction: column;
-    overflow: hidden;
-}
-
-.demo-table-fill>.app-data-table>.app-data-table__scroll,
-.demo-table-fixed>.app-data-table>.app-data-table__scroll {
-    min-height: 0;
-    flex: 1 1 0;
 }
 
 .demo-selection-bar-stage {
     min-height: 32px;
     display: flex;
     align-items: center;
-}
-
-.demo-selection-bar-stage>.app-selection-bar {
-    flex: 1 1 auto;
 }
 
 .demo-selection-bar-preview {
@@ -490,43 +472,6 @@
 .demo-antd .ant-input,
 .demo-antd .ant-select {
     width: 170px;
-}
-
-.example-page--fill {
-    height: 100%;
-    min-height: 0;
-}
-
-.example-page--fill>div {
-    height: 100%;
-    min-height: 0;
-}
-
-.example-page--fill>div>.app-page__inner {
-    height: 100%;
-    min-height: 0;
-    display: flex;
-    flex-direction: column;
-    overflow: auto;
-}
-
-.example-page--fill>div>.app-page__inner>.app-page__header {
-    flex: 0 0 auto;
-}
-
-.example-page__content--fill {
-    min-height: 0;
-    display: flex;
-    flex: 1 1 auto;
-    flex-direction: column;
-}
-
-.example-page__content--fill>.demo-page {
-    min-height: 0;
-}
-
-.example-page__content--fill>.demo-page--fill {
-    flex: 1 1 auto;
 }
 
 @media (max-width: 720px) {

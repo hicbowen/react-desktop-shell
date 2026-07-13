@@ -66,12 +66,15 @@ export type {
 } from './toast/types'
 export type { AppToolbarProps } from './toolbar/types'
 
+export type AppPageLayout = 'flow' | 'fill'
+
 export interface AppPageProps {
   title?: ReactNode
   description?: ReactNode
   actions?: ReactNode
   children?: ReactNode
   sidePane?: ReactNode
+  layout?: AppPageLayout
   animated?: boolean
   className?: string
   style?: CSSProperties

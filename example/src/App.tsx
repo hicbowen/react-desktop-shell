@@ -51,9 +51,8 @@ export function ExampleApp() {
           contentClassName="example-content"
         >
           <AppPage
-            className={currentPage.layout === 'fill' ? 'example-page--fill' : undefined}
-            contentClassName={currentPage.layout === 'fill' ? 'example-page__content--fill' : undefined}
             key={activeKey}
+            layout={currentPage.layout === 'fill' ? 'fill' : 'flow'}
             title={currentPage.label}
             description={currentPage.description}
           >
