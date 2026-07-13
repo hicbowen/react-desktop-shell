@@ -1,0 +1,47 @@
+.demo-page { display: grid; gap: 22px; min-width: 0; }
+.demo-section { display: grid; gap: 14px; min-width: 0; }
+.demo-section > header h2 { margin: 0 0 4px; font-size: 17px; }
+.demo-section > header p, .demo-card p, .demo-note { margin: 0; color: color-mix(in srgb, currentColor 65%, transparent); line-height: 1.55; }
+.demo-preview { min-width: 0; padding: 20px; overflow: hidden; border: 1px solid color-mix(in srgb, currentColor 14%, transparent); border-radius: 10px; background: color-mix(in srgb, currentColor 3%, transparent); }
+.demo-controls { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+.demo-controls > span, .demo-controls > label { display: inline-flex; align-items: center; gap: 7px; }
+.demo-stack { display: grid; gap: 10px; }
+.demo-hero { padding: 28px; border-radius: 12px; color: #fff; background: linear-gradient(135deg, #155eef, #6d5ce7); }
+.demo-hero span { font-size: 11px; font-weight: 700; letter-spacing: .1em; opacity: .82; }
+.demo-hero h2 { max-width: 680px; margin: 12px 0 8px; font-size: clamp(25px, 3vw, 38px); line-height: 1.12; }
+.demo-hero p { max-width: 690px; margin: 0; line-height: 1.6; opacity: .88; }
+.demo-card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 12px; }
+.demo-card { padding: 18px; border: 1px solid color-mix(in srgb, currentColor 13%, transparent); border-radius: 10px; }
+.demo-card h3 { margin: 12px 0 5px; font-size: 15px; }
+.demo-shell-diagram { display: grid; grid-template: 38px 120px 38px / 100px 1fr; min-height: 230px; border: 1px solid color-mix(in srgb, currentColor 15%, transparent); }
+.demo-shell-diagram > * { display: grid; place-items: center; padding: 10px; border: 1px solid color-mix(in srgb, currentColor 10%, transparent); }
+.demo-shell-diagram > :first-child { grid-column: 1 / -1; }
+.demo-shell-diagram > :nth-child(4) { grid-column: 1 / -1; }
+.demo-titlebar-preview { padding: 0; min-height: 34px; }
+.demo-nested-page { border: 1px solid color-mix(in srgb, currentColor 14%, transparent); border-radius: 8px; overflow: hidden; }
+.demo-nested-page header { display: flex; align-items: center; justify-content: space-between; padding: 16px; border-bottom: 1px solid color-mix(in srgb, currentColor 12%, transparent); }
+.demo-nested-page header div { display: grid; gap: 3px; }
+.demo-nested-page header small { opacity: .62; }
+.demo-nested-page > div { min-height: 120px; padding: 16px; }
+.demo-pane-stage { min-height: 430px; overflow: hidden; border: 1px solid color-mix(in srgb, currentColor 14%, transparent); border-radius: 10px; }
+.demo-pane-stage .app-page { min-height: 430px; }
+.demo-field { display: grid; gap: 7px; margin-top: 14px; font-size: 13px; font-weight: 600; }
+.demo-field input, .demo-input { min-height: 32px; padding: 6px 9px; border: 1px solid color-mix(in srgb, currentColor 20%, transparent); border-radius: 6px; color: inherit; background: transparent; }
+.demo-rail-preview { width: 260px; height: 300px; overflow: hidden; }
+.demo-choice-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; }
+.demo-choice { display: grid; gap: 4px; min-width: 150px; padding: 14px; text-align: left; color: inherit; border: 1px solid color-mix(in srgb, currentColor 15%, transparent); border-radius: 8px; background: transparent; }
+.demo-choice small { opacity: .62; }
+.demo-choice--active { border-color: #3b82f6; box-shadow: inset 0 0 0 1px #3b82f6; }
+.demo-context-target { display: grid; gap: 5px; min-height: 180px; place-content: center; text-align: center; }
+.demo-context-target span { opacity: .62; }
+.demo-primary { color: white; border: 0; border-radius: 6px; background: #1677ff; }
+.demo-status { font-weight: 600; }
+.demo-status--ready { color: #16803b; }
+.demo-status--processing { color: #1768c5; }
+.demo-status--paused { color: #a05b00; }
+.demo-table-fill { min-height: 430px; }
+.demo-settings { display: grid; gap: 18px; max-width: 820px; }
+.demo-antd { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+.demo-antd .ant-input, .demo-antd .ant-select { width: 170px; }
+.example-page--fill, .example-page__content--fill { min-height: 0; height: 100%; }
+@media (max-width: 720px) { .demo-preview { padding: 12px; } .demo-hero { padding: 22px; } }
