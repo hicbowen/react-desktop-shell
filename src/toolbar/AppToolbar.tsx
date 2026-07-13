@@ -2,13 +2,14 @@ import type { AppToolbarProps } from './types'
 import './AppToolbar.css'
 
 export function AppToolbar({
+  appearance = 'surface',
   start,
   status,
   end,
   children,
   className,
 }: AppToolbarProps) {
-  const classNames = ['app-toolbar']
+  const classNames = ['app-toolbar', `app-toolbar--${appearance}`]
   const hasChildren = children !== undefined && children !== null
 
   if (className) {

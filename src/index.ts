@@ -63,6 +63,7 @@ export type {
   AppToastShortcutOptions,
   AppToastStatus,
   AppToastUpdateOptions,
+  AppToolbarAppearance,
   AppToolbarProps,
   PaneDisplayMode,
   RailEntry,

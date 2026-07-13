@@ -422,7 +422,12 @@ function StudentsView({ students }: { students: Student[] }) {
 
   return (
     <AppDataView
-      toolbar={<AppToolbar status={`${students.length} students`} />}
+      toolbar={
+        <AppToolbar
+          appearance="flat"
+          status={`${students.length} students`}
+        />
+      }
       selectionBar={
         selectedCount > 0 ? (
           <AppSelectionBar
@@ -623,7 +628,12 @@ so they can shrink when a toolbar wraps or a selection bar appears.
 <div style={{ height: '100%', minHeight: 0 }}>
   <AppDataView
     height="fill"
-    toolbar={<AppToolbar status={`${students.length} students`} />}
+    toolbar={
+      <AppToolbar
+        appearance="flat"
+        status={`${students.length} students`}
+      />
+    }
     selectionBar={
       selectedCount > 0 ? (
         <AppSelectionBar
@@ -915,7 +925,7 @@ These components do not provide controls such as `Switch` or `Select`; pass any 
 
 ## App Toolbar
 
-`AppToolbar` is a layout container for desktop application page tools, supporting start, passive status, and end regions.
+`AppToolbar` is a lightweight desktop command surface for page tools, supporting start, passive status, and end regions. It uses the bordered `surface` appearance by default. Use `appearance="flat"` when the toolbar is already inside a card, dialog, side pane, or another bordered surface.
 
 ```tsx
 <AppToolbar
@@ -925,7 +935,13 @@ These components do not provide controls such as `Switch` or `Select`; pass any 
 />
 ```
 
-The toolbar does not provide buttons, inputs, selects, or command management. Pass controls from any React component library through `start` and `end`. Use `status` for passive information such as counts, synchronization state, or the current data range. When `children` is provided, it takes precedence over the three named regions and renders as custom toolbar content.
+```tsx
+<AppCard>
+  <AppToolbar appearance="flat" end={<Button>Save</Button>} />
+</AppCard>
+```
+
+The toolbar does not provide buttons, inputs, selects, or command management. Pass controls from any React component library through `start` and `end`. Use `status` for passive information such as counts, synchronization state, or the current data range. When `children` is provided, AppToolbar renders custom content mode; `start`, `status`, and `end` are ignored.
 
 `AppPage.actions` places primary page actions beside the page title. `AppToolbar` belongs below the page header and organizes content tools such as search, filters, status, import, and export controls.
 
@@ -1440,6 +1456,7 @@ Calling `show` again with the same id updates the existing toast. At most four t
 
 | Prop        | Type        | Default     | Description                                      |
 | ----------- | ----------- | ----------- | ------------------------------------------------ |
+| `appearance` | `'surface' \| 'flat'` | `'surface'` | Adds a lightweight surface or stays transparent inside an existing surface. |
 | `start`     | `ReactNode` | `undefined` | Left region for search and filtering controls.   |
 | `status`    | `ReactNode` | `undefined` | Passive information such as counts or state.     |
 | `end`       | `ReactNode` | `undefined` | Right region for page tool actions.              |

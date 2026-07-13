@@ -2,13 +2,25 @@
   box-sizing: border-box;
   width: 100%;
   min-width: 0;
+  min-height: 44px;
   margin-bottom: 0;
+  padding: 8px 12px;
   display: flex;
   align-items: center;
   flex-wrap: wrap;
   gap: 10px 16px;
   color: var(--app-shell-text-color, #1f1f1f);
+  background: var(--app-shell-card-bg, #fbfbfb);
+  border: 1px solid var(--app-shell-border-color, rgb(0 0 0 / 8%));
+  border-radius: var(--rds-radius-medium, 8px);
   container-type: inline-size;
+}
+
+.app-toolbar--flat {
+  min-height: auto;
+  padding: 0;
+  background: transparent;
+  border-color: transparent;
 }
 
 .app-toolbar__start,
