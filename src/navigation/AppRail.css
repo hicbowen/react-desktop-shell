@@ -23,6 +23,7 @@
   --app-rail-flyout-shadow: 0 8px 24px rgb(0 0 0 / 16%);
   --app-rail-item-padding-left: 16px;
   --app-rail-item-padding-right: 12px;
+  --app-rail-item-depth-offset: 0px;
   --app-rail-nav-padding: 4px;
   --app-rail-nav-top-padding: 4px;
   --app-rail-footer-padding: 4px 4px 8px;
@@ -106,14 +107,13 @@
 }
 
 .app-rail__item {
+  position: relative;
   width: 100%;
   height: 36px;
   box-sizing: border-box;
-  padding: 0 var(--app-rail-item-padding-right) 0
-    var(--app-rail-item-padding-left);
+  padding: 0;
   display: flex;
   align-items: center;
-  gap: var(--app-rail-item-icon-gap);
   color: var(--app-rail-text-color);
   font: inherit;
   font-size: 14px;
@@ -129,9 +129,24 @@
 
 .app-rail--collapsed .app-rail__item {
   width: var(--app-rail-compact-item-width);
+  align-self: flex-start;
+}
+
+.app-rail__item-content {
+  width: 100%;
+  min-width: 0;
+  height: 100%;
+  box-sizing: border-box;
+  padding: 0 var(--app-rail-item-padding-right) 0
+    calc(var(--app-rail-item-padding-left) + var(--app-rail-item-depth-offset));
+  display: flex;
+  align-items: center;
+  gap: var(--app-rail-item-icon-gap);
+}
+
+.app-rail--collapsed .app-rail__item-content {
   padding: 0;
   justify-content: center;
-  align-self: flex-start;
 }
 
 .app-rail--collapsed .app-rail__item--active {
@@ -152,7 +167,6 @@
 }
 
 .app-rail__item--active {
-  position: relative;
   color: var(--app-rail-accent-color);
   background: var(--app-rail-accent-bg);
 }
@@ -334,14 +348,18 @@
 
 .app-rail__submenu-item {
   height: 32px;
-  padding-left: var(--app-rail-item-label-offset);
   font-size: 13px;
 }
 
-.app-rail__submenu-item--with-icon {
+.app-rail__submenu-item > .app-rail__item-content {
   padding-left: calc(
-    var(--app-rail-item-label-offset) - var(--app-rail-item-icon-size) -
-      var(--app-rail-item-icon-gap)
+    var(--app-rail-item-label-offset) + var(--app-rail-item-depth-offset)
+  );
+}
+
+.app-rail__submenu-item--with-icon > .app-rail__item-content {
+  padding-left: calc(
+    var(--app-rail-item-padding-left) + var(--app-rail-item-depth-offset)
   );
 }
 

@@ -123,6 +123,7 @@ export function AppRail({
                 <RailSubmenuView
                   key={item.key}
                   item={item}
+                  depth={0}
                   collapsed={rail.isCollapsed}
                   expanded={rail.expandedKeys.has(item.key)}
                   active={rail.indicatorTarget === item.key}
@@ -146,6 +147,7 @@ export function AppRail({
               <RailItemView
                 key={item.key}
                 item={item}
+                depth={0}
                 collapsed={rail.isCollapsed}
                 active={rail.indicatorTarget === item.key}
                 selectionDirection={rail.selectionDirection}
@@ -170,6 +172,7 @@ export function AppRail({
             <RailItemView
               key={item.key}
               item={item}
+              depth={0}
               collapsed={rail.isCollapsed}
               active={rail.indicatorTarget === item.key}
               selectionDirection={rail.selectionDirection}

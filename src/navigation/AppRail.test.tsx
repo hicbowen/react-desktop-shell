@@ -93,4 +93,51 @@ describe('AppRail scroll hint', () => {
 
     expect(onChange).toHaveBeenCalledWith('home')
   })
+
+  it('assigns depth-based indentation to submenu children', () => {
+    render(
+      <AppRail
+        value="child"
+        items={[
+          { key: 'home', label: 'Home' },
+          {
+            type: 'submenu',
+            key: 'parent',
+            label: 'Parent',
+            children: [{ key: 'child', label: 'Child' }],
+          },
+        ]}
+      />,
+    )
+
+    const home = Array.from(container.querySelectorAll('button')).find(
+      (button) => button.textContent === 'Home',
+    )
+    const parent = Array.from(container.querySelectorAll('button')).find(
+      (button) => button.textContent === 'Parent',
+    )
+    const child = Array.from(container.querySelectorAll('button')).find(
+      (button) => button.textContent === 'Child',
+    )
+
+    const homeContent = home?.querySelector<HTMLElement>(
+      '.app-rail__item-content',
+    )
+    const parentContent = parent?.querySelector<HTMLElement>(
+      '.app-rail__item-content',
+    )
+    const childContent = child?.querySelector<HTMLElement>(
+      '.app-rail__item-content',
+    )
+
+    expect(homeContent?.dataset.depth).toBe('0')
+    expect(parentContent?.dataset.depth).toBe('0')
+    expect(childContent?.dataset.depth).toBe('1')
+    expect(
+      childContent?.style.getPropertyValue('--app-rail-item-depth-offset'),
+    ).toBe('20px')
+    expect(child?.style.getPropertyValue('--app-rail-item-depth-offset')).toBe(
+      '',
+    )
+  })
 })

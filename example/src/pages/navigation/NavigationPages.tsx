@@ -3,10 +3,13 @@ import {
   CalendarDays,
   CheckCircle2,
   Clock3,
+  FileText,
+  FolderTree,
   Heart,
   History,
   Inbox,
   ListTodo,
+  LockKeyhole,
 } from 'lucide-react'
 import { AppRail, AppSelectorBar } from '../../../../src'
 import {
@@ -32,15 +35,34 @@ export function AppRailPage() {
               value={selected}
               onChange={setSelected}
               items={[
-                { key: 'first', label: 'First item', badge: 3 },
+                {
+                  key: 'first',
+                  label: 'First item',
+                  icon: <Inbox />,
+                  badge: 3,
+                },
                 { type: 'group', label: 'Group' },
                 {
                   type: 'submenu',
                   key: 'submenu',
                   label: 'Submenu',
+                  icon: <FolderTree />,
                   children: [
-                    { key: 'child-one', label: 'Child one' },
-                    { key: 'child-two', label: 'Child two', disabled: true },
+                    {
+                      key: 'child-one',
+                      label: 'Child one',
+                      icon: <FileText />,
+                    },
+                    {
+                      key: 'child-two',
+                      label: 'Child two',
+                    },
+                    {
+                      key: 'child-three',
+                      label: 'Child three',
+                      icon: <LockKeyhole />,
+                      disabled: true,
+                    },
                   ],
                 },
               ]}

@@ -3,6 +3,7 @@ import type { RailSubmenu as RailSubmenuModel } from './types'
 import { RailItem } from './RailItem'
 import { RailBadge } from './RailBadge'
 import type { SelectionDirection } from './types'
+import { getRailDepthStyle } from './railDepth'
 
 function ChevronIcon() {
   return (
@@ -17,6 +18,7 @@ function ChevronIcon() {
 
 export function RailSubmenu({
   item,
+  depth = 0,
   collapsed,
   expanded,
   active,
@@ -28,6 +30,7 @@ export function RailSubmenu({
   onChange,
 }: {
   item: RailSubmenuModel
+  depth?: number
   collapsed: boolean
   expanded: boolean
   active: boolean
@@ -60,38 +63,44 @@ export function RailSubmenu({
         aria-expanded={collapsed ? flyoutOpen : expanded}
         aria-haspopup={collapsed ? 'dialog' : undefined}
       >
-        {(item.icon || collapsed) && (
-          <span className="app-rail__icon">
-            {item.icon}
-            {collapsed ? (
+        <span
+          className="app-rail__item-content"
+          data-depth={depth}
+          style={getRailDepthStyle(depth)}
+        >
+          {(item.icon || collapsed) && (
+            <span className="app-rail__icon">
+              {item.icon}
+              {collapsed ? (
+                <RailBadge
+                  content={item.badge}
+                  ariaLabel={item.badgeAriaLabel}
+                  collapsed
+                />
+              ) : null}
+            </span>
+          )}
+          {!collapsed && (
+            <>
+              <span className="app-rail__label">{item.label}</span>
               <RailBadge
                 content={item.badge}
                 ariaLabel={item.badgeAriaLabel}
-                collapsed
+                collapsed={false}
               />
-            ) : null}
-          </span>
-        )}
-        {!collapsed && (
-          <>
-            <span className="app-rail__label">{item.label}</span>
-            <RailBadge
-              content={item.badge}
-              ariaLabel={item.badgeAriaLabel}
-              collapsed={false}
-            />
-            <span
-              className={[
-                'app-rail__submenu-chevron',
-                expanded ? 'app-rail__submenu-chevron--expanded' : '',
-              ]
-                .filter(Boolean)
-                .join(' ')}
-            >
-              <ChevronIcon />
-            </span>
-          </>
-        )}
+              <span
+                className={[
+                  'app-rail__submenu-chevron',
+                  expanded ? 'app-rail__submenu-chevron--expanded' : '',
+                ]
+                  .filter(Boolean)
+                  .join(' ')}
+              >
+                <ChevronIcon />
+              </span>
+            </>
+          )}
+        </span>
       </button>
 
       {!collapsed && (
@@ -108,7 +117,7 @@ export function RailSubmenu({
               <RailItem
                 key={child.key}
                 item={child}
-                nested
+                depth={depth + 1}
                 collapsed={collapsed}
                 active={activeValue === child.key}
                 selectionDirection={selectionDirection}
