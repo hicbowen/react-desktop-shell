@@ -117,6 +117,59 @@ function App() {
 
 `system` is the default theme and follows the operating system color scheme through `prefers-color-scheme`. The theme is scoped to `AppShell` and does not modify `html`, `body`, or global application theme state.
 
+## AppSelectorBar
+
+`AppSelectorBar` switches between a small number of mutually exclusive views or
+data sets within the current page. Selection is shown with a short Fluent-style
+indicator instead of a filled segmented-control surface.
+
+```tsx
+<AppSelectorBar
+  ariaLabel="Task status"
+  defaultValue="all"
+  items={[
+    { key: 'all', label: 'All' },
+    { key: 'open', label: 'Open' },
+    { key: 'done', label: 'Completed' },
+  ]}
+/>
+```
+
+Pass `value` and `onChange` for controlled selection. Without `value`, the
+component uses `defaultValue`, or the first enabled item when no default is
+provided.
+
+```tsx
+const [view, setView] = useState('recent')
+
+<AppSelectorBar
+  value={view}
+  onChange={setView}
+  items={[
+    { key: 'recent', label: 'Recent', icon: <Clock /> },
+    { key: 'favorites', label: 'Favorites', icon: <Heart /> },
+    { key: 'history', label: 'History', icon: <History /> },
+  ]}
+/>
+```
+
+The bar uses radiogroup semantics. `ArrowLeft` and `ArrowRight` move through
+enabled items and wrap at the ends; `Home` and `End` move to the first and last
+enabled items. `Tab` enters only the selected item (or the first enabled item),
+and disabled items are skipped.
+
+Choose the component according to the scope of the interaction:
+
+- `AppRail`: application-level primary navigation.
+- `AppSelectorBar`: a few view choices within the current page.
+- Tabs: multiple documents or distinct content panels, especially when tab
+  lifecycle matters.
+- Segmented Control: a compact, filled option switch.
+
+`AppSelectorBar` is not intended for main navigation, closable or reorderable
+tabs, large filter sets, overflow menus, routing, or content-panel lifecycle
+management.
+
 ## Optional Ant Design Integration
 
 Ant Design support is an optional theme preset. Normal `react-desktop-shell` usage does not require AntD; install it only when importing the `/antd` entry point.

@@ -4,6 +4,7 @@ export { AppDialog } from './dialog/AppDialog'
 export { AppInfoBar } from './info-bar/AppInfoBar'
 export { AppPage } from './AppPage'
 export { AppRail } from './navigation/AppRail'
+export { AppSelectorBar } from './selector-bar'
 export { AppSettingsGroup } from './settings/AppSettingsGroup'
 export { AppSettingsRow } from './settings/AppSettingsRow'
 export { AppSidePane } from './AppSidePane'
@@ -33,6 +34,8 @@ export type {
   AppSettingsRowProps,
   AppShellSidebarOptions,
   AppRailProps,
+  AppSelectorBarItem,
+  AppSelectorBarProps,
   AppShellProps,
   AppSidePaneProps,
   AppTitleBarProps,

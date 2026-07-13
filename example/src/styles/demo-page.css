@@ -28,6 +28,8 @@
 .demo-field { display: grid; gap: 7px; margin-top: 14px; font-size: 13px; font-weight: 600; }
 .demo-field input, .demo-input { min-height: 32px; padding: 6px 9px; border: 1px solid color-mix(in srgb, currentColor 20%, transparent); border-radius: 6px; color: inherit; background: transparent; }
 .demo-rail-preview { width: 260px; height: 300px; overflow: hidden; }
+.demo-selector-task-view { display: grid; gap: 18px; }
+.demo-selector-task-summary { min-height: 88px; padding: 18px; display: flex; align-items: center; gap: 10px; border: 1px solid color-mix(in srgb, currentColor 12%, transparent); border-radius: 8px; }
 .demo-choice-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; }
 .demo-choice { display: grid; gap: 4px; min-width: 150px; padding: 14px; text-align: left; color: inherit; border: 1px solid color-mix(in srgb, currentColor 15%, transparent); border-radius: 8px; background: transparent; }
 .demo-choice small { opacity: .62; }

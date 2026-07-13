@@ -3,7 +3,7 @@ import { Bell, Boxes, Columns3, Database, Info, LayoutDashboard, LayoutPanelTop,
 import type { RailEntry } from '../../src'
 import { OverviewPage } from './pages/OverviewPage'
 import { AppPagePage, AppShellPage, AppSidePanePage, AppTitleBarPage } from './pages/shell/ShellPages'
-import { AppRailPage, NavigationModesPage } from './pages/navigation/NavigationPages'
+import { AppRailPage, AppSelectorBarPage, NavigationModesPage } from './pages/navigation/NavigationPages'
 import { AppDialogPage, AppInfoBarPage, AppToastPage, MessageBoxPage } from './pages/feedback/FeedbackPages'
 import { AppToolbarPage, ContextMenuPage } from './pages/actions/ActionPages'
 import { AppDataTablePage, AppDataViewPage, AppSelectionBarPage } from './pages/data/DataPages'
@@ -19,6 +19,7 @@ export const demoPages: DemoPageDefinition[] = [
   { key: 'app-page', group: 'Shell & Layout', label: 'AppPage', description: 'Consistent page headers, content, actions, and side panes.', icon: <Columns3 size={16} />, component: AppPagePage },
   { key: 'app-side-pane', group: 'Shell & Layout', label: 'AppSidePane', description: 'Dismissible and optionally resizable secondary content.', icon: <PanelRight size={16} />, component: AppSidePanePage },
   { key: 'app-rail', group: 'Navigation', label: 'AppRail', description: 'Grouped navigation items, submenus, badges, and footer links.', icon: <Navigation size={16} />, component: AppRailPage },
+  { key: 'app-selector-bar', group: 'Navigation', label: 'AppSelectorBar', description: 'Switch between a few mutually exclusive views within the current page.', icon: <Rows3 size={16} />, component: AppSelectorBarPage },
   { key: 'navigation-modes', group: 'Navigation', label: 'Navigation Modes', description: 'Expanded, compact, minimal, and responsive rail behavior.', icon: <Menu size={16} />, component: NavigationModesPage },
   { key: 'app-info-bar', group: 'Feedback', label: 'AppInfoBar', description: 'Inline informational, success, warning, and error states.', icon: <Info size={16} />, component: AppInfoBarPage },
   { key: 'app-toast', group: 'Feedback', label: 'AppToast', description: 'Transient notifications, actions, duration, and dismissal.', icon: <Bell size={16} />, component: AppToastPage },
