@@ -221,6 +221,59 @@ describe('AppDataTable controls', () => {
     expect(filterButton().getAttribute('aria-label')).toBe('Filters')
   })
 
+  it('uses localized control labels and aria labels', () => {
+    renderTable({
+      controls: {
+        ...controls,
+        locale: {
+          searchPlaceholder: '搜索表格',
+          searchAriaLabel: '搜索行',
+          clearSearchAriaLabel: '清除搜索',
+          filtersLabel: '筛选',
+          activeFiltersAriaLabel: (count) => `筛选，已启用 ${count} 项`,
+          clearFilterLabel: '清除',
+          clearFilterAriaLabel: (label) => `清除${label}筛选`,
+          clearFiltersLabel: '清除筛选',
+          clearAllLabel: '全部清除',
+          clearAllAriaLabel: '清除搜索和所有筛选',
+        },
+      },
+    })
+
+    const localizedSearch = container.querySelector<HTMLInputElement>(
+      '[aria-label="搜索行"]',
+    )!
+    expect(localizedSearch.placeholder).toBe('搜索表格')
+
+    const valueSetter = Object.getOwnPropertyDescriptor(
+      HTMLInputElement.prototype,
+      'value',
+    )?.set
+    act(() => {
+      valueSetter?.call(localizedSearch, 'Alpha')
+      localizedSearch.dispatchEvent(new Event('input', { bubbles: true }))
+    })
+    expect(container.querySelector('[aria-label="清除搜索"]')).not.toBeNull()
+
+    openFilters()
+    expect(
+      container.querySelector('[role="menu"]')?.getAttribute('aria-label'),
+    ).toBe('筛选')
+    act(() => option('menuitemradio', 'Document').click())
+
+    expect(filterButton().getAttribute('aria-label')).toBe(
+      '筛选，已启用 1 项',
+    )
+    expect(
+      container.querySelector('[aria-label="清除Category筛选"]'),
+    ).not.toBeNull()
+    expect(container.textContent).toContain('清除筛选')
+    expect(
+      container.querySelector('[aria-label="清除搜索和所有筛选"]')
+        ?.textContent,
+    ).toBe('全部清除')
+  })
+
   it('reports filter state without filtering rows in manual mode', () => {
     const onGlobalFilterChange = vi.fn()
     renderTable({ manualFiltering: true, onGlobalFilterChange })

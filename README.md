@@ -506,6 +506,34 @@ const categoryOptions = Array.from(
 />
 ```
 
+Built-in control text defaults to English. Override only the labels needed by
+the current locale through `controls.locale`; dynamic aria labels use formatter
+functions. Explicit values in `controls.search` take precedence over locale
+search defaults.
+
+```tsx
+<AppDataTable
+  data={students}
+  columns={columns}
+  controls={{
+    search: true,
+    filters: studentFilters,
+    locale: {
+      searchPlaceholder: '搜索学生',
+      searchAriaLabel: '搜索学生',
+      clearSearchAriaLabel: '清除搜索',
+      filtersLabel: '筛选',
+      activeFiltersAriaLabel: (count) => `筛选，已启用 ${count} 项`,
+      clearFilterLabel: '清除',
+      clearFilterAriaLabel: (label) => `清除“${label}”筛选`,
+      clearFiltersLabel: '清除筛选',
+      clearAllLabel: '全部清除',
+      clearAllAriaLabel: '清除搜索和所有筛选',
+    },
+  }}
+/>
+```
+
 When a filter definition does not provide `filterFn`, single mode compares the
 cell value with the selected string and multiple mode checks whether the cell
 value is included in the selected string array. A `filterFn` already declared
@@ -805,6 +833,21 @@ export interface AppDataTableControlsOptions<TData> {
   search?: boolean | AppDataTableSearchOptions
   filters?: AppDataTableFilterDefinition<TData>[]
   clearAll?: boolean
+  locale?: Partial<AppDataTableControlsLocale>
+}
+
+export interface AppDataTableControlsLocale {
+  searchPlaceholder: string
+  searchAriaLabel: string
+  clearSearchAriaLabel: string
+  filtersLabel: string
+  activeFiltersAriaLabel: (count: number) => string
+  unnamedFilterAriaLabel: (index: number) => string
+  clearFilterLabel: string
+  clearFilterAriaLabel: (label: string) => string
+  clearFiltersLabel: string
+  clearAllLabel: string
+  clearAllAriaLabel: string
 }
 
 export interface AppDataTableProps<TData> {

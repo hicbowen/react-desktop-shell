@@ -9,6 +9,7 @@ export { AppSelectionBar } from './AppSelectionBar'
 
 export type {
   AppDataTableColumn,
+  AppDataTableControlsLocale,
   AppDataTableControlsOptions,
   AppDataTableFilterDefinition,
   AppDataTableFilterOption,

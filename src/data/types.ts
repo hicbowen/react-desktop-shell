@@ -35,10 +35,25 @@ export interface AppDataTableFilterDefinition<TData> {
   filterFn?: FilterFn<TData>
 }
 
+export interface AppDataTableControlsLocale {
+  searchPlaceholder: string
+  searchAriaLabel: string
+  clearSearchAriaLabel: string
+  filtersLabel: string
+  activeFiltersAriaLabel: (count: number) => string
+  unnamedFilterAriaLabel: (index: number) => string
+  clearFilterLabel: string
+  clearFilterAriaLabel: (label: string) => string
+  clearFiltersLabel: string
+  clearAllLabel: string
+  clearAllAriaLabel: string
+}
+
 export interface AppDataTableControlsOptions<TData> {
   search?: boolean | AppDataTableSearchOptions
   filters?: AppDataTableFilterDefinition<TData>[]
   clearAll?: boolean
+  locale?: Partial<AppDataTableControlsLocale>
 }
 
 export interface AppDataTableSelectionOptions<TData> {

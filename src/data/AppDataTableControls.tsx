@@ -8,10 +8,25 @@ import {
 } from 'react'
 import type { Table } from '@tanstack/react-table'
 import type {
+  AppDataTableControlsLocale,
   AppDataTableControlsOptions,
   AppDataTableFilterDefinition,
   AppDataTableSearchOptions,
 } from './types'
+
+const defaultControlsLocale: AppDataTableControlsLocale = {
+  searchPlaceholder: 'Search rows',
+  searchAriaLabel: 'Search rows',
+  clearSearchAriaLabel: 'Clear search',
+  filtersLabel: 'Filters',
+  activeFiltersAriaLabel: (count) => `Filters, ${count} active`,
+  unnamedFilterAriaLabel: (index) => `field ${index + 1}`,
+  clearFilterLabel: 'Clear',
+  clearFilterAriaLabel: (label) => `Clear ${label} filter`,
+  clearFiltersLabel: 'Clear filters',
+  clearAllLabel: 'Clear all',
+  clearAllAriaLabel: 'Clear all search and filters',
+}
 
 function SearchIcon() {
   return (
@@ -45,10 +60,14 @@ function hasFilterValue(value: unknown) {
   return value !== undefined && value !== null && value !== ''
 }
 
-function accessibleLabel(label: ReactNode, index: number) {
+function accessibleLabel(
+  label: ReactNode,
+  index: number,
+  locale: AppDataTableControlsLocale,
+) {
   return typeof label === 'string' || typeof label === 'number'
     ? String(label)
-    : `field ${index + 1}`
+    : locale.unnamedFilterAriaLabel(index)
 }
 
 function activateWithKeyboard(
@@ -78,6 +97,7 @@ export function AppDataTableControls<TData>({
   const filterRootRef = useRef<HTMLDivElement | null>(null)
   const filterButtonRef = useRef<HTMLButtonElement | null>(null)
   const menuId = useId()
+  const locale = { ...defaultControlsLocale, ...options.locale }
   const searchOptions: AppDataTableSearchOptions | null = options.search
     ? options.search === true
       ? {}
@@ -141,16 +161,18 @@ export function AppDataTableControls<TData>({
             <SearchIcon />
           </span>
           <input
-            aria-label={searchOptions.ariaLabel ?? 'Search rows'}
+            aria-label={searchOptions.ariaLabel ?? locale.searchAriaLabel}
             className="app-data-table__search-input"
-            placeholder={searchOptions.placeholder ?? 'Search rows'}
+            placeholder={searchOptions.placeholder ?? locale.searchPlaceholder}
             type="search"
             value={searchValue}
             onChange={(event) => table.setGlobalFilter(event.currentTarget.value)}
           />
           {hasActiveSearch ? (
             <button
-              aria-label={searchOptions.clearAriaLabel ?? 'Clear search'}
+              aria-label={
+                searchOptions.clearAriaLabel ?? locale.clearSearchAriaLabel
+              }
               className="app-data-table__search-clear"
               type="button"
               onClick={() => table.setGlobalFilter('')}
@@ -170,8 +192,8 @@ export function AppDataTableControls<TData>({
             aria-haspopup="menu"
             aria-label={
               activeFilterCount > 0
-                ? `Filters, ${activeFilterCount} active`
-                : 'Filters'
+                ? locale.activeFiltersAriaLabel(activeFilterCount)
+                : locale.filtersLabel
             }
             className="app-data-table__filter-button"
             type="button"
@@ -188,7 +210,7 @@ export function AppDataTableControls<TData>({
             }}
           >
             <FilterIcon />
-            <span>Filters</span>
+            <span>{locale.filtersLabel}</span>
             {activeFilterCount > 0 ? (
               <span
                 aria-hidden="true"
@@ -201,7 +223,7 @@ export function AppDataTableControls<TData>({
 
           {menuOpen ? (
             <div
-              aria-label="Filters"
+              aria-label={locale.filtersLabel}
               className="app-data-table__filter-menu app-scrollbar"
               id={menuId}
               role="menu"
@@ -219,7 +241,7 @@ export function AppDataTableControls<TData>({
                   : []
                 const fieldActive = hasFilterValue(value)
                 const labelId = `${menuId}-group-${index}`
-                const label = accessibleLabel(definition.label, index)
+                const label = accessibleLabel(definition.label, index, locale)
 
                 return (
                   <div
@@ -232,13 +254,13 @@ export function AppDataTableControls<TData>({
                       <span id={labelId}>{definition.label}</span>
                       {fieldActive ? (
                         <button
-                          aria-label={`Clear ${label} filter`}
+                          aria-label={locale.clearFilterAriaLabel(label)}
                           className="app-data-table__filter-clear"
                           role="menuitem"
                           type="button"
                           onClick={() => column.setFilterValue(undefined)}
                         >
-                          Clear
+                          {locale.clearFilterLabel}
                         </button>
                       ) : null}
                     </div>
@@ -304,7 +326,7 @@ export function AppDataTableControls<TData>({
                     type="button"
                     onClick={() => table.setColumnFilters([])}
                   >
-                    Clear filters
+                    {locale.clearFiltersLabel}
                   </button>
                 </div>
               ) : null}
@@ -315,12 +337,12 @@ export function AppDataTableControls<TData>({
 
       {options.clearAll !== false && hasActiveControls ? (
         <button
-          aria-label="Clear all search and filters"
+          aria-label={locale.clearAllAriaLabel}
           className="app-data-table__controls-clear-all"
           type="button"
           onClick={clearAll}
         >
-          Clear all
+          {locale.clearAllLabel}
         </button>
       ) : null}
     </div>
