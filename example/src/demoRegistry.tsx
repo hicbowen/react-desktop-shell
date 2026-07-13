@@ -1,12 +1,12 @@
 import type { ComponentType, ReactNode } from 'react'
-import { Bell, Boxes, Columns3, CreditCard, Database, Info, LayoutDashboard, LayoutPanelTop, Menu, MessageSquare, MousePointerClick, Navigation, PanelRight, Rows3, ScrollText, Settings, SlidersHorizontal, Table2, Wrench } from 'lucide-react'
+import { Bell, Boxes, Columns3, CreditCard, Info, LayoutDashboard, LayoutPanelTop, Menu, MessageSquare, MousePointerClick, Navigation, PanelRight, Rows3, ScrollText, Settings, SlidersHorizontal, Table2, Wrench } from 'lucide-react'
 import type { RailEntry, RailItem } from '../../src'
 import { OverviewPage } from './pages/OverviewPage'
 import { AppPagePage, AppShellPage, AppSidePanePage, AppTitleBarPage } from './pages/shell/ShellPages'
 import { AppRailPage, AppSelectorBarPage, NavigationModesPage } from './pages/navigation/NavigationPages'
 import { AppDialogPage, AppInfoBarPage, AppToastPage, MessageBoxPage } from './pages/feedback/FeedbackPages'
 import { AppToolbarPage, ContextMenuPage } from './pages/actions/ActionPages'
-import { AppDataTablePage, AppDataViewPage, AppSelectionBarPage } from './pages/data/DataPages'
+import { AppDataTablePage, AppSelectionBarPage } from './pages/data/DataPages'
 import { AppSettingsGroupPage, AppSettingsRowPage, ThemeControlsPage } from './pages/settings/SettingsPages'
 import { AntdThemePage } from './pages/integrations/AntdThemePage'
 import { AppCardPage } from './pages/content/CardPages'
@@ -31,8 +31,7 @@ export const demoPages: DemoPageDefinition[] = [
   { key: 'message-box', group: 'Feedback', label: 'Message Box', description: 'Promise-based confirmation and decision dialogs.', icon: <MessageSquare size={16} />, component: MessageBoxPage },
   { key: 'app-toolbar', group: 'Actions', label: 'AppToolbar', description: 'Start, status, and end regions for page-level actions.', icon: <Wrench size={16} />, component: AppToolbarPage },
   { key: 'context-menu', group: 'Actions', label: 'Context Menu', description: 'Nested contextual commands and native text actions.', icon: <MousePointerClick size={16} />, component: ContextMenuPage },
-  { key: 'app-data-view', group: 'Data', label: 'AppDataView', description: 'A composed toolbar, table, selection bar, and footer layout.', icon: <Database size={16} />, component: AppDataViewPage },
-  { key: 'app-data-table', group: 'Data', label: 'AppDataTable', description: 'Built-in search and filters with sorting, sizing, selection, sticky headers, and fill layouts.', icon: <Table2 size={16} />, component: AppDataTablePage, layout: 'fill' },
+  { key: 'app-data-table', group: 'Data', label: 'AppDataTable', description: 'A complete data surface with page actions, selection actions, built-in controls, sorting, sizing, and fill layouts.', icon: <Table2 size={16} />, component: AppDataTablePage, layout: 'fill' },
   { key: 'app-selection-bar', group: 'Data', label: 'AppSelectionBar', description: 'Actions and clear behavior for selected data rows.', icon: <Rows3 size={16} />, component: AppSelectionBarPage },
   { key: 'app-settings-group', group: 'Settings', label: 'AppSettingsGroup', description: 'Headings and containers for related preference rows.', icon: <Settings size={16} />, component: AppSettingsGroupPage },
   { key: 'app-settings-row', group: 'Settings', label: 'AppSettingsRow', description: 'Aligned preference labels, descriptions, controls, and states.', icon: <Settings size={16} />, component: AppSettingsRowPage },
