@@ -497,6 +497,20 @@
   border-radius: inherit;
 }
 
+.app-data-table__virtual-spacer {
+  pointer-events: none;
+}
+
+.app-data-table__virtual-spacer > td {
+  padding: 0;
+  border: 0;
+}
+
+.app-data-table--virtualized tbody > tr:not(.app-data-table__virtual-spacer),
+.app-data-table--virtualized tbody > tr:not(.app-data-table__virtual-spacer) > td {
+  max-height: inherit;
+}
+
 .app-data-table__pagination {
   box-sizing: border-box;
   width: 100%;

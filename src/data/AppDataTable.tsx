@@ -1,3 +1,4 @@
+import { lazy, Suspense, useRef } from 'react'
 import {
   DataTableFrame,
   DataTableRow,
@@ -9,11 +10,24 @@ import { AppDataTableControls } from './AppDataTableControls'
 import { AppDataTablePagination } from './AppDataTablePagination'
 import type { AppDataTableProps } from './types'
 
+const AppDataTableVirtualRows = lazy(
+  () => import('./internal/AppDataTableVirtualRows'),
+) as typeof import('./internal/AppDataTableVirtualRows').default
+
 export { APP_DATA_TABLE_SELECTION_COLUMN_ID }
 
 export function AppDataTable<TData>(props: AppDataTableProps<TData>) {
+  const scrollRef = useRef<HTMLDivElement | null>(null)
   const core = useAppDataTable(props)
   const rows = core.table.getRowModel().rows
+  const virtualizationEnabled = Boolean(props.virtualization)
+  const virtualizationOptions =
+    typeof props.virtualization === 'object' ? props.virtualization : {}
+  const rowHeight =
+    virtualizationOptions.rowHeight ??
+    (core.density === 'compact' ? 38 : 48)
+  const overscan = virtualizationOptions.overscan ?? 5
+  const tableState = core.table.getState()
   const filterDefinitions =
     props.controls?.filters?.filter((definition) =>
       Boolean(core.table.getColumn(definition.columnId)),
@@ -34,6 +48,14 @@ export function AppDataTable<TData>(props: AppDataTableProps<TData>) {
       table={core.table}
     />
   ) : undefined
+  const normalRows = rows.map((row) => (
+    <DataTableRow
+      key={row.id}
+      onRowClick={core.onRowClick}
+      row={row}
+      stickyHeader={core.stickyHeader}
+    />
+  ))
 
   return (
     <DataTableFrame
@@ -41,6 +63,7 @@ export function AppDataTable<TData>(props: AppDataTableProps<TData>) {
       columnResizeMode={core.columnResizeMode}
       controls={controls}
       pagination={pagination}
+      scrollRef={scrollRef}
       density={core.density}
       enableColumnResizing={core.enableColumnResizing}
       loading={core.loading}
@@ -48,6 +71,7 @@ export function AppDataTable<TData>(props: AppDataTableProps<TData>) {
       stickyHeader={core.stickyHeader}
       style={core.style}
       table={core.table}
+      virtualized={virtualizationEnabled}
     >
       {core.loading ? (
         <DataTableStateRow
@@ -59,15 +83,36 @@ export function AppDataTable<TData>(props: AppDataTableProps<TData>) {
           columnCount={core.visibleColumnCount}
           content={core.emptyContent}
         />
-      ) : (
-        rows.map((row) => (
-          <DataTableRow
-            key={row.id}
+      ) : virtualizationEnabled ? (
+        <Suspense fallback={normalRows}>
+          <AppDataTableVirtualRows
+            columnFilters={tableState.columnFilters}
+            globalFilter={tableState.globalFilter}
+            initialViewportHeight={
+              typeof core.maxHeight === 'number' ? core.maxHeight : undefined
+            }
             onRowClick={core.onRowClick}
-            row={row}
+            overscan={overscan}
+            pageIndex={
+              core.paginationEnabled
+                ? tableState.pagination.pageIndex
+                : undefined
+            }
+            pageSize={
+              core.paginationEnabled
+                ? tableState.pagination.pageSize
+                : undefined
+            }
+            rowHeight={rowHeight}
+            rows={rows}
+            scrollRef={scrollRef}
+            sorting={tableState.sorting}
             stickyHeader={core.stickyHeader}
+            visibleColumnCount={core.visibleColumnCount}
           />
-        ))
+        </Suspense>
+      ) : (
+        normalRows
       )}
     </DataTableFrame>
   )

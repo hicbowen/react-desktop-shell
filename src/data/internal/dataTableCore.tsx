@@ -7,6 +7,7 @@ import {
   type KeyboardEvent,
   type MouseEvent,
   type ReactNode,
+  type RefObject,
 } from 'react'
 import {
   flexRender,
@@ -499,6 +500,8 @@ interface DataTableFrameProps<TData> {
   loading: boolean
   controls?: ReactNode
   pagination?: ReactNode
+  scrollRef?: RefObject<HTMLDivElement | null>
+  virtualized?: boolean
   className?: string
   style?: CSSProperties
   children: ReactNode
@@ -514,6 +517,8 @@ export function DataTableFrame<TData>({
   loading,
   controls,
   pagination,
+  scrollRef,
+  virtualized = false,
   className,
   style,
   children,
@@ -522,11 +527,12 @@ export function DataTableFrame<TData>({
 
   return (
     <div
-      className={`app-data-table app-data-table--${density} ${stickyHeader ? 'app-data-table--sticky-header' : ''} ${controls ? 'app-data-table--with-controls' : ''} ${pagination ? 'app-data-table--with-pagination' : ''} ${className ?? ''}`.trim()}
+      className={`app-data-table app-data-table--${density} ${stickyHeader ? 'app-data-table--sticky-header' : ''} ${controls ? 'app-data-table--with-controls' : ''} ${pagination ? 'app-data-table--with-pagination' : ''} ${virtualized ? 'app-data-table--virtualized' : ''} ${className ?? ''}`.trim()}
       style={style}
     >
       {controls}
       <div
+        ref={scrollRef}
         className="app-data-table__scroll app-scrollbar"
         style={{ maxHeight }}
       >
@@ -553,12 +559,14 @@ interface DataTableRowProps<TData> {
   row: Row<TData>
   stickyHeader: boolean
   onRowClick?: AppDataTableProps<TData>['onRowClick']
+  rowHeight?: number
 }
 
 export function DataTableRow<TData>({
   row,
   stickyHeader,
   onRowClick,
+  rowHeight,
 }: DataTableRowProps<TData>) {
   const handleClick = (event: MouseEvent<HTMLTableRowElement>) => {
     if (!onRowClick || isInteractiveTarget(event.target)) return
@@ -577,6 +585,7 @@ export function DataTableRow<TData>({
       className={onRowClick ? 'app-data-table__row--clickable' : undefined}
       data-selected={row.getIsSelected() || undefined}
       tabIndex={onRowClick ? 0 : undefined}
+      style={rowHeight !== undefined ? { height: rowHeight } : undefined}
       onClick={handleClick}
       onKeyDown={handleKeyDown}
     >

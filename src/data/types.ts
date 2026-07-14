@@ -78,6 +78,17 @@ export interface AppDataTablePaginationOptions {
   locale?: Partial<AppDataTablePaginationLocale>
 }
 
+export interface AppDataTableVirtualizationOptions {
+  /**
+   * Fixed rendered row height in pixels.
+   *
+   * Defaults to 48 for comfortable density and 38 for compact density.
+   */
+  rowHeight?: number
+  /** Number of extra rows rendered before and after the visible area. */
+  overscan?: number
+}
+
 export interface AppDataTableSelectionOptions<TData> {
   value: RowSelectionState
   onChange: OnChangeFn<RowSelectionState>
@@ -97,6 +108,7 @@ export interface AppDataTableProps<TData> {
   columns: ColumnDef<TData>[]
   controls?: AppDataTableControlsOptions<TData>
   pagination?: boolean | AppDataTablePaginationOptions
+  virtualization?: boolean | AppDataTableVirtualizationOptions
   getRowId?: TableOptions<TData>['getRowId']
   selection?: AppDataTableSelectionOptions<TData>
   sorting?: SortingState

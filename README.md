@@ -380,6 +380,13 @@ subpath. Install TanStack Table alongside the shell when you use this entry:
 npm install react-desktop-shell @tanstack/react-table
 ```
 
+`@tanstack/react-table` is required when using `AppDataTable`. Vertical row
+virtualization is optional and requires one additional peer dependency:
+
+```bash
+npm install @tanstack/react-virtual
+```
+
 `AppDataView` composes the toolbar or selection bar, table, and optional footer
 into one bordered surface. `AppSelectionBar` lays out a selection count and
 consumer-provided batch actions without owning selection state. `AppDataTable`
@@ -495,6 +502,35 @@ choices of 10, 20, and 50. The object form supports uncontrolled state through
 `defaultValue`, or controlled state through `value` and `onChange`. Use
 `selection.selectAllMode: 'page'` when the header checkbox should affect only
 the visible page. This version supports client-side pagination only.
+
+### Vertical row virtualization
+
+For longer continuously scrolling data sets, enable fixed-height vertical row
+virtualization inside a constrained scroll area:
+
+```tsx
+<AppDataView height="fill">
+  <AppDataTable
+    data={students}
+    columns={columns}
+    virtualization={{
+      overscan: 5,
+    }}
+  />
+</AppDataView>
+```
+
+Virtualization requires `@tanstack/react-virtual` and either a fill-height data
+view or an `AppDataTable maxHeight`. It reduces rendered row DOM only: search,
+column filtering, and sorting still run against the complete data set. The
+default fixed row height follows `density` (48px for comfortable and 38px for
+compact). A custom `rowHeight` must match the actual CSS row height.
+
+Only fixed-height vertical row virtualization is supported. Dynamic row
+heights and horizontal column virtualization are not supported. For roughly a
+few hundred rows, consider pagination first; use virtualization when continuous
+scrolling is important. Pagination and virtualization can be enabled together,
+but only the current page is virtualized, so the benefit is usually limited.
 
 ### Filtering and column visibility
 
@@ -899,11 +935,19 @@ export interface AppDataTablePaginationOptions {
   locale?: Partial<AppDataTablePaginationLocale>
 }
 
+export interface AppDataTableVirtualizationOptions {
+  /** Defaults to 48 for comfortable density and 38 for compact density. */
+  rowHeight?: number
+  /** Extra rows rendered before and after the visible range. */
+  overscan?: number
+}
+
 export interface AppDataTableProps<TData> {
   data: TData[]
   columns: ColumnDef<TData>[]
   controls?: AppDataTableControlsOptions<TData>
   pagination?: boolean | AppDataTablePaginationOptions
+  virtualization?: boolean | AppDataTableVirtualizationOptions
   getRowId?: TableOptions<TData>['getRowId']
   selection?: AppDataTableSelectionOptions<TData>
   sorting?: SortingState

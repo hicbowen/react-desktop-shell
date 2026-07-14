@@ -3,7 +3,7 @@
 import { act, useState, type ReactNode } from 'react'
 import { createRoot, type Root } from 'react-dom/client'
 import type { ColumnDef, RowSelectionState } from '@tanstack/react-table'
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest'
 import { AppDataTable } from './AppDataTable'
 import type { AppDataTableControlsOptions } from './types'
 
@@ -24,6 +24,13 @@ const data: RowData[] = [
 const pagedData: RowData[] = Array.from({ length: 24 }, (_, index) => ({
   id: String(index + 1),
   name: `Item ${String(index + 1).padStart(2, '0')}`,
+  category: index % 2 === 0 ? 'Document' : 'Media',
+  status: index % 3 === 0 ? 'Ready' : 'Processing',
+}))
+
+const virtualData: RowData[] = Array.from({ length: 100 }, (_, index) => ({
+  id: String(index + 1),
+  name: `Virtual ${String(index + 1).padStart(3, '0')}`,
   category: index % 2 === 0 ? 'Document' : 'Media',
   status: index % 3 === 0 ? 'Ready' : 'Processing',
 }))
@@ -63,12 +70,34 @@ describe('AppDataTable controls', () => {
   let container: HTMLDivElement
   let root: Root
 
+  beforeAll(async () => {
+    await import('./internal/AppDataTableVirtualRows')
+  })
+
   beforeEach(() => {
     ;(globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean })
       .IS_REACT_ACT_ENVIRONMENT = true
     container = document.createElement('div')
     document.body.append(container)
     root = createRoot(container)
+    Object.defineProperty(HTMLElement.prototype, 'offsetHeight', {
+      configurable: true,
+      get: () => 200,
+    })
+    Object.defineProperty(HTMLElement.prototype, 'offsetWidth', {
+      configurable: true,
+      get: () => 800,
+    })
+    Object.defineProperty(HTMLElement.prototype, 'scrollHeight', {
+      configurable: true,
+      get: () => 4800,
+    })
+    Object.defineProperty(HTMLElement.prototype, 'scrollTo', {
+      configurable: true,
+      value(this: HTMLElement, options: ScrollToOptions | number) {
+        this.scrollTop = typeof options === 'number' ? options : options.top ?? 0
+      },
+    })
   })
 
   afterEach(() => {
@@ -78,6 +107,12 @@ describe('AppDataTable controls', () => {
   })
 
   const render = (node: ReactNode) => act(() => root.render(node))
+  const settleVirtualization = () =>
+    act(async () => {
+      for (let index = 0; index < 3; index += 1) {
+        await new Promise((resolve) => setTimeout(resolve, 0))
+      }
+    })
   const renderTable = (
     props: Partial<React.ComponentProps<typeof AppDataTable<RowData>>> = {},
   ) =>
@@ -610,5 +645,171 @@ describe('AppDataTable controls', () => {
     expect(container.querySelector('.app-data-table__resize-handle')).not.toBeNull()
     expect(container.querySelector('[data-column-id="name"][data-pinned="left"]')).not.toBeNull()
     expect(container.querySelector('.app-data-table__scroll + .app-data-table__pagination')).not.toBeNull()
+  })
+
+  it('virtualizes only part of the rows with fixed comfortable height', async () => {
+    renderTable({ data: virtualData, maxHeight: 200, virtualization: true })
+    await settleVirtualization()
+    const renderedRows = Array.from(
+      container.querySelectorAll<HTMLTableRowElement>(
+        'tbody tr:not(.app-data-table__virtual-spacer)',
+      ),
+    )
+
+    expect(renderedRows.length).toBeGreaterThan(0)
+    expect(renderedRows.length).toBeLessThan(virtualData.length)
+    expect(renderedRows[0]?.textContent).toContain('Virtual 001')
+    expect(renderedRows[0]?.style.height).toBe('48px')
+    expect(container.querySelector('.app-data-table--virtualized')).not.toBeNull()
+    expect(container.querySelector('.app-data-table__virtual-spacer')).not.toBeNull()
+  })
+
+  it('renders accessible spacer rows with the correct geometry', async () => {
+    renderTable({ data: virtualData, maxHeight: 200, virtualization: false })
+    const scroll = container.querySelector<HTMLDivElement>('.app-data-table__scroll')!
+    scroll.scrollTop = 2000
+    renderTable({ data: virtualData, maxHeight: 200, virtualization: true })
+    await settleVirtualization()
+
+    const spacers = container.querySelectorAll<HTMLTableRowElement>(
+      '.app-data-table__virtual-spacer',
+    )
+    expect(spacers.length).toBeGreaterThan(0)
+    expect(spacers[0]?.getAttribute('aria-hidden')).toBe('true')
+    expect(spacers[0]?.querySelector('td')?.colSpan).toBe(columns.length)
+    expect(spacers[0]?.querySelector('td')?.style.height).not.toBe('0px')
+  })
+
+  it('virtualizes search and filter results from the full data set', async () => {
+    renderTable({ data: virtualData, maxHeight: 200, virtualization: true })
+    await settleVirtualization()
+    setSearch('Virtual 100')
+    expect(
+      container.querySelector('tbody tr:not(.app-data-table__virtual-spacer)')
+        ?.textContent,
+    ).toContain('Virtual 100')
+
+    setSearch('')
+    openFilters()
+    act(() => option('menuitemradio', 'Document').click())
+    expect(
+      Array.from(
+        container.querySelectorAll(
+          'tbody tr:not(.app-data-table__virtual-spacer)',
+        ),
+      ).every((row) => row.textContent?.includes('Document')),
+    ).toBe(true)
+  })
+
+  it('sorts before virtualizing rows', async () => {
+    renderTable({
+      data: [...virtualData].reverse(),
+      maxHeight: 200,
+      virtualization: true,
+    })
+    await settleVirtualization()
+    const nameSort = Array.from(
+      container.querySelectorAll<HTMLButtonElement>('.app-data-table__sort-button'),
+    ).find((button) => button.textContent?.includes('Name'))
+    act(() => nameSort?.click())
+    expect(
+      container.querySelector('tbody tr:not(.app-data-table__virtual-spacer)')
+        ?.textContent,
+    ).toContain('Virtual 001')
+  })
+
+  it('keeps selection scoped to data rows rather than spacer rows', async () => {
+    function Harness() {
+      const [selection, setSelection] = useState<RowSelectionState>({})
+      return (
+        <>
+          <output data-testid="selected-count">{Object.values(selection).filter(Boolean).length}</output>
+          <AppDataTable
+            columns={columns}
+            data={virtualData}
+            getRowId={(row) => row.id}
+            maxHeight={200}
+            selection={{ value: selection, onChange: setSelection }}
+            virtualization
+          />
+        </>
+      )
+    }
+    render(<Harness />)
+    await settleVirtualization()
+    act(() => container.querySelector<HTMLInputElement>('thead input')?.click())
+    expect(container.querySelector('[data-testid="selected-count"]')?.textContent).toBe('100')
+    expect(container.querySelectorAll('.app-data-table__virtual-spacer input')).toHaveLength(0)
+  })
+
+  it('keeps sticky headers, pinning, and resizing with virtualization', async () => {
+    renderTable({
+      data: virtualData,
+      maxHeight: 200,
+      virtualization: { overscan: 2 },
+      stickyHeader: true,
+      enableColumnResizing: true,
+      defaultColumnPinning: { left: ['name'] },
+    })
+    await settleVirtualization()
+    expect(container.querySelector('.app-data-table--sticky-header.app-data-table--virtualized')).not.toBeNull()
+    expect(container.querySelector('thead')).not.toBeNull()
+    expect(container.querySelector('.app-data-table__resize-handle')).not.toBeNull()
+    expect(container.querySelector('[data-column-id="name"][data-pinned="left"]')).not.toBeNull()
+  })
+
+  it('does not create virtual rows for loading or empty states', async () => {
+    renderTable({ data: virtualData, loading: true, maxHeight: 200, virtualization: true })
+    await settleVirtualization()
+    expect(container.querySelector('.app-data-table__virtual-spacer')).toBeNull()
+    expect(container.textContent).toContain('Loading')
+
+    renderTable({ data: [], loading: false, maxHeight: 200, virtualization: true })
+    await settleVirtualization()
+    expect(container.querySelector('.app-data-table__virtual-spacer')).toBeNull()
+    expect(container.textContent).toContain('No data')
+  })
+
+  it('supports compact and custom virtual row heights', async () => {
+    renderTable({ data: virtualData, density: 'compact', maxHeight: 200, virtualization: true })
+    await settleVirtualization()
+    expect(container.querySelector<HTMLTableRowElement>('tbody tr:not(.app-data-table__virtual-spacer)')?.style.height).toBe('38px')
+
+    renderTable({ data: virtualData, maxHeight: 200, virtualization: { rowHeight: 52 } })
+    await settleVirtualization()
+    expect(container.querySelector<HTMLTableRowElement>('tbody tr:not(.app-data-table__virtual-spacer)')?.style.height).toBe('52px')
+  })
+
+  it('uses custom overscan and can toggle virtualization', async () => {
+    renderTable({ data: virtualData, maxHeight: 200, virtualization: { overscan: 0 } })
+    await settleVirtualization()
+    const withoutOverscan = container.querySelectorAll(
+      'tbody tr:not(.app-data-table__virtual-spacer)',
+    ).length
+
+    renderTable({ data: virtualData, maxHeight: 200, virtualization: { overscan: 10 } })
+    await settleVirtualization()
+    const withOverscan = container.querySelectorAll(
+      'tbody tr:not(.app-data-table__virtual-spacer)',
+    ).length
+    expect(withOverscan).toBeGreaterThan(withoutOverscan)
+
+    renderTable({ data: virtualData, maxHeight: 200, virtualization: false })
+    expect(bodyRows()).toHaveLength(virtualData.length)
+    expect(container.querySelector('.app-data-table--virtualized')).toBeNull()
+  })
+
+  it('virtualizes only the current page when pagination is enabled', async () => {
+    renderTable({
+      data: virtualData,
+      maxHeight: 100,
+      pagination: { defaultValue: { pageIndex: 1, pageSize: 10 } },
+      virtualization: { overscan: 0 },
+    })
+    await settleVirtualization()
+    const text = container.querySelector('tbody')?.textContent ?? ''
+    expect(text).toContain('Virtual 011')
+    expect(text).not.toContain('Virtual 001')
+    expect(text).not.toContain('Virtual 021')
   })
 })

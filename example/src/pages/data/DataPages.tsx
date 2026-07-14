@@ -15,16 +15,19 @@ export function AppDataTablePage() {
   const [fixedHeight, setFixedHeight] = useState(true)
   const [fill, setFill] = useState(false)
   const [pagination, setPagination] = useState(true)
+  const [virtualized, setVirtualized] = useState(false)
   const count = Object.values(selection).filter(Boolean).length
 
   const handleFixedHeightChange = (next: boolean) => {
     setFixedHeight(next)
     if (next) setFill(false)
+    if (!next && !fill) setVirtualized(false)
   }
 
   const handleFillChange = (next: boolean) => {
     setFill(next)
     if (next) setFixedHeight(false)
+    if (!next && !fixedHeight) setVirtualized(false)
   }
 
   const tableClassName = fill
@@ -50,6 +53,14 @@ export function AppDataTablePage() {
         </span>
         <span>
           <Switch checked={pagination} onChange={setPagination} /> Pagination
+        </span>
+        <span>
+          <Switch
+            checked={virtualized}
+            disabled={!fill && !fixedHeight}
+            onChange={setVirtualized}
+          />{' '}
+          Vertical virtualization
         </span>
       </DemoControls>
       <DemoSection
@@ -111,6 +122,7 @@ export function AppDataTablePage() {
             }}
             stickyHeader={sticky}
             enableColumnResizing={resizing}
+            virtualization={virtualized ? { overscan: 5 } : false}
           />
         </AppDataView>
       </DemoSection>

@@ -16,6 +16,7 @@ export type {
   AppDataTableProps,
   AppDataTablePaginationLocale,
   AppDataTablePaginationOptions,
+  AppDataTableVirtualizationOptions,
   AppDataTableSearchOptions,
   AppDataTableSelectionOptions,
   AppDataViewProps,
