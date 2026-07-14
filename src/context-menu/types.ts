@@ -44,6 +44,23 @@ export type AppContextMenuItem =
   | AppContextMenuSubmenuItem
   | AppContextMenuSeparatorItem
 
+export interface AppContextMenuOpenOptions {
+  /** Menu items captured when the menu is opened. */
+  items: AppContextMenuItem[]
+  /** Viewport-relative coordinates, normally event.clientX/clientY. */
+  x: number
+  y: number
+  /** Element that caused the menu to open. */
+  trigger?: HTMLElement | null
+}
+
+export interface AppContextMenuApi {
+  /** Opens or replaces the current application context menu. */
+  open(options: AppContextMenuOpenOptions): void
+  /** Closes the current context menu using the normal focus-restoration path. */
+  close(): void
+}
+
 export interface AppContextMenuProps {
   items: AppContextMenuItem[]
   children: ReactElement

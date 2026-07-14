@@ -12,9 +12,11 @@ export type {
 export type {
   AppClipboardAdapter,
   AppContextMenuActionItem,
+  AppContextMenuApi,
   AppContextMenuItem,
   AppContextMenuLocale,
   AppContextMenuMode,
+  AppContextMenuOpenOptions,
   AppContextMenuProps,
   AppContextMenuSeparatorItem,
   AppContextMenuSubmenuItem,

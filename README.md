@@ -784,28 +784,38 @@ left-pinned columns occupy the space before original-order sticky columns.
 ### Row context-menu events
 
 `AppDataTable` reports context-menu events for non-interactive areas of data
-rows. It does not create a menu or prevent the browser menu automatically:
+rows. Use `useAppContextMenu` inside `AppShell` when those events should open
+the shared application menu layer:
 
 ```tsx
+const contextMenu = useAppContextMenu()
+
 <AppDataTable
   data={rows}
   columns={columns}
   onRowContextMenu={(row, event) => {
     event.preventDefault()
 
-    setContextMenu({
+    contextMenu.open({
       x: event.clientX,
       y: event.clientY,
-      row: row.original,
+      trigger: event.currentTarget,
+      items: [
+        {
+          key: 'open',
+          label: 'Open',
+          onClick: () => openRow(row.original),
+        },
+      ],
     })
   }}
 />
 ```
 
-Call `event.preventDefault()` only when displaying a custom menu. Right-clicking
-a row does not select it, and right-clicking an interactive element such as a
-button, input, select, or link does not invoke the row callback. Menu UI and
-business actions remain the application's responsibility.
+`AppDataTable` itself still provides only the event. Call
+`event.preventDefault()` when displaying a custom menu. Right-clicking a row
+does not select it, and right-clicking an interactive element such as a button,
+input, select, or link does not invoke the row callback.
 
 Virtualized rows may be unmounted while scrolling, so do not retain the row
 `event.currentTarget`. Store stable data such as `row.id`, `row.original`, and
@@ -1475,6 +1485,53 @@ Custom menus are data-driven and can wrap any single React element without chang
   <Item />
 </AppContextMenu>
 ```
+
+### Imperative context menus
+
+`useAppContextMenu` opens dynamic menus through the same layer used by
+`AppContextMenu`. The Hook must be used within `AppShell`.
+
+```tsx
+const contextMenu = useAppContextMenu()
+
+<AppDataTable
+  data={rows}
+  columns={columns}
+  onRowContextMenu={(row, event) => {
+    event.preventDefault()
+
+    contextMenu.open({
+      x: event.clientX,
+      y: event.clientY,
+      trigger: event.currentTarget,
+      items: [
+        {
+          key: 'open',
+          label: 'Open',
+          onClick: () => openRow(row.original),
+        },
+        { type: 'separator' },
+        {
+          key: 'delete',
+          label: 'Delete',
+          danger: true,
+          onClick: () => deleteRow(row.original),
+        },
+      ],
+    })
+  }}
+/>
+```
+
+`open()` uses viewport coordinates, so `clientX` and `clientY` are recommended.
+Each call captures its current `items` and immediately replaces any open menu;
+item callbacks can therefore close over the current business object. The Hook
+does not manage row selection. In virtual lists, retain stable data rather than
+assuming the trigger DOM will remain mounted.
+
+Explicit imperative menus work with both `contextMenu="app"` and
+`contextMenu="native"`; in native mode, call `event.preventDefault()` at the
+trigger site. Calling `close()` uses the normal menu focus-restoration path.
 
 When `contextMenu="app"` is enabled, the shell resolves menus in this order:
 

@@ -2,6 +2,7 @@ import { useCallback, useMemo, useRef, useState } from 'react'
 import type { KeyboardEvent as ReactKeyboardEvent, MouseEvent as ReactMouseEvent, RefObject } from 'react'
 import type {
   AppClipboardAdapter,
+  AppContextMenuApi,
   AppContextMenuItem,
   AppContextMenuLocale,
   AppContextMenuMode,
@@ -218,9 +219,25 @@ export function useContextMenuController({
     },
     [dismissMenu, mode, openMenu, resolveMenu, rootRef],
   )
+  const api = useMemo<AppContextMenuApi>(
+    () => ({
+      open({ items, x, y, trigger = null }) {
+        openMenu(items, x, y, trigger, false, false)
+      },
+      close() {
+        closeMenu()
+      },
+    }),
+    [closeMenu, openMenu],
+  )
+  const contextValue = useMemo(
+    () => ({ registry, api }),
+    [api, registry],
+  )
 
   return {
     registry,
+    contextValue,
     menu,
     closeMenu,
     dismissMenu,

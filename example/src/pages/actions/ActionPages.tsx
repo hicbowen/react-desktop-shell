@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Button } from 'antd'
 import { Copy, Pencil, Plus, RefreshCw, Trash2 } from 'lucide-react'
-import { AppContextMenu, AppToolbar } from '../../../../src'
+import { AppContextMenu, AppToolbar, useAppContextMenu } from '../../../../src'
 import { DemoControls, DemoPage, DemoPreview, DemoSection } from '../../components/DemoPage'
 
 export function AppToolbarPage() {
@@ -10,5 +10,7 @@ export function AppToolbarPage() {
 }
 
 export function ContextMenuPage() {
-  return <DemoPage><DemoSection title="Nested contextual actions" description="Right-click the target to open the component menu. Editable and selected text retain native text actions."><AppContextMenu items={[{ key: 'new', label: 'New item', icon: <Plus />, shortcut: 'Ctrl+N' }, { key: 'edit', label: 'Edit', icon: <Pencil />, submenu: [{ key: 'rename', label: 'Rename' }, { key: 'duplicate', label: 'Duplicate', icon: <Copy /> }] }, { key: 'refresh', label: 'Refresh', icon: <RefreshCw /> }, { type: 'separator' }, { key: 'delete', label: 'Delete', icon: <Trash2 />, danger: true }]}><DemoPreview className="demo-context-target"><strong>Context menu target</strong><span>Right-click anywhere in this neutral preview surface.</span></DemoPreview></AppContextMenu><label className="demo-field">Editable text<input defaultValue="Right-click to use native text actions" /></label></DemoSection></DemoPage>
+  const contextMenu = useAppContextMenu()
+
+  return <DemoPage><DemoSection title="Nested contextual actions" description="Declarative and imperative triggers share the same menu layer. Editable and selected text retain native text actions."><AppContextMenu items={[{ key: 'new', label: 'New item', icon: <Plus />, shortcut: 'Ctrl+N' }, { key: 'edit', label: 'Edit', icon: <Pencil />, submenu: [{ key: 'rename', label: 'Rename' }, { key: 'duplicate', label: 'Duplicate', icon: <Copy /> }] }, { key: 'refresh', label: 'Refresh', icon: <RefreshCw /> }, { type: 'separator' }, { key: 'delete', label: 'Delete', icon: <Trash2 />, danger: true }]}><DemoPreview className="demo-context-target"><strong>Declarative context menu</strong><span>Right-click this stable target.</span></DemoPreview></AppContextMenu><DemoPreview className="demo-context-target" onContextMenu={(event) => { event.preventDefault(); contextMenu.open({ items: [{ key: 'inspect', label: 'Inspect dynamic target' }, { key: 'refresh', label: 'Refresh', icon: <RefreshCw /> }], x: event.clientX, y: event.clientY, trigger: event.currentTarget }) }}><strong>Imperative context menu</strong><span>Right-click this dynamic area.</span></DemoPreview><label className="demo-field">Editable text<input defaultValue="Right-click to use native text actions" /></label></DemoSection></DemoPage>
 }

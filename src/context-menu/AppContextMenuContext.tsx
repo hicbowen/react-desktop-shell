@@ -1,5 +1,5 @@
 import { createContext, useContext } from 'react'
-import type { AppContextMenuItem } from './types'
+import type { AppContextMenuApi, AppContextMenuItem } from './types'
 
 export const APP_CONTEXT_MENU_ATTRIBUTE = 'data-app-context-menu-id'
 
@@ -15,9 +15,24 @@ export interface AppContextMenuRegistry {
   get(id: string): AppContextMenuRegistration | undefined
 }
 
+export interface AppContextMenuContextValue {
+  registry: AppContextMenuRegistry
+  api: AppContextMenuApi
+}
+
 export const AppContextMenuContext =
-  createContext<AppContextMenuRegistry | null>(null)
+  createContext<AppContextMenuContextValue | null>(null)
 
 export function useAppContextMenuRegistry() {
-  return useContext(AppContextMenuContext)
+  return useContext(AppContextMenuContext)?.registry ?? null
+}
+
+export function useAppContextMenu(): AppContextMenuApi {
+  const context = useContext(AppContextMenuContext)
+
+  if (!context) {
+    throw new Error('useAppContextMenu must be used within AppShell')
+  }
+
+  return context.api
 }

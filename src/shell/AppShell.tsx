@@ -146,7 +146,7 @@ export function AppShell({
     <AppToastContext.Provider value={toastStore.toast}>
       <AppMessageBoxContext.Provider value={dialogController.messageBox}>
         <AppDialogContext.Provider value={dialogController.registry}>
-          <AppContextMenuContext.Provider value={contextMenuController.registry}>
+          <AppContextMenuContext.Provider value={contextMenuController.contextValue}>
             <div
               ref={rootRef}
               className={rootClassName}

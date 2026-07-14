@@ -13,6 +13,7 @@ export { AppSidePane } from './AppSidePane'
 export { AppTitleBar } from './AppTitleBar'
 export { AppToolbar } from './toolbar/AppToolbar'
 export { useAppMessageBox } from './dialog/AppMessageBoxContext'
+export { useAppContextMenu } from './context-menu/AppContextMenuContext'
 export { useAppToast } from './toast/AppToastContext'
 
 export type {
@@ -25,9 +26,11 @@ export type {
   AppCardPadding,
   AppCardProps,
   AppContextMenuActionItem,
+  AppContextMenuApi,
   AppContextMenuItem,
   AppContextMenuLocale,
   AppContextMenuMode,
+  AppContextMenuOpenOptions,
   AppContextMenuProps,
   AppContextMenuSeparatorItem,
   AppDialogProps,
