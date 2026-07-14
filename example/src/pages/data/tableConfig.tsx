@@ -4,10 +4,10 @@ import type { DemoRow } from '../../fixtures/tableRows'
 import { tableRows } from '../../fixtures/tableRows'
 
 export const columns: ColumnDef<DemoRow>[] = [
-  { accessorKey: 'name', header: 'Name', size: 220 },
-  { accessorKey: 'category', header: 'Category', size: 140 },
-  { accessorKey: 'status', header: 'Status', size: 130, cell: ({ getValue }) => <span className={`demo-status demo-status--${String(getValue()).toLowerCase()}`}>{String(getValue())}</span> },
-  { accessorKey: 'updated', header: 'Updated', size: 130 },
+  { accessorKey: 'name', header: 'Name', size: 420 },
+  { accessorKey: 'category', header: 'Category', size: 280 },
+  { accessorKey: 'status', header: 'Status', size: 260, cell: ({ getValue }) => <span className={`demo-status demo-status--${String(getValue()).toLowerCase()}`}>{String(getValue())}</span> },
+  { accessorKey: 'updated', header: 'Updated', size: 280 },
 ]
 
 function uniqueOptions(values: string[]) {

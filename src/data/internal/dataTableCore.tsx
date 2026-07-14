@@ -58,33 +58,70 @@ function isInteractiveTarget(target: EventTarget | null) {
   return target instanceof Element && target.closest(interactiveSelector) != null
 }
 
-function getPinnedColumnStyles<TData>(
+export interface DataTableStickyLayout {
+  offsets: ReadonlyMap<string, number>
+  edgeColumnId?: string
+}
+
+function createStickyColumnLayout<TData>(
+  table: Table<TData>,
+  stickyColumns: string[] | undefined,
+): DataTableStickyLayout {
+  const requestedIds = new Set(stickyColumns ?? [])
+  const leftPinnedIds = table.getState().columnPinning.left ?? []
+  let offset = leftPinnedIds.reduce((width, columnId) => {
+    const column = table.getColumn(columnId)
+    return column?.getIsVisible() ? width + column.getSize() : width
+  }, 0)
+  const offsets = new Map<string, number>()
+  let edgeColumnId: string | undefined
+
+  for (const column of table.getVisibleLeafColumns()) {
+    if (column.getIsPinned() || !requestedIds.has(column.id)) continue
+
+    offsets.set(column.id, offset)
+    offset += column.getSize()
+    edgeColumnId = column.id
+  }
+
+  return { offsets, edgeColumnId }
+}
+
+function getPositionedColumnStyles<TData>(
   column: Column<TData>,
   isHeader: boolean,
   stickyHeader: boolean,
+  stickyLayout: DataTableStickyLayout,
 ): CSSProperties {
   const pinned = column.getIsPinned()
+  const stickyLeft = pinned ? undefined : stickyLayout.offsets.get(column.id)
+  const sticky = stickyLeft !== undefined
 
   return {
     position:
-      pinned || (isHeader && stickyHeader)
+      pinned || sticky || (isHeader && stickyHeader)
         ? 'sticky'
         : isHeader
           ? 'relative'
           : undefined,
-    left: pinned === 'left' ? column.getStart('left') : undefined,
+    left:
+      pinned === 'left'
+        ? column.getStart('left')
+        : sticky
+          ? stickyLeft
+          : undefined,
     right: pinned === 'right' ? column.getAfter('right') : undefined,
     top: isHeader && stickyHeader ? 0 : undefined,
     width: column.getSize(),
     zIndex: isHeader
       ? stickyHeader
-        ? pinned
+        ? pinned || sticky
           ? 4
           : 3
-        : pinned
+        : pinned || sticky
           ? 2
           : undefined
-      : pinned
+      : pinned || sticky
         ? 1
         : undefined,
   }
@@ -131,6 +168,7 @@ export function useAppDataTable<TData>({
   onColumnSizingChange,
   columnResizeMode = 'onEnd',
   stickyHeader = false,
+  stickyColumns,
   maxHeight,
   enableColumnPinning = true,
   columnPinning,
@@ -365,6 +403,7 @@ export function useAppDataTable<TData>({
     onPaginationChange: handlePaginationChange,
     autoResetPageIndex: paginationOptions.autoResetPageIndex ?? true,
   })
+  const stickyLayout = createStickyColumnLayout(table, stickyColumns)
 
   useEffect(() => {
     if (!paginationEnabled) return
@@ -401,6 +440,7 @@ export function useAppDataTable<TData>({
     style,
     paginationEnabled,
     paginationOptions,
+    stickyLayout,
   }
 }
 
@@ -409,6 +449,7 @@ interface DataTableHeaderProps<TData> {
   stickyHeader: boolean
   enableColumnResizing: boolean
   columnResizeMode: ColumnResizeMode
+  stickyLayout: DataTableStickyLayout
 }
 
 function DataTableHeader<TData>({
@@ -416,6 +457,7 @@ function DataTableHeader<TData>({
   stickyHeader,
   enableColumnResizing,
   columnResizeMode,
+  stickyLayout,
 }: DataTableHeaderProps<TData>) {
   return (
     <thead>
@@ -447,8 +489,21 @@ function DataTableHeader<TData>({
                 data-column-id={header.column.id}
                 data-pinned={header.column.getIsPinned() || undefined}
                 data-pinned-edge={getPinnedEdge(header.column)}
+                data-sticky-column={
+                  stickyLayout.offsets.has(header.column.id) || undefined
+                }
+                data-sticky-edge={
+                  stickyLayout.edgeColumnId === header.column.id
+                    ? 'left'
+                    : undefined
+                }
                 key={header.id}
-                style={getPinnedColumnStyles(header.column, true, stickyHeader)}
+                style={getPositionedColumnStyles(
+                  header.column,
+                  true,
+                  stickyHeader,
+                  stickyLayout,
+                )}
               >
                 <div className="app-data-table__header-content">
                   {header.isPlaceholder ? null : canSort ? (
@@ -517,6 +572,7 @@ interface DataTableFrameProps<TData> {
   pagination?: ReactNode
   scrollRef?: RefObject<HTMLDivElement | null>
   virtualized?: boolean
+  stickyLayout: DataTableStickyLayout
   className?: string
   style?: CSSProperties
   children: ReactNode
@@ -534,6 +590,7 @@ export function DataTableFrame<TData>({
   pagination,
   scrollRef,
   virtualized = false,
+  stickyLayout,
   className,
   style,
   children,
@@ -560,6 +617,7 @@ export function DataTableFrame<TData>({
             columnResizeMode={columnResizeMode}
             enableColumnResizing={enableColumnResizing}
             stickyHeader={stickyHeader}
+            stickyLayout={stickyLayout}
             table={table}
           />
           <tbody>{children}</tbody>
@@ -575,6 +633,7 @@ interface DataTableRowProps<TData> {
   stickyHeader: boolean
   onRowClick?: AppDataTableProps<TData>['onRowClick']
   rowHeight?: number
+  stickyLayout: DataTableStickyLayout
 }
 
 export function DataTableRow<TData>({
@@ -582,6 +641,7 @@ export function DataTableRow<TData>({
   stickyHeader,
   onRowClick,
   rowHeight,
+  stickyLayout,
 }: DataTableRowProps<TData>) {
   const handleClick = (event: MouseEvent<HTMLTableRowElement>) => {
     if (!onRowClick || isInteractiveTarget(event.target)) return
@@ -609,8 +669,19 @@ export function DataTableRow<TData>({
           data-column-id={cell.column.id}
           data-pinned={cell.column.getIsPinned() || undefined}
           data-pinned-edge={getPinnedEdge(cell.column)}
+          data-sticky-column={
+            stickyLayout.offsets.has(cell.column.id) || undefined
+          }
+          data-sticky-edge={
+            stickyLayout.edgeColumnId === cell.column.id ? 'left' : undefined
+          }
           key={cell.id}
-          style={getPinnedColumnStyles(cell.column, false, stickyHeader)}
+          style={getPositionedColumnStyles(
+            cell.column,
+            false,
+            stickyHeader,
+            stickyLayout,
+          )}
         >
           {flexRender(cell.column.columnDef.cell, cell.getContext())}
         </td>

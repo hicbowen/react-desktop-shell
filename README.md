@@ -757,6 +757,30 @@ JavaScript scroll listeners.
 />
 ```
 
+### Sticky columns in their original order
+
+Use stable column IDs with `stickyColumns` when a column should retain its
+original position and only stick after horizontal scrolling brings it to the
+left edge:
+
+```tsx
+<AppDataTable
+  data={students}
+  columns={columns}
+  stickyColumns={['category']}
+/>
+```
+
+Unlike TanStack column pinning, this does not move the column into a left or
+right group. Multiple sticky columns accumulate from the left in their current
+visible table order, regardless of the order of IDs in `stickyColumns`. Hidden
+columns and unknown IDs are ignored. Resizing a sticky column automatically
+updates the offsets of sticky columns after it.
+
+`columnPinning` continues to move columns into TanStack's pinned regions and
+takes precedence when the same ID also appears in `stickyColumns`. Visible
+left-pinned columns occupy the space before original-order sticky columns.
+
 ### Fill remaining height
 
 Use `height="fill"` when a data view should occupy its parent's available
@@ -972,6 +996,7 @@ export interface AppDataTableProps<TData> {
   onColumnSizingChange?: OnChangeFn<ColumnSizingState>
   columnResizeMode?: ColumnResizeMode
   stickyHeader?: boolean
+  stickyColumns?: string[]
   maxHeight?: number | string
   enableColumnPinning?: TableOptions<TData>['enableColumnPinning']
   columnPinning?: ColumnPinningState

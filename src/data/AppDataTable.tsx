@@ -54,6 +54,7 @@ export function AppDataTable<TData>(props: AppDataTableProps<TData>) {
       onRowClick={core.onRowClick}
       row={row}
       stickyHeader={core.stickyHeader}
+      stickyLayout={core.stickyLayout}
     />
   ))
 
@@ -69,6 +70,7 @@ export function AppDataTable<TData>(props: AppDataTableProps<TData>) {
       loading={core.loading}
       maxHeight={core.maxHeight}
       stickyHeader={core.stickyHeader}
+      stickyLayout={core.stickyLayout}
       style={core.style}
       table={core.table}
       virtualized={virtualizationEnabled}
@@ -108,6 +110,7 @@ export function AppDataTable<TData>(props: AppDataTableProps<TData>) {
             scrollRef={scrollRef}
             sorting={tableState.sorting}
             stickyHeader={core.stickyHeader}
+            stickyLayout={core.stickyLayout}
             visibleColumnCount={core.visibleColumnCount}
           />
         </Suspense>

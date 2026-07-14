@@ -2,7 +2,10 @@ import { useEffect, useRef, type RefObject } from 'react'
 import type { Row, SortingState, ColumnFiltersState } from '@tanstack/react-table'
 import { useVirtualizer } from '@tanstack/react-virtual'
 import type { AppDataTableProps } from '../types'
-import { DataTableRow } from './dataTableCore'
+import {
+  DataTableRow,
+  type DataTableStickyLayout,
+} from './dataTableCore'
 
 interface AppDataTableVirtualRowsProps<TData> {
   rows: Row<TData>[]
@@ -18,6 +21,7 @@ interface AppDataTableVirtualRowsProps<TData> {
   pageIndex?: number
   pageSize?: number
   initialViewportHeight?: number
+  stickyLayout: DataTableStickyLayout
 }
 
 function DataTableVirtualSpacerRow({
@@ -48,6 +52,7 @@ export default function AppDataTableVirtualRows<TData>({
   pageIndex,
   pageSize,
   initialViewportHeight,
+  stickyLayout,
 }: AppDataTableVirtualRowsProps<TData>) {
   const didMountRef = useRef(false)
   // TanStack Virtual intentionally exposes mutable virtualizer helpers.
@@ -102,6 +107,7 @@ export default function AppDataTableVirtualRows<TData>({
             row={row}
             rowHeight={rowHeight}
             stickyHeader={stickyHeader}
+            stickyLayout={stickyLayout}
           />
         )
       })}

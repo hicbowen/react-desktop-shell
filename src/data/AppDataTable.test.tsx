@@ -659,6 +659,160 @@ describe('AppDataTable controls', () => {
     expect(container.querySelector('.app-data-table__scroll + .app-data-table__pagination')).not.toBeNull()
   })
 
+  it('keeps ordinary columns unchanged when sticky columns are omitted', () => {
+    renderTable()
+    const categoryHeader = container.querySelector<HTMLElement>(
+      'th[data-column-id="category"]',
+    )!
+    const categoryCell = container.querySelector<HTMLElement>(
+      'td[data-column-id="category"]',
+    )!
+
+    expect(categoryHeader.hasAttribute('data-sticky-column')).toBe(false)
+    expect(categoryCell.hasAttribute('data-sticky-column')).toBe(false)
+    expect(categoryCell.style.position).toBe('')
+    expect(categoryCell.style.left).toBe('')
+  })
+
+  it('keeps a sticky second column in its original DOM position', () => {
+    renderTable({ stickyColumns: ['category'] })
+    const headerIds = Array.from(container.querySelectorAll('th')).map(
+      (header) => header.getAttribute('data-column-id'),
+    )
+    const categoryHeader = container.querySelector<HTMLElement>(
+      'th[data-column-id="category"]',
+    )!
+    const categoryCell = container.querySelector<HTMLElement>(
+      'td[data-column-id="category"]',
+    )!
+
+    expect(headerIds).toEqual(['name', 'category', 'status'])
+    expect(categoryHeader.dataset.stickyColumn).toBe('true')
+    expect(categoryCell.dataset.stickyColumn).toBe('true')
+    expect(categoryCell.hasAttribute('data-pinned')).toBe(false)
+    expect(categoryCell.style.position).toBe('sticky')
+    expect(categoryCell.style.left).toBe('0px')
+  })
+
+  it('orders and offsets multiple sticky columns by visible table order', () => {
+    renderTable({ stickyColumns: ['status', 'category', 'category'] })
+    const category = container.querySelector<HTMLElement>(
+      'td[data-column-id="category"]',
+    )!
+    const status = container.querySelector<HTMLElement>(
+      'td[data-column-id="status"]',
+    )!
+
+    expect(category.style.left).toBe('0px')
+    expect(status.style.left).toBe('150px')
+    expect(category.getAttribute('data-sticky-edge')).toBeNull()
+    expect(status.dataset.stickyEdge).toBe('left')
+  })
+
+  it('silently ignores hidden and invalid sticky column IDs', () => {
+    renderTable({
+      stickyColumns: ['missing', 'category'],
+      columnVisibility: { category: false },
+    })
+
+    expect(container.querySelector('[data-column-id="category"]')).toBeNull()
+    expect(container.querySelector('[data-sticky-column]')).toBeNull()
+  })
+
+  it('starts sticky offsets after visible left-pinned columns', () => {
+    renderTable({
+      stickyColumns: ['category'],
+      defaultColumnPinning: { left: ['name'] },
+    })
+    const category = container.querySelector<HTMLElement>(
+      'td[data-column-id="category"]',
+    )!
+
+    expect(category.style.left).toBe('150px')
+    expect(category.dataset.stickyColumn).toBe('true')
+  })
+
+  it('gives pinning precedence and ignores right-pinned width', () => {
+    renderTable({
+      stickyColumns: ['category', 'status'],
+      defaultColumnPinning: { left: ['category'], right: ['name'] },
+    })
+    const category = container.querySelector<HTMLElement>(
+      'td[data-column-id="category"]',
+    )!
+    const status = container.querySelector<HTMLElement>(
+      'td[data-column-id="status"]',
+    )!
+
+    expect(category.dataset.pinned).toBe('left')
+    expect(category.hasAttribute('data-sticky-column')).toBe(false)
+    expect(status.style.left).toBe('150px')
+  })
+
+  it('updates later sticky offsets when column sizing changes', () => {
+    renderTable({
+      stickyColumns: ['category', 'status'],
+      columnSizing: { category: 210 },
+    })
+    expect(
+      container.querySelector<HTMLElement>('td[data-column-id="status"]')
+        ?.style.left,
+    ).toBe('210px')
+
+    renderTable({
+      stickyColumns: ['category', 'status'],
+      columnSizing: { category: 260 },
+    })
+    expect(
+      container.querySelector<HTMLElement>('td[data-column-id="status"]')
+        ?.style.left,
+    ).toBe('260px')
+  })
+
+  it('layers sticky columns correctly with sticky headers and pagination', () => {
+    renderTable({
+      data: pagedData,
+      pagination: true,
+      stickyColumns: ['category'],
+      stickyHeader: true,
+    })
+    const header = container.querySelector<HTMLElement>(
+      'th[data-column-id="category"]',
+    )!
+
+    expect(header.style.position).toBe('sticky')
+    expect(header.style.zIndex).toBe('4')
+    expect(bodyRows()).toHaveLength(10)
+  })
+
+  it('preserves sticky cells in virtualized selectable rows', async () => {
+    function Harness() {
+      const [selection, setSelection] = useState<RowSelectionState>({})
+      return (
+        <AppDataTable
+          columns={columns}
+          data={virtualData}
+          enableColumnResizing
+          getRowId={(row) => row.id}
+          maxHeight={200}
+          selection={{ value: selection, onChange: setSelection }}
+          stickyColumns={['category']}
+          virtualization
+        />
+      )
+    }
+    render(<Harness />)
+    await settleVirtualization()
+    const stickyCell = container.querySelector<HTMLElement>(
+      'tbody td[data-column-id="category"]',
+    )!
+    act(() => container.querySelector<HTMLInputElement>('tbody input')?.click())
+
+    expect(stickyCell.dataset.stickyColumn).toBe('true')
+    expect(stickyCell.closest('tr')?.dataset.selected).toBe('true')
+    expect(container.querySelector('.app-data-table__resize-handle')).not.toBeNull()
+  })
+
   it('virtualizes only part of the rows with fixed comfortable height', async () => {
     renderTable({ data: virtualData, maxHeight: 200, virtualization: true })
     await settleVirtualization()

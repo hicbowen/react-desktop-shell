@@ -16,6 +16,7 @@ export function AppDataTablePage() {
   const [fill, setFill] = useState(false)
   const [pagination, setPagination] = useState(true)
   const [virtualized, setVirtualized] = useState(false)
+  const [stickyCategory, setStickyCategory] = useState(true)
   const count = Object.values(selection).filter(Boolean).length
 
   const handleFixedHeightChange = (next: boolean) => {
@@ -44,6 +45,9 @@ export function AppDataTablePage() {
         </span>
         <span>
           <Switch checked={resizing} onChange={setResizing} /> Column resizing
+        </span>
+        <span>
+          <Switch checked={stickyCategory} onChange={setStickyCategory} /> Sticky Category column
         </span>
         <span>
           <Switch checked={fixedHeight} onChange={handleFixedHeightChange} /> Fixed height
@@ -121,6 +125,7 @@ export function AppDataTablePage() {
               getRowAriaLabel: (row) => `Select ${row.original.name}`,
             }}
             stickyHeader={sticky}
+            stickyColumns={stickyCategory ? ['category'] : undefined}
             enableColumnResizing={resizing}
             virtualization={virtualized ? { overscan: 5 } : false}
           />

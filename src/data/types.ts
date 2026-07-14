@@ -133,6 +133,14 @@ export interface AppDataTableProps<TData> {
   onColumnSizingChange?: OnChangeFn<ColumnSizingState>
   columnResizeMode?: ColumnResizeMode
   stickyHeader?: boolean
+  /**
+   * Columns that retain their original order and stick to the left edge
+   * when horizontal scrolling reaches them.
+   *
+   * Column pinning takes precedence when the same column is configured
+   * in both APIs.
+   */
+  stickyColumns?: string[]
   maxHeight?: number | string
   enableColumnPinning?: TableOptions<TData>['enableColumnPinning']
   columnPinning?: ColumnPinningState
