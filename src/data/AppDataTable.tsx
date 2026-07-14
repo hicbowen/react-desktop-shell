@@ -87,7 +87,7 @@ export function AppDataTable<TData>(props: AppDataTableProps<TData>) {
           content={core.emptyContent}
         />
       ) : virtualizationEnabled ? (
-        <Suspense fallback={normalRows}>
+        <Suspense fallback={null}>
           <AppDataTableVirtualRows
             columnFilters={tableState.columnFilters}
             globalFilter={tableState.globalFilter}

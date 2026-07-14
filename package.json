@@ -60,16 +60,12 @@
   },
   "peerDependencies": {
     "@tanstack/react-table": ">=8.21.0 <9.0.0",
-    "@tanstack/react-virtual": ">=3.13.0 <4.0.0",
     "antd": ">=5.0.0 <7.0.0",
     "react": ">=18",
     "react-dom": ">=18"
   },
   "peerDependenciesMeta": {
     "@tanstack/react-table": {
-      "optional": true
-    },
-    "@tanstack/react-virtual": {
       "optional": true
     },
     "antd": {

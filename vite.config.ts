@@ -21,8 +21,6 @@ export default defineConfig({
         id === 'react/jsx-runtime' ||
         id === '@tanstack/react-table' ||
         id.startsWith('@tanstack/react-table/') ||
-        id === '@tanstack/react-virtual' ||
-        id.startsWith('@tanstack/react-virtual/') ||
         id === 'antd' ||
         id.startsWith('antd/'),
     },
