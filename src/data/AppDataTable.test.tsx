@@ -457,6 +457,18 @@ describe('AppDataTable controls', () => {
     expect(container.querySelector('.app-data-table__pagination')).toBeNull()
   })
 
+  it('restores every row when pagination is disabled at runtime', () => {
+    renderTable({
+      data: pagedData,
+      pagination: { defaultValue: { pageIndex: 0, pageSize: 20 } },
+    })
+    expect(bodyRows()).toHaveLength(20)
+
+    renderTable({ data: pagedData, pagination: undefined })
+    expect(bodyRows()).toHaveLength(24)
+    expect(container.querySelector('.app-data-table__pagination')).toBeNull()
+  })
+
   it('jumps between first and last pages and exposes boundary states', () => {
     renderTable({ data: pagedData, pagination: true })
     const first = container.querySelector<HTMLButtonElement>('[aria-label="First page"]')!

@@ -190,6 +190,22 @@ export function useAppDataTable<TData>({
     () => resolveControlFilterColumns(columns, controls?.filters ?? []),
     [columns, controls?.filters],
   )
+  const getOptionalPaginationRowModel = useMemo(() => {
+    const createPaginationRowModel = getPaginationRowModel<TData>()
+
+    return (table: Table<TData>) => {
+      const getPaginatedRows = createPaginationRowModel(table)
+
+      return () =>
+        (
+          table.options.meta as
+            | { __appDataTablePaginationEnabled?: boolean }
+            | undefined
+        )?.__appDataTablePaginationEnabled
+          ? getPaginatedRows()
+          : table.getPrePaginationRowModel()
+    }
+  }, [])
 
   const handleSortingChange: OnChangeFn<SortingState> = (updater) => {
     if (sorting === undefined) setInternalSorting(updater)
@@ -319,9 +335,7 @@ export function useAppDataTable<TData>({
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     getSortedRowModel: getSortedRowModel(),
-    getPaginationRowModel: paginationEnabled
-      ? getPaginationRowModel()
-      : undefined,
+    getPaginationRowModel: getOptionalPaginationRowModel,
     manualSorting,
     manualFiltering,
     ...(globalFilterFn !== undefined ? { globalFilterFn } : {}),
@@ -330,6 +344,7 @@ export function useAppDataTable<TData>({
     enableColumnResizing,
     columnResizeMode,
     enableColumnPinning,
+    meta: { __appDataTablePaginationEnabled: paginationEnabled },
     state: {
       sorting: resolvedSorting,
       globalFilter: resolvedGlobalFilter,
