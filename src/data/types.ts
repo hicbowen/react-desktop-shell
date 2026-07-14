@@ -154,6 +154,16 @@ export interface AppDataTableProps<TData> {
     row: Row<TData>,
     event: MouseEvent<HTMLTableRowElement>,
   ) => void
+  /**
+   * Called when the user opens the context menu on a non-interactive
+   * area of a data row.
+   *
+   * Call event.preventDefault() when displaying a custom context menu.
+   */
+  onRowContextMenu?: (
+    row: Row<TData>,
+    event: MouseEvent<HTMLTableRowElement>,
+  ) => void
   className?: string
   style?: CSSProperties
 }

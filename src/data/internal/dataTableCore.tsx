@@ -179,6 +179,7 @@ export function useAppDataTable<TData>({
   emptyContent = 'No data',
   density = 'comfortable',
   onRowClick,
+  onRowContextMenu,
   className,
   style,
 }: AppDataTableProps<TData>) {
@@ -436,6 +437,7 @@ export function useAppDataTable<TData>({
     loadingContent,
     emptyContent,
     onRowClick,
+    onRowContextMenu,
     className,
     style,
     paginationEnabled,
@@ -632,6 +634,7 @@ interface DataTableRowProps<TData> {
   row: Row<TData>
   stickyHeader: boolean
   onRowClick?: AppDataTableProps<TData>['onRowClick']
+  onRowContextMenu?: AppDataTableProps<TData>['onRowContextMenu']
   rowHeight?: number
   stickyLayout: DataTableStickyLayout
 }
@@ -640,6 +643,7 @@ export function DataTableRow<TData>({
   row,
   stickyHeader,
   onRowClick,
+  onRowContextMenu,
   rowHeight,
   stickyLayout,
 }: DataTableRowProps<TData>) {
@@ -654,6 +658,10 @@ export function DataTableRow<TData>({
     event.preventDefault()
     event.currentTarget.click()
   }
+  const handleContextMenu = (event: MouseEvent<HTMLTableRowElement>) => {
+    if (!onRowContextMenu || isInteractiveTarget(event.target)) return
+    onRowContextMenu(row, event)
+  }
 
   return (
     <tr
@@ -662,6 +670,7 @@ export function DataTableRow<TData>({
       tabIndex={onRowClick ? 0 : undefined}
       style={rowHeight !== undefined ? { height: rowHeight } : undefined}
       onClick={handleClick}
+      onContextMenu={onRowContextMenu ? handleContextMenu : undefined}
       onKeyDown={handleKeyDown}
     >
       {row.getVisibleCells().map((cell) => (

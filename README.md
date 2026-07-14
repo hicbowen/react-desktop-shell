@@ -781,6 +781,36 @@ updates the offsets of sticky columns after it.
 takes precedence when the same ID also appears in `stickyColumns`. Visible
 left-pinned columns occupy the space before original-order sticky columns.
 
+### Row context-menu events
+
+`AppDataTable` reports context-menu events for non-interactive areas of data
+rows. It does not create a menu or prevent the browser menu automatically:
+
+```tsx
+<AppDataTable
+  data={rows}
+  columns={columns}
+  onRowContextMenu={(row, event) => {
+    event.preventDefault()
+
+    setContextMenu({
+      x: event.clientX,
+      y: event.clientY,
+      row: row.original,
+    })
+  }}
+/>
+```
+
+Call `event.preventDefault()` only when displaying a custom menu. Right-clicking
+a row does not select it, and right-clicking an interactive element such as a
+button, input, select, or link does not invoke the row callback. Menu UI and
+business actions remain the application's responsibility.
+
+Virtualized rows may be unmounted while scrolling, so do not retain the row
+`event.currentTarget`. Store stable data such as `row.id`, `row.original`, and
+the mouse `clientX`/`clientY` coordinates instead.
+
 ### Fill remaining height
 
 Use `height="fill"` when a data view should occupy its parent's available
@@ -1007,6 +1037,10 @@ export interface AppDataTableProps<TData> {
   emptyContent?: ReactNode
   density?: 'comfortable' | 'compact'
   onRowClick?: (row: Row<TData>, event: MouseEvent<HTMLTableRowElement>) => void
+  onRowContextMenu?: (
+    row: Row<TData>,
+    event: MouseEvent<HTMLTableRowElement>,
+  ) => void
   className?: string
   style?: CSSProperties
 }

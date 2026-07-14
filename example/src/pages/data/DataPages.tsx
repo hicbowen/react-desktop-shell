@@ -7,6 +7,13 @@ import { DemoControls, DemoPage, DemoPreview, DemoSection } from '../../componen
 import { tableRows } from '../../fixtures/tableRows'
 import { columns, tableControls } from './tableConfig'
 
+interface RowContextTarget {
+  rowId: string
+  rowName: string
+  x: number
+  y: number
+}
+
 export function AppDataTablePage() {
   const [sorting, setSorting] = useState<SortingState>([{ id: 'name', desc: false }])
   const [selection, setSelection] = useState<RowSelectionState>({})
@@ -17,6 +24,9 @@ export function AppDataTablePage() {
   const [pagination, setPagination] = useState(true)
   const [virtualized, setVirtualized] = useState(false)
   const [stickyCategory, setStickyCategory] = useState(true)
+  const [contextTarget, setContextTarget] = useState<RowContextTarget | null>(
+    null,
+  )
   const count = Object.values(selection).filter(Boolean).length
 
   const handleFixedHeightChange = (next: boolean) => {
@@ -65,6 +75,11 @@ export function AppDataTablePage() {
             onChange={setVirtualized}
           />{' '}
           Vertical virtualization
+        </span>
+        <span>
+          {contextTarget
+            ? `Right-clicked ${contextTarget.rowName} (${contextTarget.rowId}) at ${contextTarget.x}, ${contextTarget.y}`
+            : 'Right-click a data row to inspect its context target'}
         </span>
       </DemoControls>
       <DemoSection
@@ -118,6 +133,15 @@ export function AppDataTablePage() {
             }
             sorting={sorting}
             onSortingChange={setSorting}
+            onRowContextMenu={(row, event) => {
+              event.preventDefault()
+              setContextTarget({
+                rowId: row.id,
+                rowName: row.original.name,
+                x: event.clientX,
+                y: event.clientY,
+              })
+            }}
             selection={{
               value: selection,
               onChange: setSelection,

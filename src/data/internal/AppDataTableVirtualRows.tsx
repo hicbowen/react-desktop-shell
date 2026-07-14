@@ -15,6 +15,7 @@ interface AppDataTableVirtualRowsProps<TData> {
   visibleColumnCount: number
   stickyHeader: boolean
   onRowClick?: AppDataTableProps<TData>['onRowClick']
+  onRowContextMenu?: AppDataTableProps<TData>['onRowContextMenu']
   sorting: SortingState
   globalFilter: unknown
   columnFilters: ColumnFiltersState
@@ -46,6 +47,7 @@ export default function AppDataTableVirtualRows<TData>({
   visibleColumnCount,
   stickyHeader,
   onRowClick,
+  onRowContextMenu,
   sorting,
   globalFilter,
   columnFilters,
@@ -104,6 +106,7 @@ export default function AppDataTableVirtualRows<TData>({
           <DataTableRow
             key={row.id}
             onRowClick={onRowClick}
+            onRowContextMenu={onRowContextMenu}
             row={row}
             rowHeight={rowHeight}
             stickyHeader={stickyHeader}

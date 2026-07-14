@@ -125,7 +125,8 @@ describe('AppDataTable controls', () => {
         {...props}
       />,
     )
-  const bodyRows = () => Array.from(container.querySelectorAll('tbody tr'))
+  const bodyRows = () =>
+    Array.from(container.querySelectorAll<HTMLTableRowElement>('tbody tr'))
   const searchInput = () =>
     container.querySelector<HTMLInputElement>('[aria-label="Search rows"]')!
   const setSearch = (value: string) => {
@@ -138,6 +139,18 @@ describe('AppDataTable controls', () => {
       valueSetter?.call(input, value)
       input.dispatchEvent(new Event('input', { bubbles: true }))
     })
+  }
+  const contextMenu = (
+    target: Element,
+    options: MouseEventInit = {},
+  ) => {
+    const event = new MouseEvent('contextmenu', {
+      bubbles: true,
+      cancelable: true,
+      ...options,
+    })
+    act(() => target.dispatchEvent(event))
+    return event
   }
   const filterButton = () =>
     container.querySelector<HTMLButtonElement>('[aria-haspopup="menu"]')!
@@ -811,6 +824,160 @@ describe('AppDataTable controls', () => {
     expect(stickyCell.dataset.stickyColumn).toBe('true')
     expect(stickyCell.closest('tr')?.dataset.selected).toBe('true')
     expect(container.querySelector('.app-data-table__resize-handle')).not.toBeNull()
+  })
+
+  it('does not alter rows when no row context-menu callback is provided', () => {
+    renderTable()
+    const row = bodyRows()[0]!
+
+    expect(row.classList.contains('app-data-table__row--clickable')).toBe(false)
+    expect(row.tabIndex).toBe(-1)
+    expect(contextMenu(row).defaultPrevented).toBe(false)
+  })
+
+  it('reports the correct row and original React context-menu event', () => {
+    const onRowContextMenu = vi.fn()
+    renderTable({ onRowContextMenu })
+    const nativeEvent = contextMenu(bodyRows()[1]!, { clientX: 32, clientY: 48 })
+
+    expect(onRowContextMenu).toHaveBeenCalledOnce()
+    const [row, event] = onRowContextMenu.mock.calls[0]!
+    expect(row.id).toBe('1')
+    expect(row.original).toBe(data[1])
+    expect(event.type).toBe('contextmenu')
+    expect(event.clientX).toBe(32)
+    expect(event.clientY).toBe(48)
+    expect(event.nativeEvent).toBe(nativeEvent)
+    expect(nativeEvent.defaultPrevented).toBe(false)
+  })
+
+  it('lets the consumer prevent the native context menu', () => {
+    const onRowContextMenu = vi.fn((_row, event) => event.preventDefault())
+    renderTable({ onRowContextMenu })
+    const event = contextMenu(bodyRows()[0]!)
+
+    expect(onRowContextMenu).toHaveBeenCalledOnce()
+    expect(event.defaultPrevented).toBe(true)
+  })
+
+  it('reports the corresponding original data for different rows', () => {
+    const originals: RowData[] = []
+    renderTable({
+      onRowContextMenu: (row) => originals.push(row.original),
+    })
+    contextMenu(bodyRows()[0]!)
+    contextMenu(bodyRows()[2]!)
+
+    expect(originals).toEqual([data[0], data[2]])
+  })
+
+  it('ignores context menus from interactive cell content', () => {
+    const onRowContextMenu = vi.fn()
+    const interactiveColumns: ColumnDef<RowData>[] = [
+      {
+        accessorKey: 'name',
+        header: 'Name',
+        cell: ({ getValue }) => (
+          <>
+            <button type="button">Action</button>
+            <input aria-label="Cell input" />
+            <select aria-label="Cell select"><option>One</option></select>
+            <span role="button" tabIndex={0}>Role action</span>
+            <span data-testid="plain-cell">{String(getValue())}</span>
+          </>
+        ),
+      },
+    ]
+    renderTable({ columns: interactiveColumns, onRowContextMenu })
+
+    contextMenu(container.querySelector('tbody button')!)
+    contextMenu(container.querySelector('tbody input')!)
+    contextMenu(container.querySelector('tbody select')!)
+    contextMenu(container.querySelector('[role="button"]')!)
+    expect(onRowContextMenu).not.toHaveBeenCalled()
+
+    contextMenu(container.querySelector('[data-testid="plain-cell"]')!)
+    expect(onRowContextMenu).toHaveBeenCalledOnce()
+  })
+
+  it('keeps row click and context-menu callbacks independent', () => {
+    const onRowClick = vi.fn()
+    const onRowContextMenu = vi.fn()
+    renderTable({ onRowClick, onRowContextMenu })
+    const row = bodyRows()[0]!
+
+    contextMenu(row.querySelector('td')!)
+    expect(onRowContextMenu).toHaveBeenCalledOnce()
+    expect(onRowClick).not.toHaveBeenCalled()
+
+    act(() => row.click())
+    expect(onRowClick).toHaveBeenCalledOnce()
+    expect(onRowContextMenu).toHaveBeenCalledOnce()
+  })
+
+  it('does not change row selection on context menu', () => {
+    const onRowContextMenu = vi.fn()
+    const onSelectionChange = vi.fn()
+    renderTable({
+      onRowContextMenu,
+      selection: { value: {}, onChange: onSelectionChange },
+    })
+    contextMenu(bodyRows()[0]!.querySelector('td[data-column-id="name"]')!)
+
+    expect(onRowContextMenu).toHaveBeenCalledOnce()
+    expect(onSelectionChange).not.toHaveBeenCalled()
+    expect(bodyRows()[0]?.dataset.selected).toBeUndefined()
+  })
+
+  it('reports the current row after pagination and filtering', () => {
+    const onRowContextMenu = vi.fn()
+    renderTable({
+      onRowContextMenu,
+      pagination: { defaultValue: { pageIndex: 1, pageSize: 2 } },
+    })
+    contextMenu(bodyRows()[0]!)
+    expect(onRowContextMenu.mock.calls[0]?.[0].original.name).toBe('Gamma')
+
+    renderTable({ onRowContextMenu, pagination: false })
+    setSearch('Alpha')
+    contextMenu(bodyRows()[0]!)
+    expect(onRowContextMenu.mock.calls[1]?.[0].original.name).toBe('Alpha')
+  })
+
+  it('works with sticky and pinned columns', () => {
+    const onRowContextMenu = vi.fn()
+    renderTable({
+      defaultColumnPinning: { left: ['name'] },
+      onRowContextMenu,
+      stickyColumns: ['category'],
+    })
+    contextMenu(bodyRows()[0]!.querySelector('td[data-column-id="category"]')!)
+
+    expect(onRowContextMenu.mock.calls[0]?.[0].original).toBe(data[0])
+    expect(
+      bodyRows()[0]?.querySelector('[data-sticky-column="true"]'),
+    ).not.toBeNull()
+  })
+
+  it('reports virtual rows and ignores loading and empty state rows', async () => {
+    const onRowContextMenu = vi.fn()
+    renderTable({
+      data: virtualData,
+      maxHeight: 200,
+      onRowContextMenu,
+      virtualization: true,
+    })
+    await settleVirtualization()
+    contextMenu(
+      container.querySelector('tbody tr:not(.app-data-table__virtual-spacer)')!,
+    )
+    expect(onRowContextMenu.mock.calls[0]?.[0].original).toBe(virtualData[0])
+
+    renderTable({ loading: true, onRowContextMenu, virtualization: false })
+    contextMenu(bodyRows()[0]!)
+    renderTable({ data: [], loading: false, onRowContextMenu })
+    contextMenu(bodyRows()[0]!)
+    expect(onRowContextMenu).toHaveBeenCalledOnce()
   })
 
   it('virtualizes only part of the rows with fixed comfortable height', async () => {

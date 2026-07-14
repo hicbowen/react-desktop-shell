@@ -52,6 +52,7 @@ export function AppDataTable<TData>(props: AppDataTableProps<TData>) {
     <DataTableRow
       key={row.id}
       onRowClick={core.onRowClick}
+      onRowContextMenu={core.onRowContextMenu}
       row={row}
       stickyHeader={core.stickyHeader}
       stickyLayout={core.stickyLayout}
@@ -94,6 +95,7 @@ export function AppDataTable<TData>(props: AppDataTableProps<TData>) {
               typeof core.maxHeight === 'number' ? core.maxHeight : undefined
             }
             onRowClick={core.onRowClick}
+            onRowContextMenu={core.onRowContextMenu}
             overscan={overscan}
             pageIndex={
               core.paginationEnabled
