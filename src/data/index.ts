@@ -14,6 +14,8 @@ export type {
   AppDataTableFilterDefinition,
   AppDataTableFilterOption,
   AppDataTableProps,
+  AppDataTablePaginationLocale,
+  AppDataTablePaginationOptions,
   AppDataTableSearchOptions,
   AppDataTableSelectionOptions,
   AppDataViewProps,

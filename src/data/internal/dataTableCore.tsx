@@ -1,6 +1,7 @@
 /* eslint-disable react-refresh/only-export-components */
 import {
   useMemo,
+  useEffect,
   useState,
   type CSSProperties,
   type KeyboardEvent,
@@ -11,6 +12,7 @@ import {
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
+  getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
   type Column,
@@ -20,13 +22,17 @@ import {
   type ColumnResizeMode,
   type ColumnSizingState,
   type OnChangeFn,
+  type PaginationState,
   type Row,
   type SortingState,
   type Table,
   type VisibilityState,
 } from '@tanstack/react-table'
 import { DataTableCheckbox } from '../DataTableCheckbox'
-import type { AppDataTableProps } from '../types'
+import type {
+  AppDataTablePaginationOptions,
+  AppDataTableProps,
+} from '../types'
 import { resolveControlFilterColumns } from './dataTableFilters'
 import '../../scroll-area/AppScrollArea.css'
 
@@ -99,6 +105,7 @@ export function useAppDataTable<TData>({
   data,
   columns,
   controls,
+  pagination,
   getRowId,
   selection,
   sorting,
@@ -136,6 +143,9 @@ export function useAppDataTable<TData>({
   className,
   style,
 }: AppDataTableProps<TData>) {
+  const paginationEnabled = Boolean(pagination)
+  const paginationOptions: AppDataTablePaginationOptions =
+    typeof pagination === 'object' ? pagination : {}
   const [internalSorting, setInternalSorting] = useState<SortingState>(
     () => defaultSorting,
   )
@@ -150,6 +160,13 @@ export function useAppDataTable<TData>({
     useState<ColumnSizingState>(() => defaultColumnSizing)
   const [internalColumnPinning, setInternalColumnPinning] =
     useState<ColumnPinningState>(() => defaultColumnPinning)
+  const [internalPagination, setInternalPagination] = useState<PaginationState>(
+    () => ({
+      pageIndex: 0,
+      pageSize: 10,
+      ...paginationOptions.defaultValue,
+    }),
+  )
   const resolvedSorting = sorting ?? internalSorting
   const resolvedGlobalFilter =
     globalFilter !== undefined ? globalFilter : internalGlobalFilter
@@ -157,6 +174,7 @@ export function useAppDataTable<TData>({
   const resolvedColumnVisibility = columnVisibility ?? internalColumnVisibility
   const resolvedColumnSizing = columnSizing ?? internalColumnSizing
   const resolvedColumnPinning = columnPinning ?? internalColumnPinning
+  const resolvedPagination = paginationOptions.value ?? internalPagination
   const effectiveColumnVisibility = selection
     ? {
         ...resolvedColumnVisibility,
@@ -196,6 +214,12 @@ export function useAppDataTable<TData>({
     if (columnPinning === undefined) setInternalColumnPinning(updater)
     onColumnPinningChange?.(updater)
   }
+  const handlePaginationChange: OnChangeFn<PaginationState> = (updater) => {
+    if (paginationOptions.value === undefined) {
+      setInternalPagination(updater)
+    }
+    paginationOptions.onChange?.(updater)
+  }
 
   const resolvedColumns = useMemo<ColumnDef<TData>[]>(() => {
     if (!selectionEnabled) return columnsWithControlFilters
@@ -224,9 +248,13 @@ export function useAppDataTable<TData>({
           )
         }
 
-        const selectableRows = table
-          .getFilteredRowModel()
-          .flatRows.filter((row) => row.getCanSelect())
+        const selectionRowModel =
+          selectAllMode === 'page'
+            ? table.getRowModel()
+            : table.getFilteredRowModel()
+        const selectableRows = selectionRowModel.flatRows.filter((row) =>
+          row.getCanSelect(),
+        )
         const selectedRowCount = selectableRows.filter((row) =>
           row.getIsSelected(),
         ).length
@@ -236,7 +264,12 @@ export function useAppDataTable<TData>({
 
         return (
           <DataTableCheckbox
-            aria-label={selectAllAriaLabel ?? 'Select all filtered rows'}
+            aria-label={
+              selectAllAriaLabel ??
+              (selectAllMode === 'page'
+                ? 'Select all rows on this page'
+                : 'Select all filtered rows')
+            }
             checked={allSelected}
             disabled={selectableRows.length === 0}
             indeterminate={selectedRowCount > 0 && !allSelected}
@@ -285,6 +318,9 @@ export function useAppDataTable<TData>({
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     getSortedRowModel: getSortedRowModel(),
+    getPaginationRowModel: paginationEnabled
+      ? getPaginationRowModel()
+      : undefined,
     manualSorting,
     manualFiltering,
     ...(globalFilterFn !== undefined ? { globalFilterFn } : {}),
@@ -301,6 +337,7 @@ export function useAppDataTable<TData>({
       columnSizing: resolvedColumnSizing,
       columnPinning: resolvedColumnPinning,
       ...(selection ? { rowSelection: selection.value } : {}),
+      ...(paginationEnabled ? { pagination: resolvedPagination } : {}),
     },
     onSortingChange: handleSortingChange,
     onGlobalFilterChange: handleGlobalFilterChange,
@@ -309,7 +346,28 @@ export function useAppDataTable<TData>({
     onColumnSizingChange: handleColumnSizingChange,
     onColumnPinningChange: handleColumnPinningChange,
     onRowSelectionChange: selection?.onChange,
+    onPaginationChange: handlePaginationChange,
+    autoResetPageIndex: paginationOptions.autoResetPageIndex ?? true,
   })
+
+  useEffect(() => {
+    if (!paginationEnabled) return
+
+    const pageCount = table.getPageCount()
+    const pageIndex = table.getState().pagination.pageIndex
+    if (pageCount > 0 && pageIndex >= pageCount) {
+      table.setPageIndex(pageCount - 1)
+    }
+  }, [
+    data,
+    paginationEnabled,
+    resolvedColumnFilters,
+    resolvedGlobalFilter,
+    resolvedPagination.pageIndex,
+    resolvedPagination.pageSize,
+    resolvedSorting,
+    table,
+  ])
 
   return {
     table,
@@ -325,6 +383,8 @@ export function useAppDataTable<TData>({
     onRowClick,
     className,
     style,
+    paginationEnabled,
+    paginationOptions,
   }
 }
 
@@ -438,6 +498,7 @@ interface DataTableFrameProps<TData> {
   columnResizeMode: ColumnResizeMode
   loading: boolean
   controls?: ReactNode
+  pagination?: ReactNode
   className?: string
   style?: CSSProperties
   children: ReactNode
@@ -452,6 +513,7 @@ export function DataTableFrame<TData>({
   columnResizeMode,
   loading,
   controls,
+  pagination,
   className,
   style,
   children,
@@ -460,7 +522,7 @@ export function DataTableFrame<TData>({
 
   return (
     <div
-      className={`app-data-table app-data-table--${density} ${stickyHeader ? 'app-data-table--sticky-header' : ''} ${controls ? 'app-data-table--with-controls' : ''} ${className ?? ''}`.trim()}
+      className={`app-data-table app-data-table--${density} ${stickyHeader ? 'app-data-table--sticky-header' : ''} ${controls ? 'app-data-table--with-controls' : ''} ${pagination ? 'app-data-table--with-pagination' : ''} ${className ?? ''}`.trim()}
       style={style}
     >
       {controls}
@@ -482,6 +544,7 @@ export function DataTableFrame<TData>({
           <tbody>{children}</tbody>
         </table>
       </div>
+      {pagination}
     </div>
   )
 }

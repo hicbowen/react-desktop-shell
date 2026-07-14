@@ -21,6 +21,13 @@ const data: RowData[] = [
   { id: '4', name: 'Delta', category: 'Document', status: 'Ready' },
 ]
 
+const pagedData: RowData[] = Array.from({ length: 24 }, (_, index) => ({
+  id: String(index + 1),
+  name: `Item ${String(index + 1).padStart(2, '0')}`,
+  category: index % 2 === 0 ? 'Document' : 'Media',
+  status: index % 3 === 0 ? 'Ready' : 'Processing',
+}))
+
 const columns: ColumnDef<RowData>[] = [
   { accessorKey: 'name', header: 'Name' },
   { accessorKey: 'category', header: 'Category' },
@@ -396,5 +403,212 @@ describe('AppDataTable controls', () => {
     ).find((button) => button.textContent?.includes('Name'))
     act(() => nameSort?.click())
     expect(bodyRows()[0]?.textContent).toContain('Alpha')
+  })
+
+  it('uses ten rows per page by default and navigates next and previous', () => {
+    renderTable({ data: pagedData, pagination: true })
+
+    expect(bodyRows()).toHaveLength(10)
+    expect(bodyRows()[0]?.textContent).toContain('Item 01')
+    act(() => container.querySelector<HTMLButtonElement>('[aria-label="Next page"]')?.click())
+    expect(bodyRows()[0]?.textContent).toContain('Item 11')
+    act(() => container.querySelector<HTMLButtonElement>('[aria-label="Previous page"]')?.click())
+    expect(bodyRows()[0]?.textContent).toContain('Item 01')
+  })
+
+  it('renders every row when pagination is not enabled', () => {
+    renderTable({ data: pagedData, pagination: undefined })
+    expect(bodyRows()).toHaveLength(24)
+    expect(container.querySelector('.app-data-table__pagination')).toBeNull()
+  })
+
+  it('jumps between first and last pages and exposes boundary states', () => {
+    renderTable({ data: pagedData, pagination: true })
+    const first = container.querySelector<HTMLButtonElement>('[aria-label="First page"]')!
+    const previous = container.querySelector<HTMLButtonElement>('[aria-label="Previous page"]')!
+    const next = container.querySelector<HTMLButtonElement>('[aria-label="Next page"]')!
+    const last = container.querySelector<HTMLButtonElement>('[aria-label="Last page"]')!
+
+    expect(first.disabled).toBe(true)
+    expect(previous.disabled).toBe(true)
+    act(() => last.click())
+    expect(bodyRows()).toHaveLength(4)
+    expect(bodyRows()[0]?.textContent).toContain('Item 21')
+    expect(next.disabled).toBe(true)
+    expect(last.disabled).toBe(true)
+    act(() => first.click())
+    expect(bodyRows()[0]?.textContent).toContain('Item 01')
+  })
+
+  it('changes page size and updates the range and page count', () => {
+    renderTable({ data: pagedData, pagination: true })
+    const select = container.querySelector<HTMLSelectElement>('[aria-label="Rows per page"]')!
+    act(() => {
+      select.value = '20'
+      select.dispatchEvent(new Event('change', { bubbles: true }))
+    })
+
+    expect(bodyRows()).toHaveLength(20)
+    expect(container.textContent).toContain('1–20 of 24')
+    expect(container.textContent).toContain('Page 1 of 2')
+  })
+
+  it('searches and filters the full result before paginating', () => {
+    renderTable({ data: pagedData, pagination: true })
+    setSearch('Item 24')
+    expect(bodyRows()).toHaveLength(1)
+    expect(bodyRows()[0]?.textContent).toContain('Item 24')
+
+    setSearch('')
+    openFilters()
+    act(() => option('menuitemradio', 'Document').click())
+    expect(bodyRows()).toHaveLength(10)
+    expect(container.textContent).toContain('1–10 of 12')
+  })
+
+  it('sorts the complete result before taking the current page', () => {
+    renderTable({ data: [...pagedData].reverse(), pagination: true })
+    const nameSort = Array.from(
+      container.querySelectorAll<HTMLButtonElement>('.app-data-table__sort-button'),
+    ).find((button) => button.textContent?.includes('Name'))
+    act(() => nameSort?.click())
+
+    expect(bodyRows()[0]?.textContent).toContain('Item 01')
+    expect(bodyRows()[9]?.textContent).toContain('Item 10')
+  })
+
+  it('clamps an invalid page after searching even when auto reset is disabled', () => {
+    renderTable({
+      data: pagedData,
+      pagination: {
+        defaultValue: { pageIndex: 2, pageSize: 10 },
+        autoResetPageIndex: false,
+      },
+    })
+    expect(bodyRows()[0]?.textContent).toContain('Item 21')
+    setSearch('Item 01')
+
+    expect(bodyRows()).toHaveLength(1)
+    expect(bodyRows()[0]?.textContent).toContain('Item 01')
+    expect(container.textContent).toContain('Page 1 of 1')
+  })
+
+  it('returns to the first page when filtering reduces the page count', () => {
+    renderTable({
+      data: pagedData,
+      pagination: { defaultValue: { pageIndex: 2, pageSize: 10 } },
+    })
+    setSearch('Item 01')
+    expect(bodyRows()[0]?.textContent).toContain('Item 01')
+    expect(container.textContent).toContain('Page 1 of 1')
+  })
+
+  it('shows an empty range and disables navigation with no data', () => {
+    renderTable({ data: [], pagination: true })
+    expect(container.textContent).toContain('0–0 of 0')
+    expect(container.textContent).toContain('Page 0 of 0')
+    expect(container.querySelector<HTMLButtonElement>('[aria-label="Next page"]')?.disabled).toBe(true)
+  })
+
+  it('disables all pagination operations while loading', () => {
+    renderTable({ data: pagedData, loading: true, pagination: true })
+    expect(
+      Array.from(container.querySelectorAll<HTMLButtonElement>('.app-data-table__pagination-button'))
+        .every((button) => button.disabled),
+    ).toBe(true)
+    expect(container.querySelector<HTMLSelectElement>('[aria-label="Rows per page"]')?.disabled).toBe(true)
+  })
+
+  it('reports controlled pagination without changing the controlled page', () => {
+    const onChange = vi.fn()
+    renderTable({
+      data: pagedData,
+      pagination: { value: { pageIndex: 0, pageSize: 10 }, onChange },
+    })
+    act(() => container.querySelector<HTMLButtonElement>('[aria-label="Next page"]')?.click())
+
+    expect(onChange).toHaveBeenCalledOnce()
+    expect(bodyRows()[0]?.textContent).toContain('Item 01')
+    expect(container.textContent).toContain('Page 1 of 3')
+  })
+
+  it('selects only the current page in page mode', () => {
+    function Harness() {
+      const [selection, setSelection] = useState<RowSelectionState>({})
+      return (
+        <>
+          <output data-testid="selected-count">{Object.values(selection).filter(Boolean).length}</output>
+          <AppDataTable
+            columns={columns}
+            data={pagedData}
+            getRowId={(row) => row.id}
+            pagination
+            selection={{ value: selection, onChange: setSelection, selectAllMode: 'page' }}
+          />
+        </>
+      )
+    }
+    render(<Harness />)
+    act(() => container.querySelector<HTMLInputElement>('thead input')?.click())
+    expect(container.querySelector('[data-testid="selected-count"]')?.textContent).toBe('10')
+  })
+
+  it('selects all filtered rows across pages in filtered mode', () => {
+    function Harness() {
+      const [selection, setSelection] = useState<RowSelectionState>({})
+      return (
+        <>
+          <output data-testid="selected-count">{Object.values(selection).filter(Boolean).length}</output>
+          <AppDataTable
+            columns={columns}
+            controls={controls}
+            data={pagedData}
+            getRowId={(row) => row.id}
+            pagination
+            selection={{ value: selection, onChange: setSelection, selectAllMode: 'filtered' }}
+          />
+        </>
+      )
+    }
+    render(<Harness />)
+    openFilters()
+    act(() => option('menuitemradio', 'Document').click())
+    act(() => container.querySelector<HTMLInputElement>('thead input')?.click())
+    expect(container.querySelector('[data-testid="selected-count"]')?.textContent).toBe('12')
+  })
+
+  it('supports pagination locale and optional control visibility', () => {
+    renderTable({
+      data: pagedData,
+      pagination: {
+        showPageSizeSelector: false,
+        showFirstLastButtons: false,
+        locale: {
+          rangeLabel: (start, end, total) => `第 ${start}–${end} 条，共 ${total} 条`,
+          pageLabel: (page, pageCount) => `第 ${page} / ${pageCount} 页`,
+          previousPageAriaLabel: '上一页',
+          nextPageAriaLabel: '下一页',
+        },
+      },
+    })
+    expect(container.textContent).toContain('第 1–10 条，共 24 条')
+    expect(container.textContent).toContain('第 1 / 3 页')
+    expect(container.querySelector('[aria-label="Rows per page"]')).toBeNull()
+    expect(container.querySelector('[aria-label="First page"]')).toBeNull()
+    expect(container.querySelector('[aria-label="上一页"]')).not.toBeNull()
+  })
+
+  it('composes pagination with sticky headers, resizing, and pinning', () => {
+    renderTable({
+      data: pagedData,
+      pagination: true,
+      stickyHeader: true,
+      enableColumnResizing: true,
+      defaultColumnPinning: { left: ['name'] },
+    })
+    expect(container.querySelector('.app-data-table--sticky-header.app-data-table--with-pagination')).not.toBeNull()
+    expect(container.querySelector('.app-data-table__resize-handle')).not.toBeNull()
+    expect(container.querySelector('[data-column-id="name"][data-pinned="left"]')).not.toBeNull()
+    expect(container.querySelector('.app-data-table__scroll + .app-data-table__pagination')).not.toBeNull()
   })
 })

@@ -385,7 +385,7 @@ into one bordered surface. `AppSelectionBar` lays out a selection count and
 consumer-provided batch actions without owning selection state. `AppDataTable`
 uses TanStack Table's `ColumnDef<TData>` directly.
 
-The data table supports client or manual sorting, optional built-in global
+The data table supports client-side pagination, client or manual sorting, optional built-in global
 search and column filter controls, manual/server-side filtering, column
 visibility, controlled row selection, loading and empty states, comfortable
 and compact density, row activation, horizontal scrolling, and opt-in column sizing. Column sizing
@@ -393,8 +393,7 @@ supports controlled or uncontrolled state, mouse and touch resizing, minimum
 and maximum widths, per-column resize control, `onEnd` and `onChange` modes,
 and double-click reset. Sticky table headers and controlled or uncontrolled
 left/right column pinning include pinned boundary shadows and compose with
-resizing and visibility. The table does not provide pagination or column order
-dragging.
+resizing and visibility. The table does not provide column order dragging.
 
 ```tsx
 import { useState } from 'react'
@@ -464,9 +463,38 @@ The table never adds fields to or mutates input data.
 checkbox selects or clears only selectable rows in the current filtered result.
 Use `'all'` to make it operate on all data rows instead. Changing filters does
 not automatically clear already selected rows outside the filtered result.
+When pagination is enabled, use `'page'` to select or clear only the current
+page; `'filtered'` continues to include matching rows on every page.
 
 `AppDataTable` currently supports flat leaf-column definitions. Multi-level
 grouped headers are not currently supported.
+
+### Client-side pagination
+
+Enable the built-in client-side pagination row model with `pagination`. Search
+and column filters run against the full data set, sorting runs next, and only
+then are the resulting rows split into pages. Pass the complete `data` array;
+the application should not call `slice()` before rendering the table.
+
+```tsx
+<AppDataTable
+  data={students}
+  columns={columns}
+  pagination={{
+    defaultValue: {
+      pageIndex: 0,
+      pageSize: 10,
+    },
+    pageSizeOptions: [10, 20, 50],
+  }}
+/>
+```
+
+`pagination={true}` uses a 10-row initial page and the default page-size
+choices of 10, 20, and 50. The object form supports uncontrolled state through
+`defaultValue`, or controlled state through `value` and `onChange`. Use
+`selection.selectAllMode: 'page'` when the header checkbox should affect only
+the visible page. This version supports client-side pagination only.
 
 ### Filtering and column visibility
 
@@ -775,8 +803,8 @@ import {
 
 Hiding a pinned column does not remove its ID from `columnPinning`; showing it
 again restores the pinned position and existing size. Pinning menus and state
-persistence belong to the application. Column order dragging and pagination
-are separate concerns.
+persistence belong to the application. Column order dragging is a separate
+concern.
 
 ### Data view API
 
@@ -805,7 +833,7 @@ export interface AppDataTableSelectionOptions<TData> {
   value: RowSelectionState
   onChange: OnChangeFn<RowSelectionState>
   enableRowSelection?: TableOptions<TData>['enableRowSelection']
-  selectAllMode?: 'all' | 'filtered'
+  selectAllMode?: 'all' | 'filtered' | 'page'
   selectAllAriaLabel?: string
   getRowAriaLabel?: (row: Row<TData>) => string
 }
@@ -850,10 +878,32 @@ export interface AppDataTableControlsLocale {
   clearAllAriaLabel: string
 }
 
+export interface AppDataTablePaginationLocale {
+  rowsPerPageLabel: string
+  rangeLabel: (start: number, end: number, total: number) => string
+  pageLabel: (page: number, pageCount: number) => string
+  firstPageAriaLabel: string
+  previousPageAriaLabel: string
+  nextPageAriaLabel: string
+  lastPageAriaLabel: string
+}
+
+export interface AppDataTablePaginationOptions {
+  value?: PaginationState
+  defaultValue?: PaginationState
+  onChange?: OnChangeFn<PaginationState>
+  pageSizeOptions?: number[]
+  showPageSizeSelector?: boolean
+  showFirstLastButtons?: boolean
+  autoResetPageIndex?: boolean
+  locale?: Partial<AppDataTablePaginationLocale>
+}
+
 export interface AppDataTableProps<TData> {
   data: TData[]
   columns: ColumnDef<TData>[]
   controls?: AppDataTableControlsOptions<TData>
+  pagination?: boolean | AppDataTablePaginationOptions
   getRowId?: TableOptions<TData>['getRowId']
   selection?: AppDataTableSelectionOptions<TData>
   sorting?: SortingState

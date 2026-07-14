@@ -450,8 +450,18 @@
   outline-offset: -2px;
 }
 
+.app-data-table__pagination-button:focus-visible,
+.app-data-table__pagination-size select:focus-visible {
+  outline: 2px solid var(--app-data-accent);
+  outline-offset: -2px;
+}
+
 .app-data-table--with-controls > .app-data-table__scroll {
   border-radius: 0 0 8px 8px;
+}
+
+.app-data-table--with-pagination > .app-data-table__scroll {
+  border-radius: 0;
 }
 
 .app-data-view--fill > .app-data-view__body > .app-data-table {
@@ -485,6 +495,108 @@
   overflow: auto;
   background: var(--app-data-surface-bg);
   border-radius: inherit;
+}
+
+.app-data-table__pagination {
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  min-height: 49px;
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  flex: 0 0 auto;
+  gap: 8px 16px;
+  color: var(--app-data-muted-color);
+  background: var(--app-data-surface-bg);
+  border-top: 1px solid var(--app-data-border-color);
+  border-radius: 0 0 8px 8px;
+  font-size: 12px;
+}
+
+.app-data-table__pagination-summary {
+  min-width: 0;
+  flex: 1 1 auto;
+  white-space: nowrap;
+}
+
+.app-data-table__pagination-controls,
+.app-data-table__pagination-size {
+  display: flex;
+  align-items: center;
+}
+
+.app-data-table__pagination-controls {
+  min-width: 0;
+  flex: 0 0 auto;
+  gap: 4px;
+}
+
+.app-data-table__pagination-size {
+  margin-right: 8px;
+  gap: 7px;
+  white-space: nowrap;
+}
+
+.app-data-table__pagination-size select {
+  height: 32px;
+  box-sizing: border-box;
+  padding: 0 24px 0 8px;
+  color: var(--app-data-text-color);
+  font: inherit;
+  font-size: 13px;
+  background: var(--app-data-control-bg);
+  border: 1px solid var(--app-data-border-color);
+  border-radius: 6px;
+  cursor: default;
+}
+
+.app-data-table__pagination-page {
+  min-width: 76px;
+  padding-inline: 4px;
+  color: var(--app-data-text-color);
+  text-align: center;
+  white-space: nowrap;
+}
+
+.app-data-table__pagination-button {
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 32px;
+  color: var(--app-data-text-color);
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  cursor: default;
+}
+
+.app-data-table__pagination-button:hover:not(:disabled) {
+  background: var(--app-data-hover-bg);
+  border-color: var(--app-data-border-color);
+}
+
+.app-data-table__pagination-button:active:not(:disabled) {
+  background: var(--app-data-control-pressed-bg);
+}
+
+.app-data-table__pagination-button:disabled,
+.app-data-table__pagination-size select:disabled {
+  color: var(--app-data-muted-color);
+  opacity: 0.62;
+}
+
+.app-data-table__pagination-button svg {
+  width: 17px;
+  height: 17px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.5;
 }
 
 .app-data-view--fill .app-data-table__scroll {
@@ -693,6 +805,19 @@
 @media (max-width: 560px) {
   .app-selection-bar__actions {
     width: 100%;
+  }
+
+  .app-data-table__pagination {
+    flex-wrap: wrap;
+  }
+
+  .app-data-table__pagination-summary {
+    display: none;
+  }
+
+  .app-data-table__pagination-controls {
+    width: 100%;
+    justify-content: flex-end;
   }
 }
 

@@ -7,6 +7,7 @@ import type {
   ColumnSizingState,
   FilterFn,
   OnChangeFn,
+  PaginationState,
   Row,
   RowSelectionState,
   SortingState,
@@ -56,11 +57,32 @@ export interface AppDataTableControlsOptions<TData> {
   locale?: Partial<AppDataTableControlsLocale>
 }
 
+export interface AppDataTablePaginationLocale {
+  rowsPerPageLabel: string
+  rangeLabel: (start: number, end: number, total: number) => string
+  pageLabel: (page: number, pageCount: number) => string
+  firstPageAriaLabel: string
+  previousPageAriaLabel: string
+  nextPageAriaLabel: string
+  lastPageAriaLabel: string
+}
+
+export interface AppDataTablePaginationOptions {
+  value?: PaginationState
+  defaultValue?: PaginationState
+  onChange?: OnChangeFn<PaginationState>
+  pageSizeOptions?: number[]
+  showPageSizeSelector?: boolean
+  showFirstLastButtons?: boolean
+  autoResetPageIndex?: boolean
+  locale?: Partial<AppDataTablePaginationLocale>
+}
+
 export interface AppDataTableSelectionOptions<TData> {
   value: RowSelectionState
   onChange: OnChangeFn<RowSelectionState>
   enableRowSelection?: TableOptions<TData>['enableRowSelection']
-  selectAllMode?: 'all' | 'filtered'
+  selectAllMode?: 'all' | 'filtered' | 'page'
   selectAllAriaLabel?: string
   getRowAriaLabel?: (row: Row<TData>) => string
 }
@@ -74,6 +96,7 @@ export interface AppDataTableProps<TData> {
    */
   columns: ColumnDef<TData>[]
   controls?: AppDataTableControlsOptions<TData>
+  pagination?: boolean | AppDataTablePaginationOptions
   getRowId?: TableOptions<TData>['getRowId']
   selection?: AppDataTableSelectionOptions<TData>
   sorting?: SortingState

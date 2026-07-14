@@ -6,6 +6,7 @@ import {
   APP_DATA_TABLE_SELECTION_COLUMN_ID,
 } from './internal/dataTableCore'
 import { AppDataTableControls } from './AppDataTableControls'
+import { AppDataTablePagination } from './AppDataTablePagination'
 import type { AppDataTableProps } from './types'
 
 export { APP_DATA_TABLE_SELECTION_COLUMN_ID }
@@ -26,12 +27,20 @@ export function AppDataTable<TData>(props: AppDataTableProps<TData>) {
         table={core.table}
       />
     ) : undefined
+  const pagination = core.paginationEnabled ? (
+    <AppDataTablePagination
+      loading={core.loading}
+      options={core.paginationOptions}
+      table={core.table}
+    />
+  ) : undefined
 
   return (
     <DataTableFrame
       className={core.className}
       columnResizeMode={core.columnResizeMode}
       controls={controls}
+      pagination={pagination}
       density={core.density}
       enableColumnResizing={core.enableColumnResizing}
       loading={core.loading}

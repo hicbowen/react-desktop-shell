@@ -14,6 +14,7 @@ export function AppDataTablePage() {
   const [resizing, setResizing] = useState(true)
   const [fixedHeight, setFixedHeight] = useState(true)
   const [fill, setFill] = useState(false)
+  const [pagination, setPagination] = useState(true)
   const count = Object.values(selection).filter(Boolean).length
 
   const handleFixedHeightChange = (next: boolean) => {
@@ -46,6 +47,9 @@ export function AppDataTablePage() {
         </span>
         <span>
           <Switch checked={fill} onChange={handleFillChange} /> Fill remaining height
+        </span>
+        <span>
+          <Switch checked={pagination} onChange={setPagination} /> Pagination
         </span>
       </DemoControls>
       <DemoSection
@@ -83,22 +87,26 @@ export function AppDataTablePage() {
               />
             ) : null
           }
-          footer={
-            <span>
-              Showing {tableRows.length} rows{count > 0 ? ` · ${count} selected` : ''}
-            </span>
-          }
         >
           <AppDataTable
             columns={columns}
             controls={tableControls}
             data={tableRows}
             getRowId={(row) => row.id}
+            pagination={
+              pagination
+                ? {
+                    defaultValue: { pageIndex: 0, pageSize: 10 },
+                    pageSizeOptions: [5, 10, 20],
+                  }
+                : undefined
+            }
             sorting={sorting}
             onSortingChange={setSorting}
             selection={{
               value: selection,
               onChange: setSelection,
+              selectAllMode: 'page',
               getRowAriaLabel: (row) => `Select ${row.original.name}`,
             }}
             stickyHeader={sticky}
