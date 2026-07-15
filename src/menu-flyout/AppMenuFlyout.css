@@ -1,0 +1,123 @@
+.app-menu-flyout {
+  position: fixed;
+  z-index: var(--rds-z-overlay, 1050);
+  width: max-content;
+  min-width: min(188px, max(0px, calc(100vw - 16px)));
+  max-width: min(
+    var(--app-menu-flyout-max-width, 320px),
+    max(0px, calc(100vw - 16px))
+  );
+  box-sizing: border-box;
+  padding: 4px;
+  overflow-x: hidden;
+  overflow-y: auto;
+  color: var(--app-shell-text-color, #1f1f1f);
+  background: var(--app-shell-menu-bg, rgb(249 249 249 / 96%));
+  border: 1px solid
+    var(--app-shell-menu-border-color, rgb(0 0 0 / 12%));
+  border-radius: 8px;
+  box-shadow: var(
+    --app-shell-menu-shadow,
+    0 6px 18px rgb(0 0 0 / 16%)
+  );
+  outline: 0;
+  font: inherit;
+  pointer-events: auto;
+  backdrop-filter: blur(24px);
+  animation: app-menu-flyout-enter var(--rds-motion-fast, 120ms)
+    var(--rds-ease-enter, ease-out);
+}
+
+.app-menu-flyout__item {
+  width: 100%;
+  min-height: 32px;
+  display: grid;
+  grid-template-columns: 20px minmax(0, 1fr);
+  align-items: center;
+  gap: 8px;
+  padding: 0 10px 0 8px;
+  color: inherit;
+  font: inherit;
+  font-size: 13px;
+  line-height: 1.25;
+  text-align: left;
+  background: transparent;
+  border: 0;
+  border-radius: 6px;
+  cursor: default;
+}
+
+.app-menu-flyout__item:hover:not(:disabled),
+.app-menu-flyout__item:focus-visible,
+.app-menu-flyout__item--active:not(:disabled) {
+  background: var(--app-shell-hover-bg, rgb(0 0 0 / 4%));
+  outline: 0;
+}
+
+.app-menu-flyout__item:active:not(:disabled) {
+  background: var(--app-shell-active-bg, rgb(0 95 184 / 10%));
+}
+
+.app-menu-flyout__item:disabled {
+  color: var(--app-shell-disabled-text-color, rgb(0 0 0 / 36%));
+}
+
+.app-menu-flyout__item--danger {
+  color: var(--app-shell-danger-fg, #c42b1c);
+}
+
+.app-menu-flyout__item--danger:hover:not(:disabled),
+.app-menu-flyout__item--danger:focus-visible,
+.app-menu-flyout__item--danger.app-menu-flyout__item--active:not(:disabled) {
+  background: var(--app-shell-danger-subtle-bg, rgb(196 43 28 / 8%));
+}
+
+.app-menu-flyout__icon {
+  width: 16px;
+  height: 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: currentColor;
+}
+
+.app-menu-flyout__icon:empty {
+  visibility: hidden;
+}
+
+.app-menu-flyout__icon > svg {
+  width: 16px;
+  height: 16px;
+  display: block;
+}
+
+.app-menu-flyout__label {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.app-menu-flyout__separator {
+  height: 1px;
+  margin: 4px 6px;
+  background: var(--app-shell-border-color, rgb(0 0 0 / 8%));
+}
+
+@keyframes app-menu-flyout-enter {
+  from {
+    opacity: 0;
+    transform: translateY(-2px) scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .app-menu-flyout {
+    animation: none;
+  }
+}

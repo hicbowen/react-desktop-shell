@@ -31,6 +31,12 @@ export type {
 } from './dialog/types'
 export type { AppInfoBarProps, AppInfoBarStatus } from './info-bar/types'
 export type {
+  AppMenuFlyoutEntry,
+  AppMenuFlyoutItem,
+  AppMenuFlyoutProps,
+  AppMenuFlyoutSeparator,
+} from './menu-flyout/types'
+export type {
   AppSettingsGroupProps,
   AppSettingsRowProps,
 } from './settings/types'

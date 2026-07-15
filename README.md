@@ -1272,6 +1272,35 @@ The toolbar does not provide buttons, inputs, selects, or command management. Pa
 
 `AppPage.actions` places primary page actions beside the page title. `AppToolbar` belongs below the page header and organizes content tools such as search, filters, status, import, and export controls.
 
+## Menu Flyout
+
+`AppMenuFlyout` provides a lightweight, one-level command menu anchored to a
+trigger. It defaults to `bottom-start`, automatically flips or clamps near the
+viewport edge, and supports icons, disabled commands, danger styling, and
+separators.
+
+```tsx
+<AppMenuFlyout
+  items={[
+    { key: 'rename', label: 'Rename' },
+    { type: 'separator' },
+    { key: 'delete', label: 'Delete', danger: true },
+  ]}
+  onSelect={(key) => console.log(key)}
+>
+  <button type="button">More</button>
+</AppMenuFlyout>
+```
+
+Use `onSelect` to execute the selected command. The menu opens from click,
+ArrowDown, or ArrowUp and supports looping arrow navigation, Home, End, Enter,
+Space, Escape, and Tab. Selection and Escape restore focus to the trigger;
+Tab closes without trapping focus.
+
+Use `AppMenuFlyout` for a button-triggered command list and `AppContextMenu`
+for right-click menus. This first version does not support submenus, checkbox
+items, radio items, shortcuts, or controlled open state.
+
 ## Title Bar
 
 `AppTitleBar` renders the custom title bar UI. Window actions are provided by the host application through callbacks, making it compatible with Wails, Electron, Tauri, or other desktop runtimes.

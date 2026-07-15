@@ -532,6 +532,47 @@
     display: flex;
 }
 
+.demo-menu-flyout-row,
+.demo-menu-flyout-placement-grid {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+}
+
+.demo-menu-flyout-button,
+.demo-menu-flyout-icon-button {
+    min-height: 32px;
+    padding: 0 12px;
+    color: inherit;
+    font: inherit;
+    background: var(--app-shell-card-bg);
+    border: 1px solid var(--app-shell-border-color);
+    border-radius: 6px;
+    cursor: default;
+}
+
+.demo-menu-flyout-button:hover,
+.demo-menu-flyout-icon-button:hover {
+    background: var(--app-shell-card-hover-bg);
+}
+
+.demo-menu-flyout-icon-button {
+    width: 32px;
+    padding: 0;
+    display: inline-grid;
+    place-items: center;
+}
+
+.demo-menu-flyout-placement-grid {
+    min-height: 190px;
+    align-content: center;
+}
+
+.demo-menu-flyout-edge-trigger {
+    margin-left: auto;
+}
+
 .demo-settings {
     display: grid;
     gap: 18px;

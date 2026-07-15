@@ -3,6 +3,7 @@ export { AppCard, AppCardFooter, AppCardGroup, AppCardHeader } from './card'
 export { AppContextMenu } from './context-menu/AppContextMenu'
 export { AppDialog } from './dialog/AppDialog'
 export { AppInfoBar } from './info-bar/AppInfoBar'
+export { AppMenuFlyout } from './menu-flyout'
 export { AppPage } from './AppPage'
 export { AppRail } from './navigation/AppRail'
 export { AppSelectorBar, AppSelectorPanel, AppSelectorPanels } from './selector-bar'
@@ -42,6 +43,10 @@ export type {
   AppMessageBoxConfirmOptions,
   AppMessageBoxLocale,
   AppMessageBoxOptions,
+  AppMenuFlyoutEntry,
+  AppMenuFlyoutItem,
+  AppMenuFlyoutProps,
+  AppMenuFlyoutSeparator,
   AppPageLayout,
   AppPageProps,
   AppSettingsGroupProps,

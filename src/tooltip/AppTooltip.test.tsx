@@ -135,6 +135,15 @@ describe('AppTooltip', () => {
     expect(tooltip()).toBeNull()
   })
 
+  it('closes when its trigger is clicked', () => {
+    renderTooltip({ delay: 0 })
+    pointerEnter()
+    expect(tooltip()).not.toBeNull()
+
+    act(() => trigger().click())
+    expect(tooltip()).toBeNull()
+  })
+
   it('closes on Escape while preserving the child key handler', () => {
     const onKeyDown = vi.fn()
     render(

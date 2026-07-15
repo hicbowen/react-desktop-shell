@@ -1,21 +1,28 @@
 import {
   cloneElement,
+  forwardRef,
   useCallback,
   useEffect,
   useId,
   useRef,
   useState,
-  version as reactVersion,
+  type AriaAttributes,
   type CSSProperties,
   type FocusEventHandler,
   type KeyboardEventHandler,
+  type MouseEventHandler,
   type PointerEventHandler,
   type ReactElement,
   type Ref,
-  type RefCallback,
 } from 'react'
 import { createPortal } from 'react-dom'
 import { useAppOverlayHost } from '../overlay/AppOverlayHostContext'
+import { OVERLAY_SURFACE_FALLBACK_STYLE } from '../overlay/surfaceFallback'
+import {
+  composeEventHandlers,
+  getElementRef,
+  useMergedRefs,
+} from '../overlay/trigger'
 import { useAnchoredOverlayPosition } from '../overlay/useAnchoredOverlayPosition'
 import { useOverlayDismiss } from '../overlay/useOverlayDismiss'
 import type { AppTooltipProps } from './types'
@@ -23,16 +30,6 @@ import './AppTooltip.css'
 
 const TOOLTIP_GAP = 6
 const TOOLTIP_VIEWPORT_PADDING = 8
-const REACT_MAJOR_VERSION = Number.parseInt(
-  reactVersion.split('.')[0] ?? '19',
-  10,
-)
-const BODY_FALLBACK_STYLE: CSSProperties = {
-  color: '#1f1f1f',
-  background: 'rgba(249, 249, 249, 0.96)',
-  borderColor: 'rgba(0, 0, 0, 0.12)',
-  boxShadow: '0 6px 18px rgba(0, 0, 0, 0.16)',
-}
 const NATIVE_DISABLED_ELEMENTS = new Set([
   'button',
   'fieldset',
@@ -43,8 +40,12 @@ const NATIVE_DISABLED_ELEMENTS = new Set([
 ])
 
 interface TooltipTriggerProps {
+  'aria-controls'?: string
   'aria-describedby'?: string
+  'aria-expanded'?: boolean
+  'aria-haspopup'?: AriaAttributes['aria-haspopup']
   disabled?: boolean
+  onClick?: MouseEventHandler<HTMLElement>
   onPointerEnter?: PointerEventHandler<HTMLElement>
   onPointerLeave?: PointerEventHandler<HTMLElement>
   onFocus?: FocusEventHandler<HTMLElement>
@@ -62,53 +63,11 @@ function hasContent(content: AppTooltipProps['content']) {
   )
 }
 
-function elementRef(element: ReactElement<TooltipTriggerProps>) {
-  return REACT_MAJOR_VERSION >= 19
-    ? element.props.ref
-    : (element as unknown as { ref?: Ref<HTMLElement> }).ref
-}
-
-function setRef<T>(ref: Ref<T> | undefined, value: T | null) {
-  if (typeof ref === 'function') {
-    return ref(value)
-  }
-
-  if (ref) {
-    ;(ref as { current: T | null }).current = value
-  }
-}
-
-function useMergedRefs<T>(
-  firstRef: Ref<T> | undefined,
-  secondRef: Ref<T> | undefined,
-): RefCallback<T> {
-  return useCallback((value) => {
-    const refs = [firstRef, secondRef]
-    const cleanups = refs.map((ref) => setRef(ref, value))
-
-    if (REACT_MAJOR_VERSION < 19) {
-      return
-    }
-
-    return () => {
-      refs.forEach((ref, index) => {
-        const cleanup = cleanups[index]
-
-        if (typeof cleanup === 'function') {
-          cleanup()
-        } else {
-          setRef(ref, null)
-        }
-      })
-    }
-  }, [firstRef, secondRef])
-}
-
 function describedBy(original: string | undefined, tooltipId: string | null) {
   return [original, tooltipId].filter(Boolean).join(' ') || undefined
 }
 
-export function AppTooltip({
+function AppTooltipInner({
   content,
   children,
   placement = 'top',
@@ -116,7 +75,8 @@ export function AppTooltip({
   disabled = false,
   maxWidth = 320,
   className,
-}: AppTooltipProps) {
+  ...triggerProps
+}: AppTooltipProps & TooltipTriggerProps, forwardedRef: Ref<HTMLElement>) {
   const canShow = !disabled && hasContent(content)
   const resolvedMaxWidth = Math.max(0, maxWidth)
   const [hovered, setHovered] = useState(false)
@@ -211,55 +171,65 @@ export function AppTooltip({
     restoreFocus: false,
   })
 
-  const childRef = elementRef(child)
-  const mergedRef = useMergedRefs(childRef, triggerRef)
-  const wrapperRef = useMergedRefs<HTMLElement>(undefined, triggerRef)
+  const childRef = getElementRef(child)
+  const forwardedChildRef = useMergedRefs(childRef, forwardedRef)
+  const mergedRef = useMergedRefs(forwardedChildRef, triggerRef)
+  const forwardedWrapperRef = useMergedRefs<HTMLElement>(
+    forwardedRef,
+    triggerRef,
+  )
   const mergedDescription = describedBy(
     child.props['aria-describedby'],
     open ? tooltipId : null,
   )
-  const handlePointerEnter: PointerEventHandler<HTMLElement> = (event) => {
-    child.props.onPointerEnter?.(event)
-    if (!event.defaultPrevented) {
-      scheduleOpen()
-    }
-  }
-  const handlePointerLeave: PointerEventHandler<HTMLElement> = (event) => {
-    child.props.onPointerLeave?.(event)
-    if (!event.defaultPrevented) {
+  /* eslint-disable react-hooks/refs -- composed event callbacks and cloned refs
+   * only access refs after React dispatches an event or during commit. */
+  const handlePointerEnter = composeEventHandlers(
+    child.props.onPointerEnter,
+    composeEventHandlers(triggerProps.onPointerEnter, scheduleOpen),
+  )
+  const handlePointerLeave = composeEventHandlers(
+    child.props.onPointerLeave,
+    composeEventHandlers(triggerProps.onPointerLeave, () => {
       cancelOpen()
       setHovered(false)
-    }
-  }
-  const handleFocus: FocusEventHandler<HTMLElement> = (event) => {
-    child.props.onFocus?.(event)
-    if (!event.defaultPrevented && canShow) {
+    }),
+  )
+  const handleFocus = composeEventHandlers(
+    child.props.onFocus,
+    composeEventHandlers(triggerProps.onFocus, () => {
+      if (!canShow) {
+        return
+      }
+
       cancelOpen()
       setFocused(true)
-    }
-  }
-  const handleBlur: FocusEventHandler<HTMLElement> = (event) => {
-    child.props.onBlur?.(event)
-    if (!event.defaultPrevented) {
-      setFocused(false)
-    }
-  }
-  const handleKeyDown: KeyboardEventHandler<HTMLElement> = (event) => {
-    child.props.onKeyDown?.(event)
-    if (!event.defaultPrevented && event.key === 'Escape') {
-      event.preventDefault()
-      closeTooltip()
-    }
-  }
+    }),
+  )
+  const handleBlur = composeEventHandlers(
+    child.props.onBlur,
+    composeEventHandlers(triggerProps.onBlur, () => setFocused(false)),
+  )
+  const handleClick = composeEventHandlers(
+    child.props.onClick,
+    composeEventHandlers(triggerProps.onClick, closeTooltip),
+  )
+  const handleKeyDown = composeEventHandlers(
+    child.props.onKeyDown,
+    composeEventHandlers(triggerProps.onKeyDown, (event) => {
+      if (event.key === 'Escape') {
+        event.preventDefault()
+        closeTooltip()
+      }
+    }),
+  )
   const nativeDisabled =
     typeof child.type === 'string' &&
     NATIVE_DISABLED_ELEMENTS.has(child.type) &&
     child.props.disabled === true
-  /* eslint-disable react-hooks/refs -- cloneElement receives a ref callback;
-   * the callback reads refs only during React's commit phase. */
   const trigger = nativeDisabled ? (
     <span
-      ref={wrapperRef}
+      ref={forwardedWrapperRef}
       className="app-tooltip__trigger-wrapper"
       onPointerEnter={scheduleOpen}
       onPointerLeave={() => {
@@ -272,7 +242,14 @@ export function AppTooltip({
   ) : (
     cloneElement(child, {
       ref: mergedRef,
+      'aria-controls':
+        triggerProps['aria-controls'] ?? child.props['aria-controls'],
       'aria-describedby': mergedDescription,
+      'aria-expanded':
+        triggerProps['aria-expanded'] ?? child.props['aria-expanded'],
+      'aria-haspopup':
+        triggerProps['aria-haspopup'] ?? child.props['aria-haspopup'],
+      onClick: handleClick,
       onPointerEnter: handlePointerEnter,
       onPointerLeave: handlePointerLeave,
       onFocus: handleFocus,
@@ -300,7 +277,7 @@ export function AppTooltip({
           id={tooltipId}
           role="tooltip"
           style={{
-            ...(overlayHost ? undefined : BODY_FALLBACK_STYLE),
+            ...(overlayHost ? undefined : OVERLAY_SURFACE_FALLBACK_STYLE),
             '--app-tooltip-max-width': `${resolvedMaxWidth}px`,
             left: position.x,
             maxHeight: position.measured ? position.maxHeight : undefined,
@@ -317,3 +294,9 @@ export function AppTooltip({
     </>
   )
 }
+
+export const AppTooltip = forwardRef<HTMLElement, AppTooltipProps>(
+  AppTooltipInner,
+)
+
+AppTooltip.displayName = 'AppTooltip'

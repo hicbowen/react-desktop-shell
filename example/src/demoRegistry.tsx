@@ -1,5 +1,5 @@
 import type { ComponentType, ReactNode } from 'react'
-import { Bell, Boxes, CircleHelp, Columns3, CreditCard, Info, LayoutDashboard, LayoutPanelTop, Menu, MessageSquare, MousePointerClick, Navigation, PanelRight, Rows3, ScrollText, Settings, SlidersHorizontal, Table2, Wrench } from 'lucide-react'
+import { Bell, Boxes, CircleHelp, Columns3, CreditCard, Info, LayoutDashboard, LayoutPanelTop, ListChecks, Menu, MessageSquare, MousePointerClick, Navigation, PanelRight, Rows3, ScrollText, Settings, SlidersHorizontal, Table2, Wrench } from 'lucide-react'
 import type { RailEntry, RailItem } from '../../src'
 import { OverviewPage } from './pages/OverviewPage'
 import { AppPagePage, AppShellPage, AppSidePanePage, AppTitleBarPage } from './pages/shell/ShellPages'
@@ -12,6 +12,7 @@ import { AntdThemePage } from './pages/integrations/AntdThemePage'
 import { AppCardPage } from './pages/content/CardPages'
 import { AppScrollAreaPage } from './pages/content/ScrollAreaPage'
 import { AppTooltipPage } from './pages/feedback/TooltipPage'
+import { AppMenuFlyoutPage } from './pages/actions/MenuFlyoutPage'
 
 export type DemoPageDefinition = { key: string; group: string; label: string; description: string; icon: ReactNode; component: ComponentType; layout?: 'default' | 'fill' }
 
@@ -32,6 +33,7 @@ export const demoPages: DemoPageDefinition[] = [
   { key: 'app-dialog', group: 'Feedback', label: 'AppDialog', description: 'Modal content with controlled state and custom actions.', icon: <MessageSquare size={16} />, component: AppDialogPage },
   { key: 'message-box', group: 'Feedback', label: 'Message Box', description: 'Promise-based confirmation and decision dialogs.', icon: <MessageSquare size={16} />, component: MessageBoxPage },
   { key: 'app-toolbar', group: 'Actions', label: 'AppToolbar', description: 'Start, status, and end regions for page-level actions.', icon: <Wrench size={16} />, component: AppToolbarPage },
+  { key: 'app-menu-flyout', group: 'Actions', label: 'AppMenuFlyout', description: 'Anchored one-level command menus with keyboard navigation.', icon: <ListChecks size={16} />, component: AppMenuFlyoutPage },
   { key: 'context-menu', group: 'Actions', label: 'Context Menu', description: 'Nested contextual commands and native text actions.', icon: <MousePointerClick size={16} />, component: ContextMenuPage },
   { key: 'app-data-table', group: 'Data', label: 'AppDataTable', description: 'A complete data surface with page actions, selection actions, built-in controls, sorting, sizing, and fill layouts.', icon: <Table2 size={16} />, component: AppDataTablePage, layout: 'fill' },
   { key: 'app-selection-bar', group: 'Data', label: 'AppSelectionBar', description: 'Actions and clear behavior for selected data rows.', icon: <Rows3 size={16} />, component: AppSelectionBarPage },
