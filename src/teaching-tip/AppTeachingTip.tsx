@@ -1,5 +1,6 @@
 import {
   cloneElement,
+  useEffect,
   useId,
   useRef,
   type CSSProperties,
@@ -20,7 +21,6 @@ const TEACHING_TIP_VIEWPORT_PADDING = 12
 
 interface TeachingTipTriggerProps {
   'aria-describedby'?: string
-  'aria-expanded'?: boolean
   ref?: Ref<HTMLElement>
 }
 
@@ -40,6 +40,7 @@ export function AppTeachingTip({
   ariaLabel = 'Teaching tip',
   children,
   className,
+  closeAriaLabel = 'Close',
   closeOnOutsidePointerDown = true,
   content,
   dismissible = true,
@@ -53,6 +54,7 @@ export function AppTeachingTip({
 }: AppTeachingTipProps) {
   const triggerRef = useRef<HTMLElement | null>(null)
   const overlayRef = useRef<HTMLDivElement | null>(null)
+  const closeRequestedRef = useRef(false)
   const overlayHost = useAppOverlayHost()
   const tipId = useId()
   const titleId = useId()
@@ -67,10 +69,29 @@ export function AppTeachingTip({
     gap: TEACHING_TIP_GAP,
     viewportPadding: TEACHING_TIP_VIEWPORT_PADDING,
     maxWidth: resolvedMaxWidth,
-    dependencies: [title, content, primaryAction?.label, secondaryAction?.label],
+    dependencies: [
+      Boolean(title),
+      Boolean(primaryAction),
+      Boolean(secondaryAction),
+      typeof title === 'string' ? title : null,
+      typeof content === 'string' ? content : null,
+    ],
   })
 
-  const close = () => onOpenChange(false)
+  useEffect(() => {
+    if (open) {
+      closeRequestedRef.current = false
+    }
+  }, [open])
+
+  const close = () => {
+    if (closeRequestedRef.current) {
+      return
+    }
+
+    closeRequestedRef.current = true
+    onOpenChange(false)
+  }
   const restoreTriggerFocus = () =>
     triggerRef.current?.focus({ preventScroll: true })
   const closeAndRestoreFocus = () => {
@@ -78,8 +99,11 @@ export function AppTeachingTip({
     restoreTriggerFocus()
   }
   const runAction = (action: AppTeachingTipAction) => {
-    action.onClick()
-    closeAndRestoreFocus()
+    try {
+      action.onClick()
+    } finally {
+      closeAndRestoreFocus()
+    }
   }
 
   useOverlayDismiss({
@@ -99,7 +123,6 @@ export function AppTeachingTip({
       child.props['aria-describedby'],
       open ? contentId : null,
     ),
-    'aria-expanded': open,
   })
 
   if (!open || typeof document === 'undefined') {
@@ -146,7 +169,7 @@ export function AppTeachingTip({
               )}
               {dismissible ? (
                 <button
-                  aria-label="Close"
+                  aria-label={closeAriaLabel}
                   className="app-teaching-tip__close"
                   onClick={closeAndRestoreFocus}
                   type="button"

@@ -75,7 +75,11 @@ export function AppTeachingTipPage() {
             primaryAction={{ label: 'Understood', onClick: () => undefined }}
             title="Two ways to export"
           >
-            <span className="demo-teaching-tip-anchor">
+            <span
+              aria-label="Export options"
+              className="demo-teaching-tip-anchor"
+              role="group"
+            >
               <AppSplitButton icon={<Download />} items={exportItems} label="Export" onClick={() => setOpenTip('split')} />
             </span>
           </AppTeachingTip>

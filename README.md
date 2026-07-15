@@ -1721,11 +1721,16 @@ secondary actions while remaining open until application state closes it.
   onOpenChange={setShowTip}
   title="Batch export"
   content="You can now export multiple records at once."
+  closeAriaLabel="关闭"
   primaryAction={{ label: 'Got it', onClick: acknowledgeFeature }}
 >
   <button type="button">Export</button>
 </AppTeachingTip>
 ```
+
+TeachingTip does not control the trigger's own open state and only merges
+`aria-describedby`; it does not overwrite an existing `aria-expanded` value.
+Use `closeAriaLabel` to localize the dismiss button.
 
 The default placement is `right` with a `360px` maximum width. It closes on
 Escape, external pointer down, external scroll, resize, window blur, the close

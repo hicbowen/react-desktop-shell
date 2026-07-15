@@ -99,10 +99,30 @@ describe('AppTeachingTip', () => {
   it('renders only while controlled open is true', () => {
     renderTip({ open: false })
     expect(tip()).toBeNull()
-    expect(trigger().getAttribute('aria-expanded')).toBe('false')
+    expect(trigger().hasAttribute('aria-expanded')).toBe(false)
 
     renderTip({ open: true })
     expect(tip()).not.toBeNull()
+    expect(trigger().hasAttribute('aria-expanded')).toBe(false)
+  })
+
+  it('does not overwrite the child aria-expanded state', () => {
+    render(
+      <AppTeachingTip content="Content" onOpenChange={() => undefined} open>
+        <button aria-expanded="false" className="tip-trigger" type="button">
+          Trigger
+        </button>
+      </AppTeachingTip>,
+    )
+    expect(trigger().getAttribute('aria-expanded')).toBe('false')
+
+    render(
+      <AppTeachingTip content="Content" onOpenChange={() => undefined} open={false}>
+        <button aria-expanded="true" className="tip-trigger" type="button">
+          Trigger
+        </button>
+      </AppTeachingTip>,
+    )
     expect(trigger().getAttribute('aria-expanded')).toBe('true')
   })
 
@@ -160,6 +180,15 @@ describe('AppTeachingTip', () => {
     expect(tip()?.querySelector('[aria-label="Close"]')).toBeNull()
   })
 
+  it('supports a localized close aria-label and defaults to Close', () => {
+    renderTip()
+    expect(tip()?.querySelector('[aria-label="Close"]')).not.toBeNull()
+
+    renderTip({ closeAriaLabel: '关闭' })
+    expect(tip()?.querySelector('[aria-label="关闭"]')).not.toBeNull()
+    expect(tip()?.querySelector('[aria-label="Close"]')).toBeNull()
+  })
+
   it('closes on Escape and restores trigger focus', () => {
     const onOpenChange = vi.fn()
     renderTip({ onOpenChange })
@@ -197,14 +226,19 @@ describe('AppTeachingTip', () => {
     expect(onOpenChange).not.toHaveBeenCalled()
   })
 
-  it('closes on external scroll, resize, and window blur', () => {
+  it('requests close only once per open cycle and resets after reopening', () => {
     const onOpenChange = vi.fn()
     renderTip({ onOpenChange })
     act(() => window.dispatchEvent(new Event('scroll')))
     act(() => window.dispatchEvent(new Event('resize')))
     act(() => window.dispatchEvent(new Event('blur')))
-    expect(onOpenChange).toHaveBeenCalledTimes(3)
-    expect(onOpenChange).toHaveBeenNthCalledWith(1, false)
+    expect(onOpenChange).toHaveBeenCalledTimes(1)
+    expect(onOpenChange).toHaveBeenCalledWith(false)
+
+    renderTip({ onOpenChange, open: false })
+    renderTip({ onOpenChange, open: true })
+    act(() => window.dispatchEvent(new Event('resize')))
+    expect(onOpenChange).toHaveBeenCalledTimes(2)
   })
 
   it('runs the primary action, closes, and restores trigger focus', () => {
@@ -230,6 +264,35 @@ describe('AppTeachingTip', () => {
     act(() => tip()?.querySelector<HTMLButtonElement>('.app-teaching-tip__action--secondary')?.click())
     expect(action).toHaveBeenCalledOnce()
     expect(onOpenChange).toHaveBeenCalledWith(false)
+  })
+
+  it('closes and restores focus even when an action throws', () => {
+    const onOpenChange = vi.fn()
+    const error = new Error('Action failed')
+    renderTip({
+      onOpenChange,
+      primaryAction: {
+        label: 'Failing action',
+        onClick: () => {
+          throw error
+        },
+      },
+    })
+    const button = tip()?.querySelector<HTMLButtonElement>(
+      '.app-teaching-tip__action--primary',
+    )
+    const reportedErrors: unknown[] = []
+    const handleError = (event: ErrorEvent) => {
+      reportedErrors.push(event.error)
+      event.preventDefault()
+    }
+    window.addEventListener('error', handleError)
+
+    act(() => button?.click())
+    window.removeEventListener('error', handleError)
+    expect(reportedErrors).toContain(error)
+    expect(onOpenChange).toHaveBeenCalledWith(false)
+    expect(document.activeElement).toBe(trigger())
   })
 
   it('preserves child refs and existing descriptions', () => {
@@ -265,5 +328,43 @@ describe('AppTeachingTip', () => {
     renderTip({ ariaLabel: 'Export guidance', title: undefined })
     expect(tip()?.getAttribute('aria-label')).toBe('Export guidance')
     expect(tip()?.hasAttribute('aria-labelledby')).toBe(false)
+  })
+
+  it('does not remeasure for equivalent ReactNode structures', () => {
+    const view = (iteration: number) => (
+      <AppTeachingTip
+        content={<span>Stable content</span>}
+        onOpenChange={() => undefined}
+        open
+        primaryAction={{ label: <span>Continue</span>, onClick: () => undefined }}
+        title={<span>Stable title</span>}
+      >
+        <button className="tip-trigger" type="button">Trigger {iteration}</button>
+      </AppTeachingTip>
+    )
+    render(view(1))
+    flushMeasurement()
+    const measurements = vi.mocked(requestAnimationFrame).mock.calls.length
+
+    render(view(2))
+    expect(vi.mocked(requestAnimationFrame).mock.calls.length).toBe(measurements)
+    expect(tip()?.style.visibility).toBe('visible')
+  })
+
+  it('remeasures when string content changes', () => {
+    const view = (content: string) => (
+      <AppTeachingTip content={content} onOpenChange={() => undefined} open>
+        <button className="tip-trigger" type="button">Trigger</button>
+      </AppTeachingTip>
+    )
+    render(view('First content'))
+    flushMeasurement()
+    const measurements = vi.mocked(requestAnimationFrame).mock.calls.length
+
+    render(view('Updated content'))
+    expect(vi.mocked(requestAnimationFrame).mock.calls.length).toBeGreaterThan(
+      measurements,
+    )
+    expect(tip()?.style.visibility).toBe('hidden')
   })
 })
