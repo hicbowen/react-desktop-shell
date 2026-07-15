@@ -1,9 +1,12 @@
 import { useEffect, useRef, useState } from 'react'
-import { filterAcceptedFiles } from './fileAcceptance'
+import {
+  previewFileDrag,
+  validateDroppedFiles,
+} from './fileAcceptance'
 import type { AppFileDropOverlayProps } from './types'
 import './AppFileDropOverlay.css'
 
-type FileDropState = 'idle' | 'accept' | 'reject'
+type FileDropState = 'idle' | 'pending' | 'accept' | 'reject'
 
 function UploadIcon() {
   return (
@@ -13,40 +16,20 @@ function UploadIcon() {
   )
 }
 
-function hasFiles(dataTransfer: DataTransfer) {
+function hasFileType(dataTransfer: DataTransfer) {
   return Array.from(dataTransfer.types ?? []).includes('Files')
+}
+
+function hasFileItems(dataTransfer: DataTransfer) {
+  return Array.from(dataTransfer.items ?? []).some(
+    (item) => item.kind === 'file',
+  )
 }
 
 function filesFromTransfer(dataTransfer: DataTransfer) {
   const files = Array.from(dataTransfer.files ?? [])
 
-  if (files.length > 0) {
-    return files
-  }
-
-  return Array.from(dataTransfer.items ?? []).flatMap((item) => {
-    const file = item.kind === 'file' ? item.getAsFile() : null
-    return file ? [file] : []
-  })
-}
-
-function batchState(
-  files: File[],
-  accept: string[] | undefined,
-  multiple: boolean,
-): Exclude<FileDropState, 'idle'> {
-  if (!multiple && files.length > 1) {
-    return 'reject'
-  }
-
-  if (
-    files.length > 0 &&
-    filterAcceptedFiles(files, accept).length !== files.length
-  ) {
-    return 'reject'
-  }
-
-  return 'accept'
+  return files
 }
 
 export function AppFileDropOverlay({
@@ -58,23 +41,24 @@ export function AppFileDropOverlay({
   icon,
   multiple = true,
   onFiles,
+  onReject,
   rejectDescription,
-  rejectTitle = '不支持这些文件',
-  title = '松开鼠标以导入文件',
+  rejectTitle = 'These files are not supported',
+  style,
+  title = 'Drop files to import',
 }: AppFileDropOverlayProps) {
   const [state, setState] = useState<FileDropState>('idle')
-  const [previousDisabled, setPreviousDisabled] = useState(disabled)
   const rootRef = useRef<HTMLDivElement | null>(null)
   const dragDepthRef = useRef(0)
   const hasChildren = children !== undefined && children !== null
 
-  if (previousDisabled !== disabled) {
-    setPreviousDisabled(disabled)
-
+  useEffect(() => {
     if (disabled) {
+      dragDepthRef.current = 0
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- disabling must synchronously clear transient drag UI.
       setState('idle')
     }
-  }
+  }, [disabled])
 
   useEffect(() => {
     const root = rootRef.current
@@ -91,42 +75,46 @@ export function AppFileDropOverlay({
     const handleDragEnter = (event: DragEvent) => {
       const dataTransfer = event.dataTransfer
 
-      if (disabled || !dataTransfer || !hasFiles(dataTransfer)) {
-        return
-      }
-
-      dragDepthRef.current += 1
-      setState(batchState(filesFromTransfer(dataTransfer), accept, multiple))
-    }
-    const handleDragOver = (event: DragEvent) => {
-      const dataTransfer = event.dataTransfer
-
-      if (disabled || !dataTransfer || !hasFiles(dataTransfer)) {
+      if (
+        disabled ||
+        !dataTransfer ||
+        !hasFileType(dataTransfer) ||
+        !hasFileItems(dataTransfer)
+      ) {
         return
       }
 
       event.preventDefault()
-      const nextState = batchState(
-        filesFromTransfer(dataTransfer),
-        accept,
-        multiple,
-      )
+      dragDepthRef.current += 1
+      setState(previewFileDrag(dataTransfer, accept, multiple).state)
+    }
+    const handleDragOver = (event: DragEvent) => {
+      const dataTransfer = event.dataTransfer
+
+      if (disabled || !dataTransfer || !hasFileType(dataTransfer)) {
+        return
+      }
+
+      event.preventDefault()
+      if (!hasFileItems(dataTransfer) && dragDepthRef.current === 0) {
+        return
+      }
+
+      const nextState = previewFileDrag(dataTransfer, accept, multiple).state
       setState(nextState)
 
       try {
-        dataTransfer.dropEffect = nextState === 'accept' ? 'copy' : 'none'
+        dataTransfer.dropEffect = nextState === 'reject' ? 'none' : 'copy'
       } catch {
         // Some WebViews expose dropEffect as read-only during synthetic drags.
       }
     }
-    const handleDragLeave = (event: DragEvent) => {
-      const dataTransfer = event.dataTransfer
-
-      if (disabled || (dataTransfer && !hasFiles(dataTransfer))) {
+    const handleDragLeave = () => {
+      if (dragDepthRef.current === 0) {
         return
       }
 
-      dragDepthRef.current = Math.max(0, dragDepthRef.current - 1)
+      dragDepthRef.current -= 1
 
       if (dragDepthRef.current === 0) {
         setState('idle')
@@ -135,17 +123,25 @@ export function AppFileDropOverlay({
     const handleDrop = (event: DragEvent) => {
       const dataTransfer = event.dataTransfer
 
-      if (disabled || !dataTransfer || !hasFiles(dataTransfer)) {
+      if (disabled || !dataTransfer) {
+        return
+      }
+
+      const files = filesFromTransfer(dataTransfer)
+      if (!hasFileType(dataTransfer) && files.length === 0) {
         return
       }
 
       event.preventDefault()
-      const files = filesFromTransfer(dataTransfer)
-      const nextState = batchState(files, accept, multiple)
+      const validation = validateDroppedFiles(files, accept, multiple)
       reset()
 
-      if (nextState === 'accept' && files.length > 0) {
-        onFiles(multiple ? files : files.slice(0, 1))
+      if (validation.accepted) {
+        if (validation.files.length > 0) {
+          onFiles(validation.files)
+        }
+      } else if (validation.reason) {
+        onReject?.(validation.files, validation.reason)
       }
     }
 
@@ -161,7 +157,7 @@ export function AppFileDropOverlay({
       target.removeEventListener('dragleave', handleDragLeave)
       target.removeEventListener('drop', handleDrop)
     }
-  }, [accept, disabled, hasChildren, multiple, onFiles])
+  }, [accept, disabled, hasChildren, multiple, onFiles, onReject])
 
   const active = state !== 'idle' && !disabled
   const rejected = state === 'reject'
@@ -175,7 +171,7 @@ export function AppFileDropOverlay({
     .join(' ')
 
   return (
-    <div className={rootClassName} ref={rootRef}>
+    <div className={rootClassName} ref={rootRef} style={style}>
       {children}
       {active ? (
         <div

@@ -40,6 +40,7 @@ export type {
   AppContextMenuSeparatorItem,
   AppDialogProps,
   AppFileDropOverlayProps,
+  FileDropRejectionReason,
   AppInfoBarProps,
   AppInfoBarStatus,
   AppMessageBox,

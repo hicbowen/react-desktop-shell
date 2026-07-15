@@ -1,7 +1,20 @@
 // @vitest-environment jsdom
 
 import { describe, expect, it } from 'vitest'
-import { filterAcceptedFiles, isFileAccepted } from './fileAcceptance'
+import {
+  filterAcceptedFiles,
+  isFileAccepted,
+  previewFileDrag,
+  validateDroppedFiles,
+} from './fileAcceptance'
+
+function transfer(...items: DataTransferItem[]) {
+  return { items, types: ['Files'] } as unknown as DataTransfer
+}
+
+function item(type: string) {
+  return { kind: 'file', type } as DataTransferItem
+}
 
 describe('file acceptance', () => {
   it('accepts every file when no rules are provided', () => {
@@ -36,5 +49,49 @@ describe('file acceptance', () => {
     expect(
       filterAcceptedFiles(files, ['.csv', 'image/*', 'application/pdf']),
     ).toEqual(files.slice(0, 3))
+  })
+
+  it('previews only reliable item MIME metadata', () => {
+    expect(previewFileDrag(transfer(item('image/png')), ['image/*'], true)).toEqual(
+      { state: 'accept' },
+    )
+    expect(
+      previewFileDrag(transfer(item('application/pdf')), ['image/*'], true),
+    ).toEqual({ state: 'reject', reason: 'type' })
+    expect(previewFileDrag(transfer(item('text/csv')), ['.csv'], true)).toEqual(
+      { state: 'pending' },
+    )
+    expect(previewFileDrag(transfer(item('')), ['image/*'], true)).toEqual({
+      state: 'pending',
+    })
+  })
+
+  it('previews an explicit multiple-file rejection', () => {
+    expect(
+      previewFileDrag(
+        transfer(item('text/csv'), item('text/csv')),
+        undefined,
+        false,
+      ),
+    ).toEqual({ state: 'reject', reason: 'multiple' })
+  })
+
+  it('validates the complete dropped batch', () => {
+    const csv = new File(['a'], 'DATA.CSV', { type: 'text/plain' })
+    const text = new File(['b'], 'notes.txt', { type: 'text/plain' })
+    expect(validateDroppedFiles([csv], ['.csv'], false)).toEqual({
+      accepted: true,
+      files: [csv],
+    })
+    expect(validateDroppedFiles([text], ['.csv'], true)).toEqual({
+      accepted: false,
+      files: [text],
+      reason: 'type',
+    })
+    expect(validateDroppedFiles([csv, text], undefined, false)).toEqual({
+      accepted: false,
+      files: [csv, text],
+      reason: 'multiple',
+    })
   })
 })

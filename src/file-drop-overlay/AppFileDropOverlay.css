@@ -83,6 +83,11 @@
   color: var(--app-shell-danger-fg, #c42b1c);
 }
 
+.app-file-drop--pending .app-file-drop__overlay,
+.app-file-drop--accept .app-file-drop__overlay {
+  color: var(--app-shell-accent-color, #005fb8);
+}
+
 @keyframes app-file-drop-enter {
   from {
     opacity: 0;

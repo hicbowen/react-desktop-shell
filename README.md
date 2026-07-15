@@ -1747,20 +1747,28 @@ does not upload, parse, read, or convert their contents.
   accept={['.xlsx', '.csv', 'application/pdf']}
   description="Excel, CSV, or PDF"
   onFiles={handleFiles}
+  onReject={(files, reason) => console.warn(reason, files)}
+  style={{ height: '100%' }}
 >
   <AppPage />
 </AppFileDropOverlay>
 ```
 
 Extension rules are case-insensitive. Exact MIME types and wildcard groups
-such as `image/*` are also supported. A batch is rejected when any file fails
-the accept rules, or when `multiple={false}` receives more than one file. An
-empty `accept` list accepts every file.
+such as `image/*` are also supported. During protected browser drag events,
+file names or MIME types may be unavailable, so the overlay can show a neutral
+pending state. Final acceptance always happens on drop using the complete
+`File[]`. A batch is rejected when any file fails the accept rules, or when
+`multiple={false}` receives more than one file. `onReject` receives the full
+batch and either a `type` or `multiple` reason. An empty `accept` list accepts
+every file.
 
 With children, the component creates a relative wrapper around the local drop
-region. Without children, place it inside a positioned parent; it listens on
-that parent without blocking ordinary interaction while idle. It never adds
-document-level drag listeners.
+region. Pass `style={{ width: '100%', height: '100%' }}` when that wrapper must
+fill its parent; no full-size dimensions are forced by default. Without
+children, place it inside a positioned parent; it listens on that parent
+without blocking ordinary interaction while idle. It never adds document-level
+drag listeners.
 
 Drag and drop must not be the only import path. Applications should also offer
 a keyboard-accessible “Choose file” button. The component does not open a file

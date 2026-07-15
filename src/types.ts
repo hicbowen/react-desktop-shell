@@ -31,6 +31,7 @@ export type {
 } from './dialog/types'
 export type { AppInfoBarProps, AppInfoBarStatus } from './info-bar/types'
 export type { AppFileDropOverlayProps } from './file-drop-overlay/types'
+export type { FileDropRejectionReason } from './file-drop-overlay/fileAcceptance'
 export type {
   AppMenuFlyoutEntry,
   AppMenuFlyoutItem,
