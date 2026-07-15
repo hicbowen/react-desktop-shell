@@ -450,6 +450,22 @@
     color: #a05b00;
 }
 
+.demo-priority {
+    font-weight: 600;
+}
+
+.demo-priority--high {
+    color: #c42b1c;
+}
+
+.demo-priority--medium {
+    color: #a05b00;
+}
+
+.demo-priority--low {
+    color: var(--app-shell-muted-text-color);
+}
+
 .demo-table-layout {
     min-width: 0;
     min-height: 0;
