@@ -69,6 +69,10 @@ export type {
 } from './shell/types'
 export type { AppSplitButtonProps } from './split-button/types'
 export type {
+  AppTeachingTipAction,
+  AppTeachingTipProps,
+} from './teaching-tip/types'
+export type {
   AppToast,
   AppToastAction,
   AppToastHostOptions,

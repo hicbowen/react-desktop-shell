@@ -1,0 +1,138 @@
+.app-teaching-tip {
+  position: fixed;
+  z-index: var(--rds-z-overlay, 1050);
+  width: min(
+    var(--app-teaching-tip-max-width, 360px),
+    max(0px, calc(100vw - 24px))
+  );
+  box-sizing: border-box;
+  padding: 14px;
+  display: grid;
+  grid-template-rows: auto minmax(0, auto) auto;
+  gap: 10px;
+  overflow: hidden;
+  color: var(--app-shell-text-color, #1f1f1f);
+  background: var(--app-shell-menu-bg, rgb(249 249 249 / 96%));
+  border: 1px solid
+    var(--app-shell-menu-border-color, rgb(0 0 0 / 12%));
+  border-radius: 10px;
+  box-shadow: var(
+    --app-shell-menu-shadow,
+    0 10px 28px rgb(0 0 0 / 18%)
+  );
+  font: inherit;
+  pointer-events: auto;
+  backdrop-filter: blur(24px);
+  animation: app-teaching-tip-enter var(--rds-motion-normal, 180ms)
+    var(--rds-ease-enter, ease-out);
+}
+
+.app-teaching-tip__header {
+  min-width: 0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.app-teaching-tip__title {
+  min-width: 0;
+  padding-top: 2px;
+  font-size: 15px;
+  font-weight: 650;
+  line-height: 1.3;
+  overflow-wrap: anywhere;
+}
+
+.app-teaching-tip__close {
+  width: 28px;
+  height: 28px;
+  margin: -5px -5px 0 0;
+  padding: 0;
+  display: inline-grid;
+  flex: 0 0 28px;
+  place-items: center;
+  color: inherit;
+  background: transparent;
+  border: 0;
+  border-radius: 5px;
+  cursor: default;
+}
+
+.app-teaching-tip__close:hover {
+  background: var(--app-shell-hover-bg, rgb(0 0 0 / 4%));
+}
+
+.app-teaching-tip__close:focus-visible,
+.app-teaching-tip__action:focus-visible {
+  outline: 2px solid var(--app-shell-accent-color, #005fb8);
+  outline-offset: 1px;
+}
+
+.app-teaching-tip__close > svg {
+  width: 16px;
+  height: 16px;
+  display: block;
+  fill: currentColor;
+}
+
+.app-teaching-tip__content {
+  min-width: 0;
+  min-height: 0;
+  overflow-y: auto;
+  color: var(--app-shell-muted-text-color, #5d5d5d);
+  font-size: 13px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.app-teaching-tip__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.app-teaching-tip__action {
+  min-height: 30px;
+  padding: 0 12px;
+  color: inherit;
+  background: var(--app-shell-card-bg, #fff);
+  border: 1px solid var(--app-shell-border-color, rgb(0 0 0 / 12%));
+  border-radius: 5px;
+  font: inherit;
+  font-size: 13px;
+  cursor: default;
+}
+
+.app-teaching-tip__action:hover {
+  background: var(--app-shell-card-hover-bg, rgb(0 0 0 / 4%));
+}
+
+.app-teaching-tip__action--primary {
+  color: #fff;
+  background: var(--app-shell-accent-color, #005fb8);
+  border-color: transparent;
+}
+
+.app-teaching-tip__action--primary:hover {
+  background: var(--app-shell-accent-hover-color, #005a9e);
+}
+
+@keyframes app-teaching-tip-enter {
+  from {
+    opacity: 0;
+    transform: translateY(-2px) scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .app-teaching-tip {
+    animation: none;
+  }
+}

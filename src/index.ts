@@ -12,6 +12,7 @@ export { AppSettingsGroup } from './settings/AppSettingsGroup'
 export { AppSettingsRow } from './settings/AppSettingsRow'
 export { AppSidePane } from './AppSidePane'
 export { AppSplitButton } from './split-button'
+export { AppTeachingTip } from './teaching-tip'
 export { AppTitleBar } from './AppTitleBar'
 export { AppToolbar } from './toolbar/AppToolbar'
 export { AppTooltip } from './tooltip'
@@ -66,6 +67,8 @@ export type {
   AppShellProps,
   AppSidePaneProps,
   AppSplitButtonProps,
+  AppTeachingTipAction,
+  AppTeachingTipProps,
   AppTitleBarProps,
   AppTheme,
   AppToast,

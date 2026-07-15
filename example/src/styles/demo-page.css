@@ -580,6 +580,33 @@
     gap: 12px;
 }
 
+.demo-teaching-tip-row {
+    min-height: 180px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+}
+
+.demo-teaching-tip-edge-trigger {
+    margin-left: auto;
+}
+
+.demo-teaching-tip-anchor {
+    display: inline-flex;
+}
+
+.demo-teaching-tip-dark-preview {
+    height: 190px;
+    padding: 0;
+}
+
+.demo-teaching-tip-dark-content {
+    height: 100%;
+    display: grid;
+    place-items: center;
+}
+
 .demo-settings {
     display: grid;
     gap: 18px;

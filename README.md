@@ -1709,6 +1709,33 @@ Tooltip content must remain descriptive and non-interactive. Do not place
 buttons, links, or inputs inside it; richer interactive guidance belongs in a
 future `AppTeachingTip` or `AppPopover`.
 
+## Teaching Tip
+
+`AppTeachingTip` is a controlled, non-modal guidance card anchored to one
+element. Unlike Tooltip, it supports a title, longer content, and primary or
+secondary actions while remaining open until application state closes it.
+
+```tsx
+<AppTeachingTip
+  open={showTip}
+  onOpenChange={setShowTip}
+  title="Batch export"
+  content="You can now export multiple records at once."
+  primaryAction={{ label: 'Got it', onClick: acknowledgeFeature }}
+>
+  <button type="button">Export</button>
+</AppTeachingTip>
+```
+
+The default placement is `right` with a `360px` maximum width. It closes on
+Escape, external pointer down, external scroll, resize, window blur, the close
+button, or either action. Set `closeOnOutsidePointerDown={false}` for guidance
+that should survive outside clicks, or `dismissible={false}` to hide the close
+button. TeachingTip does not trap or automatically move focus.
+
+This first version does not provide arrows, spotlight overlays, multi-step
+tours, drag behavior, or automatic first-use persistence.
+
 ## Dialog
 
 `AppDialog` is a controlled, shell-managed modal dialog. It renders into the shell overlay layer, traps focus while open, restores focus on close, and closes on Escape by default. Overlay clicks do not close the dialog unless opted in.

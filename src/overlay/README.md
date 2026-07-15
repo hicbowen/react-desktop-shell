@@ -47,7 +47,7 @@ Body portal fallbacks must provide CSS fallback values and preserve any theme
 variables that would otherwise be lost outside AppShell.
 
 Current anchored consumers are the data-table Filter menu, `RailFlyout`, the
-public `AppTooltip`, and the public `AppMenuFlyout`. Each consumer must ensure
+public `AppTooltip`, `AppMenuFlyout`, and `AppTeachingTip`. Each consumer must ensure
 its CSS `min-width` can
 shrink below the normal desktop minimum when the positioning result returns a
 smaller `maxWidth`; a fixed minimum can otherwise override the viewport limit.
