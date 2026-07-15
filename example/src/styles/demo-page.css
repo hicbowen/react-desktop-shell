@@ -607,6 +607,63 @@
     place-items: center;
 }
 
+.demo-file-drop-large {
+    height: 250px;
+    padding: 0;
+}
+
+.demo-file-drop-large>.app-file-drop,
+.demo-file-drop-stage {
+    height: 100%;
+}
+
+.demo-file-drop-stage {
+    display: grid;
+    align-content: center;
+    justify-items: center;
+    gap: 12px;
+    color: var(--app-shell-muted-text-color);
+}
+
+.demo-file-drop-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+    gap: 12px;
+}
+
+.demo-file-drop-card {
+    min-height: 112px;
+    padding: 16px;
+    display: grid;
+    box-sizing: border-box;
+    align-content: center;
+    gap: 6px;
+    border: 1px solid var(--app-shell-border-color);
+    border-radius: 8px;
+    background: var(--app-shell-card-bg);
+}
+
+.demo-file-drop-card>span,
+.demo-file-drop-results>span,
+.demo-file-drop-results li {
+    color: var(--app-shell-muted-text-color);
+    font-size: 13px;
+}
+
+.demo-file-drop-card--disabled {
+    opacity: var(--rds-disabled-opacity, .55);
+}
+
+.demo-file-drop-results {
+    display: grid;
+    gap: 6px;
+}
+
+.demo-file-drop-results ul {
+    margin: 0;
+    padding-left: 18px;
+}
+
 .demo-settings {
     display: grid;
     gap: 18px;

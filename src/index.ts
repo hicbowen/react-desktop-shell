@@ -3,6 +3,7 @@ export { AppCard, AppCardFooter, AppCardGroup, AppCardHeader } from './card'
 export { AppContextMenu } from './context-menu/AppContextMenu'
 export { AppDialog } from './dialog/AppDialog'
 export { AppInfoBar } from './info-bar/AppInfoBar'
+export { AppFileDropOverlay } from './file-drop-overlay'
 export { AppMenuFlyout } from './menu-flyout'
 export { AppPage } from './AppPage'
 export { AppRail } from './navigation/AppRail'
@@ -38,6 +39,7 @@ export type {
   AppContextMenuProps,
   AppContextMenuSeparatorItem,
   AppDialogProps,
+  AppFileDropOverlayProps,
   AppInfoBarProps,
   AppInfoBarStatus,
   AppMessageBox,

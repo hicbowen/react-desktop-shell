@@ -1736,6 +1736,41 @@ button. TeachingTip does not trap or automatically move focus.
 This first version does not provide arrows, spotlight overlays, multi-step
 tours, drag behavior, or automatic first-use persistence.
 
+## File Drop Overlay
+
+`AppFileDropOverlay` adds accepting and rejecting feedback while files are
+dragged over a local region. It returns standard browser `File[]` values and
+does not upload, parse, read, or convert their contents.
+
+```tsx
+<AppFileDropOverlay
+  accept={['.xlsx', '.csv', 'application/pdf']}
+  description="Excel, CSV, or PDF"
+  onFiles={handleFiles}
+>
+  <AppPage />
+</AppFileDropOverlay>
+```
+
+Extension rules are case-insensitive. Exact MIME types and wildcard groups
+such as `image/*` are also supported. A batch is rejected when any file fails
+the accept rules, or when `multiple={false}` receives more than one file. An
+empty `accept` list accepts every file.
+
+With children, the component creates a relative wrapper around the local drop
+region. Without children, place it inside a positioned parent; it listens on
+that parent without blocking ordinary interaction while idle. It never adds
+document-level drag listeners.
+
+Drag and drop must not be the only import path. Applications should also offer
+a keyboard-accessible “Choose file” button. The component does not open a file
+picker itself. Wails and Electron integrations receive the same browser File
+API surface; native paths, permissions, IPC, and filesystem access remain the
+application's responsibility, and an absolute path is not guaranteed.
+
+This first version does not provide upload progress, previews, directory
+recursion, size limits, count limits, or per-file partial acceptance.
+
 ## Dialog
 
 `AppDialog` is a controlled, shell-managed modal dialog. It renders into the shell overlay layer, traps focus while open, restores focus on close, and closes on Escape by default. Overlay clicks do not close the dialog unless opted in.
