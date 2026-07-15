@@ -97,7 +97,7 @@ describe('AppMenuFlyout', () => {
         new PointerEvent('pointerdown', { bubbles: true, cancelable: true }),
       ),
     )
-  const keyDown = (element: HTMLElement, key: string) => {
+  const keyDown = (element: HTMLElement, key: string, shiftKey = false) => {
     let notCancelled = true
     act(() => {
       notCancelled = element.dispatchEvent(
@@ -105,6 +105,7 @@ describe('AppMenuFlyout', () => {
           bubbles: true,
           cancelable: true,
           key,
+          shiftKey,
         }),
       )
     })
@@ -203,6 +204,17 @@ describe('AppMenuFlyout', () => {
     keyDown(menuItems()[0]!, 'Escape')
     expect(menu()).toBeNull()
     expect(document.activeElement).toBe(trigger())
+  })
+
+  it('handles Escape once through the document listener', () => {
+    renderMenu()
+    click(trigger())
+    flushMeasurement()
+    const focus = vi.spyOn(trigger(), 'focus')
+
+    keyDown(menuItems()[0]!, 'Escape')
+    expect(menu()).toBeNull()
+    expect(focus).toHaveBeenCalledOnce()
   })
 
   it('preserves trigger events and lets preventDefault block internal behavior', () => {
@@ -367,6 +379,32 @@ describe('AppMenuFlyout', () => {
     expect(separator?.hasAttribute('tabindex')).toBe(false)
   })
 
+  it('does not open an empty menu', () => {
+    renderMenu({ items: [] })
+    click(trigger())
+    expect(menu()).toBeNull()
+    expect(keyDown(trigger(), 'ArrowDown')).toBe(true)
+    expect(menu()).toBeNull()
+  })
+
+  it('opens an all-disabled menu and focuses its root container', () => {
+    renderMenu({
+      items: [
+        { key: 'disabled', label: 'Unavailable', disabled: true },
+        { type: 'separator' },
+      ],
+    })
+    click(trigger())
+    expect(menu()).not.toBeNull()
+    flushMeasurement()
+    expect(menu()?.tabIndex).toBe(-1)
+    expect(document.activeElement).toBe(menu())
+
+    keyDown(menu()!, 'Escape')
+    expect(menu()).toBeNull()
+    expect(document.activeElement).toBe(trigger())
+  })
+
   it('selects an item, closes, and restores trigger focus', () => {
     const onSelect = vi.fn()
     renderMenu({ onSelect })
@@ -437,7 +475,7 @@ describe('AppMenuFlyout', () => {
     expect(menu()).toBeNull()
   })
 
-  it('closes on Tab without preventing the browser default', () => {
+  it('restores the trigger before Tab closes without preventing default', () => {
     renderMenu()
     click(trigger())
     flushMeasurement()
@@ -445,6 +483,18 @@ describe('AppMenuFlyout', () => {
 
     expect(notCancelled).toBe(true)
     expect(menu()).toBeNull()
+    expect(document.activeElement).toBe(trigger())
+  })
+
+  it('restores the trigger before Shift+Tab closes without preventing default', () => {
+    renderMenu()
+    click(trigger())
+    flushMeasurement()
+    const notCancelled = keyDown(menuItems()[0]!, 'Tab', true)
+
+    expect(notCancelled).toBe(true)
+    expect(menu()).toBeNull()
+    expect(document.activeElement).toBe(trigger())
   })
 
   it('composes through AppTooltip without losing ARIA, click, or refs', () => {

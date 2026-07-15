@@ -1299,7 +1299,9 @@ Tab closes without trapping focus.
 
 Use `AppMenuFlyout` for a button-triggered command list and `AppContextMenu`
 for right-click menus. This first version does not support submenus, checkbox
-items, radio items, shortcuts, or controlled open state.
+items, radio items, shortcuts, or controlled open state. An empty `items`
+array does not open a menu. Tab and Shift+Tab close an open menu without
+preventing normal browser focus navigation.
 
 ## Split Button
 
@@ -1322,7 +1324,17 @@ alternate commands. The left and right sides remain separate Tab stops.
 `disabled` disables both sides. Use `menuDisabled` when the primary command
 should remain available but alternate choices are temporarily unavailable.
 The menu defaults to `bottom-end` and retains all AppMenuFlyout positioning,
-dismissal, and keyboard behavior.
+dismissal, and keyboard behavior. An empty `items` array automatically disables
+the menu side while leaving the primary action available. When `label` is an
+icon or another ReactNode without readable text, provide `ariaLabel` explicitly:
+
+```tsx
+<AppSplitButton
+  ariaLabel="Export"
+  label={<ExportIcon />}
+  items={exportItems}
+/>
+```
 
 ## Title Bar
 

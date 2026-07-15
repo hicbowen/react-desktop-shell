@@ -74,7 +74,9 @@ function AppMenuFlyoutInner(
   } = props as AppMenuFlyoutProps & MenuTriggerProps
   const [open, setOpen] = useState(false)
   const [activeIndex, setActiveIndex] = useState(-1)
-  const [previousDisabled, setPreviousDisabled] = useState(disabled)
+  const menuUnavailable = disabled || items.length === 0
+  const [previousUnavailable, setPreviousUnavailable] =
+    useState(menuUnavailable)
   const triggerRef = useRef<HTMLElement | null>(null)
   const overlayRef = useRef<HTMLDivElement | null>(null)
   const itemRefs = useRef<Array<HTMLButtonElement | null>>([])
@@ -95,10 +97,10 @@ function AppMenuFlyoutInner(
   const firstEnabledIndex = enabledIndexes[0] ?? -1
   const lastEnabledIndex = enabledIndexes.at(-1) ?? -1
 
-  if (previousDisabled !== disabled) {
-    setPreviousDisabled(disabled)
+  if (previousUnavailable !== menuUnavailable) {
+    setPreviousUnavailable(menuUnavailable)
 
-    if (disabled) {
+    if (menuUnavailable) {
       setOpen(false)
       setActiveIndex(-1)
     }
@@ -143,7 +145,11 @@ function AppMenuFlyoutInner(
         : firstEnabledIndex
 
     setActiveIndex(index)
-    itemRefs.current[index]?.focus({ preventScroll: true })
+    if (index >= 0) {
+      itemRefs.current[index]?.focus({ preventScroll: true })
+    } else {
+      overlayRef.current?.focus({ preventScroll: true })
+    }
   }, [firstEnabledIndex, lastEnabledIndex, open, position.measured])
 
   useEffect(() => {
@@ -177,7 +183,7 @@ function AppMenuFlyoutInner(
   })
 
   const openMenu = (intent: FocusIntent) => {
-    if (disabled) {
+    if (menuUnavailable) {
       return
     }
 
@@ -251,13 +257,8 @@ function AppMenuFlyoutInner(
           }
         }
         break
-      case 'Escape':
-        if (!event.defaultPrevented) {
-          event.preventDefault()
-          closeMenuAndRestoreFocus()
-        }
-        break
       case 'Tab':
+        restoreTriggerFocus()
         closeMenu()
         break
     }
@@ -268,7 +269,7 @@ function AppMenuFlyoutInner(
   const handleTriggerClick = composeEventHandlers(
     child.props.onClick,
     composeEventHandlers(triggerProps.onClick, () => {
-      if (disabled) {
+      if (menuUnavailable) {
         return
       }
 
@@ -282,7 +283,7 @@ function AppMenuFlyoutInner(
   const handleTriggerKeyDown = composeEventHandlers(
     child.props.onKeyDown,
     composeEventHandlers(triggerProps.onKeyDown, (event) => {
-      if (disabled) {
+      if (menuUnavailable) {
         return
       }
 
@@ -340,6 +341,7 @@ function AppMenuFlyoutInner(
           onKeyDown={handleMenuKeyDown}
           ref={overlayRef}
           role="menu"
+          tabIndex={-1}
           style={{
             ...(overlayHost ? undefined : OVERLAY_SURFACE_FALLBACK_STYLE),
             '--app-menu-flyout-max-width': `${resolvedMaxWidth}px`,

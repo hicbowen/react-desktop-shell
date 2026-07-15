@@ -30,7 +30,7 @@ export function AppSplitButton({
   ]
     .filter(Boolean)
     .join(' ')
-  const resolvedMenuDisabled = disabled || menuDisabled
+  const resolvedMenuDisabled = disabled || menuDisabled || items.length === 0
 
   return (
     <div className={rootClassName}>

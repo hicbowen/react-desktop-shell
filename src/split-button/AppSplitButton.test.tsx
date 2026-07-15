@@ -74,6 +74,7 @@ describe('AppSplitButton', () => {
     renderSplitButton({ onClick })
     click(primary())
     expect(onClick).toHaveBeenCalledOnce()
+    expect(onClick.mock.calls[0]?.[0].nativeEvent).toBeInstanceOf(MouseEvent)
   })
 
   it('opens the flyout from the right button and forwards placement', () => {
@@ -115,6 +116,25 @@ describe('AppSplitButton', () => {
     click(primary())
     click(menuTrigger())
     expect(onClick).toHaveBeenCalledOnce()
+    expect(menu()).toBeNull()
+  })
+
+  it('disables only the menu side when items is empty', () => {
+    const onClick = vi.fn()
+    renderSplitButton({ items: [], onClick })
+    expect(primary().disabled).toBe(false)
+    expect(menuTrigger().disabled).toBe(true)
+    click(primary())
+    click(menuTrigger())
+    expect(onClick).toHaveBeenCalledOnce()
+    expect(menu()).toBeNull()
+  })
+
+  it('keeps an empty menu disabled when menuDisabled is also set', () => {
+    renderSplitButton({ items: [], menuDisabled: true })
+    expect(primary().disabled).toBe(false)
+    expect(menuTrigger().disabled).toBe(true)
+    click(menuTrigger())
     expect(menu()).toBeNull()
   })
 
