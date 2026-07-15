@@ -102,6 +102,19 @@
   padding: var(--app-rail-footer-padding);
 }
 
+.app-rail .app-tooltip__trigger-wrapper {
+  flex-shrink: 0;
+}
+
+.app-rail__nav > .app-tooltip__trigger-wrapper,
+.app-rail__footer > .app-tooltip__trigger-wrapper {
+  width: var(--app-rail-compact-item-width);
+}
+
+.app-rail__submenu > .app-tooltip__trigger-wrapper {
+  width: 100%;
+}
+
 .app-rail__item {
   position: relative;
   width: 100%;
@@ -398,7 +411,7 @@
 .app-rail-flyout {
   position: fixed;
   z-index: var(--rds-z-overlay, 1050);
-  min-width: 180px;
+  min-width: min(180px, max(0px, calc(100vw - 16px)));
   max-width: 280px;
   overflow-y: auto;
   box-sizing: border-box;

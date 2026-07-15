@@ -48,6 +48,7 @@ describe('AppRail scroll fade', () => {
   afterEach(() => {
     act(() => root.unmount())
     container.remove()
+    vi.useRealTimers()
     vi.restoreAllMocks()
     vi.unstubAllGlobals()
   })
@@ -59,11 +60,21 @@ describe('AppRail scroll fade', () => {
   const openFlyout = () =>
     act(() =>
       Array.from(container.querySelectorAll<HTMLButtonElement>('button'))
-        .find((button) => button.title === 'Parent')
+        .find((button) => button.getAttribute('aria-label') === 'Parent')
         ?.click(),
     )
   const flyout = () =>
     document.body.querySelector<HTMLElement>('.app-rail-flyout')
+  const tooltip = () =>
+    document.body.querySelector<HTMLElement>('[role="tooltip"]')
+  const hover = (element: Element) => {
+    act(() =>
+      element.dispatchEvent(
+        new PointerEvent('pointerover', { bubbles: true }),
+      ),
+    )
+    act(() => vi.advanceTimersByTime(500))
+  }
 
   it('does not apply the fade when all content fits', () => {
     render(<AppRail items={items} />)
@@ -158,6 +169,79 @@ describe('AppRail scroll fade', () => {
     )
   })
 
+  it('shows tooltips for collapsed items without native title attributes', () => {
+    vi.useFakeTimers()
+    const onChange = vi.fn()
+    render(<AppRail collapsed items={items} onChange={onChange} />)
+    const home = container.querySelector<HTMLButtonElement>(
+      '[aria-label="Home"]',
+    )!
+
+    expect(home.title).toBe('')
+    hover(home)
+    expect(tooltip()?.textContent).toBe('Home')
+    act(() => home.click())
+    expect(onChange).toHaveBeenCalledWith('home')
+  })
+
+  it('does not add item tooltips while expanded', () => {
+    vi.useFakeTimers()
+    render(<AppRail collapsed={false} items={items} />)
+    const home = Array.from(container.querySelectorAll('button')).find(
+      (button) => button.textContent === 'Home',
+    )!
+
+    hover(home)
+    expect(tooltip()).toBeNull()
+    expect(home.hasAttribute('aria-label')).toBe(false)
+  })
+
+  it('supports collapsed footer and disabled item tooltips', () => {
+    vi.useFakeTimers()
+    render(
+      <AppRail
+        collapsed
+        footerItems={[{ key: 'settings', label: 'Settings' }]}
+        items={[{ key: 'disabled', label: 'Disabled', disabled: true }]}
+      />,
+    )
+    const settings = container.querySelector<HTMLButtonElement>(
+      '[aria-label="Settings"]',
+    )!
+    hover(settings)
+    expect(tooltip()?.textContent).toBe('Settings')
+
+    act(() =>
+      settings.dispatchEvent(
+        new PointerEvent('pointerout', { bubbles: true }),
+      ),
+    )
+    const disabled = container.querySelector<HTMLButtonElement>(
+      '[aria-label="Disabled"]',
+    )!
+    const wrapper = disabled.closest('.app-tooltip__trigger-wrapper')!
+    hover(wrapper)
+    expect(disabled.disabled).toBe(true)
+    expect(tooltip()?.textContent).toBe('Disabled')
+  })
+
+  it('closes the submenu tooltip when its RailFlyout opens', () => {
+    vi.useFakeTimers()
+    render(<AppRail collapsed items={flyoutItems} />)
+    const parent = container.querySelector<HTMLButtonElement>(
+      '[aria-label="Parent"]',
+    )!
+    hover(parent)
+    expect(tooltip()?.textContent).toBe('Parent')
+
+    act(() => parent.click())
+
+    expect(flyout()).not.toBeNull()
+    expect(tooltip()).toBeNull()
+    expect(parent.title).toBe('')
+    expect(parent.getAttribute('aria-label')).toBe('Parent')
+  })
+
   it('portals collapsed submenu flyouts into the AppShell overlay host', () => {
     render(
       <AppShell theme="dark">
@@ -242,6 +326,53 @@ describe('AppRail scroll fade', () => {
     expect(flyout()?.style.maxHeight).toBe('584px')
   })
 
+  it('allows the flyout min-width to shrink in a narrow viewport', () => {
+    let measure: FrameRequestCallback | undefined
+    vi.stubGlobal(
+      'requestAnimationFrame',
+      vi.fn((callback: FrameRequestCallback) => {
+        measure = callback
+        return 1
+      }),
+    )
+    vi.stubGlobal('cancelAnimationFrame', vi.fn())
+    vi.stubGlobal('innerWidth', 100)
+    vi.stubGlobal('innerHeight', 600)
+    vi.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(
+      function (this: HTMLElement) {
+        if (this.classList.contains('app-rail__submenu-trigger')) {
+          return {
+            bottom: 140,
+            height: 40,
+            left: 8,
+            right: 48,
+            top: 100,
+            width: 40,
+          } as DOMRect
+        }
+        if (this.classList.contains('app-rail-flyout')) {
+          return {
+            bottom: 220,
+            height: 120,
+            left: 0,
+            right: 180,
+            top: 100,
+            width: 180,
+          } as DOMRect
+        }
+        return new DOMRect()
+      },
+    )
+
+    render(<AppRail collapsed items={flyoutItems} />)
+    openFlyout()
+    act(() => measure?.(0))
+
+    expect(flyout()?.style.maxWidth).toBe('38px')
+    expect(flyout()?.style.minWidth).toBe('38px')
+    expect(flyout()?.style.left).toBe('54px')
+  })
+
   it('uses right-start when the preferred side has room', async () => {
     vi.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(
       function (this: HTMLElement) {
@@ -312,7 +443,7 @@ describe('AppRail scroll fade', () => {
     openFlyout()
     const trigger = Array.from(
       container.querySelectorAll<HTMLButtonElement>('button'),
-    ).find((button) => button.title === 'Parent')!
+    ).find((button) => button.getAttribute('aria-label') === 'Parent')!
     trigger.blur()
     act(() =>
       document.dispatchEvent(

@@ -1,5 +1,6 @@
 import type { RailLinkItem } from './types'
 import type { SelectionDirection } from './types'
+import { AppTooltip } from '../tooltip/AppTooltip'
 import { RailBadge } from './RailBadge'
 import { getRailDepthStyle } from './railDepth'
 
@@ -35,12 +36,12 @@ export function RailItem({
     }
   }
 
-  return (
+  const button = (
     <button
+      aria-label={collapsed && !nested ? item.label : undefined}
       className={classNames.filter(Boolean).join(' ')}
       disabled={item.disabled}
       onClick={() => onChange(item.key)}
-      title={collapsed && !nested ? item.label : undefined}
       type="button"
     >
       <span
@@ -72,5 +73,13 @@ export function RailItem({
         ) : null}
       </span>
     </button>
+  )
+
+  return collapsed && !nested ? (
+    <AppTooltip content={item.label} placement="right">
+      {button}
+    </AppTooltip>
+  ) : (
+    button
   )
 }

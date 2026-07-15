@@ -45,3 +45,8 @@ internal z-index tokens live on `.app-shell`:
 
 Body portal fallbacks must provide CSS fallback values and preserve any theme
 variables that would otherwise be lost outside AppShell.
+
+Current anchored consumers are the data-table Filter menu, `RailFlyout`, and
+the public `AppTooltip`. Each consumer must ensure its CSS `min-width` can
+shrink below the normal desktop minimum when the positioning result returns a
+smaller `maxWidth`; a fixed minimum can otherwise override the viewport limit.

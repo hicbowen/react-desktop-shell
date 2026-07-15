@@ -465,6 +465,53 @@ describe('AppDataTable controls', () => {
     expect(filterMenu()?.style.overflow).toBe('')
   })
 
+  it('allows the filter menu min-width to shrink in a narrow viewport', () => {
+    let measure: FrameRequestCallback | undefined
+    vi.stubGlobal(
+      'requestAnimationFrame',
+      vi.fn((callback: FrameRequestCallback) => {
+        measure = callback
+        return 1
+      }),
+    )
+    vi.stubGlobal('cancelAnimationFrame', vi.fn())
+    vi.stubGlobal('innerWidth', 100)
+    vi.stubGlobal('innerHeight', 600)
+    vi.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(
+      function (this: HTMLElement) {
+        if (this.classList.contains('app-data-table__filter-button')) {
+          return {
+            bottom: 132,
+            height: 32,
+            left: 50,
+            right: 90,
+            top: 100,
+            width: 40,
+          } as DOMRect
+        }
+        if (this.classList.contains('app-data-table__filter-menu')) {
+          return {
+            bottom: 200,
+            height: 200,
+            left: 0,
+            right: 260,
+            top: 0,
+            width: 260,
+          } as DOMRect
+        }
+        return new DOMRect()
+      },
+    )
+
+    renderTable()
+    openFilters()
+    act(() => measure?.(0))
+
+    expect(filterMenu()?.style.maxWidth).toBe('84px')
+    expect(filterMenu()?.style.minWidth).toBe('84px')
+    expect(filterMenu()?.style.left).toBe('8px')
+  })
+
   it('keeps internal interactions open and closes on resize or outside scroll', () => {
     renderTable()
     openFilters()

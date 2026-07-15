@@ -3,6 +3,7 @@ import type { RailSubmenu as RailSubmenuModel } from './types'
 import { RailItem } from './RailItem'
 import { RailBadge } from './RailBadge'
 import type { SelectionDirection } from './types'
+import { AppTooltip } from '../tooltip/AppTooltip'
 import { getRailDepthStyle } from './railDepth'
 
 function ChevronIcon() {
@@ -51,57 +52,72 @@ export function RailSubmenu({
     classNames.push(`app-rail__item--indicator-enter-${selectionDirection}`)
   }
 
-  return (
-    <div className="app-rail__submenu">
-      <button
-        ref={triggerRef}
-        className={classNames.filter(Boolean).join(' ')}
-        disabled={item.disabled}
-        onClick={() => onToggle(item)}
-        title={collapsed ? item.label : undefined}
-        type="button"
-        aria-expanded={collapsed ? flyoutOpen : expanded}
-        aria-haspopup={collapsed ? 'dialog' : undefined}
+  const trigger = (
+    <button
+      ref={triggerRef}
+      aria-label={collapsed ? item.label : undefined}
+      aria-expanded={collapsed ? flyoutOpen : expanded}
+      aria-haspopup={collapsed ? 'dialog' : undefined}
+      className={classNames.filter(Boolean).join(' ')}
+      disabled={item.disabled}
+      onClick={() => onToggle(item)}
+      type="button"
+    >
+      <span
+        className="app-rail__item-content"
+        data-depth={depth}
+        style={getRailDepthStyle(depth)}
       >
-        <span
-          className="app-rail__item-content"
-          data-depth={depth}
-          style={getRailDepthStyle(depth)}
-        >
-          {(item.icon || collapsed) && (
-            <span className="app-rail__icon">
-              {item.icon}
-              {collapsed ? (
-                <RailBadge
-                  content={item.badge}
-                  ariaLabel={item.badgeAriaLabel}
-                  collapsed
-                />
-              ) : null}
-            </span>
-          )}
-          {!collapsed && (
-            <>
-              <span className="app-rail__label">{item.label}</span>
+        {(item.icon || collapsed) && (
+          <span className="app-rail__icon">
+            {item.icon}
+            {collapsed ? (
               <RailBadge
                 content={item.badge}
                 ariaLabel={item.badgeAriaLabel}
-                collapsed={false}
+                collapsed
               />
-              <span
-                className={[
-                  'app-rail__submenu-chevron',
-                  expanded ? 'app-rail__submenu-chevron--expanded' : '',
-                ]
-                  .filter(Boolean)
-                  .join(' ')}
-              >
-                <ChevronIcon />
-              </span>
-            </>
-          )}
-        </span>
-      </button>
+            ) : null}
+          </span>
+        )}
+        {!collapsed && (
+          <>
+            <span className="app-rail__label">{item.label}</span>
+            <RailBadge
+              content={item.badge}
+              ariaLabel={item.badgeAriaLabel}
+              collapsed={false}
+            />
+            <span
+              className={[
+                'app-rail__submenu-chevron',
+                expanded ? 'app-rail__submenu-chevron--expanded' : '',
+              ]
+                .filter(Boolean)
+                .join(' ')}
+            >
+              <ChevronIcon />
+            </span>
+          </>
+        )}
+      </span>
+    </button>
+  )
+  const renderedTrigger = collapsed ? (
+    <AppTooltip
+      content={item.label}
+      disabled={flyoutOpen}
+      placement="right"
+    >
+      {trigger}
+    </AppTooltip>
+  ) : (
+    trigger
+  )
+
+  return (
+    <div className="app-rail__submenu">
+      {renderedTrigger}
 
       {!collapsed && (
         <div

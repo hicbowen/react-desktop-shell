@@ -94,6 +94,7 @@ interface AppDataTableControlsProps<TData> {
 const FILTER_MENU_GAP = 5
 const FILTER_MENU_MAX_HEIGHT = 420
 const FILTER_MENU_MAX_WIDTH = 340
+const FILTER_MENU_MIN_WIDTH = 260
 const FILTER_MENU_VIEWPORT_PADDING = 8
 
 export function AppDataTableControls<TData>({
@@ -242,6 +243,12 @@ export function AppDataTableControls<TData>({
                         : FILTER_MENU_MAX_HEIGHT,
                       maxWidth: menuPosition.measured
                         ? menuPosition.maxWidth
+                        : undefined,
+                      minWidth: menuPosition.measured
+                        ? Math.min(
+                            FILTER_MENU_MIN_WIDTH,
+                            menuPosition.maxWidth,
+                          )
                         : undefined,
                       pointerEvents: menuPosition.measured
                         ? undefined

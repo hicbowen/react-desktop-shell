@@ -491,6 +491,47 @@
     padding: 8px 24px;
 }
 
+.demo-tooltip-row,
+.demo-tooltip-grid {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+}
+
+.demo-tooltip-grid {
+    min-height: 96px;
+}
+
+.demo-tooltip-button,
+.demo-tooltip-icon-button {
+    min-height: 32px;
+    padding: 0 12px;
+    color: inherit;
+    background: var(--app-shell-card-bg);
+    border: 1px solid var(--app-shell-border-color);
+    border-radius: 6px;
+}
+
+.demo-tooltip-icon-button {
+    width: 32px;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.demo-tooltip-edge-trigger {
+    margin-left: auto;
+}
+
+.demo-tooltip-rail-preview {
+    width: 72px;
+    height: 210px;
+    padding: 8px;
+    display: flex;
+}
+
 .demo-settings {
     display: grid;
     gap: 18px;

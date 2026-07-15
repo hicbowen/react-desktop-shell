@@ -1618,6 +1618,45 @@ This is intended for Wails, Electron, Tauri, or other hosts that want to bridge 
 />
 ```
 
+## Tooltip
+
+`AppTooltip` provides a short, non-interactive description on delayed hover or
+keyboard focus. Icon-only triggers still need an accessible name; Tooltip
+content supplements `aria-label` rather than replacing it. It defaults to a
+`top` placement, a `500ms` hover delay, and a `320px` maximum width; keyboard
+focus opens it immediately.
+
+```tsx
+<AppTooltip content="Refresh data">
+  <button aria-label="Refresh">
+    <RefreshIcon />
+  </button>
+</AppTooltip>
+```
+
+Native disabled form controls are wrapped automatically so pointer hover still
+works without making the disabled control focusable:
+
+```tsx
+<AppTooltip content="Select a row first">
+  <button disabled>Delete</button>
+</AppTooltip>
+```
+
+Placement supports `top`, `bottom`, `left`, and `right`, plus `-start` and
+`-end` alignment variants. The final placement may flip when the preferred side
+does not have enough room.
+
+```tsx
+<AppTooltip content="Aligned help" placement="right-start" maxWidth={240}>
+  <button>Details</button>
+</AppTooltip>
+```
+
+Tooltip content must remain descriptive and non-interactive. Do not place
+buttons, links, or inputs inside it; richer interactive guidance belongs in a
+future `AppTeachingTip` or `AppPopover`.
+
 ## Dialog
 
 `AppDialog` is a controlled, shell-managed modal dialog. It renders into the shell overlay layer, traps focus while open, restores focus on close, and closes on Escape by default. Overlay clicks do not close the dialog unless opted in.

@@ -73,6 +73,7 @@ export type {
   AppToastUpdateOptions,
 } from './toast/types'
 export type { AppToolbarAppearance, AppToolbarProps } from './toolbar/types'
+export type { AppTooltipPlacement, AppTooltipProps } from './tooltip/types'
 
 export type AppPageLayout = 'flow' | 'fill'
 

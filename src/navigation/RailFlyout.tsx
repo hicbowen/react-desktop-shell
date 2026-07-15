@@ -8,6 +8,7 @@ import type { FlyoutState, RailSubmenu } from './types'
 
 const FLYOUT_GAP = 6
 const FLYOUT_MAX_WIDTH = 280
+const FLYOUT_MIN_WIDTH = 180
 const FLYOUT_VIEWPORT_PADDING = 8
 
 export function RailFlyout({
@@ -72,6 +73,9 @@ export function RailFlyout({
         left: position.x,
         maxHeight: position.measured ? position.maxHeight : undefined,
         maxWidth: position.measured ? position.maxWidth : undefined,
+        minWidth: position.measured
+          ? Math.min(FLYOUT_MIN_WIDTH, position.maxWidth)
+          : undefined,
         pointerEvents: position.measured ? undefined : 'none',
         top: position.y,
         visibility: position.measured ? 'visible' : 'hidden',

@@ -12,6 +12,7 @@ export { AppSettingsRow } from './settings/AppSettingsRow'
 export { AppSidePane } from './AppSidePane'
 export { AppTitleBar } from './AppTitleBar'
 export { AppToolbar } from './toolbar/AppToolbar'
+export { AppTooltip } from './tooltip'
 export { useAppMessageBox } from './dialog/AppMessageBoxContext'
 export { useAppContextMenu } from './context-menu/AppContextMenuContext'
 export { useAppToast } from './toast/AppToastContext'
@@ -71,6 +72,8 @@ export type {
   AppToastUpdateOptions,
   AppToolbarAppearance,
   AppToolbarProps,
+  AppTooltipPlacement,
+  AppTooltipProps,
   PaneDisplayMode,
   RailEntry,
   RailGroup,
