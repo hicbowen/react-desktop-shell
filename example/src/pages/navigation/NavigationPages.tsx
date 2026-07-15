@@ -11,7 +11,12 @@ import {
   ListTodo,
   LockKeyhole,
 } from 'lucide-react'
-import { AppRail, AppSelectorBar } from '../../../../src'
+import {
+  AppRail,
+  AppSelectorBar,
+  AppSelectorPanel,
+  AppSelectorPanels,
+} from '../../../../src'
 import {
   DemoControls,
   DemoPage,
@@ -77,6 +82,8 @@ export function AppRailPage() {
 export function AppSelectorBarPage() {
   const [basicView, setBasicView] = useState('all')
   const [taskView, setTaskView] = useState('all-tasks')
+  const [unmountView, setUnmountView] = useState('recent')
+  const [hiddenView, setHiddenView] = useState('recent')
   const taskSummary: Record<string, string> = {
     'all-tasks': '12 tasks across all dates',
     today: '3 tasks due today',
@@ -163,7 +170,83 @@ export function AppSelectorBarPage() {
           </div>
         </DemoPreview>
       </DemoSection>
+
+      <DemoSection
+        title="Unmounted panels"
+        description="The default strategy releases inactive panels, so their local input and counter state reset when selected again."
+      >
+        <DemoPreview>
+          <div className="demo-selector-panel-view">
+            <AppSelectorBar
+              ariaLabel="Unmounted panel example"
+              items={[
+                { key: 'recent', label: 'Recent', panelId: 'unmount-recent' },
+                {
+                  key: 'favorites',
+                  label: 'Favorites',
+                  panelId: 'unmount-favorites',
+                },
+              ]}
+              value={unmountView}
+              onChange={setUnmountView}
+            />
+            <AppSelectorPanels value={unmountView}>
+              <AppSelectorPanel id="unmount-recent" value="recent">
+                <SelectorPanelStateDemo label="Recent" />
+              </AppSelectorPanel>
+              <AppSelectorPanel id="unmount-favorites" value="favorites">
+                <SelectorPanelStateDemo label="Favorites" />
+              </AppSelectorPanel>
+            </AppSelectorPanels>
+          </div>
+        </DemoPreview>
+      </DemoSection>
+
+      <DemoSection
+        title="State-preserving panels"
+        description="The hidden strategy keeps every panel mounted, preserving local state while removing inactive panels from layout and accessibility navigation."
+      >
+        <DemoPreview>
+          <div className="demo-selector-panel-view">
+            <AppSelectorBar
+              ariaLabel="State-preserving panel example"
+              items={[
+                { key: 'recent', label: 'Recent', panelId: 'hidden-recent' },
+                {
+                  key: 'favorites',
+                  label: 'Favorites',
+                  panelId: 'hidden-favorites',
+                },
+              ]}
+              value={hiddenView}
+              onChange={setHiddenView}
+            />
+            <AppSelectorPanels mountStrategy="hidden" value={hiddenView}>
+              <AppSelectorPanel id="hidden-recent" value="recent">
+                <SelectorPanelStateDemo label="Recent" />
+              </AppSelectorPanel>
+              <AppSelectorPanel id="hidden-favorites" value="favorites">
+                <SelectorPanelStateDemo label="Favorites" />
+              </AppSelectorPanel>
+            </AppSelectorPanels>
+          </div>
+        </DemoPreview>
+      </DemoSection>
     </DemoPage>
+  )
+}
+
+function SelectorPanelStateDemo({ label }: { label: string }) {
+  const [count, setCount] = useState(0)
+
+  return (
+    <div className="demo-selector-panel-state">
+      <strong>{label} panel</strong>
+      <input aria-label={`${label} note`} placeholder="Type a note" />
+      <button type="button" onClick={() => setCount((value) => value + 1)}>
+        Count: {count}
+      </button>
+    </div>
   )
 }
 

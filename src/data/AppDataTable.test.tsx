@@ -5,6 +5,7 @@ import { createRoot, type Root } from 'react-dom/client'
 import type { ColumnDef, RowSelectionState } from '@tanstack/react-table'
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest'
 import { AppDataTable } from './AppDataTable'
+import { AppShell } from '../shell/AppShell'
 import type { AppDataTableControlsOptions } from './types'
 
 interface RowData {
@@ -104,6 +105,7 @@ describe('AppDataTable controls', () => {
     act(() => root.unmount())
     container.remove()
     vi.restoreAllMocks()
+    vi.unstubAllGlobals()
   })
 
   const render = (node: ReactNode) => act(() => root.render(node))
@@ -155,6 +157,8 @@ describe('AppDataTable controls', () => {
   const filterButton = () =>
     container.querySelector<HTMLButtonElement>('[aria-haspopup="menu"]')!
   const openFilters = () => act(() => filterButton().click())
+  const filterMenu = () =>
+    container.querySelector<HTMLElement>('.app-data-table__filter-menu')
   const option = (role: 'menuitemradio' | 'menuitemcheckbox', label: string) =>
     Array.from(
       container.querySelectorAll<HTMLButtonElement>(`[role="${role}"]`),
@@ -385,6 +389,107 @@ describe('AppDataTable controls', () => {
     )
     expect(container.querySelector('[role="menu"]')).toBeNull()
     expect(document.activeElement).toBe(filterButton())
+  })
+
+  it('measures the filter menu before showing it and flips above the trigger', () => {
+    let measure: FrameRequestCallback | undefined
+    vi.stubGlobal(
+      'requestAnimationFrame',
+      vi.fn((callback: FrameRequestCallback) => {
+        measure = callback
+        return 1
+      }),
+    )
+    vi.stubGlobal('cancelAnimationFrame', vi.fn())
+    vi.stubGlobal('innerWidth', 800)
+    vi.stubGlobal('innerHeight', 600)
+    vi.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(
+      function (this: HTMLElement) {
+        if (this.classList.contains('app-data-table__filter-button')) {
+          return {
+            bottom: 532,
+            height: 32,
+            left: 680,
+            right: 780,
+            top: 500,
+            width: 100,
+          } as DOMRect
+        }
+
+        if (this.classList.contains('app-data-table__filter-menu')) {
+          return {
+            bottom: 300,
+            height: 300,
+            left: 0,
+            right: 260,
+            top: 0,
+            width: 260,
+          } as DOMRect
+        }
+
+        return {
+          bottom: 0,
+          height: 0,
+          left: 0,
+          right: 0,
+          top: 0,
+          width: 0,
+        } as DOMRect
+      },
+    )
+
+    renderTable()
+    openFilters()
+    expect(filterMenu()?.style.visibility).toBe('hidden')
+
+    act(() => measure?.(0))
+
+    expect(filterMenu()?.style.visibility).toBe('visible')
+    expect(filterMenu()?.dataset.placement).toBe('top-end')
+    expect(filterMenu()?.style.left).toBe('520px')
+    expect(filterMenu()?.style.top).toBe('195px')
+    expect(filterMenu()?.style.maxHeight).toBe('420px')
+    expect(filterMenu()?.style.overflow).toBe('')
+  })
+
+  it('keeps internal interactions open and closes on resize or outside scroll', () => {
+    renderTable()
+    openFilters()
+    const menu = filterMenu()!
+
+    act(() =>
+      menu.dispatchEvent(new MouseEvent('mousedown', { bubbles: true })),
+    )
+    expect(filterMenu()).not.toBeNull()
+
+    act(() => menu.dispatchEvent(new Event('scroll')))
+    expect(filterMenu()).not.toBeNull()
+
+    act(() => window.dispatchEvent(new Event('resize')))
+    expect(filterMenu()).toBeNull()
+
+    openFilters()
+    act(() => container.dispatchEvent(new Event('scroll')))
+    expect(filterMenu()).toBeNull()
+  })
+
+  it('renders the filter menu in the AppShell overlay host', () => {
+    render(
+      <AppShell>
+        <AppDataTable
+          columns={columns}
+          controls={controls}
+          data={data}
+          getRowId={(row) => row.id}
+        />
+      </AppShell>,
+    )
+
+    openFilters()
+
+    expect(
+      container.querySelector('.app-shell__overlay-host')?.contains(filterMenu()),
+    ).toBe(true)
   })
 
   it('opens and selects filter options with the keyboard', () => {

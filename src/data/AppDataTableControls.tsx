@@ -1,12 +1,19 @@
 import {
   useEffect,
   useId,
+  useLayoutEffect,
   useRef,
   useState,
   type KeyboardEvent,
   type ReactNode,
 } from 'react'
+import { createPortal } from 'react-dom'
 import type { Table } from '@tanstack/react-table'
+import { useAppOverlayHost } from '../overlay/AppOverlayHostContext'
+import {
+  placeAnchoredOverlay,
+  type AnchoredOverlayPosition,
+} from '../overlay/placement'
 import type {
   AppDataTableControlsLocale,
   AppDataTableControlsOptions,
@@ -88,14 +95,29 @@ interface AppDataTableControlsProps<TData> {
   filterDefinitions: AppDataTableFilterDefinition<TData>[]
 }
 
+const FILTER_MENU_GAP = 5
+const FILTER_MENU_MAX_HEIGHT = 420
+const FILTER_MENU_VIEWPORT_PADDING = 8
+
+const hiddenMenuPosition: AnchoredOverlayPosition & { measured: boolean } = {
+  x: 0,
+  y: 0,
+  placement: 'bottom-end',
+  maxHeight: FILTER_MENU_MAX_HEIGHT,
+  measured: false,
+}
+
 export function AppDataTableControls<TData>({
   table,
   options,
   filterDefinitions,
 }: AppDataTableControlsProps<TData>) {
   const [menuOpen, setMenuOpen] = useState(false)
+  const [menuPosition, setMenuPosition] = useState(hiddenMenuPosition)
   const filterRootRef = useRef<HTMLDivElement | null>(null)
   const filterButtonRef = useRef<HTMLButtonElement | null>(null)
+  const menuRef = useRef<HTMLDivElement | null>(null)
+  const overlayHost = useAppOverlayHost()
   const menuId = useId()
   const locale = { ...defaultControlsLocale, ...options.locale }
   const searchOptions: AppDataTableSearchOptions | null = options.search
@@ -121,7 +143,8 @@ export function AppDataTableControls<TData>({
     const handleMouseDown = (event: MouseEvent) => {
       if (
         event.target instanceof Node &&
-        !filterRootRef.current?.contains(event.target)
+        !filterRootRef.current?.contains(event.target) &&
+        !menuRef.current?.contains(event.target)
       ) {
         setMenuOpen(false)
       }
@@ -135,14 +158,70 @@ export function AppDataTableControls<TData>({
       setMenuOpen(false)
       filterButtonRef.current?.focus({ preventScroll: true })
     }
+    const handleBlur = () => setMenuOpen(false)
+    const handleResize = () => setMenuOpen(false)
+    const handleScroll = (event: Event) => {
+      if (
+        event.target instanceof Node &&
+        menuRef.current?.contains(event.target)
+      ) {
+        return
+      }
+
+      setMenuOpen(false)
+    }
 
     document.addEventListener('mousedown', handleMouseDown)
     document.addEventListener('keydown', handleKeyDown)
+    window.addEventListener('blur', handleBlur)
+    window.addEventListener('resize', handleResize)
+    window.addEventListener('scroll', handleScroll, true)
     return () => {
       document.removeEventListener('mousedown', handleMouseDown)
       document.removeEventListener('keydown', handleKeyDown)
+      window.removeEventListener('blur', handleBlur)
+      window.removeEventListener('resize', handleResize)
+      window.removeEventListener('scroll', handleScroll, true)
     }
   }, [menuOpen])
+
+  useLayoutEffect(() => {
+    if (!menuOpen) {
+      return
+    }
+
+    const measure = () => {
+      const trigger = filterButtonRef.current
+      const menu = menuRef.current
+
+      if (!trigger || !menu) {
+        return
+      }
+
+      setMenuPosition({
+        ...placeAnchoredOverlay(
+          trigger.getBoundingClientRect(),
+          menu.getBoundingClientRect(),
+          { width: window.innerWidth, height: window.innerHeight },
+          {
+            gap: FILTER_MENU_GAP,
+            maxHeight: FILTER_MENU_MAX_HEIGHT,
+            preferredPlacement: 'bottom-end',
+            viewportPadding: FILTER_MENU_VIEWPORT_PADDING,
+          },
+        ),
+        measured: true,
+      })
+    }
+    const frame = window.requestAnimationFrame?.(measure)
+
+    if (frame === undefined) {
+      measure()
+      return
+    }
+
+    return () => window.cancelAnimationFrame(frame)
+  }, [activeFilterCount, menuOpen])
 
   if (!searchOptions && !showFilters) {
     return null
@@ -151,6 +230,16 @@ export function AppDataTableControls<TData>({
   const clearAll = () => {
     table.setGlobalFilter('')
     table.setColumnFilters([])
+  }
+
+  const toggleFilterMenu = () => {
+    setMenuPosition(hiddenMenuPosition)
+    setMenuOpen((current) => !current)
+  }
+
+  const openFilterMenu = () => {
+    setMenuPosition(hiddenMenuPosition)
+    setMenuOpen(true)
   }
 
   return (
@@ -197,16 +286,14 @@ export function AppDataTableControls<TData>({
             }
             className="app-data-table__filter-button"
             type="button"
-            onClick={() => setMenuOpen((current) => !current)}
+            onClick={toggleFilterMenu}
             onKeyDown={(event) => {
               if (event.key === 'ArrowDown') {
                 event.preventDefault()
-                setMenuOpen(true)
+                openFilterMenu()
                 return
               }
-              activateWithKeyboard(event, () =>
-                setMenuOpen((current) => !current),
-              )
+              activateWithKeyboard(event, toggleFilterMenu)
             }}
           >
             <FilterIcon />
@@ -221,13 +308,26 @@ export function AppDataTableControls<TData>({
             ) : null}
           </button>
 
-          {menuOpen ? (
-            <div
-              aria-label={locale.filtersLabel}
-              className="app-data-table__filter-menu app-scrollbar"
-              id={menuId}
-              role="menu"
-            >
+          {menuOpen
+            ? (() => {
+                const menu = (
+                  <div
+                    ref={menuRef}
+                    aria-label={locale.filtersLabel}
+                    className="app-data-table__filter-menu app-scrollbar"
+                    data-placement={menuPosition.placement}
+                    id={menuId}
+                    role="menu"
+                    style={{
+                      left: menuPosition.x,
+                      maxHeight: menuPosition.maxHeight,
+                      pointerEvents: menuPosition.measured
+                        ? undefined
+                        : 'none',
+                      top: menuPosition.y,
+                      visibility: menuPosition.measured ? 'visible' : 'hidden',
+                    }}
+                  >
               {filterDefinitions.map((definition, index) => {
                 const column = table.getColumn(definition.columnId)
                 if (!column) {
@@ -330,8 +430,12 @@ export function AppDataTableControls<TData>({
                   </button>
                 </div>
               ) : null}
-            </div>
-          ) : null}
+                  </div>
+                )
+
+                return overlayHost ? createPortal(menu, overlayHost) : menu
+              })()
+            : null}
         </div>
       ) : null}
 

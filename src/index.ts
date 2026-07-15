@@ -5,7 +5,7 @@ export { AppDialog } from './dialog/AppDialog'
 export { AppInfoBar } from './info-bar/AppInfoBar'
 export { AppPage } from './AppPage'
 export { AppRail } from './navigation/AppRail'
-export { AppSelectorBar } from './selector-bar'
+export { AppSelectorBar, AppSelectorPanel, AppSelectorPanels } from './selector-bar'
 export { AppScrollArea } from './scroll-area'
 export { AppSettingsGroup } from './settings/AppSettingsGroup'
 export { AppSettingsRow } from './settings/AppSettingsRow'
@@ -49,6 +49,9 @@ export type {
   AppRailProps,
   AppSelectorBarItem,
   AppSelectorBarProps,
+  AppSelectorPanelMountStrategy,
+  AppSelectorPanelProps,
+  AppSelectorPanelsProps,
   AppScrollAreaGutter,
   AppScrollAreaOrientation,
   AppScrollAreaProps,

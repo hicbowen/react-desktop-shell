@@ -42,7 +42,13 @@ export type {
   RailLinkItem,
   RailSubmenu,
 } from './navigation/types'
-export type { AppSelectorBarItem, AppSelectorBarProps } from './selector-bar'
+export type {
+  AppSelectorBarItem,
+  AppSelectorBarProps,
+  AppSelectorPanelMountStrategy,
+  AppSelectorPanelProps,
+  AppSelectorPanelsProps,
+} from './selector-bar'
 export type {
   AppScrollAreaGutter,
   AppScrollAreaOrientation,

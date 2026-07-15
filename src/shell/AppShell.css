@@ -141,6 +141,13 @@
   transition: none;
 }
 
+.app-shell__overlay-host {
+  position: fixed;
+  inset: 0;
+  z-index: 1050;
+  pointer-events: none;
+}
+
 .app-shell__sidebar-header {
   grid-column: 1;
   grid-row: 1;

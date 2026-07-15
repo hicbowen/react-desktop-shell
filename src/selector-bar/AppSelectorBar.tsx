@@ -12,6 +12,16 @@ function firstAvailableKey(items: AppSelectorBarProps['items']) {
   return items.find((item) => !item.disabled)?.key
 }
 
+function resolveSelectorValue(
+  currentValue: string | undefined,
+  items: AppSelectorBarProps['items'],
+) {
+  return currentValue !== undefined &&
+    items.some((item) => item.key === currentValue && !item.disabled)
+    ? currentValue
+    : firstAvailableKey(items)
+}
+
 export function AppSelectorBar({
   items,
   value,
@@ -38,34 +48,50 @@ export function AppSelectorBar({
   )
   const fallbackKey = availableKeys[0]
   const [internalValue, setInternalValue] = useState<string | undefined>(() => {
-    const initialFallback = firstAvailableKey(items)
-    return defaultValue &&
-      items.some((item) => item.key === defaultValue && !item.disabled)
-      ? defaultValue
-      : initialFallback
+    return resolveSelectorValue(defaultValue, items)
   })
   const requestedValue = isControlled ? value : internalValue
-  const selectedKey =
-    requestedValue !== undefined && availableKeys.includes(requestedValue)
-      ? requestedValue
-      : fallbackKey
-
-  if (!isControlled && internalValue !== selectedKey) {
-    setInternalValue(selectedKey)
-  }
+  const selectedKey = resolveSelectorValue(requestedValue, items)
 
   useEffect(() => {
-    if (!isControlled || value === selectedKey || selectedKey === undefined) {
+    if (requestedValue === selectedKey) {
       reconciliationRef.current = undefined
       return
     }
 
+    let internalUpdateActive = true
+
+    if (!isControlled) {
+      queueMicrotask(() => {
+        if (internalUpdateActive) {
+          setInternalValue(selectedKey)
+        }
+      })
+    }
+
+    if (selectedKey === undefined) {
+      reconciliationRef.current = { value: requestedValue, fallback: undefined }
+      return () => {
+        internalUpdateActive = false
+      }
+    }
+
     const previous = reconciliationRef.current
-    if (previous?.value !== value || previous.fallback !== selectedKey) {
-      reconciliationRef.current = { value, fallback: selectedKey }
+    if (
+      previous?.value !== requestedValue ||
+      previous?.fallback !== selectedKey
+    ) {
+      reconciliationRef.current = {
+        value: requestedValue,
+        fallback: selectedKey,
+      }
       onChange?.(selectedKey)
     }
-  }, [isControlled, onChange, selectedKey, value])
+
+    return () => {
+      internalUpdateActive = false
+    }
+  }, [isControlled, onChange, requestedValue, selectedKey])
 
   const select = (key: string) => {
     if (disabled || !availableKeys.includes(key) || key === selectedKey) {
@@ -143,6 +169,7 @@ export function AppSelectorBar({
             aria-checked={selected}
             aria-disabled={itemDisabled}
             aria-label={item.ariaLabel}
+            aria-controls={item.panelId}
             className={`app-selector-bar__item${
               selected ? ' app-selector-bar__item--selected' : ''
             }`}

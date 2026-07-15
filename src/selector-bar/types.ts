@@ -6,6 +6,7 @@ export interface AppSelectorBarItem {
   icon?: ReactNode
   disabled?: boolean
   ariaLabel?: string
+  panelId?: string
 }
 
 export interface AppSelectorBarProps {
@@ -18,4 +19,21 @@ export interface AppSelectorBarProps {
   ariaLabel?: string
   className?: string
   style?: CSSProperties
+}
+
+export type AppSelectorPanelMountStrategy = 'unmount' | 'hidden'
+
+export interface AppSelectorPanelsProps {
+  value?: string
+  mountStrategy?: AppSelectorPanelMountStrategy
+  children: ReactNode
+  className?: string
+}
+
+export interface AppSelectorPanelProps {
+  value: string
+  children: ReactNode
+  id?: string
+  labelledBy?: string
+  className?: string
 }

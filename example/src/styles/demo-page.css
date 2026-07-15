@@ -372,6 +372,29 @@
     border-radius: 8px;
 }
 
+.demo-selector-panel-view,
+.demo-selector-panel-state {
+    display: grid;
+    gap: 12px;
+}
+
+.demo-selector-panel-state {
+    min-height: 108px;
+    padding: 16px;
+    align-content: start;
+    grid-template-columns: minmax(0, 1fr) auto;
+    border: 1px solid color-mix(in srgb, currentColor 12%, transparent);
+    border-radius: 8px;
+}
+
+.demo-selector-panel-state > strong {
+    grid-column: 1 / -1;
+}
+
+.demo-selector-panel-state > input {
+    min-width: 0;
+}
+
 .demo-choice-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));

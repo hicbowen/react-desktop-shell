@@ -1,2 +1,9 @@
 export { AppSelectorBar } from './AppSelectorBar'
-export type { AppSelectorBarItem, AppSelectorBarProps } from './types'
+export { AppSelectorPanel, AppSelectorPanels } from './AppSelectorPanels'
+export type {
+  AppSelectorBarItem,
+  AppSelectorBarProps,
+  AppSelectorPanelMountStrategy,
+  AppSelectorPanelProps,
+  AppSelectorPanelsProps,
+} from './types'

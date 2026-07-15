@@ -121,7 +121,9 @@ function App() {
 
 `AppSelectorBar` switches between a small number of mutually exclusive views or
 data sets within the current page. Selection is shown with a short Fluent-style
-indicator instead of a filled segmented-control surface.
+indicator instead of a filled segmented-control surface. It owns selection,
+keyboard interaction, and presentation only; it does not own business panels or
+silently choose whether those panels remain mounted.
 
 ```tsx
 <AppSelectorBar
@@ -137,7 +139,10 @@ indicator instead of a filled segmented-control surface.
 
 Pass `value` and `onChange` for controlled selection. Without `value`, the
 component uses `defaultValue`, or the first enabled item when no default is
-provided.
+provided. Removing or disabling the current item selects the first enabled item
+and reports that fallback through `onChange`. Controlled mode is recommended
+when selection drives application content because it keeps one explicit source
+of truth.
 
 ```tsx
 const [view, setView] = useState('recent')
@@ -153,6 +158,47 @@ const [view, setView] = useState('recent')
 />
 ```
 
+Use `AppSelectorPanels` when a selector controls content panels and you want an
+explicit mounting policy. The default `unmount` strategy renders only the active
+panel:
+
+```tsx
+const [view, setView] = useState('recent')
+
+<AppSelectorBar
+  value={view}
+  onChange={setView}
+  items={[
+    { key: 'recent', label: 'Recent', panelId: 'recent-panel' },
+    { key: 'favorites', label: 'Favorites', panelId: 'favorites-panel' },
+  ]}
+/>
+
+<AppSelectorPanels value={view} mountStrategy="unmount">
+  <AppSelectorPanel id="recent-panel" value="recent">
+    <RecentView />
+  </AppSelectorPanel>
+  <AppSelectorPanel id="favorites-panel" value="favorites">
+    <FavoritesView />
+  </AppSelectorPanel>
+</AppSelectorPanels>
+```
+
+With `mountStrategy="unmount"`, switching releases inactive components and
+their local state. Use `mountStrategy="hidden"` to keep every panel mounted:
+
+```tsx
+<AppSelectorPanels value={view} mountStrategy="hidden">
+  <AppSelectorPanel value="recent"><RecentView /></AppSelectorPanel>
+  <AppSelectorPanel value="favorites"><FavoritesView /></AppSelectorPanel>
+</AppSelectorPanels>
+```
+
+Hidden panels use the standard `hidden` attribute, so they do not participate
+in layout, focus navigation, or the active accessibility tree. Their React
+component instances, subscriptions, and effects still exist, so use this mode
+only when preserving local state is worth the retained resources.
+
 The bar uses radiogroup semantics. `ArrowLeft` and `ArrowRight` move through
 enabled items and wrap at the ends; `Home` and `End` move to the first and last
 enabled items. `Tab` enters only the selected item (or the first enabled item),
@@ -166,9 +212,8 @@ Choose the component according to the scope of the interaction:
   lifecycle matters.
 - Segmented Control: a compact, filled option switch.
 
-`AppSelectorBar` is not intended for main navigation, closable or reorderable
-tabs, large filter sets, overflow menus, routing, or content-panel lifecycle
-management.
+`AppSelectorBar` itself is not intended for main navigation, closable or
+reorderable tabs, large filter sets, overflow menus, or routing.
 
 ## Fluent Cards
 

@@ -1,4 +1,4 @@
-import { useMemo, useRef } from 'react'
+import { useMemo, useRef, useState } from 'react'
 import type { CSSProperties } from 'react'
 import { AppContextMenuContext } from '../context-menu/AppContextMenuContext'
 import { useContextMenuController } from '../context-menu/useContextMenuController'
@@ -6,6 +6,7 @@ import { AppDialogContext } from '../dialog/AppDialogContext'
 import { AppMessageBoxContext } from '../dialog/AppMessageBoxContext'
 import { useDialogController } from '../dialog/useDialogController'
 import { AppToastContext } from '../toast/AppToastContext'
+import { AppOverlayHostContext } from '../overlay/AppOverlayHostContext'
 import {
   defaultToastLocale,
   useToastStore,
@@ -46,6 +47,7 @@ export function AppShell({
   contentStyle,
 }: AppShellProps) {
   const rootRef = useRef<HTMLDivElement | null>(null)
+  const [overlayHost, setOverlayHost] = useState<HTMLDivElement | null>(null)
   const pane = usePaneController({ sidebar, containerRef: rootRef })
   const sidebarCollapsible = pane.collapsible
   const sidebarCollapsed = pane.collapsed
@@ -147,16 +149,17 @@ export function AppShell({
       <AppMessageBoxContext.Provider value={dialogController.messageBox}>
         <AppDialogContext.Provider value={dialogController.registry}>
           <AppContextMenuContext.Provider value={contextMenuController.contextValue}>
-            <div
-              ref={rootRef}
-              className={rootClassName}
-              data-pane-mode={resolvedDisplayMode}
-              data-theme={theme}
-              style={shellStyle}
-              onMouseDownCapture={contextMenuController.handleMouseDown}
-              onContextMenuCapture={contextMenuController.handleContextMenu}
-              onKeyDownCapture={contextMenuController.handleKeyDown}
-            >
+            <AppOverlayHostContext.Provider value={overlayHost}>
+              <div
+                ref={rootRef}
+                className={rootClassName}
+                data-pane-mode={resolvedDisplayMode}
+                data-theme={theme}
+                style={shellStyle}
+                onMouseDownCapture={contextMenuController.handleMouseDown}
+                onContextMenuCapture={contextMenuController.handleContextMenu}
+                onKeyDownCapture={contextMenuController.handleKeyDown}
+              >
               {hasSidebar && !isMinimal && !sidebarCollapsed && (
                 sidebarHeader ?? (
                   <ShellSidebarHeader
@@ -206,14 +209,16 @@ export function AppShell({
                 />
               )}
               <ShellOverlayLayer
-                dialogs={dialogController.dialogs}
-                contextMenu={contextMenuController.menu}
-                onCloseContextMenu={contextMenuController.closeMenu}
-                toastStore={toastStore}
-                toastLocale={resolvedToastLocale}
-                hasModalDialog={dialogController.hasModalDialog}
+                  dialogs={dialogController.dialogs}
+                  contextMenu={contextMenuController.menu}
+                  onCloseContextMenu={contextMenuController.closeMenu}
+                  overlayHostRef={setOverlayHost}
+                  toastStore={toastStore}
+                  toastLocale={resolvedToastLocale}
+                  hasModalDialog={dialogController.hasModalDialog}
               />
-            </div>
+              </div>
+            </AppOverlayHostContext.Provider>
           </AppContextMenuContext.Provider>
         </AppDialogContext.Provider>
       </AppMessageBoxContext.Provider>

@@ -161,6 +161,8 @@ describe('AppSelectorBar', () => {
   })
 
   it('falls back when the selected item is removed', () => {
+    const onChange = vi.fn()
+
     function Harness() {
       const [currentItems, setCurrentItems] = useState(items)
       return (
@@ -168,7 +170,11 @@ describe('AppSelectorBar', () => {
           <button type="button" onClick={() => setCurrentItems(items.slice(1))}>
             Remove
           </button>
-          <AppSelectorBar items={currentItems} defaultValue="all" />
+          <AppSelectorBar
+            items={currentItems}
+            defaultValue="all"
+            onChange={onChange}
+          />
         </>
       )
     }
@@ -176,10 +182,22 @@ describe('AppSelectorBar', () => {
     render(<Harness />)
     act(() => container.querySelector<HTMLButtonElement>('button')?.click())
     expect(radio('Open').getAttribute('aria-checked')).toBe('true')
+    expect(onChange).toHaveBeenCalledTimes(1)
+    expect(onChange).toHaveBeenCalledWith('open')
+
+    render(<Harness />)
+    expect(onChange).toHaveBeenCalledTimes(1)
   })
 
   it('falls back when the selected item becomes disabled', () => {
-    render(<AppSelectorBar defaultValue="done" items={items} />)
+    const onChange = vi.fn()
+    render(
+      <AppSelectorBar
+        defaultValue="done"
+        items={items}
+        onChange={onChange}
+      />,
+    )
     expect(radio('Done').getAttribute('aria-checked')).toBe('true')
 
     render(
@@ -188,9 +206,12 @@ describe('AppSelectorBar', () => {
         items={items.map((item) =>
           item.key === 'done' ? { ...item, disabled: true } : item,
         )}
+        onChange={onChange}
       />,
     )
     expect(radio('All').getAttribute('aria-checked')).toBe('true')
+    expect(onChange).toHaveBeenCalledTimes(1)
+    expect(onChange).toHaveBeenCalledWith('all')
   })
 
   it('falls back and reports the new value when a controlled value is unavailable', () => {
@@ -211,5 +232,37 @@ describe('AppSelectorBar', () => {
     expect(container.querySelectorAll('[aria-checked="true"]')).toHaveLength(0)
     expect(container.querySelectorAll('[role="radio"][tabindex="0"]')).toHaveLength(0)
     expect(onChange).not.toHaveBeenCalled()
+  })
+
+  it('clears an unavailable uncontrolled value without repeated notifications', () => {
+    const onChange = vi.fn()
+    render(<AppSelectorBar defaultValue="all" items={items} onChange={onChange} />)
+    render(
+      <AppSelectorBar
+        defaultValue="all"
+        items={items.map((item) => ({ ...item, disabled: true }))}
+        onChange={onChange}
+      />,
+    )
+    render(
+      <AppSelectorBar
+        defaultValue="all"
+        items={items.map((item) => ({ ...item, disabled: true }))}
+        onChange={onChange}
+      />,
+    )
+
+    expect(container.querySelectorAll('[aria-checked="true"]')).toHaveLength(0)
+    expect(onChange).not.toHaveBeenCalled()
+  })
+
+  it('associates an item with an optional panel id', () => {
+    render(
+      <AppSelectorBar
+        items={[{ key: 'all', label: 'All', panelId: 'all-panel' }]}
+      />,
+    )
+
+    expect(radio('All').getAttribute('aria-controls')).toBe('all-panel')
   })
 })

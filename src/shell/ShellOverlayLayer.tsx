@@ -4,11 +4,13 @@ import type { AppDialogRegistration } from '../dialog/AppDialogContext'
 import { AppDialogLayer } from '../dialog/AppDialogLayer'
 import type { AppToastLocale } from '../toast/types'
 import { AppToastHost, type useToastStore } from '../toast/AppToastHost'
+import type { RefCallback } from 'react'
 
 export function ShellOverlayLayer({
   dialogs,
   contextMenu,
   onCloseContextMenu,
+  overlayHostRef,
   toastStore,
   toastLocale,
   hasModalDialog,
@@ -16,12 +18,14 @@ export function ShellOverlayLayer({
   dialogs: AppDialogRegistration[]
   contextMenu: AppContextMenuState | null
   onCloseContextMenu: () => void
+  overlayHostRef: RefCallback<HTMLDivElement>
   toastStore: ReturnType<typeof useToastStore>
   toastLocale: AppToastLocale
   hasModalDialog: boolean
 }) {
   return (
     <>
+      <div className="app-shell__overlay-host" ref={overlayHostRef} />
       <AppDialogLayer dialogs={dialogs} />
       <AppToastHost
         toasts={toastStore.toasts}
