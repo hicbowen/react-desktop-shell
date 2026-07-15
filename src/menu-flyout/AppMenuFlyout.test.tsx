@@ -155,9 +155,31 @@ describe('AppMenuFlyout', () => {
 
     renderMenu({ disabled: true })
     expect(menu()).toBeNull()
+    expect(trigger().getAttribute('aria-expanded')).toBe('false')
+    expect(trigger().hasAttribute('aria-controls')).toBe(false)
 
     renderMenu({ disabled: false })
     expect(menu()).toBeNull()
+    click(trigger())
+    expect(menu()).not.toBeNull()
+  })
+
+  it('closes immediately when open items become empty', () => {
+    const consoleError = vi.spyOn(console, 'error').mockImplementation(() => undefined)
+    renderMenu()
+    click(trigger())
+    expect(menu()).not.toBeNull()
+    expect(trigger().getAttribute('aria-expanded')).toBe('true')
+
+    renderMenu({ items: [] })
+    expect(menu()).toBeNull()
+    expect(trigger().getAttribute('aria-expanded')).toBe('false')
+    expect(trigger().hasAttribute('aria-controls')).toBe(false)
+    expect(
+      consoleError.mock.calls.some((call) =>
+        call.some((value) => String(value).includes('Cannot update')),
+      ),
+    ).toBe(false)
   })
 
   it('dismisses on outside pointer down but ignores internal pointer down', () => {

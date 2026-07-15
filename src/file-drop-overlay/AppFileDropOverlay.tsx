@@ -26,6 +26,10 @@ function hasFileItems(dataTransfer: DataTransfer) {
   )
 }
 
+function isFileDrag(dataTransfer: DataTransfer) {
+  return hasFileType(dataTransfer) || hasFileItems(dataTransfer)
+}
+
 function filesFromTransfer(dataTransfer: DataTransfer) {
   const files = Array.from(dataTransfer.files ?? [])
 
@@ -78,8 +82,7 @@ export function AppFileDropOverlay({
       if (
         disabled ||
         !dataTransfer ||
-        !hasFileType(dataTransfer) ||
-        !hasFileItems(dataTransfer)
+        !isFileDrag(dataTransfer)
       ) {
         return
       }
@@ -91,15 +94,14 @@ export function AppFileDropOverlay({
     const handleDragOver = (event: DragEvent) => {
       const dataTransfer = event.dataTransfer
 
-      if (disabled || !dataTransfer || !hasFileType(dataTransfer)) {
+      if (disabled || !dataTransfer || !isFileDrag(dataTransfer)) {
         return
       }
 
       event.preventDefault()
-      if (!hasFileItems(dataTransfer) && dragDepthRef.current === 0) {
-        return
+      if (dragDepthRef.current === 0) {
+        dragDepthRef.current = 1
       }
-
       const nextState = previewFileDrag(dataTransfer, accept, multiple).state
       setState(nextState)
 
@@ -128,7 +130,7 @@ export function AppFileDropOverlay({
       }
 
       const files = filesFromTransfer(dataTransfer)
-      if (!hasFileType(dataTransfer) && files.length === 0) {
+      if (!isFileDrag(dataTransfer) && files.length === 0) {
         return
       }
 

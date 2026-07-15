@@ -55,6 +55,10 @@ export function previewFileDrag(
     (item) => item.kind === 'file',
   )
 
+  if (fileItems.length === 0) {
+    return { state: 'pending' }
+  }
+
   if (!multiple && fileItems.length > 1) {
     return { state: 'reject', reason: 'multiple' }
   }
@@ -71,7 +75,7 @@ export function previewFileDrag(
 
   const itemTypes = fileItems.map((item) => item.type.trim().toLowerCase())
 
-  if (fileItems.length === 0 || itemTypes.some((type) => type === '')) {
+  if (itemTypes.some((type) => type === '')) {
     return { state: 'pending' }
   }
 

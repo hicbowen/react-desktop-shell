@@ -99,6 +99,47 @@ describe('AppFileDropOverlay', () => {
     expect(overlay()?.getAttribute('aria-live')).toBe('polite')
   })
 
+  it('recognizes a types-only file drag as pending', () => {
+    renderDrop()
+    const entered = createDragEvent('dragenter', {
+      files: [],
+      items: [],
+      types: ['Files'],
+    })
+    expect(dispatch(dropRoot(), entered.event)).toBe(false)
+    expect(dropRoot().classList.contains('app-file-drop--pending')).toBe(true)
+
+    const over = createDragEvent('dragover', {
+      files: [],
+      items: [],
+      types: ['Files'],
+    })
+    expect(dispatch(dropRoot(), over.event)).toBe(false)
+    expect(over.dataTransfer.dropEffect).toBe('copy')
+  })
+
+  it('recognizes items-only file drags and evaluates their MIME', () => {
+    renderDrop({ accept: ['image/*'] })
+    dispatch(
+      dropRoot(),
+      createDragEvent('dragenter', {
+        items: [fileItem('image/png')],
+        types: [],
+      }).event,
+    )
+    expect(dropRoot().classList.contains('app-file-drop--accept')).toBe(true)
+
+    dispatch(dropRoot(), createDragEvent('dragleave', { types: [] }).event)
+    dispatch(
+      dropRoot(),
+      createDragEvent('dragenter', {
+        items: [fileItem('application/pdf')],
+        types: [],
+      }).event,
+    )
+    expect(dropRoot().classList.contains('app-file-drop--reject')).toBe(true)
+  })
+
   it('rejects a clearly incompatible MIME preview', () => {
     renderDrop({ accept: ['image/*'] })
     dispatch(
@@ -163,6 +204,20 @@ describe('AppFileDropOverlay', () => {
     expect(over.dataTransfer.dropEffect).toBe('copy')
   })
 
+  it('allows dragover to activate without a preceding dragenter', () => {
+    renderDrop({ accept: ['image/*'] })
+    const over = createDragEvent('dragover', {
+      items: [fileItem('image/png')],
+      types: [],
+    })
+    expect(dispatch(dropRoot(), over.event)).toBe(false)
+    expect(over.dataTransfer.dropEffect).toBe('copy')
+    expect(dropRoot().classList.contains('app-file-drop--accept')).toBe(true)
+
+    dispatch(dropRoot(), createDragEvent('dragleave', { types: [] }).event)
+    expect(overlay()).toBeNull()
+  })
+
   it('accepts a valid pending drop and does not reject it', () => {
     const onFiles = vi.fn()
     const onReject = vi.fn()
@@ -202,6 +257,26 @@ describe('AppFileDropOverlay', () => {
     dispatch(dropRoot(), createDragEvent('drop', { files }).event)
     expect(onReject).toHaveBeenCalledWith(files, 'multiple')
     expect(onFiles).not.toHaveBeenCalled()
+  })
+
+  it('validates a files-only drop without types or items', () => {
+    const onFiles = vi.fn()
+    const onReject = vi.fn()
+    renderDrop({ accept: ['.csv'], onFiles, onReject })
+    const csv = new File(['a'], 'data.csv')
+    dispatch(
+      dropRoot(),
+      createDragEvent('drop', { files: [csv], items: [], types: [] }).event,
+    )
+    expect(onFiles).toHaveBeenCalledWith([csv])
+    expect(onReject).not.toHaveBeenCalled()
+
+    const text = new File(['a'], 'notes.txt')
+    dispatch(
+      dropRoot(),
+      createDragEvent('drop', { files: [text], items: [], types: [] }).event,
+    )
+    expect(onReject).toHaveBeenCalledWith([text], 'type')
   })
 
   it('clears active state when disabled changes', () => {

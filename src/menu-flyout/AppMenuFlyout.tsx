@@ -75,8 +75,7 @@ function AppMenuFlyoutInner(
   const [open, setOpen] = useState(false)
   const [activeIndex, setActiveIndex] = useState(-1)
   const menuUnavailable = disabled || items.length === 0
-  const [previousUnavailable, setPreviousUnavailable] =
-    useState(menuUnavailable)
+  const effectiveOpen = open && !menuUnavailable
   const triggerRef = useRef<HTMLElement | null>(null)
   const overlayRef = useRef<HTMLDivElement | null>(null)
   const itemRefs = useRef<Array<HTMLButtonElement | null>>([])
@@ -97,17 +96,8 @@ function AppMenuFlyoutInner(
   const firstEnabledIndex = enabledIndexes[0] ?? -1
   const lastEnabledIndex = enabledIndexes.at(-1) ?? -1
 
-  if (previousUnavailable !== menuUnavailable) {
-    setPreviousUnavailable(menuUnavailable)
-
-    if (menuUnavailable) {
-      setOpen(false)
-      setActiveIndex(-1)
-    }
-  }
-
   const position = useAnchoredOverlayPosition({
-    open,
+    open: effectiveOpen,
     triggerRef,
     overlayRef,
     preferredPlacement: placement,
@@ -134,7 +124,18 @@ function AppMenuFlyoutInner(
   }
 
   useEffect(() => {
-    if (!open || !position.measured || focusedForOpenRef.current) {
+    if (!menuUnavailable) {
+      return
+    }
+
+    focusedForOpenRef.current = false
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- external availability changes must clear stale internal open state.
+    setOpen(false)
+    setActiveIndex(-1)
+  }, [menuUnavailable])
+
+  useEffect(() => {
+    if (!effectiveOpen || !position.measured || focusedForOpenRef.current) {
       return
     }
 
@@ -150,10 +151,10 @@ function AppMenuFlyoutInner(
     } else {
       overlayRef.current?.focus({ preventScroll: true })
     }
-  }, [firstEnabledIndex, lastEnabledIndex, open, position.measured])
+  }, [effectiveOpen, firstEnabledIndex, lastEnabledIndex, position.measured])
 
   useEffect(() => {
-    if (!open || typeof document === 'undefined') {
+    if (!effectiveOpen || typeof document === 'undefined') {
       return
     }
 
@@ -171,10 +172,10 @@ function AppMenuFlyoutInner(
 
     document.addEventListener('keydown', handleEscape)
     return () => document.removeEventListener('keydown', handleEscape)
-  }, [open])
+  }, [effectiveOpen])
 
   useOverlayDismiss({
-    open,
+    open: effectiveOpen,
     triggerRef,
     overlayRef,
     onDismiss: closeMenu,
@@ -273,7 +274,7 @@ function AppMenuFlyoutInner(
         return
       }
 
-      if (open) {
+      if (effectiveOpen) {
         closeMenu()
       } else {
         openMenu('first')
@@ -301,10 +302,10 @@ function AppMenuFlyoutInner(
   const mergedRef = useMergedRefs(forwardedChildRef, triggerRef)
   const trigger = cloneElement(child, {
     ref: mergedRef,
-    'aria-controls': open ? menuId : undefined,
+    'aria-controls': effectiveOpen ? menuId : undefined,
     'aria-describedby':
       triggerProps['aria-describedby'] ?? child.props['aria-describedby'],
-    'aria-expanded': open,
+    'aria-expanded': effectiveOpen,
     'aria-haspopup': 'menu',
     onBlur: composeEventHandlers(child.props.onBlur, triggerProps.onBlur),
     onClick: handleTriggerClick,
@@ -321,7 +322,7 @@ function AppMenuFlyoutInner(
   })
   /* eslint-enable react-hooks/refs */
 
-  if (!open || typeof document === 'undefined') {
+  if (!effectiveOpen || typeof document === 'undefined') {
     return trigger
   }
 

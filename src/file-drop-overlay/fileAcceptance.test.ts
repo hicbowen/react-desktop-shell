@@ -66,6 +66,12 @@ describe('file acceptance', () => {
     })
   })
 
+  it('keeps a transfer without inspectable items pending', () => {
+    expect(previewFileDrag(transfer(), undefined, true)).toEqual({
+      state: 'pending',
+    })
+  })
+
   it('previews an explicit multiple-file rejection', () => {
     expect(
       previewFileDrag(
