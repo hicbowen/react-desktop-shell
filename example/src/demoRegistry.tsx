@@ -13,6 +13,7 @@ import { AppCardPage } from './pages/content/CardPages'
 import { AppScrollAreaPage } from './pages/content/ScrollAreaPage'
 import { AppTooltipPage } from './pages/feedback/TooltipPage'
 import { AppMenuFlyoutPage } from './pages/actions/MenuFlyoutPage'
+import { AppSplitButtonPage } from './pages/actions/SplitButtonPage'
 
 export type DemoPageDefinition = { key: string; group: string; label: string; description: string; icon: ReactNode; component: ComponentType; layout?: 'default' | 'fill' }
 
@@ -34,6 +35,7 @@ export const demoPages: DemoPageDefinition[] = [
   { key: 'message-box', group: 'Feedback', label: 'Message Box', description: 'Promise-based confirmation and decision dialogs.', icon: <MessageSquare size={16} />, component: MessageBoxPage },
   { key: 'app-toolbar', group: 'Actions', label: 'AppToolbar', description: 'Start, status, and end regions for page-level actions.', icon: <Wrench size={16} />, component: AppToolbarPage },
   { key: 'app-menu-flyout', group: 'Actions', label: 'AppMenuFlyout', description: 'Anchored one-level command menus with keyboard navigation.', icon: <ListChecks size={16} />, component: AppMenuFlyoutPage },
+  { key: 'app-split-button', group: 'Actions', label: 'AppSplitButton', description: 'A default command paired with alternate menu actions.', icon: <Columns3 size={16} />, component: AppSplitButtonPage },
   { key: 'context-menu', group: 'Actions', label: 'Context Menu', description: 'Nested contextual commands and native text actions.', icon: <MousePointerClick size={16} />, component: ContextMenuPage },
   { key: 'app-data-table', group: 'Data', label: 'AppDataTable', description: 'A complete data surface with page actions, selection actions, built-in controls, sorting, sizing, and fill layouts.', icon: <Table2 size={16} />, component: AppDataTablePage, layout: 'fill' },
   { key: 'app-selection-bar', group: 'Data', label: 'AppSelectionBar', description: 'Actions and clear behavior for selected data rows.', icon: <Rows3 size={16} />, component: AppSelectionBarPage },

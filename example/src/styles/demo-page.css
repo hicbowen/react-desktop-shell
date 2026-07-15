@@ -573,6 +573,13 @@
     margin-left: auto;
 }
 
+.demo-split-button-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+}
+
 .demo-settings {
     display: grid;
     gap: 18px;

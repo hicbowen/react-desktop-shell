@@ -1,0 +1,95 @@
+.app-split-button {
+  display: inline-flex;
+  max-width: 100%;
+  min-height: 32px;
+  vertical-align: middle;
+}
+
+.app-split-button__primary,
+.app-split-button__menu {
+  min-height: 32px;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--app-shell-text-color, #1f1f1f);
+  background: var(--app-shell-card-bg, #fff);
+  border: 1px solid var(--app-shell-border-color, rgb(0 0 0 / 12%));
+  border-radius: 0;
+  font: inherit;
+  font-size: 13px;
+  line-height: 1;
+  cursor: default;
+  transition: background-color var(--rds-motion-fast, 120ms) ease;
+}
+
+.app-split-button__primary {
+  min-width: 0;
+  padding: 0 12px;
+  gap: 7px;
+  border-radius: 6px 0 0 6px;
+}
+
+.app-split-button__menu {
+  width: 32px;
+  flex: 0 0 32px;
+  padding: 0;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 0;
+}
+
+.app-split-button__primary:hover:not(:disabled),
+.app-split-button__menu:hover:not(:disabled) {
+  background: var(--app-shell-card-hover-bg, rgb(0 0 0 / 4%));
+}
+
+.app-split-button__primary:active:not(:disabled),
+.app-split-button__menu:active:not(:disabled),
+.app-split-button__menu[aria-expanded='true'] {
+  background: var(--app-shell-card-pressed-bg, rgb(0 0 0 / 8%));
+}
+
+.app-split-button__primary:focus-visible,
+.app-split-button__menu:focus-visible {
+  position: relative;
+  z-index: 1;
+  outline: 2px solid var(--app-shell-accent-color, #005fb8);
+  outline-offset: -2px;
+}
+
+.app-split-button__primary:disabled,
+.app-split-button__menu:disabled {
+  color: var(--app-shell-disabled-text-color, rgb(0 0 0 / 36%));
+  background: var(--app-shell-card-bg, #fff);
+}
+
+.app-split-button__icon {
+  width: 16px;
+  height: 16px;
+  display: inline-flex;
+  flex: 0 0 16px;
+  align-items: center;
+  justify-content: center;
+}
+
+.app-split-button__icon > svg,
+.app-split-button__menu > svg {
+  width: 16px;
+  height: 16px;
+  display: block;
+  fill: currentColor;
+}
+
+.app-split-button__label {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .app-split-button__primary,
+  .app-split-button__menu {
+    transition: none;
+  }
+}

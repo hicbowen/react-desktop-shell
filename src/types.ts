@@ -67,6 +67,7 @@ export type {
   AppTheme,
   PaneDisplayMode,
 } from './shell/types'
+export type { AppSplitButtonProps } from './split-button/types'
 export type {
   AppToast,
   AppToastAction,

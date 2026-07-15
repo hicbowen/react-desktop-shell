@@ -1301,6 +1301,29 @@ Use `AppMenuFlyout` for a button-triggered command list and `AppContextMenu`
 for right-click menus. This first version does not support submenus, checkbox
 items, radio items, shortcuts, or controlled open state.
 
+## Split Button
+
+`AppSplitButton` combines a primary command with an `AppMenuFlyout` containing
+alternate commands. The left and right sides remain separate Tab stops.
+
+```tsx
+<AppSplitButton
+  icon={<ExportIcon />}
+  label="Export"
+  items={[
+    { key: 'pdf', label: 'Export PDF' },
+    { key: 'image', label: 'Export image' },
+  ]}
+  onClick={exportDefault}
+  onSelect={exportAs}
+/>
+```
+
+`disabled` disables both sides. Use `menuDisabled` when the primary command
+should remain available but alternate choices are temporarily unavailable.
+The menu defaults to `bottom-end` and retains all AppMenuFlyout positioning,
+dismissal, and keyboard behavior.
+
 ## Title Bar
 
 `AppTitleBar` renders the custom title bar UI. Window actions are provided by the host application through callbacks, making it compatible with Wails, Electron, Tauri, or other desktop runtimes.

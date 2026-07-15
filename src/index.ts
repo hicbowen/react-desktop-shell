@@ -11,6 +11,7 @@ export { AppScrollArea } from './scroll-area'
 export { AppSettingsGroup } from './settings/AppSettingsGroup'
 export { AppSettingsRow } from './settings/AppSettingsRow'
 export { AppSidePane } from './AppSidePane'
+export { AppSplitButton } from './split-button'
 export { AppTitleBar } from './AppTitleBar'
 export { AppToolbar } from './toolbar/AppToolbar'
 export { AppTooltip } from './tooltip'
@@ -64,6 +65,7 @@ export type {
   AppScrollAreaScrollbar,
   AppShellProps,
   AppSidePaneProps,
+  AppSplitButtonProps,
   AppTitleBarProps,
   AppTheme,
   AppToast,
