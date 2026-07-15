@@ -439,7 +439,7 @@ export function AppDataTableControls<TData>({
         </div>
       ) : null}
 
-      {options.clearAll !== false && hasActiveControls ? (
+      {options.clearAll === true && hasActiveControls ? (
         <button
           aria-label={locale.clearAllAriaLabel}
           className="app-data-table__controls-clear-all"

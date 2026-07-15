@@ -618,7 +618,8 @@ const categoryOptions = Array.from(
 Built-in control text defaults to English. Override only the labels needed by
 the current locale through `controls.locale`; dynamic aria labels use formatter
 functions. Explicit values in `controls.search` take precedence over locale
-search defaults.
+search defaults. The combined clear-all button is hidden by default; set
+`controls.clearAll` to `true` to show it.
 
 ```tsx
 <AppDataTable
@@ -627,6 +628,7 @@ search defaults.
   controls={{
     search: true,
     filters: studentFilters,
+    clearAll: true,
     locale: {
       searchPlaceholder: '搜索学生',
       searchAriaLabel: '搜索学生',

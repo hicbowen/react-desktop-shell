@@ -262,8 +262,17 @@ describe('AppDataTable controls', () => {
     )
   })
 
-  it('clears all search and column filter state', () => {
+  it('hides the combined clear-all button by default', () => {
     renderTable()
+    setSearch('Alpha')
+
+    expect(
+      container.querySelector('[aria-label="Clear all search and filters"]'),
+    ).toBeNull()
+  })
+
+  it('clears all search and column filter state', () => {
+    renderTable({ controls: { ...controls, clearAll: true } })
     setSearch('Alpha')
     openFilters()
     act(() => option('menuitemradio', 'Document').click())
@@ -284,6 +293,7 @@ describe('AppDataTable controls', () => {
     renderTable({
       controls: {
         ...controls,
+        clearAll: true,
         locale: {
           searchPlaceholder: '搜索表格',
           searchAriaLabel: '搜索行',

@@ -1,5 +1,6 @@
 .app-data-view,
-.app-data-table {
+.app-data-table,
+.app-data-table__filter-menu {
   --app-data-border-color: var(--app-shell-border-color, rgb(0 0 0 / 10%));
   --app-data-surface-bg: var(--app-shell-surface-bg, #fff);
   --app-data-text-color: var(--app-shell-text-color, #1f1f1f);

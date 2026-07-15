@@ -53,6 +53,7 @@ export interface AppDataTableControlsLocale {
 export interface AppDataTableControlsOptions<TData> {
   search?: boolean | AppDataTableSearchOptions
   filters?: AppDataTableFilterDefinition<TData>[]
+  /** Show a button that clears both search and filters. Defaults to false. */
   clearAll?: boolean
   locale?: Partial<AppDataTableControlsLocale>
 }
