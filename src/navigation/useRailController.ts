@@ -123,7 +123,7 @@ function getAutoCollapsed(collapseBreakpoint: number) {
   )
 }
 
-function getFlyoutThemeStyle(element: HTMLElement | null) {
+function getFlyoutFallbackThemeStyle(element: HTMLElement | null) {
   if (!element || typeof window === 'undefined') return {}
   const style = window.getComputedStyle(element)
 
@@ -247,11 +247,11 @@ export function useRailController({
       const trigger = triggerRefs.current.get(item.key)
       if (!trigger) return
       const rect = trigger.getBoundingClientRect()
-      const themeStyle = getFlyoutThemeStyle(railRef.current)
+      const fallbackThemeStyle = getFlyoutFallbackThemeStyle(railRef.current)
       setFlyout((current) =>
         current?.key === item.key && current.value === value
           ? null
-          : { key: item.key, rect, value, themeStyle },
+          : { key: item.key, rect, value, fallbackThemeStyle },
       )
       return
     }

@@ -330,7 +330,7 @@
 
 .app-data-table__filter-menu {
   position: fixed;
-  z-index: 1050;
+  z-index: var(--rds-z-overlay, 1050);
   width: max-content;
   min-width: 260px;
   max-width: min(340px, calc(100vw - 32px));

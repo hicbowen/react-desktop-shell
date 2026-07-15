@@ -15,36 +15,103 @@ function rect(left: number, top: number, width: number, height: number) {
 }
 
 describe('placeAnchoredOverlay', () => {
-  it('uses the preferred bottom-end placement when it fits', () => {
-    const position = placeAnchoredOverlay(
-      rect(500, 100, 100, 32),
-      rect(0, 0, 260, 200),
+  it('positions bottom-start and bottom-end placements', () => {
+    const start = placeAnchoredOverlay(
+      rect(100, 100, 100, 30),
+      rect(0, 0, 200, 100),
       viewport,
-      { gap: 5, preferredPlacement: 'bottom-end', viewportPadding: 8 },
+      { preferredPlacement: 'bottom-start' },
+    )
+    const end = placeAnchoredOverlay(
+      rect(500, 100, 100, 30),
+      rect(0, 0, 200, 100),
+      viewport,
+      { preferredPlacement: 'bottom-end' },
     )
 
-    expect(position).toEqual({
-      x: 340,
-      y: 137,
-      placement: 'bottom-end',
-      maxHeight: 455,
+    expect(start).toEqual({
+      x: 100,
+      y: 134,
+      placement: 'bottom-start',
+      maxHeight: 458,
+      maxWidth: 784,
+    })
+    expect(end.x).toBe(400)
+    expect(end.placement).toBe('bottom-end')
+  })
+
+  it('centers top and right placements on their cross axes', () => {
+    const top = placeAnchoredOverlay(
+      rect(300, 300, 100, 30),
+      rect(0, 0, 200, 100),
+      viewport,
+      { preferredPlacement: 'top' },
+    )
+    const right = placeAnchoredOverlay(
+      rect(100, 100, 100, 30),
+      rect(0, 0, 200, 100),
+      viewport,
+      { preferredPlacement: 'right' },
+    )
+
+    expect(top).toMatchObject({ x: 250, y: 196, placement: 'top' })
+    expect(right).toMatchObject({ x: 204, y: 65, placement: 'right' })
+  })
+
+  it('positions a right-start placement when it fits', () => {
+    const position = placeAnchoredOverlay(
+      rect(100, 100, 100, 30),
+      rect(0, 0, 200, 100),
+      viewport,
+      { preferredPlacement: 'right-start' },
+    )
+
+    expect(position).toMatchObject({
+      x: 204,
+      y: 100,
+      placement: 'right-start',
+      maxHeight: 584,
+      maxWidth: 588,
     })
   })
 
-  it('flips to top-end when the bottom does not fit and top has more space', () => {
-    const position = placeAnchoredOverlay(
-      rect(500, 500, 100, 32),
-      rect(0, 0, 260, 240),
+  it('flips right to left and bottom to top when the opposite side has more room', () => {
+    const horizontal = placeAnchoredOverlay(
+      rect(700, 100, 80, 30),
+      rect(0, 0, 200, 100),
       viewport,
-      { gap: 5, preferredPlacement: 'bottom-end', viewportPadding: 8 },
+      { preferredPlacement: 'right-start' },
+    )
+    const vertical = placeAnchoredOverlay(
+      rect(100, 500, 100, 30),
+      rect(0, 0, 200, 100),
+      viewport,
+      { preferredPlacement: 'bottom-start' },
     )
 
-    expect(position.placement).toBe('top-end')
-    expect(position.y).toBe(255)
-    expect(position.maxHeight).toBe(487)
+    expect(horizontal).toMatchObject({
+      x: 496,
+      placement: 'left-start',
+    })
+    expect(vertical).toMatchObject({ y: 396, placement: 'top-start' })
   })
 
-  it('chooses the side with more room when neither side fits', () => {
+  it('preserves end alignment when flipping directions', () => {
+    const position = placeAnchoredOverlay(
+      rect(700, 200, 80, 40),
+      rect(0, 0, 200, 100),
+      viewport,
+      { preferredPlacement: 'right-end' },
+    )
+
+    expect(position).toMatchObject({
+      x: 496,
+      y: 140,
+      placement: 'left-end',
+    })
+  })
+
+  it('chooses the larger side when neither side fits', () => {
     const position = placeAnchoredOverlay(
       rect(300, 350, 100, 32),
       rect(0, 0, 260, 500),
@@ -57,66 +124,118 @@ describe('placeAnchoredOverlay', () => {
       },
     )
 
-    expect(position.placement).toBe('top-start')
-    expect(position.maxHeight).toBe(337)
-    expect(position.y).toBe(8)
+    expect(position).toMatchObject({
+      y: 8,
+      placement: 'top-start',
+      maxHeight: 337,
+    })
   })
 
-  it('clamps right and left overflow within viewport padding', () => {
-    const right = placeAnchoredOverlay(
-      rect(780, 100, 20, 30),
-      rect(0, 0, 300, 100),
-      viewport,
-      { preferredPlacement: 'bottom-start', viewportPadding: 12 },
-    )
+  it('clamps left, right, top, and bottom overflow', () => {
     const left = placeAnchoredOverlay(
       rect(-40, 100, 20, 30),
-      rect(0, 0, 300, 100),
+      rect(0, 0, 200, 100),
       viewport,
-      { preferredPlacement: 'bottom-end', viewportPadding: 12 },
+      { preferredPlacement: 'bottom-start' },
+    )
+    const right = placeAnchoredOverlay(
+      rect(780, 100, 40, 30),
+      rect(0, 0, 200, 100),
+      viewport,
+      { preferredPlacement: 'bottom-end' },
+    )
+    const top = placeAnchoredOverlay(
+      rect(100, -40, 30, 20),
+      rect(0, 0, 200, 100),
+      viewport,
+      { preferredPlacement: 'right-start' },
+    )
+    const bottom = placeAnchoredOverlay(
+      rect(100, 580, 30, 40),
+      rect(0, 0, 200, 100),
+      viewport,
+      { preferredPlacement: 'right-end' },
     )
 
-    expect(right.x).toBe(488)
-    expect(left.x).toBe(12)
+    expect(left.x).toBe(8)
+    expect(right.x).toBe(592)
+    expect(top.y).toBe(8)
+    expect(bottom.y).toBe(492)
   })
 
-  it('caps maxHeight using both the visual limit and available space', () => {
-    const capped = placeAnchoredOverlay(
-      rect(100, 50, 100, 30),
-      rect(0, 0, 260, 700),
-      viewport,
-      {
-        gap: 5,
-        maxHeight: 420,
-        preferredPlacement: 'bottom-start',
-        viewportPadding: 10,
-      },
-    )
-    const constrained = placeAnchoredOverlay(
+  it('returns dynamic maxHeight and maxWidth for the chosen direction', () => {
+    const vertical = placeAnchoredOverlay(
       rect(100, 300, 100, 30),
       rect(0, 0, 260, 700),
       viewport,
-      {
-        gap: 5,
-        maxHeight: 420,
-        preferredPlacement: 'bottom-start',
-        viewportPadding: 10,
-      },
+      { gap: 5, preferredPlacement: 'bottom-start', viewportPadding: 10 },
+    )
+    const horizontal = placeAnchoredOverlay(
+      rect(300, 100, 30, 100),
+      rect(0, 0, 700, 260),
+      viewport,
+      { gap: 5, preferredPlacement: 'right-start', viewportPadding: 10 },
     )
 
-    expect(capped.maxHeight).toBe(420)
-    expect(constrained.placement).toBe('top-start')
-    expect(constrained.maxHeight).toBe(285)
+    expect(vertical).toMatchObject({
+      placement: 'top-start',
+      maxHeight: 285,
+      maxWidth: 780,
+    })
+    expect(horizontal).toMatchObject({
+      placement: 'right-start',
+      maxHeight: 580,
+      maxWidth: 455,
+    })
   })
 
-  it('returns a usable x coordinate when the overlay is wider than the viewport', () => {
-    const position = placeAnchoredOverlay(
+  it('handles overlays larger than the viewport with stable coordinates', () => {
+    const wider = placeAnchoredOverlay(
       rect(200, 100, 100, 30),
       rect(0, 0, 1000, 100),
       viewport,
       { viewportPadding: 16 },
     )
+    const taller = placeAnchoredOverlay(
+      rect(300, 290, 100, 20),
+      rect(0, 0, 200, 1000),
+      viewport,
+      { preferredPlacement: 'bottom', viewportPadding: 16 },
+    )
 
-    expect(position.x).toBe(16)
+    expect(wider).toMatchObject({ x: 16, maxWidth: 768 })
+    expect(taller).toMatchObject({ y: 314, maxHeight: 270 })
+  })
+
+  it('honors viewport padding and explicit size limits', () => {
+    const position = placeAnchoredOverlay(
+      rect(0, 100, 100, 30),
+      rect(0, 0, 400, 400),
+      viewport,
+      {
+        maxHeight: 150,
+        maxWidth: 180,
+        preferredPlacement: 'bottom-start',
+        viewportPadding: 20,
+      },
+    )
+
+    expect(position).toMatchObject({
+      x: 20,
+      maxHeight: 150,
+      maxWidth: 180,
+    })
+  })
+
+  it('never returns negative size limits', () => {
+    const position = placeAnchoredOverlay(
+      rect(0, 0, 800, 600),
+      rect(0, 0, 400, 400),
+      { width: 10, height: 10 },
+      { maxHeight: -20, maxWidth: -30, viewportPadding: 20 },
+    )
+
+    expect(position.maxHeight).toBe(0)
+    expect(position.maxWidth).toBe(0)
   })
 })

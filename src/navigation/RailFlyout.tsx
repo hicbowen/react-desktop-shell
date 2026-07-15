@@ -1,86 +1,60 @@
-import { useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { useLayoutEffect, useMemo, useRef } from 'react'
 import { createPortal } from 'react-dom'
-import type { RailSubmenu } from './types'
-import type { FlyoutState } from './types'
+import { useAppOverlayHost } from '../overlay/AppOverlayHostContext'
+import { useAnchoredOverlayPosition } from '../overlay/useAnchoredOverlayPosition'
+import { useOverlayDismiss } from '../overlay/useOverlayDismiss'
 import { RailBadge } from './RailBadge'
+import type { FlyoutState, RailSubmenu } from './types'
 
 const FLYOUT_GAP = 6
-const FLYOUT_MARGIN = 8
+const FLYOUT_MAX_WIDTH = 280
+const FLYOUT_VIEWPORT_PADDING = 8
 
 export function RailFlyout({
   activeValue,
   flyout,
   submenu,
-  triggerContains,
-  focusTrigger,
+  getTrigger,
   onChange,
   onClose,
 }: {
   activeValue?: string
   flyout: Exclude<FlyoutState, null>
   submenu: RailSubmenu
-  triggerContains: (target: Node) => boolean
-  focusTrigger: () => void
+  getTrigger: () => HTMLButtonElement | null
   onChange: (key: string) => void
   onClose: () => void
 }) {
   const flyoutRef = useRef<HTMLDivElement | null>(null)
-  const [position, setPosition] = useState({
-    left: flyout.rect.right + FLYOUT_GAP,
-    top: flyout.rect.top,
-    visible: false,
+  const triggerRef = useRef<HTMLButtonElement | null>(null)
+  const overlayHost = useAppOverlayHost()
+  const position = useAnchoredOverlayPosition({
+    open: true,
+    triggerRect: flyout.rect,
+    overlayRef: flyoutRef,
+    preferredPlacement: 'right-start',
+    gap: FLYOUT_GAP,
+    viewportPadding: FLYOUT_VIEWPORT_PADDING,
+    maxWidth: FLYOUT_MAX_WIDTH,
+    dependencies: [submenu.children.length],
   })
 
   useLayoutEffect(() => {
-    if (!flyoutRef.current || typeof window === 'undefined') {
-      return
-    }
+    triggerRef.current = getTrigger()
+  }, [getTrigger])
 
-    const rect = flyoutRef.current.getBoundingClientRect()
-    const maxLeft = window.innerWidth - rect.width - FLYOUT_MARGIN
-    const maxTop = window.innerHeight - rect.height - FLYOUT_MARGIN
+  useOverlayDismiss({
+    open: true,
+    triggerRef,
+    overlayRef: flyoutRef,
+    onDismiss: onClose,
+    restoreFocus: true,
+  })
 
-    setPosition({
-      left: Math.max(
-        FLYOUT_MARGIN,
-        Math.min(flyout.rect.right + FLYOUT_GAP, maxLeft),
-      ),
-      top: Math.max(FLYOUT_MARGIN, Math.min(flyout.rect.top, maxTop)),
-      visible: true,
-    })
-  }, [flyout.rect])
-
-  useEffect(() => {
-    const handlePointerDown = (event: PointerEvent) => {
-      const target = event.target
-
-      if (!(target instanceof Node)) {
-        return
-      }
-
-      if (triggerContains(target) || flyoutRef.current?.contains(target)) {
-        return
-      }
-
-      onClose()
-    }
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key !== 'Escape') {
-        return
-      }
-
-      event.preventDefault()
-      onClose()
-      focusTrigger()
-    }
-
-    document.addEventListener('pointerdown', handlePointerDown, true)
-    document.addEventListener('keydown', handleKeyDown, true)
-    return () => {
-      document.removeEventListener('pointerdown', handlePointerDown, true)
-      document.removeEventListener('keydown', handleKeyDown, true)
-    }
-  }, [focusTrigger, onClose, triggerContains])
+  const fallbackThemeStyle = useMemo(
+    () => (overlayHost ? undefined : flyout.fallbackThemeStyle),
+    [flyout.fallbackThemeStyle, overlayHost],
+  )
 
   if (typeof document === 'undefined') {
     return null
@@ -89,15 +63,19 @@ export function RailFlyout({
   return createPortal(
     <div
       ref={flyoutRef}
-      className="app-rail-flyout"
-      data-app-rail-flyout={submenu.key}
-      style={{
-        ...flyout.themeStyle,
-        left: position.left,
-        top: position.top,
-        visibility: position.visible ? 'visible' : 'hidden',
-      }}
       aria-label={submenu.label}
+      className="app-rail-flyout app-scrollbar"
+      data-app-rail-flyout={submenu.key}
+      data-placement={position.placement}
+      style={{
+        ...fallbackThemeStyle,
+        left: position.x,
+        maxHeight: position.measured ? position.maxHeight : undefined,
+        maxWidth: position.measured ? position.maxWidth : undefined,
+        pointerEvents: position.measured ? undefined : 'none',
+        top: position.y,
+        visibility: position.measured ? 'visible' : 'hidden',
+      }}
     >
       <div className="app-rail-flyout__title">{submenu.label}</div>
       <div className="app-rail-flyout__items">
@@ -127,6 +105,6 @@ export function RailFlyout({
         ))}
       </div>
     </div>,
-    document.body,
+    overlayHost ?? document.body,
   )
 }

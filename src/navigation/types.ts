@@ -48,5 +48,5 @@ export type FlyoutState = {
   key: string
   rect: DOMRect
   value?: string
-  themeStyle: CSSProperties
+  fallbackThemeStyle: CSSProperties
 } | null

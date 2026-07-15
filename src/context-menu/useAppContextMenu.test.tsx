@@ -168,6 +168,28 @@ describe('useAppContextMenu', () => {
     expect(menu()).toBeNull()
   })
 
+  it('keeps root and submenu scrolling open but closes on external scroll', () => {
+    renderShell()
+    open([
+      {
+        key: 'more',
+        label: 'More',
+        submenu: [{ key: 'child', label: 'Child action' }],
+      },
+    ])
+    const rootMenu = container.querySelectorAll<HTMLElement>('[role="menu"]')[0]!
+    act(() => rootMenu.dispatchEvent(new Event('scroll')))
+    expect(menu()).not.toBeNull()
+
+    act(() => menuItem('More')?.click())
+    const submenu = container.querySelectorAll<HTMLElement>('[role="menu"]')[1]!
+    act(() => submenu.dispatchEvent(new Event('scroll')))
+    expect(container.querySelectorAll('[role="menu"]')).toHaveLength(2)
+
+    act(() => container.dispatchEvent(new Event('scroll')))
+    expect(menu()).toBeNull()
+  })
+
   it('keeps window blur and resize dismissal', () => {
     renderShell()
     open([{ key: 'open', label: 'Open' }])

@@ -389,7 +389,9 @@ describe('AppDataTable controls', () => {
     expect(container.querySelector('[role="menu"]')).not.toBeNull()
 
     act(() =>
-      document.body.dispatchEvent(new MouseEvent('mousedown', { bubbles: true })),
+      document.body.dispatchEvent(
+        new PointerEvent('pointerdown', { bubbles: true }),
+      ),
     )
     expect(container.querySelector('[role="menu"]')).toBeNull()
 
@@ -459,6 +461,7 @@ describe('AppDataTable controls', () => {
     expect(filterMenu()?.style.left).toBe('520px')
     expect(filterMenu()?.style.top).toBe('195px')
     expect(filterMenu()?.style.maxHeight).toBe('420px')
+    expect(filterMenu()?.style.maxWidth).toBe('340px')
     expect(filterMenu()?.style.overflow).toBe('')
   })
 
@@ -468,7 +471,7 @@ describe('AppDataTable controls', () => {
     const menu = filterMenu()!
 
     act(() =>
-      menu.dispatchEvent(new MouseEvent('mousedown', { bubbles: true })),
+      menu.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true })),
     )
     expect(filterMenu()).not.toBeNull()
 

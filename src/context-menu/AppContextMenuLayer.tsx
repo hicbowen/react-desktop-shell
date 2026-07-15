@@ -366,7 +366,18 @@ export function AppContextMenuLayer({
 
     const handleBlur = () => onClose()
     const handleResize = () => onClose()
-    const handleScroll = () => onClose()
+    const handleScroll = (event: Event) => {
+      const target = event.target
+
+      if (
+        target instanceof Node &&
+        menuRefs.current.some((node) => node?.contains(target))
+      ) {
+        return
+      }
+
+      onClose()
+    }
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
         event.preventDefault()

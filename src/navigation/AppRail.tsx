@@ -39,6 +39,11 @@ export function AppRail({
     railRef,
     triggerRefs,
   })
+  const flyoutKey = rail.currentFlyout?.key
+  const getFlyoutTrigger = useCallback(
+    () => (flyoutKey ? (triggerRefs.current.get(flyoutKey) ?? null) : null),
+    [flyoutKey],
+  )
   const rootClassName = useMemo(() => {
     const classes = ['app-rail']
 
@@ -180,18 +185,10 @@ export function AppRail({
         <RailFlyout
           activeValue={value}
           flyout={rail.currentFlyout}
+          getTrigger={getFlyoutTrigger}
           onChange={rail.handleItemChange}
           onClose={rail.closeFlyout}
           submenu={rail.activeFlyoutSubmenu}
-          triggerContains={(target) =>
-            triggerRefs.current.get(rail.currentFlyout!.key)?.contains(target) ??
-            false
-          }
-          focusTrigger={() =>
-            triggerRefs.current
-              .get(rail.currentFlyout!.key)
-              ?.focus({ preventScroll: true })
-          }
         />
       ) : null}
     </aside>

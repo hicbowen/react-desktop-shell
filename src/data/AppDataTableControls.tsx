@@ -1,7 +1,5 @@
 import {
-  useEffect,
   useId,
-  useLayoutEffect,
   useRef,
   useState,
   type KeyboardEvent,
@@ -10,10 +8,8 @@ import {
 import { createPortal } from 'react-dom'
 import type { Table } from '@tanstack/react-table'
 import { useAppOverlayHost } from '../overlay/AppOverlayHostContext'
-import {
-  placeAnchoredOverlay,
-  type AnchoredOverlayPosition,
-} from '../overlay/placement'
+import { useAnchoredOverlayPosition } from '../overlay/useAnchoredOverlayPosition'
+import { useOverlayDismiss } from '../overlay/useOverlayDismiss'
 import type {
   AppDataTableControlsLocale,
   AppDataTableControlsOptions,
@@ -97,15 +93,8 @@ interface AppDataTableControlsProps<TData> {
 
 const FILTER_MENU_GAP = 5
 const FILTER_MENU_MAX_HEIGHT = 420
+const FILTER_MENU_MAX_WIDTH = 340
 const FILTER_MENU_VIEWPORT_PADDING = 8
-
-const hiddenMenuPosition: AnchoredOverlayPosition & { measured: boolean } = {
-  x: 0,
-  y: 0,
-  placement: 'bottom-end',
-  maxHeight: FILTER_MENU_MAX_HEIGHT,
-  measured: false,
-}
 
 export function AppDataTableControls<TData>({
   table,
@@ -113,8 +102,6 @@ export function AppDataTableControls<TData>({
   filterDefinitions,
 }: AppDataTableControlsProps<TData>) {
   const [menuOpen, setMenuOpen] = useState(false)
-  const [menuPosition, setMenuPosition] = useState(hiddenMenuPosition)
-  const filterRootRef = useRef<HTMLDivElement | null>(null)
   const filterButtonRef = useRef<HTMLButtonElement | null>(null)
   const menuRef = useRef<HTMLDivElement | null>(null)
   const overlayHost = useAppOverlayHost()
@@ -134,94 +121,26 @@ export function AppDataTableControls<TData>({
   const hasActiveSearch = searchValue.length > 0
   const hasActiveControls = hasActiveSearch || activeFilterCount > 0
   const showFilters = filterDefinitions.length > 0
+  const closeMenu = () => setMenuOpen(false)
+  const menuPosition = useAnchoredOverlayPosition({
+    open: menuOpen,
+    triggerRef: filterButtonRef,
+    overlayRef: menuRef,
+    preferredPlacement: 'bottom-end',
+    gap: FILTER_MENU_GAP,
+    viewportPadding: FILTER_MENU_VIEWPORT_PADDING,
+    maxHeight: FILTER_MENU_MAX_HEIGHT,
+    maxWidth: FILTER_MENU_MAX_WIDTH,
+    dependencies: [activeFilterCount],
+  })
 
-  useEffect(() => {
-    if (!menuOpen) {
-      return
-    }
-
-    const handleMouseDown = (event: MouseEvent) => {
-      if (
-        event.target instanceof Node &&
-        !filterRootRef.current?.contains(event.target) &&
-        !menuRef.current?.contains(event.target)
-      ) {
-        setMenuOpen(false)
-      }
-    }
-    const handleKeyDown = (event: globalThis.KeyboardEvent) => {
-      if (event.key !== 'Escape') {
-        return
-      }
-
-      event.preventDefault()
-      setMenuOpen(false)
-      filterButtonRef.current?.focus({ preventScroll: true })
-    }
-    const handleBlur = () => setMenuOpen(false)
-    const handleResize = () => setMenuOpen(false)
-    const handleScroll = (event: Event) => {
-      if (
-        event.target instanceof Node &&
-        menuRef.current?.contains(event.target)
-      ) {
-        return
-      }
-
-      setMenuOpen(false)
-    }
-
-    document.addEventListener('mousedown', handleMouseDown)
-    document.addEventListener('keydown', handleKeyDown)
-    window.addEventListener('blur', handleBlur)
-    window.addEventListener('resize', handleResize)
-    window.addEventListener('scroll', handleScroll, true)
-    return () => {
-      document.removeEventListener('mousedown', handleMouseDown)
-      document.removeEventListener('keydown', handleKeyDown)
-      window.removeEventListener('blur', handleBlur)
-      window.removeEventListener('resize', handleResize)
-      window.removeEventListener('scroll', handleScroll, true)
-    }
-  }, [menuOpen])
-
-  useLayoutEffect(() => {
-    if (!menuOpen) {
-      return
-    }
-
-    const measure = () => {
-      const trigger = filterButtonRef.current
-      const menu = menuRef.current
-
-      if (!trigger || !menu) {
-        return
-      }
-
-      setMenuPosition({
-        ...placeAnchoredOverlay(
-          trigger.getBoundingClientRect(),
-          menu.getBoundingClientRect(),
-          { width: window.innerWidth, height: window.innerHeight },
-          {
-            gap: FILTER_MENU_GAP,
-            maxHeight: FILTER_MENU_MAX_HEIGHT,
-            preferredPlacement: 'bottom-end',
-            viewportPadding: FILTER_MENU_VIEWPORT_PADDING,
-          },
-        ),
-        measured: true,
-      })
-    }
-    const frame = window.requestAnimationFrame?.(measure)
-
-    if (frame === undefined) {
-      measure()
-      return
-    }
-
-    return () => window.cancelAnimationFrame(frame)
-  }, [activeFilterCount, menuOpen])
+  useOverlayDismiss({
+    open: menuOpen,
+    triggerRef: filterButtonRef,
+    overlayRef: menuRef,
+    onDismiss: closeMenu,
+    restoreFocus: true,
+  })
 
   if (!searchOptions && !showFilters) {
     return null
@@ -233,12 +152,10 @@ export function AppDataTableControls<TData>({
   }
 
   const toggleFilterMenu = () => {
-    setMenuPosition(hiddenMenuPosition)
     setMenuOpen((current) => !current)
   }
 
   const openFilterMenu = () => {
-    setMenuPosition(hiddenMenuPosition)
     setMenuOpen(true)
   }
 
@@ -273,7 +190,7 @@ export function AppDataTableControls<TData>({
       ) : null}
 
       {showFilters ? (
-        <div className="app-data-table__filter" ref={filterRootRef}>
+        <div className="app-data-table__filter">
           <button
             ref={filterButtonRef}
             aria-controls={menuOpen ? menuId : undefined}
@@ -320,7 +237,12 @@ export function AppDataTableControls<TData>({
                     role="menu"
                     style={{
                       left: menuPosition.x,
-                      maxHeight: menuPosition.maxHeight,
+                      maxHeight: menuPosition.measured
+                        ? menuPosition.maxHeight
+                        : FILTER_MENU_MAX_HEIGHT,
+                      maxWidth: menuPosition.measured
+                        ? menuPosition.maxWidth
+                        : undefined,
                       pointerEvents: menuPosition.measured
                         ? undefined
                         : 'none',

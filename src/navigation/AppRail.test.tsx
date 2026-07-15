@@ -3,11 +3,24 @@
 import { act, type ReactNode } from 'react'
 import { createRoot, type Root } from 'react-dom/client'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { AppShell } from '../shell/AppShell'
 import { AppRail } from './AppRail'
+import type { RailEntry } from './types'
 
 const items = [
   { key: 'home', label: 'Home' },
   { key: 'files', label: 'Files' },
+]
+const flyoutItems: RailEntry[] = [
+  {
+    type: 'submenu',
+    key: 'parent',
+    label: 'Parent',
+    children: [
+      { key: 'child', label: 'Child' },
+      { key: 'second', label: 'Second' },
+    ],
+  },
 ]
 
 describe('AppRail scroll fade', () => {
@@ -36,12 +49,21 @@ describe('AppRail scroll fade', () => {
     act(() => root.unmount())
     container.remove()
     vi.restoreAllMocks()
+    vi.unstubAllGlobals()
   })
 
   const render = (node: ReactNode) => act(() => root.render(node))
   const nav = () => container.querySelector<HTMLElement>('.app-rail__nav')!
   const scroll = () =>
     act(() => nav().dispatchEvent(new Event('scroll', { bubbles: false })))
+  const openFlyout = () =>
+    act(() =>
+      Array.from(container.querySelectorAll<HTMLButtonElement>('button'))
+        .find((button) => button.title === 'Parent')
+        ?.click(),
+    )
+  const flyout = () =>
+    document.body.querySelector<HTMLElement>('.app-rail-flyout')
 
   it('does not apply the fade when all content fits', () => {
     render(<AppRail items={items} />)
@@ -134,5 +156,180 @@ describe('AppRail scroll fade', () => {
     expect(child?.style.getPropertyValue('--app-rail-item-depth-offset')).toBe(
       '',
     )
+  })
+
+  it('portals collapsed submenu flyouts into the AppShell overlay host', () => {
+    render(
+      <AppShell theme="dark">
+        <AppRail collapsed items={flyoutItems} />
+      </AppShell>,
+    )
+    openFlyout()
+
+    const host = container.querySelector('.app-shell__overlay-host')
+    expect(host?.contains(flyout())).toBe(true)
+    expect(flyout()?.closest('.app-shell')?.getAttribute('data-theme')).toBe(
+      'dark',
+    )
+    expect(
+      flyout()?.style.getPropertyValue('--app-rail-flyout-bg'),
+    ).toBe('')
+  })
+
+  it('falls back to a document.body portal without AppShell', () => {
+    render(<AppRail collapsed items={flyoutItems} />)
+    openFlyout()
+
+    expect(flyout()).not.toBeNull()
+    expect(container.contains(flyout())).toBe(false)
+  })
+
+  it('measures before showing and flips right-start to left-start', () => {
+    let measure: FrameRequestCallback | undefined
+    vi.stubGlobal(
+      'requestAnimationFrame',
+      vi.fn((callback: FrameRequestCallback) => {
+        measure = callback
+        return 1
+      }),
+    )
+    vi.stubGlobal('cancelAnimationFrame', vi.fn())
+    vi.stubGlobal('innerWidth', 800)
+    vi.stubGlobal('innerHeight', 600)
+    vi.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(
+      function (this: HTMLElement) {
+        if (this.classList.contains('app-rail__submenu-trigger')) {
+          return {
+            bottom: 140,
+            height: 40,
+            left: 750,
+            right: 790,
+            top: 100,
+            width: 40,
+          } as DOMRect
+        }
+        if (this.classList.contains('app-rail-flyout')) {
+          return {
+            bottom: 220,
+            height: 120,
+            left: 0,
+            right: 200,
+            top: 100,
+            width: 200,
+          } as DOMRect
+        }
+        return {
+          bottom: 0,
+          height: 0,
+          left: 0,
+          right: 0,
+          top: 0,
+          width: 0,
+        } as DOMRect
+      },
+    )
+
+    render(<AppRail collapsed items={flyoutItems} />)
+    openFlyout()
+    expect(flyout()?.style.visibility).toBe('hidden')
+
+    act(() => measure?.(0))
+
+    expect(flyout()?.style.visibility).toBe('visible')
+    expect(flyout()?.dataset.placement).toBe('left-start')
+    expect(flyout()?.style.left).toBe('544px')
+    expect(flyout()?.style.top).toBe('100px')
+    expect(flyout()?.style.maxHeight).toBe('584px')
+  })
+
+  it('uses right-start when the preferred side has room', async () => {
+    vi.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(
+      function (this: HTMLElement) {
+        if (this.classList.contains('app-rail__submenu-trigger')) {
+          return {
+            bottom: 140,
+            height: 40,
+            left: 100,
+            right: 140,
+            top: 100,
+            width: 40,
+          } as DOMRect
+        }
+        return {
+          bottom: 220,
+          height: 120,
+          left: 0,
+          right: 200,
+          top: 100,
+          width: 200,
+        } as DOMRect
+      },
+    )
+
+    render(<AppRail collapsed items={flyoutItems} />)
+    openFlyout()
+    await act(() => new Promise((resolve) => setTimeout(resolve, 20)))
+
+    expect(flyout()?.dataset.placement).toBe('right-start')
+    expect(flyout()?.style.left).toBe('146px')
+  })
+
+  it('dismisses on outside interactions and preserves internal scrolling', () => {
+    render(<AppRail collapsed items={flyoutItems} />)
+    openFlyout()
+    act(() => flyout()?.dispatchEvent(new Event('scroll')))
+    expect(flyout()).not.toBeNull()
+
+    act(() => window.dispatchEvent(new Event('scroll')))
+    expect(flyout()).toBeNull()
+
+    openFlyout()
+    act(() => window.dispatchEvent(new Event('resize')))
+    expect(flyout()).toBeNull()
+
+    openFlyout()
+    act(() => window.dispatchEvent(new Event('blur')))
+    expect(flyout()).toBeNull()
+
+    openFlyout()
+    act(() =>
+      document.body.dispatchEvent(
+        new PointerEvent('pointerdown', { bubbles: true }),
+      ),
+    )
+    expect(flyout()).toBeNull()
+  })
+
+  it('closes on Escape, restores trigger focus, and keeps item selection', () => {
+    const onChange = vi.fn()
+    render(
+      <AppRail
+        collapsed
+        items={flyoutItems}
+        onChange={onChange}
+      />,
+    )
+    openFlyout()
+    const trigger = Array.from(
+      container.querySelectorAll<HTMLButtonElement>('button'),
+    ).find((button) => button.title === 'Parent')!
+    trigger.blur()
+    act(() =>
+      document.dispatchEvent(
+        new KeyboardEvent('keydown', { bubbles: true, key: 'Escape' }),
+      ),
+    )
+
+    expect(flyout()).toBeNull()
+    expect(document.activeElement).toBe(trigger)
+
+    openFlyout()
+    act(() =>
+      Array.from(flyout()?.querySelectorAll<HTMLButtonElement>('button') ?? [])
+        .find((button) => button.textContent === 'Child')
+        ?.click(),
+    )
+    expect(onChange).toHaveBeenCalledWith('child')
+    expect(flyout()).toBeNull()
   })
 })
