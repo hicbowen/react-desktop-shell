@@ -39,12 +39,15 @@ export function AppExpander({
   const [internal, setInternal] = useState(defaultExpanded)
   const open = controlled ? expanded : internal
   const reducedMotion = useReducedMotion()
-  const [contentVisible, setContentVisible] = useState(open)
+  const [retainedContent, setRetainedContent] = useState(open)
   const [animatedExpanded, setAnimatedExpanded] = useState(open)
   const animatedExpandedRef = useRef(open)
   const animationFrameRef = useRef<number | null>(null)
+  const transitionGenerationRef = useRef(0)
   const triggerRef = useRef<HTMLButtonElement>(null)
   const regionRef = useRef<HTMLDivElement>(null)
+  const contentVisible = open || (!reducedMotion && retainedContent)
+  const visiblyExpanded = open && (reducedMotion || animatedExpanded)
 
   const restoreFocusIfNeeded = () => {
     if (regionRef.current?.contains(document.activeElement)) {
@@ -52,34 +55,25 @@ export function AppExpander({
     }
   }
 
-  useEffect(() => () => {
-    if (animationFrameRef.current != null) {
-      cancelAnimationFrame(animationFrameRef.current)
-    }
-  }, [])
-
+  /* eslint-disable react-hooks/set-state-in-effect -- the first committed
+   * expansion state must expose content before the next-frame class change. */
   useEffect(() => {
-    if (!controlled) return
-    let cancelled = false
-
+    const generation = ++transitionGenerationRef.current
     if (animationFrameRef.current != null) {
       cancelAnimationFrame(animationFrameRef.current)
       animationFrameRef.current = null
     }
 
     if (open) {
+      setRetainedContent(true)
       if (reducedMotion) {
-        queueMicrotask(() => {
-          if (cancelled) return
-          setContentVisible(true)
-          animatedExpandedRef.current = true
-          setAnimatedExpanded(true)
-        })
-      } else {
+        animatedExpandedRef.current = true
+        setAnimatedExpanded(true)
+      } else if (!animatedExpandedRef.current) {
+        setAnimatedExpanded(false)
         animationFrameRef.current = requestAnimationFrame(() => {
-          if (cancelled) return
+          if (transitionGenerationRef.current !== generation) return
           animationFrameRef.current = null
-          setContentVisible(true)
           animatedExpandedRef.current = true
           setAnimatedExpanded(true)
         })
@@ -87,72 +81,46 @@ export function AppExpander({
     } else {
       const expansionStarted = animatedExpandedRef.current
       animatedExpandedRef.current = false
-      const collapse = () => {
-        if (cancelled) return
-        setAnimatedExpanded(false)
-        if (reducedMotion || !expansionStarted) {
-          restoreFocusIfNeeded()
-          setContentVisible(false)
-        }
+      setAnimatedExpanded(false)
+      if (reducedMotion || !expansionStarted) {
+        restoreFocusIfNeeded()
+        setRetainedContent(false)
       }
-      if (reducedMotion) queueMicrotask(collapse)
-      else animationFrameRef.current = requestAnimationFrame(collapse)
     }
 
     return () => {
-      cancelled = true
       if (animationFrameRef.current != null) {
         cancelAnimationFrame(animationFrameRef.current)
         animationFrameRef.current = null
       }
     }
-  }, [controlled, open, reducedMotion])
+  }, [open, reducedMotion])
+  /* eslint-enable react-hooks/set-state-in-effect */
 
   const toggle = () => {
     if (disabled) return
     const next = !open
-    if (!controlled) {
-      if (animationFrameRef.current != null) {
-        cancelAnimationFrame(animationFrameRef.current)
-        animationFrameRef.current = null
-      }
-      setInternal(next)
-      if (next) {
-        setContentVisible(true)
-        if (reducedMotion) {
-          animatedExpandedRef.current = true
-          setAnimatedExpanded(true)
-        } else {
-          animationFrameRef.current = requestAnimationFrame(() => {
-            animationFrameRef.current = null
-            animatedExpandedRef.current = true
-            setAnimatedExpanded(true)
-          })
-        }
-      } else {
-        const expansionStarted = animatedExpandedRef.current
-        animatedExpandedRef.current = false
-        setAnimatedExpanded(false)
-        if (reducedMotion || !expansionStarted) {
-          restoreFocusIfNeeded()
-          setContentVisible(false)
-        }
-      }
-    }
+    if (!controlled) setInternal(next)
     onExpandedChange?.(next)
   }
 
   const finishTransition = (event: TransitionEvent<HTMLDivElement>) => {
-    if (event.target !== event.currentTarget || open || animatedExpanded) return
+    if (
+      event.target !== event.currentTarget ||
+      open ||
+      animatedExpandedRef.current
+    ) {
+      return
+    }
     restoreFocusIfNeeded()
-    setContentVisible(false)
+    setRetainedContent(false)
   }
 
   return <section
     className={[
       'app-expander',
       `app-expander--${appearance}`,
-      animatedExpanded ? 'app-expander--expanded' : '',
+      visiblyExpanded ? 'app-expander--expanded' : '',
       disabled ? 'app-expander--disabled' : '',
       className,
     ].filter(Boolean).join(' ')}
