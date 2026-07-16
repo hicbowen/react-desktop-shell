@@ -226,6 +226,17 @@ reorderable tabs, large filter sets, overflow menus, or routing.
 <AppIconButton ariaLabel="More actions" appearance="subtle" icon={<MoreHorizontal />} />
 ```
 
+## Fields and empty states
+
+`AppField` supplies label, description or error messaging, required state, and vertical or settings-friendly horizontal layout without controlling its child input. `AppEmptyState` presents a restrained regular or compact empty state with optional icon, description, and action.
+
+```tsx
+<AppField label="Student name" htmlFor="student-name" required error={error}>
+  <input id="student-name" aria-describedby={errorId} />
+</AppField>
+<AppEmptyState title="No students yet" description="Add a student to begin." action={<AppButton>Add student</AppButton>} />
+```
+
 `AppCard` is a low-contrast Fluent content surface for desktop tools, settings,
 status summaries, recent projects, and utility entry points. It is not a fixed
 web-dashboard panel: cards have no strong shadow or title divider by default,

@@ -1,6 +1,8 @@
 import type { CSSProperties, ReactNode } from 'react'
 
 export type { AppButtonAppearance, AppButtonProps, AppButtonSize, AppIconButtonProps } from './button/types'
+export type { AppEmptyStateProps } from './empty-state/types'
+export type { AppFieldProps } from './field/types'
 
 export type {
   AppCardAppearance,

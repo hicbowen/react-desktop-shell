@@ -1,0 +1,7 @@
+import { UserPlus, Users } from 'lucide-react'
+import { AppButton, AppEmptyState, AppField } from '../../../../src'
+import { DemoPage, DemoPreview, DemoSection } from '../../components/DemoPage'
+
+export function FieldEmptyStatePage() {
+  return <DemoPage><DemoSection title="Field structure"><DemoPreview className="demo-form-stack"><AppField description="Used in feedback and learning plans" htmlFor="student-name" label="Student name" required><input className="demo-input" id="student-name" /></AppField><AppField htmlFor="course" label="Course" labelWidth={140} orientation="horizontal"><select className="demo-input" id="course"><option>Python</option><option>Visual coding</option></select></AppField><AppField error="Enter a valid email address" htmlFor="email" label="Email"><input aria-invalid="true" className="demo-input" id="email" /></AppField><AppField disabled htmlFor="locked" label="Managed value"><input className="demo-input" disabled id="locked" value="Administrator" readOnly /></AppField></DemoPreview></DemoSection><DemoSection title="Empty states"><DemoPreview><AppEmptyState action={<AppButton appearance="primary" icon={<UserPlus />}>Add student</AppButton>} description="Add a student to create feedback and learning plans." icon={<Users />} title="No students yet" /><AppEmptyState align="start" appearance="compact" title="Nothing selected" description="Choose an item from the list to inspect it." /></DemoPreview></DemoSection></DemoPage>
+}

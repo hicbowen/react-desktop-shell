@@ -1,0 +1,10 @@
+.app-empty-state { box-sizing: border-box; width: 100%; max-width: 560px; display: flex; flex-direction: column; gap: 7px; padding: 32px 24px; color: var(--app-shell-text-color, #1f1f1f); }
+.app-empty-state--compact { gap: 5px; padding: 18px 16px; }
+.app-empty-state--center { align-items: center; margin-inline: auto; text-align: center; }
+.app-empty-state--start { align-items: flex-start; text-align: start; }
+.app-empty-state__icon { width: 28px; height: 28px; display: grid; place-items: center; margin-bottom: 3px; color: var(--app-shell-secondary-text-color, rgb(0 0 0 / 48%)); }
+.app-empty-state--compact .app-empty-state__icon { width: 22px; height: 22px; }
+.app-empty-state__icon > svg { width: 100%; height: 100%; }
+.app-empty-state__title { font-size: 15px; font-weight: 600; line-height: 1.35; }
+.app-empty-state__description { max-width: 46ch; color: var(--app-shell-secondary-text-color, rgb(0 0 0 / 62%)); font-size: 13px; line-height: 1.5; }
+.app-empty-state__action { margin-top: 8px; }

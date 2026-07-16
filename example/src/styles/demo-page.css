@@ -697,3 +697,4 @@
   align-items: center;
   gap: 10px;
 }
+.demo-form-stack { display: grid; gap: 18px; }

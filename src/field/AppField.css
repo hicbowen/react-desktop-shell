@@ -1,0 +1,11 @@
+.app-field { display: grid; gap: 6px; color: var(--app-shell-text-color, #1f1f1f); font-size: 13px; }
+.app-field--horizontal { grid-template-columns: var(--app-field-label-width, minmax(120px, 32%)) minmax(0, 1fr); align-items: start; gap: 10px 16px; }
+.app-field__label-wrap { min-width: 0; }
+.app-field--horizontal .app-field__label-wrap { padding-top: 7px; }
+.app-field__label { display: inline-flex; align-items: baseline; gap: 6px; font-weight: 500; }
+.app-field__required { color: var(--app-shell-secondary-text-color, rgb(0 0 0 / 58%)); font-size: 11px; font-weight: 400; }
+.app-field__body, .app-field__control { min-width: 0; }
+.app-field__message { margin-top: 5px; color: var(--app-shell-secondary-text-color, rgb(0 0 0 / 62%)); font-size: 12px; line-height: 1.35; }
+.app-field__message--error { color: var(--app-shell-danger-color, #c42b1c); }
+.app-field--disabled .app-field__label, .app-field--disabled .app-field__message { color: var(--app-shell-disabled-text-color, rgb(0 0 0 / 36%)); }
+@media (max-width: 520px) { .app-field--horizontal { grid-template-columns: 1fr; gap: 6px; } .app-field--horizontal .app-field__label-wrap { padding-top: 0; } }
