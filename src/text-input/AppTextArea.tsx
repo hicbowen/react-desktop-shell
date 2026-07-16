@@ -1,4 +1,4 @@
-import { forwardRef, useLayoutEffect, useRef, useState } from 'react'
+import { forwardRef, useCallback, useLayoutEffect, useRef, useState } from 'react'
 import type { ChangeEvent } from 'react'
 import type { AppTextAreaProps } from './types'
 import { useAppFieldContext } from '../field/AppFieldContext'
@@ -8,8 +8,31 @@ export const AppTextArea = forwardRef<HTMLTextAreaElement, AppTextAreaProps>(fun
   const field = useAppFieldContext(); const resolvedDisabled = disabled ?? field?.disabled ?? false; const resolvedInvalid = ariaInvalid ?? invalid ?? field?.invalid; const resolvedRequired = required ?? field?.required
   const localRef = useRef<HTMLTextAreaElement>(null); const [count, setCount] = useState(() => String(value ?? defaultValue ?? '').length)
   const setRef = (node: HTMLTextAreaElement | null) => { localRef.current = node; if (typeof forwardedRef === 'function') forwardedRef(node); else if (forwardedRef) forwardedRef.current = node }
-  const resizeNow = () => { const node = localRef.current; if (!node || !autoResize) return; const computed = getComputedStyle(node); const lineHeight = Number.parseFloat(computed.lineHeight) || 20; const border = (Number.parseFloat(computed.borderTopWidth) || 0) + (Number.parseFloat(computed.borderBottomWidth) || 0); node.style.height = 'auto'; const min = lineHeight * minRows + border; const max = maxRows ? lineHeight * maxRows + border : Number.POSITIVE_INFINITY; node.style.height = `${Math.min(max, Math.max(min, node.scrollHeight))}px` }
-  useLayoutEffect(resizeNow, [autoResize, maxRows, minRows, value])
+  const resizeNow = useCallback(() => {
+    const node = localRef.current
+    if (!node || !autoResize) return
+    const computed = getComputedStyle(node)
+    const numeric = (property: string) => Number.parseFloat(property) || 0
+    const lineHeight = numeric(computed.lineHeight) || 20
+    const padding = numeric(computed.paddingTop) + numeric(computed.paddingBottom)
+    const border = numeric(computed.borderTopWidth) + numeric(computed.borderBottomWidth)
+    const chrome = padding + border
+    const safeMinRows = Math.max(1, Math.floor(minRows))
+    const safeMaxRows = maxRows == null ? undefined : Math.max(safeMinRows, Math.floor(maxRows))
+    node.style.height = 'auto'
+    const minOuterHeight = lineHeight * safeMinRows + chrome
+    const maxOuterHeight = safeMaxRows == null ? Number.POSITIVE_INFINITY : lineHeight * safeMaxRows + chrome
+    const outerHeight = Math.min(maxOuterHeight, Math.max(minOuterHeight, node.scrollHeight + border))
+    node.style.height = `${computed.boxSizing === 'border-box' ? outerHeight : Math.max(0, outerHeight - chrome)}px`
+  }, [autoResize, maxRows, minRows])
+  useLayoutEffect(() => {
+    resizeNow()
+    const node = localRef.current
+    if (!node || !autoResize || typeof ResizeObserver === 'undefined') return
+    const observer = new ResizeObserver(() => resizeNow())
+    observer.observe(node)
+    return () => observer.disconnect()
+  }, [autoResize, resizeNow, value])
   const handleChange = (event: ChangeEvent<HTMLTextAreaElement>) => { setCount(event.target.value.length); resizeNow(); onChange?.(event) }
   const length = value == null ? count : String(value).length
   const classes = ['app-text-area', resolvedInvalid ? 'app-text-area--invalid' : '', autoResize ? 'app-text-area--auto' : '', className].filter(Boolean).join(' ')

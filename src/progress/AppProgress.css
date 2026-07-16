@@ -25,4 +25,4 @@
 .app-status-badge__sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 @keyframes app-progress-spin { to { transform: rotate(360deg); } }
 @keyframes app-progress-slide { from { transform: translateX(-110%); } 50% { transform: translateX(90%); } to { transform: translateX(270%); } }
-@media (prefers-reduced-motion: reduce) { .app-progress-ring__indicator { animation-duration: 1.7s; } .app-progress-bar__indicator { transition: none; } .app-progress-bar--indeterminate .app-progress-bar__indicator { animation: none; width: 55%; opacity: .72; } }
+@media (prefers-reduced-motion: reduce) { .app-progress-ring__indicator { animation: none; } .app-progress-bar__indicator { transition: none; } .app-progress-bar--indeterminate .app-progress-bar__indicator { animation: none; width: 55%; opacity: .72; } }

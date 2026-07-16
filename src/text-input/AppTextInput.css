@@ -16,4 +16,4 @@
 .app-text-area--invalid .app-text-area__control { border-bottom-color: var(--app-shell-danger-color, #c42b1c); }
 .app-text-area__count { justify-self: end; margin: -18px 8px 5px; color: var(--app-shell-secondary-text-color, rgb(0 0 0 / 58%)); font-size: 11px; pointer-events: none; }
 @keyframes app-text-spin { to { transform: rotate(360deg); } }
-@media (prefers-reduced-motion: reduce) { .app-text-box__loading { animation-duration: 1.8s; } }
+@media (prefers-reduced-motion: reduce) { .app-text-box__loading { animation: none; } }

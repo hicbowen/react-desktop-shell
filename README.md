@@ -247,7 +247,7 @@ RDS inputs consume field associations automatically. For a native or third-party
 
 ## Progress and status
 
-Use `AppProgressRing` for indeterminate work, `AppProgressBar` for determinate or inline indeterminate progress, and `AppStatusBadge` for one of the fixed semantic statuses. All progress controls expose native ARIA roles and reduced-motion fallbacks.
+Use `AppProgressRing` for indeterminate work, `AppProgressBar` for determinate or inline indeterminate progress, and `AppStatusBadge` for one of the fixed semantic statuses. Supply `statusLabel` when the hidden status name needs localization. All progress controls expose native ARIA roles and static reduced-motion fallbacks.
 
 ```tsx
 <AppProgressBar value={68} label="Importing students" showValue />
@@ -256,7 +256,7 @@ Use `AppProgressRing` for indeterminate work, `AppProgressBar` for determinate o
 
 ## Text inputs
 
-`AppTextBox` wraps native input behavior with optional icons, clear and loading affordances. `AppTextArea` supports character counts and dependency-free automatic height within row limits. Both forward refs and compose with `AppField`.
+`AppTextBox` wraps native input behavior with optional icons, clear and loading affordances. Use `clearLabel` and `loadingLabel` to localize their accessible text. `AppTextArea` supports character counts and dependency-free automatic height within row limits, including padding and borders. Both forward refs and compose with `AppField`.
 
 ```tsx
 <AppTextBox value={name} onChange={(event) => setName(event.target.value)} clearable />

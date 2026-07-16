@@ -41,4 +41,4 @@
 .app-icon-button__spinner { position: absolute; }
 .app-icon-button[aria-busy='true'] .app-icon-button__graphic { visibility: hidden; }
 @keyframes app-button-spin { to { transform: rotate(360deg); } }
-@media (prefers-reduced-motion: reduce) { .app-button { transition: none; } .app-button__spinner { animation-duration: 1.6s; } }
+@media (prefers-reduced-motion: reduce) { .app-button { transition: none; } .app-button__spinner { animation: none; } }

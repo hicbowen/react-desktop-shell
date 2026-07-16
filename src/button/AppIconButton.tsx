@@ -16,6 +16,7 @@ export const AppIconButton = forwardRef<HTMLButtonElement, AppIconButtonProps>(f
   ...rest
 }, ref) {
   const label = nativeAriaLabel ?? ariaLabel
+  if (import.meta.env.DEV && !label && !rest['aria-labelledby']) console.warn('AppIconButton requires ariaLabel, aria-label, or aria-labelledby.')
   const classes = ['app-button', 'app-icon-button', `app-button--${appearance}`, `app-button--${size}`, `app-icon-button--${shape}`, className].filter(Boolean).join(' ')
   return <button {...rest} aria-busy={loading || undefined} aria-label={label} className={classes} disabled={disabled || loading} ref={ref} type={type}>
     <span aria-hidden="true" className="app-icon-button__graphic">{icon}</span>

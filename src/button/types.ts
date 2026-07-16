@@ -12,8 +12,14 @@ export interface AppButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> 
   block?: boolean
 }
 
-export interface AppIconButtonProps extends Omit<AppButtonProps, 'block' | 'children' | 'iconPosition'> {
+type AppIconButtonBaseProps = Omit<AppButtonProps, 'aria-label' | 'aria-labelledby' | 'block' | 'children' | 'iconPosition'> & {
   icon: ReactNode
-  ariaLabel?: string
   shape?: 'circular' | 'rounded'
 }
+
+type AccessibleIconButtonLabel =
+  | { ariaLabel: string; 'aria-label'?: string; 'aria-labelledby'?: string }
+  | { ariaLabel?: string; 'aria-label': string; 'aria-labelledby'?: string }
+  | { ariaLabel?: string; 'aria-label'?: string; 'aria-labelledby': string }
+
+export type AppIconButtonProps = AppIconButtonBaseProps & AccessibleIconButtonLabel
