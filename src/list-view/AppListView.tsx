@@ -3,7 +3,7 @@ import type { AppListViewItemInternalProps, AppListViewProps } from './types'
 import { AppListViewItem } from './AppListViewItem'
 import './AppListView.css'
 
-const interactiveSelector = 'button,a,input,select,textarea,[role="button"],[role="link"],[data-list-action]'
+const selectionInteractiveSelector = 'button,a,input,select,textarea,[role="button"],[role="link"],[data-list-action]'
 
 export function AppListView({ activationMode = 'selection', ariaLabel, children, className, defaultValue = [], density = 'standard', onItemInvoke, onValueChange, selectionMode = 'none', style, value }: AppListViewProps) {
   const controlled = value !== undefined
@@ -25,7 +25,7 @@ export function AppListView({ activationMode = 'selection', ariaLabel, children,
   }
   const invoke = (itemValue: string) => onItemInvoke?.(itemValue)
   const click = (itemValue: string, event: React.MouseEvent<HTMLDivElement>) => {
-    if ((event.target as Element).closest(interactiveSelector) && event.target !== event.currentTarget) return
+    if (!isInvokeList && (event.target as Element).closest(selectionInteractiveSelector) && event.target !== event.currentTarget) return
     const item = items.find((entry) => entry.props.value === itemValue)
     if (!item || !isFocusable(item)) return
     setActive(itemValue)
@@ -51,7 +51,7 @@ export function AppListView({ activationMode = 'selection', ariaLabel, children,
     event.preventDefault()
     const target = enabled[next]
     setActive(target)
-    Array.from(event.currentTarget.parentElement?.querySelectorAll<HTMLElement>('[data-value]') ?? []).find((node) => node.dataset.value === target)?.focus()
+    Array.from(event.currentTarget.closest('.app-list-view')?.querySelectorAll<HTMLElement>('[data-value]') ?? []).find((node) => node.dataset.value === target)?.focus()
   }
 
   return <div aria-label={ariaLabel} aria-multiselectable={isSelectionList && selectionMode === 'multiple' || undefined} className={['app-list-view', `app-list-view--${density}`, className].filter(Boolean).join(' ')} role={isSelectionList ? 'listbox' : 'list'} style={style}>{items.map((item) => {

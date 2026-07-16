@@ -283,7 +283,7 @@ Use `AppProgressRing` for indeterminate work, `AppProgressBar` for determinate o
 
 ## List view
 
-`AppListView` and `AppListViewItem` form a desktop information list with mutually exclusive selection and invoke modes, plus Arrow/Home/End/Space/Enter keyboard support. Information mode uses list/listitem semantics; single and multiple selection use listbox/options, click and Space to select; invoke mode uses button rows, with click, Enter, and Space to invoke. Interactive trailing content is isolated from row activation.
+`AppListView` and `AppListViewItem` form a desktop information list with mutually exclusive static, selection, and invoke modes, plus Arrow/Home/End/Space/Enter keyboard support. Static mode uses list/listitem semantics; single and multiple selection use listbox/options, click and Space to select. Invoke mode keeps each `role="button"` main action and its trailing controls as siblings inside a listitem, so click, Enter, and Space invoke only the main action while trailing buttons remain independent.
 
 ```tsx
 <AppListView ariaLabel="Students" selectionMode="multiple" value={selected} onValueChange={setSelected}>
