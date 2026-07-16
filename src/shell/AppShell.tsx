@@ -11,10 +11,7 @@ import { AppLocaleContext } from '../localization/AppLocaleContext'
 import { appLocaleSettings } from '../localization/localeSettings'
 import { appLocaleMessages } from '../localization/messages'
 import { useResolvedAppLocale } from '../localization/resolveAppLocale'
-import {
-  defaultToastLocale,
-  useToastStore,
-} from '../toast/AppToastHost'
+import { useToastStore } from '../toast/AppToastHost'
 import {
   defaultClipboardAdapter,
 } from '../context-menu/AppContextMenuTextActions'
@@ -35,9 +32,6 @@ export function AppShell({
   theme = 'system',
   contextMenu = 'native',
   clipboard = defaultClipboardAdapter,
-  contextMenuLocale,
-  messageBoxLocale,
-  toastLocale,
   toastOptions,
   title,
   icon,
@@ -77,15 +71,11 @@ export function AppShell({
     rootRef,
     mode: contextMenu,
     clipboard,
-    locale: contextMenuLocale,
+    messages: localeContextValue.messages.contextMenu,
   })
   const dialogController = useDialogController(
-    messageBoxLocale,
+    localeContextValue.messages.common,
     contextMenuController.dismissMenu,
-  )
-  const resolvedToastLocale = useMemo(
-    () => ({ ...defaultToastLocale, ...toastLocale }),
-    [toastLocale],
   )
   const toastStore = useToastStore(toastOptions)
   const hasSidebar = rail !== undefined || sidebarHeader !== undefined
@@ -153,11 +143,11 @@ export function AppShell({
 
   const paneToggleAriaLabel = isMinimal
     ? isPaneOpen
-      ? 'Close navigation'
-      : 'Open navigation'
+      ? localeContextValue.messages.shell.closeNavigation
+      : localeContextValue.messages.shell.openNavigation
     : sidebarCollapsed
-      ? 'Expand navigation'
-      : 'Collapse navigation'
+      ? localeContextValue.messages.shell.expandNavigation
+      : localeContextValue.messages.shell.collapseNavigation
 
   return (
     <AppLocaleContext.Provider value={localeContextValue}>
@@ -230,7 +220,6 @@ export function AppShell({
                   onCloseContextMenu={contextMenuController.closeMenu}
                   overlayHostRef={setOverlayHost}
                   toastStore={toastStore}
-                  toastLocale={resolvedToastLocale}
                   hasModalDialog={dialogController.hasModalDialog}
               />
               </div>

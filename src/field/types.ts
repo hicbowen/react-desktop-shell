@@ -12,7 +12,6 @@ export interface AppFieldProps {
   labelWidth?: number | string
   htmlFor?: string
   requiredIndicator?: ReactNode
-  requiredLabel?: string
   children: ReactNode
   className?: string
   style?: CSSProperties

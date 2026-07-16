@@ -47,10 +47,6 @@ export interface AppToast {
   info(title: ReactNode, options?: AppToastShortcutOptions): AppToastId
 }
 
-export interface AppToastLocale {
-  dismiss: string
-}
-
 export interface AppToastHostOptions {
   maxVisible?: number
 }

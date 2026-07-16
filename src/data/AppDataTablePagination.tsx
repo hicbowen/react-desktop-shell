@@ -1,23 +1,11 @@
 import type { Table } from '@tanstack/react-table'
-import type {
-  AppDataTablePaginationLocale,
-  AppDataTablePaginationOptions,
-} from './types'
+import { useAppLocale } from '../localization/useAppLocale'
+import type { AppDataTablePaginationOptions } from './types'
 
 interface AppDataTablePaginationProps<TData> {
   table: Table<TData>
   options: AppDataTablePaginationOptions
   loading: boolean
-}
-
-const defaultLocale: AppDataTablePaginationLocale = {
-  rowsPerPageLabel: 'Rows per page',
-  rangeLabel: (start, end, total) => `${start}–${end} of ${total}`,
-  pageLabel: (page, pageCount) => `Page ${page} of ${pageCount}`,
-  firstPageAriaLabel: 'First page',
-  previousPageAriaLabel: 'Previous page',
-  nextPageAriaLabel: 'Next page',
-  lastPageAriaLabel: 'Last page',
 }
 
 function PaginationIcon({ direction }: { direction: 'first' | 'previous' | 'next' | 'last' }) {
@@ -39,7 +27,8 @@ export function AppDataTablePagination<TData>({
   options,
   loading,
 }: AppDataTablePaginationProps<TData>) {
-  const locale = { ...defaultLocale, ...options.locale }
+  const { messages } = useAppLocale()
+  const locale = messages.dataTable
   const pageSizeOptions = options.pageSizeOptions ?? [10, 20, 50]
   const showPageSizeSelector = options.showPageSizeSelector ?? true
   const showFirstLastButtons = options.showFirstLastButtons ?? true
@@ -54,14 +43,14 @@ export function AppDataTablePagination<TData>({
   return (
     <div className="app-data-table__pagination">
       <div className="app-data-table__pagination-summary">
-        {locale.rangeLabel(start, end, total)}
+        {locale.range(start, end, total)}
       </div>
       <div className="app-data-table__pagination-controls">
         {showPageSizeSelector ? (
           <label className="app-data-table__pagination-size">
-            <span>{locale.rowsPerPageLabel}</span>
+            <span>{locale.rowsPerPage}</span>
             <select
-              aria-label={locale.rowsPerPageLabel}
+              aria-label={locale.rowsPerPage}
               disabled={loading}
               value={pageSize}
               onChange={(event) => table.setPageSize(Number(event.currentTarget.value))}
@@ -74,7 +63,7 @@ export function AppDataTablePagination<TData>({
         ) : null}
         {showFirstLastButtons ? (
           <button
-            aria-label={locale.firstPageAriaLabel}
+            aria-label={locale.firstPage}
             className="app-data-table__pagination-button"
             disabled={loading || atFirstPage}
             type="button"
@@ -84,7 +73,7 @@ export function AppDataTablePagination<TData>({
           </button>
         ) : null}
         <button
-          aria-label={locale.previousPageAriaLabel}
+          aria-label={locale.previousPage}
           className="app-data-table__pagination-button"
           disabled={loading || atFirstPage}
           type="button"
@@ -93,10 +82,10 @@ export function AppDataTablePagination<TData>({
           <PaginationIcon direction="previous" />
         </button>
         <span className="app-data-table__pagination-page">
-          {locale.pageLabel(total === 0 ? 0 : pageIndex + 1, pageCount)}
+          {locale.page(total === 0 ? 0 : pageIndex + 1, pageCount)}
         </span>
         <button
-          aria-label={locale.nextPageAriaLabel}
+          aria-label={locale.nextPage}
           className="app-data-table__pagination-button"
           disabled={loading || atLastPage}
           type="button"
@@ -106,7 +95,7 @@ export function AppDataTablePagination<TData>({
         </button>
         {showFirstLastButtons ? (
           <button
-            aria-label={locale.lastPageAriaLabel}
+            aria-label={locale.lastPage}
             className="app-data-table__pagination-button"
             disabled={loading || atLastPage}
             type="button"

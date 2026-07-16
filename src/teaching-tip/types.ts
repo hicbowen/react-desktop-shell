@@ -19,6 +19,5 @@ export interface AppTeachingTipProps {
   dismissible?: boolean
   closeOnOutsidePointerDown?: boolean
   ariaLabel?: string
-  closeAriaLabel?: string
   className?: string
 }

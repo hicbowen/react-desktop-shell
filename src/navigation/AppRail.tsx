@@ -3,6 +3,7 @@ import type { AppRailProps } from './types'
 import './AppRail.css'
 import '../scroll-area/AppScrollArea.css'
 import { RailFlyout } from './RailFlyout'
+import { useAppLocale } from '../localization/useAppLocale'
 import { RailItem as RailItemView } from './RailItem'
 import { RailSubmenu as RailSubmenuView } from './RailSubmenu'
 import {
@@ -24,6 +25,7 @@ export function AppRail({
   className,
   style,
 }: AppRailProps) {
+  const { messages } = useAppLocale()
   const railRef = useRef<HTMLElement | null>(null)
   const navRef = useRef<HTMLElement | null>(null)
   const triggerRefs = useRef(new Map<string, HTMLButtonElement>())
@@ -106,7 +108,7 @@ export function AppRail({
           className={`app-rail__nav app-scrollbar${
             canScrollDown ? ' app-rail__nav--fade-bottom' : ''
           }`}
-          aria-label="Primary"
+          aria-label={messages.shell.primaryNavigation}
           onScroll={updateScrollHint}
         >
           {items.map((item, index) => {

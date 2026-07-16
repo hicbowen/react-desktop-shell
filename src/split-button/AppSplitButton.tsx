@@ -1,4 +1,5 @@
 import { AppMenuFlyout } from '../menu-flyout'
+import { useAppLocale } from '../localization/useAppLocale'
 import type { AppSplitButtonProps } from './types'
 import './AppSplitButton.css'
 
@@ -17,12 +18,13 @@ export function AppSplitButton({
   icon,
   items,
   label,
-  menuAriaLabel = 'Open more options',
   menuDisabled = false,
   onClick,
   onSelect,
   placement = 'bottom-end',
 }: AppSplitButtonProps) {
+  const { messages } = useAppLocale()
+  const menuAriaLabel = messages.splitButton.openMore
   const rootClassName = [
     'app-split-button',
     disabled ? 'app-split-button--disabled' : '',

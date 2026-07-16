@@ -37,7 +37,6 @@ export type {
   AppContextMenuActionItem,
   AppContextMenuApi,
   AppContextMenuItem,
-  AppContextMenuLocale,
   AppContextMenuMode,
   AppContextMenuOpenOptions,
   AppContextMenuProps,
@@ -49,7 +48,6 @@ export type {
   AppMessageBox,
   AppMessageBoxButton,
   AppMessageBoxConfirmOptions,
-  AppMessageBoxLocale,
   AppMessageBoxOptions,
 } from './dialog/types'
 export type { AppInfoBarProps, AppInfoBarStatus } from './info-bar/types'
@@ -102,7 +100,6 @@ export type {
   AppToastAction,
   AppToastHostOptions,
   AppToastId,
-  AppToastLocale,
   AppToastOptions,
   AppToastShortcutOptions,
   AppToastStatus,

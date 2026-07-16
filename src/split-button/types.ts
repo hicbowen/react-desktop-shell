@@ -12,6 +12,5 @@ export interface AppSplitButtonProps {
   menuDisabled?: boolean
   placement?: AnchoredOverlayPlacement
   ariaLabel?: string
-  menuAriaLabel?: string
   className?: string
 }

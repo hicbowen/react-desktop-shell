@@ -17,12 +17,6 @@ import type {
 
 export type AppDataTableColumn<TData> = ColumnDef<TData>
 
-export interface AppDataTableSearchOptions {
-  placeholder?: string
-  ariaLabel?: string
-  clearAriaLabel?: string
-}
-
 export interface AppDataTableFilterOption {
   value: string
   label: ReactNode
@@ -36,36 +30,11 @@ export interface AppDataTableFilterDefinition<TData> {
   filterFn?: FilterFn<TData>
 }
 
-export interface AppDataTableControlsLocale {
-  searchPlaceholder: string
-  searchAriaLabel: string
-  clearSearchAriaLabel: string
-  filtersLabel: string
-  activeFiltersAriaLabel: (count: number) => string
-  unnamedFilterAriaLabel: (index: number) => string
-  clearFilterLabel: string
-  clearFilterAriaLabel: (label: string) => string
-  clearFiltersLabel: string
-  clearAllLabel: string
-  clearAllAriaLabel: string
-}
-
 export interface AppDataTableControlsOptions<TData> {
-  search?: boolean | AppDataTableSearchOptions
+  search?: boolean
   filters?: AppDataTableFilterDefinition<TData>[]
   /** Show a button that clears both search and filters. Defaults to false. */
   clearAll?: boolean
-  locale?: Partial<AppDataTableControlsLocale>
-}
-
-export interface AppDataTablePaginationLocale {
-  rowsPerPageLabel: string
-  rangeLabel: (start: number, end: number, total: number) => string
-  pageLabel: (page: number, pageCount: number) => string
-  firstPageAriaLabel: string
-  previousPageAriaLabel: string
-  nextPageAriaLabel: string
-  lastPageAriaLabel: string
 }
 
 export interface AppDataTablePaginationOptions {
@@ -76,7 +45,6 @@ export interface AppDataTablePaginationOptions {
   showPageSizeSelector?: boolean
   showFirstLastButtons?: boolean
   autoResetPageIndex?: boolean
-  locale?: Partial<AppDataTablePaginationLocale>
 }
 
 export interface AppDataTableVirtualizationOptions {
@@ -95,8 +63,6 @@ export interface AppDataTableSelectionOptions<TData> {
   onChange: OnChangeFn<RowSelectionState>
   enableRowSelection?: TableOptions<TData>['enableRowSelection']
   selectAllMode?: 'all' | 'filtered' | 'page'
-  selectAllAriaLabel?: string
-  getRowAriaLabel?: (row: Row<TData>) => string
 }
 
 export interface AppDataTableProps<TData> {
@@ -184,7 +150,6 @@ export interface AppSelectionBarProps {
   label?: ReactNode
   actions?: ReactNode
   onClear?: () => void
-  clearAriaLabel?: string
   className?: string
   style?: CSSProperties
 }

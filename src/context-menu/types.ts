@@ -7,15 +7,6 @@ export interface AppClipboardAdapter {
   writeText(text: string): Promise<void>
 }
 
-export interface AppContextMenuLocale {
-  undo: string
-  cut: string
-  copy: string
-  paste: string
-  delete: string
-  selectAll: string
-}
-
 export interface AppContextMenuActionItem {
   key: string
   label: ReactNode

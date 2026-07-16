@@ -30,6 +30,7 @@ import {
   type VisibilityState,
 } from '@tanstack/react-table'
 import { DataTableCheckbox } from '../DataTableCheckbox'
+import { useAppLocale } from '../../localization/useAppLocale'
 import type {
   AppDataTablePaginationOptions,
   AppDataTableProps,
@@ -175,14 +176,18 @@ export function useAppDataTable<TData>({
   defaultColumnPinning = {},
   onColumnPinningChange,
   loading = false,
-  loadingContent = 'Loading…',
-  emptyContent = 'No data',
+  loadingContent,
+  emptyContent,
   density = 'comfortable',
   onRowClick,
   onRowContextMenu,
   className,
   style,
 }: AppDataTableProps<TData>) {
+  const { messages } = useAppLocale()
+  const resolvedLoadingContent =
+    loadingContent ?? messages.dataTable.loading
+  const resolvedEmptyContent = emptyContent ?? messages.dataTable.empty
   const paginationEnabled = Boolean(pagination)
   const paginationOptions: AppDataTablePaginationOptions =
     typeof pagination === 'object' ? pagination : {}
@@ -223,8 +228,6 @@ export function useAppDataTable<TData>({
     : resolvedColumnVisibility
   const selectionEnabled = selection !== undefined
   const selectAllMode = selection?.selectAllMode ?? 'filtered'
-  const selectAllAriaLabel = selection?.selectAllAriaLabel
-  const getRowAriaLabel = selection?.getRowAriaLabel
   const columnsWithControlFilters = useMemo(
     () => resolveControlFilterColumns(columns, controls?.filters ?? []),
     [columns, controls?.filters],
@@ -293,7 +296,7 @@ export function useAppDataTable<TData>({
         if (selectAllMode === 'all') {
           return (
             <DataTableCheckbox
-              aria-label={selectAllAriaLabel ?? 'Select all rows'}
+              aria-label={messages.dataTable.selectAllRows}
               checked={table.getIsAllRowsSelected()}
               disabled={
                 !table.getCoreRowModel().flatRows.some((row) => row.getCanSelect())
@@ -321,10 +324,9 @@ export function useAppDataTable<TData>({
         return (
           <DataTableCheckbox
             aria-label={
-              selectAllAriaLabel ??
-              (selectAllMode === 'page'
-                ? 'Select all rows on this page'
-                : 'Select all filtered rows')
+              selectAllMode === 'page'
+                ? messages.dataTable.selectAllPageRows
+                : messages.dataTable.selectAllFilteredRows
             }
             checked={allSelected}
             disabled={selectableRows.length === 0}
@@ -348,7 +350,7 @@ export function useAppDataTable<TData>({
       },
       cell: ({ row }) => (
         <DataTableCheckbox
-          aria-label={getRowAriaLabel?.(row) ?? `Select row ${row.id}`}
+          aria-label={messages.dataTable.selectRow(row.id)}
           checked={row.getIsSelected()}
           disabled={!row.getCanSelect()}
           indeterminate={row.getIsSomeSelected()}
@@ -359,8 +361,7 @@ export function useAppDataTable<TData>({
     return [selectionColumn, ...columnsWithControlFilters]
   }, [
     columnsWithControlFilters,
-    getRowAriaLabel,
-    selectAllAriaLabel,
+    messages.dataTable,
     selectAllMode,
     selectionEnabled,
   ])
@@ -434,8 +435,8 @@ export function useAppDataTable<TData>({
     enableColumnResizing,
     columnResizeMode,
     loading,
-    loadingContent,
-    emptyContent,
+    loadingContent: resolvedLoadingContent,
+    emptyContent: resolvedEmptyContent,
     onRowClick,
     onRowContextMenu,
     className,

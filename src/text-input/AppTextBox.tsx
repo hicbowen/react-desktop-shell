@@ -2,11 +2,13 @@ import { forwardRef, useRef, useState } from 'react'
 import type { ChangeEvent } from 'react'
 import type { AppTextBoxProps } from './types'
 import { useAppFieldContext } from '../field/AppFieldContext'
+import { useAppLocale } from '../localization/useAppLocale'
 import './AppTextInput.css'
 
 const clearableTypes = new Set(['text', 'search', 'email', 'url', 'tel'])
-export const AppTextBox = forwardRef<HTMLInputElement, AppTextBoxProps>(function AppTextBox({ 'aria-describedby': ariaDescribedBy, 'aria-invalid': ariaInvalid, className, clearable = false, clearLabel = 'Clear input', disabled, endIcon, id, invalid, loading = false, loadingLabel = 'Loading', onChange, onClear, readOnly = false, required, size = 'standard', startIcon, type = 'text', value, defaultValue, ...rest }, forwardedRef) {
+export const AppTextBox = forwardRef<HTMLInputElement, AppTextBoxProps>(function AppTextBox({ 'aria-describedby': ariaDescribedBy, 'aria-invalid': ariaInvalid, className, clearable = false, disabled, endIcon, id, invalid, loading = false, onChange, onClear, readOnly = false, required, size = 'standard', startIcon, type = 'text', value, defaultValue, ...rest }, forwardedRef) {
   const field = useAppFieldContext()
+  const { messages } = useAppLocale()
   const resolvedDisabled = disabled ?? field?.disabled ?? false
   const resolvedInvalid = ariaInvalid ?? invalid ?? field?.invalid
   const resolvedRequired = required ?? field?.required
@@ -18,5 +20,5 @@ export const AppTextBox = forwardRef<HTMLInputElement, AppTextBoxProps>(function
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => { setCurrentValue(event.target.value); onChange?.(event) }
   const clear = () => { const input = localRef.current; if (!input) return; const setter = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value')?.set; setter?.call(input, ''); input.dispatchEvent(new Event('input', { bubbles: true })); setCurrentValue(''); onClear?.(); input.focus() }
   const classes = ['app-text-box', `app-text-box--${size}`, resolvedInvalid ? 'app-text-box--invalid' : '', resolvedDisabled ? 'app-text-box--disabled' : '', className].filter(Boolean).join(' ')
-  return <span className={classes}>{startIcon ? <span aria-hidden="true" className="app-text-box__icon">{startIcon}</span> : null}<input {...rest} aria-describedby={ariaDescribedBy ?? field?.describedBy} aria-invalid={resolvedInvalid || undefined} className="app-text-box__input" defaultValue={value == null ? defaultValue : undefined} disabled={resolvedDisabled} id={id ?? field?.controlId} onChange={handleChange} readOnly={readOnly} ref={setRef} required={resolvedRequired} type={type} value={value} />{canClear ? <button aria-label={clearLabel} className="app-text-box__clear" onClick={clear} type="button"><span aria-hidden="true">×</span></button> : null}{loading ? <span aria-label={loadingLabel} className="app-text-box__loading" role="status" /> : endIcon ? <span aria-hidden="true" className="app-text-box__icon">{endIcon}</span> : null}</span>
+  return <span className={classes}>{startIcon ? <span aria-hidden="true" className="app-text-box__icon">{startIcon}</span> : null}<input {...rest} aria-describedby={ariaDescribedBy ?? field?.describedBy} aria-invalid={resolvedInvalid || undefined} className="app-text-box__input" defaultValue={value == null ? defaultValue : undefined} disabled={resolvedDisabled} id={id ?? field?.controlId} onChange={handleChange} readOnly={readOnly} ref={setRef} required={resolvedRequired} type={type} value={value} />{canClear ? <button aria-label={messages.textBox.clear} className="app-text-box__clear" onClick={clear} type="button"><span aria-hidden="true">×</span></button> : null}{loading ? <span aria-label={messages.textBox.loading} className="app-text-box__loading" role="status" /> : endIcon ? <span aria-hidden="true" className="app-text-box__icon">{endIcon}</span> : null}</span>
 })

@@ -138,11 +138,11 @@ describe('AppSplitButton', () => {
     expect(menu()).toBeNull()
   })
 
-  it('uses the custom menu label on the trigger and menu', () => {
-    renderSplitButton({ menuAriaLabel: 'Export formats' })
-    expect(menuTrigger().getAttribute('aria-label')).toBe('Export formats')
+  it('uses the built-in menu label on the trigger and menu', () => {
+    renderSplitButton()
+    expect(menuTrigger().getAttribute('aria-label')).toBe('Open more options')
     click(menuTrigger())
-    expect(menu()?.getAttribute('aria-label')).toBe('Export formats')
+    expect(menu()?.getAttribute('aria-label')).toBe('Open more options')
   })
 
   it('renders an optional icon and keeps both buttons in the tab order', () => {

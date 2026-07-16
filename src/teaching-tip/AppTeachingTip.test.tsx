@@ -180,13 +180,9 @@ describe('AppTeachingTip', () => {
     expect(tip()?.querySelector('[aria-label="Close"]')).toBeNull()
   })
 
-  it('supports a localized close aria-label and defaults to Close', () => {
+  it('uses the built-in close aria-label', () => {
     renderTip()
     expect(tip()?.querySelector('[aria-label="Close"]')).not.toBeNull()
-
-    renderTip({ closeAriaLabel: '关闭' })
-    expect(tip()?.querySelector('[aria-label="关闭"]')).not.toBeNull()
-    expect(tip()?.querySelector('[aria-label="Close"]')).toBeNull()
   })
 
   it('closes on Escape and restores trigger focus', () => {

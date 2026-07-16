@@ -12,11 +12,11 @@ import type {
   AppToastAction,
   AppToastHostOptions,
   AppToastId,
-  AppToastLocale,
   AppToastOptions,
   AppToastStatus,
   AppToastUpdateOptions,
 } from './types'
+import { useAppLocale } from '../localization/useAppLocale'
 import './AppToastHost.css'
 
 const DEFAULT_DURATION = 4000
@@ -25,10 +25,6 @@ const EXIT_DURATION = 180
 
 type ToastPhase = 'visible' | 'waiting' | 'exiting'
 type PauseReason = 'hover' | 'window-blur'
-
-export const defaultToastLocale: AppToastLocale = {
-  dismiss: 'Dismiss',
-}
 
 interface ToastRecord {
   id: AppToastId
@@ -393,7 +389,6 @@ export function useToastStore(options: AppToastHostOptions | undefined) {
 
 export interface AppToastHostProps {
   toasts: ToastRecord[]
-  locale: AppToastLocale
   interactive: boolean
   onDismiss: (id: AppToastId) => void
   onExited: (id: AppToastId) => void
@@ -403,13 +398,13 @@ export interface AppToastHostProps {
 
 export function AppToastHost({
   toasts,
-  locale,
   interactive,
   onDismiss,
   onExited,
   onPause,
   onResume,
 }: AppToastHostProps) {
+  const { messages } = useAppLocale()
   const visibleToasts = toasts
     .filter((toast) => toast.phase === 'visible' || toast.phase === 'exiting')
     .sort((a, b) => a.order - b.order)
@@ -424,7 +419,7 @@ export function AppToastHost({
         <ToastItem
           key={toast.id}
           toast={toast}
-          locale={locale}
+          dismissLabel={messages.common.dismiss}
           interactive={interactive}
           onDismiss={onDismiss}
           onExited={onExited}
@@ -438,7 +433,7 @@ export function AppToastHost({
 
 function ToastItem({
   toast,
-  locale,
+  dismissLabel,
   interactive,
   onDismiss,
   onExited,
@@ -446,7 +441,7 @@ function ToastItem({
   onResume,
 }: {
   toast: ToastRecord
-  locale: AppToastLocale
+  dismissLabel: string
   interactive: boolean
   onDismiss: (id: AppToastId) => void
   onExited: (id: AppToastId) => void
@@ -508,7 +503,7 @@ function ToastItem({
         <button
           className="app-toast__close"
           type="button"
-          aria-label={locale.dismiss}
+          aria-label={dismissLabel}
           tabIndex={interactive ? 0 : -1}
           onMouseDown={(event) => {
             if (!interactive) {

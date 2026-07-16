@@ -4,6 +4,7 @@ import {
   validateDroppedFiles,
 } from './fileAcceptance'
 import type { AppFileDropOverlayProps } from './types'
+import { useAppLocale } from '../localization/useAppLocale'
 import './AppFileDropOverlay.css'
 
 type FileDropState = 'idle' | 'pending' | 'accept' | 'reject'
@@ -47,10 +48,13 @@ export function AppFileDropOverlay({
   onFiles,
   onReject,
   rejectDescription,
-  rejectTitle = 'These files are not supported',
+  rejectTitle,
   style,
-  title = 'Drop files to import',
+  title,
 }: AppFileDropOverlayProps) {
+  const { messages } = useAppLocale()
+  const resolvedTitle = title ?? messages.fileDrop.title
+  const resolvedRejectTitle = rejectTitle ?? messages.fileDrop.rejectTitle
   const [state, setState] = useState<FileDropState>('idle')
   const rootRef = useRef<HTMLDivElement | null>(null)
   const dragDepthRef = useRef(0)
@@ -184,7 +188,7 @@ export function AppFileDropOverlay({
           <div className="app-file-drop__panel">
             <div className="app-file-drop__icon">{icon ?? <UploadIcon />}</div>
             <div className="app-file-drop__title">
-              {rejected ? rejectTitle : title}
+              {rejected ? resolvedRejectTitle : resolvedTitle}
             </div>
             {(rejected ? rejectDescription : description) ? (
               <div className="app-file-drop__description">

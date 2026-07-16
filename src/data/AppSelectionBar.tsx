@@ -1,4 +1,5 @@
 import { Check, X } from 'lucide-react'
+import { useAppLocale } from '../localization/useAppLocale'
 import type { AppSelectionBarProps } from './types'
 
 export function AppSelectionBar({
@@ -6,10 +7,10 @@ export function AppSelectionBar({
   label,
   actions,
   onClear,
-  clearAriaLabel = 'Clear selection',
   className,
   style,
 }: AppSelectionBarProps) {
+  const { messages } = useAppLocale()
   return (
     <div
       className={`app-selection-bar ${className ?? ''}`.trim()}
@@ -17,14 +18,14 @@ export function AppSelectionBar({
     >
       <div className="app-selection-bar__label">
         <Check aria-hidden="true" size={16} strokeWidth={2.25} />
-        <span>{label ?? `${count} selected`}</span>
+        <span>{label ?? messages.dataTable.selectedCount(count)}</span>
       </div>
       {actions != null || onClear ? (
         <div className="app-selection-bar__actions">
           {actions}
           {onClear ? (
             <button
-              aria-label={clearAriaLabel}
+              aria-label={messages.dataTable.clearSelection}
               className="app-selection-bar__clear"
               type="button"
               onClick={onClear}

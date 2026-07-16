@@ -1,11 +1,9 @@
 import type { CSSProperties, ReactNode } from 'react'
 import type {
   AppClipboardAdapter,
-  AppContextMenuLocale,
   AppContextMenuMode,
 } from '../context-menu/types'
-import type { AppMessageBoxLocale } from '../dialog/types'
-import type { AppToastHostOptions, AppToastLocale } from '../toast/types'
+import type { AppToastHostOptions } from '../toast/types'
 import type { AppLocale } from '../localization/types'
 
 export type AppTheme = 'system' | 'light' | 'dark'
@@ -16,9 +14,6 @@ export interface AppShellProps {
   theme?: AppTheme
   contextMenu?: AppContextMenuMode
   clipboard?: AppClipboardAdapter
-  contextMenuLocale?: Partial<AppContextMenuLocale>
-  messageBoxLocale?: Partial<AppMessageBoxLocale>
-  toastLocale?: Partial<AppToastLocale>
   toastOptions?: AppToastHostOptions
   title?: ReactNode
   icon?: ReactNode

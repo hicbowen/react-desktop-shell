@@ -40,10 +40,7 @@ function uniqueOptions(values: string[]) {
 }
 
 export const tableControls: AppDataTableControlsOptions<DemoRow> = {
-  search: {
-    placeholder: 'Search table rows',
-    ariaLabel: 'Search table rows',
-  },
+  search: true,
   filters: [
     {
       columnId: 'category',

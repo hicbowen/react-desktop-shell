@@ -1,5 +1,6 @@
 import { useMemo } from 'react'
 import type { AppTitleBarProps } from './types'
+import { useAppLocale } from './localization/useAppLocale'
 import './AppTitleBar.css'
 
 function MinimizeIcon() {
@@ -104,6 +105,7 @@ export function AppTitleBar({
   className,
   style,
 }: AppTitleBarProps) {
+  const { messages } = useAppLocale()
   const rootClassName = useMemo(() => {
     const classes = ['app-title-bar']
 
@@ -127,7 +129,7 @@ export function AppTitleBar({
         <div className="app-title-bar__controls">
           {showMinimize && (
             <button
-              aria-label="Minimize window"
+              aria-label={messages.window.minimize}
               className="app-title-bar__button"
               onClick={() => onMinimize?.()}
               type="button"
@@ -137,7 +139,9 @@ export function AppTitleBar({
           )}
           {showMaximize && (
             <button
-              aria-label={maximized ? 'Restore window' : 'Maximize window'}
+              aria-label={
+                maximized ? messages.window.restore : messages.window.maximize
+              }
               className="app-title-bar__button"
               onClick={() => onToggleMaximize?.()}
               type="button"
@@ -147,7 +151,7 @@ export function AppTitleBar({
           )}
           {showClose && (
             <button
-              aria-label="Close window"
+              aria-label={messages.window.close}
               className="app-title-bar__button app-title-bar__button--danger"
               onClick={() => onClose?.()}
               type="button"

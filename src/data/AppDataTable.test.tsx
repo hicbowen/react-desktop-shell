@@ -290,29 +290,21 @@ describe('AppDataTable controls', () => {
   })
 
   it('uses localized control labels and aria labels', () => {
-    renderTable({
-      controls: {
-        ...controls,
-        clearAll: true,
-        locale: {
-          searchPlaceholder: '搜索表格',
-          searchAriaLabel: '搜索行',
-          clearSearchAriaLabel: '清除搜索',
-          filtersLabel: '筛选',
-          activeFiltersAriaLabel: (count) => `筛选，已启用 ${count} 项`,
-          clearFilterLabel: '清除',
-          clearFilterAriaLabel: (label) => `清除${label}筛选`,
-          clearFiltersLabel: '清除筛选',
-          clearAllLabel: '全部清除',
-          clearAllAriaLabel: '清除搜索和所有筛选',
-        },
-      },
-    })
+    render(
+      <AppShell locale="zh-CN">
+        <AppDataTable
+          columns={columns}
+          controls={{ ...controls, clearAll: true }}
+          data={data}
+          getRowId={(row) => row.id}
+        />
+      </AppShell>,
+    )
 
     const localizedSearch = container.querySelector<HTMLInputElement>(
       '[aria-label="搜索行"]',
     )!
-    expect(localizedSearch.placeholder).toBe('搜索表格')
+    expect(localizedSearch.placeholder).toBe('搜索行')
 
     const valueSetter = Object.getOwnPropertyDescriptor(
       HTMLInputElement.prototype,
@@ -803,21 +795,20 @@ describe('AppDataTable controls', () => {
   })
 
   it('supports pagination locale and optional control visibility', () => {
-    renderTable({
-      data: pagedData,
-      pagination: {
-        showPageSizeSelector: false,
-        showFirstLastButtons: false,
-        locale: {
-          rangeLabel: (start, end, total) => `第 ${start}–${end} 条，共 ${total} 条`,
-          pageLabel: (page, pageCount) => `第 ${page} / ${pageCount} 页`,
-          previousPageAriaLabel: '上一页',
-          nextPageAriaLabel: '下一页',
-        },
-      },
-    })
-    expect(container.textContent).toContain('第 1–10 条，共 24 条')
-    expect(container.textContent).toContain('第 1 / 3 页')
+    render(
+      <AppShell locale="zh-CN">
+        <AppDataTable
+          columns={columns}
+          data={pagedData}
+          pagination={{
+            showPageSizeSelector: false,
+            showFirstLastButtons: false,
+          }}
+        />
+      </AppShell>,
+    )
+    expect(container.textContent).toContain('1–10，共 24 行')
+    expect(container.textContent).toContain('第 1 页，共 3 页')
     expect(container.querySelector('[aria-label="Rows per page"]')).toBeNull()
     expect(container.querySelector('[aria-label="First page"]')).toBeNull()
     expect(container.querySelector('[aria-label="上一页"]')).not.toBeNull()

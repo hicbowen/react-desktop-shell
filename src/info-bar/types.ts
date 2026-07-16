@@ -10,7 +10,6 @@ export interface AppInfoBarProps {
   action?: ReactNode
   dismissible?: boolean
   onDismiss?: () => void
-  dismissAriaLabel?: string
   className?: string
   children?: ReactNode
 }

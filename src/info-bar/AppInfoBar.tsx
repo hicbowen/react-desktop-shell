@@ -1,4 +1,5 @@
 import type { AppInfoBarProps, AppInfoBarStatus } from './types'
+import { useAppLocale } from '../localization/useAppLocale'
 import './AppInfoBar.css'
 
 export function AppInfoBar({
@@ -9,10 +10,10 @@ export function AppInfoBar({
   action,
   dismissible = false,
   onDismiss,
-  dismissAriaLabel = 'Dismiss',
   className,
   children,
 }: AppInfoBarProps) {
+  const { messages } = useAppLocale()
   const renderedIcon = icon === undefined ? getDefaultIcon(status) : icon
   const classNames = ['app-info-bar', `app-info-bar--${status}`]
 
@@ -44,7 +45,7 @@ export function AppInfoBar({
 
       {dismissible ? (
         <button
-          aria-label={dismissAriaLabel}
+          aria-label={messages.infoBar.dismiss}
           className="app-info-bar__dismiss"
           onClick={onDismiss}
           type="button"

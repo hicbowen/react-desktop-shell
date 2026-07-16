@@ -3,14 +3,9 @@ import type {
   AppMessageBox,
   AppMessageBoxButton,
   AppMessageBoxConfirmOptions,
-  AppMessageBoxLocale,
   AppMessageBoxOptions,
 } from './types'
-
-export const defaultMessageBoxLocale: AppMessageBoxLocale = {
-  confirm: 'Confirm',
-  cancel: 'Cancel',
-}
+import type { AppLocaleMessages } from '../localization/types'
 
 export interface MessageBoxRequest {
   id: number
@@ -20,7 +15,7 @@ export interface MessageBoxRequest {
 }
 
 export function useMessageBoxQueue(
-  locale: AppMessageBoxLocale,
+  locale: Pick<AppLocaleMessages['common'], 'confirm' | 'cancel'>,
   registerDialog: (dialog: MessageBoxRequest | null) => void,
 ) {
   const queueRef = useRef<MessageBoxRequest[]>([])

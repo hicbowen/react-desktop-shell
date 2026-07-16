@@ -45,8 +45,3 @@ export interface AppMessageBox {
   show(options: AppMessageBoxOptions): Promise<string | undefined>
   confirm(options: AppMessageBoxConfirmOptions): Promise<boolean>
 }
-
-export interface AppMessageBoxLocale {
-  confirm: string
-  cancel: string
-}

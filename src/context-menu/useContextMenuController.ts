@@ -4,9 +4,9 @@ import type {
   AppClipboardAdapter,
   AppContextMenuApi,
   AppContextMenuItem,
-  AppContextMenuLocale,
   AppContextMenuMode,
 } from './types'
+import type { AppLocaleMessages } from '../localization/types'
 import {
   APP_CONTEXT_MENU_ATTRIBUTE,
   type AppContextMenuRegistration,
@@ -16,7 +16,6 @@ import type { AppContextMenuState } from './AppContextMenuLayer'
 import {
   createEditableMenuItems,
   createSelectionMenuItems,
-  defaultContextMenuLocale,
   getEditableElement,
   hasEditableSelection,
 } from './AppContextMenuTextActions'
@@ -25,20 +24,16 @@ export function useContextMenuController({
   rootRef,
   mode,
   clipboard,
-  locale,
+  messages,
 }: {
   rootRef: RefObject<HTMLDivElement | null>
   mode: AppContextMenuMode
   clipboard: AppClipboardAdapter
-  locale: Partial<AppContextMenuLocale> | undefined
+  messages: AppLocaleMessages['contextMenu']
 }) {
   const registryRef = useRef(new Map<string, AppContextMenuRegistration>())
   const restoreFocusRef = useRef<HTMLElement | null>(null)
   const [menu, setMenu] = useState<AppContextMenuState | null>(null)
-  const resolvedLocale = useMemo(
-    () => ({ ...defaultContextMenuLocale, ...locale }),
-    [locale],
-  )
   const registry = useMemo<AppContextMenuRegistry>(
     () => ({
       register(registration) {
@@ -100,7 +95,7 @@ export function useContextMenuController({
       if (editable) {
         return {
           trigger: editable,
-          items: createEditableMenuItems(editable, clipboard, resolvedLocale),
+          items: createEditableMenuItems(editable, clipboard, messages),
           preserveTriggerFocus: true,
         }
       }
@@ -110,13 +105,13 @@ export function useContextMenuController({
       if (selectionText.trim().length > 0) {
         return {
           trigger: target instanceof HTMLElement ? target : null,
-          items: createSelectionMenuItems(clipboard, resolvedLocale),
+          items: createSelectionMenuItems(clipboard, messages),
         }
       }
 
       return null
     },
-    [clipboard, findCustomMenu, resolvedLocale],
+    [clipboard, findCustomMenu, messages],
   )
   const openMenu = useCallback(
     (

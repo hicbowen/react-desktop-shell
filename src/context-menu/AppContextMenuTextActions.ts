@@ -1,17 +1,8 @@
 import type {
   AppClipboardAdapter,
   AppContextMenuItem,
-  AppContextMenuLocale,
 } from './types'
-
-export const defaultContextMenuLocale: AppContextMenuLocale = {
-  undo: 'Undo',
-  cut: 'Cut',
-  copy: 'Copy',
-  paste: 'Paste',
-  delete: 'Delete',
-  selectAll: 'Select all',
-}
+import type { AppLocaleMessages } from '../localization/types'
 
 export const defaultClipboardAdapter: AppClipboardAdapter = {
   async readText() {
@@ -73,7 +64,7 @@ export function hasEditableSelection(editable: EditableElement) {
 export function createEditableMenuItems(
   editable: EditableElement,
   clipboard: AppClipboardAdapter,
-  locale: AppContextMenuLocale,
+  locale: AppLocaleMessages['contextMenu'],
 ): AppContextMenuItem[] {
   return [
     {
@@ -118,7 +109,7 @@ export function createEditableMenuItems(
 
 export function createSelectionMenuItems(
   clipboard: AppClipboardAdapter,
-  locale: AppContextMenuLocale,
+  locale: AppLocaleMessages['contextMenu'],
 ): AppContextMenuItem[] {
   return [
     {

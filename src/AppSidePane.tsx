@@ -8,6 +8,7 @@ import {
 } from 'react'
 import type { CSSProperties } from 'react'
 import type { AppSidePaneProps } from './types'
+import { useAppLocale } from './localization/useAppLocale'
 import './AppSidePane.css'
 import './scroll-area/AppScrollArea.css'
 
@@ -32,6 +33,7 @@ export function AppSidePane({
   className,
   style,
 }: AppSidePaneProps) {
+  const { messages } = useAppLocale()
   const rootRef = useRef<HTMLElement | null>(null)
   const dragRef = useRef<{
     pointerId: number
@@ -213,7 +215,7 @@ export function AppSidePane({
           className="app-side-pane__resize-handle"
           role="separator"
           aria-orientation="vertical"
-          aria-label="Resize side pane"
+          aria-label={messages.sidePane.resize}
           onPointerDown={handlePointerDown}
         />
       ) : null}
@@ -224,7 +226,7 @@ export function AppSidePane({
             <button
               className="app-side-pane__close"
               type="button"
-              aria-label="Close side pane"
+              aria-label={messages.sidePane.close}
               onClick={onClose}
             >
               <svg viewBox="0 0 16 16" aria-hidden="true">

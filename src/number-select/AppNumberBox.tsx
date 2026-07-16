@@ -1,6 +1,7 @@
 import { forwardRef, useEffect, useRef, useState } from 'react'
 import type { FocusEvent, KeyboardEvent } from 'react'
 import { useAppFieldContext } from '../field/AppFieldContext'
+import { useAppLocale } from '../localization/useAppLocale'
 import type { AppNumberBoxProps } from './types'
 import './AppNumberSelect.css'
 
@@ -24,11 +25,9 @@ export const AppNumberBox = forwardRef<HTMLInputElement, AppNumberBoxProps>(func
   'aria-invalid': ariaInvalid,
   allowEmpty = false,
   defaultValue = null,
-  decrementLabel = 'Decrease value',
   disabled,
   formatValue = String,
   id,
-  incrementLabel = 'Increase value',
   max,
   min,
   onBlur,
@@ -46,6 +45,7 @@ export const AppNumberBox = forwardRef<HTMLInputElement, AppNumberBoxProps>(func
   ...rest
 }, ref) {
   const field = useAppFieldContext()
+  const { messages } = useAppLocale()
   const resolvedDisabled = disabled ?? field?.disabled ?? false
   const controlled = value !== undefined
   const initialValue = defaultValue != null && Number.isFinite(defaultValue)
@@ -105,5 +105,5 @@ export const AppNumberBox = forwardRef<HTMLInputElement, AppNumberBoxProps>(func
     ? parsedEditingValue
     : committedValue
 
-  return <span className={`app-number-box${resolvedDisabled ? ' app-number-box--disabled' : ''}`}><input {...rest} aria-describedby={ariaDescribedBy ?? field?.describedBy} aria-invalid={(ariaInvalid ?? field?.invalid) || undefined} aria-valuemax={bounds.max} aria-valuemin={bounds.min} aria-valuenow={committedValue ?? undefined} aria-valuetext={formattedCommittedValue} disabled={resolvedDisabled} id={id ?? field?.controlId} inputMode="decimal" onBlur={handleBlur} onChange={(event) => setEditingText(event.target.value)} onKeyDown={handleKeyDown} readOnly={readOnly} ref={ref} required={required ?? field?.required} role="spinbutton" type="text" value={editingText} /><span className="app-number-box__buttons"><button aria-label={incrementLabel} disabled={resolvedDisabled || readOnly || effectiveValue == null || (bounds.max != null && effectiveValue >= bounds.max)} onClick={() => changeBy(1)} onPointerDown={(event) => event.preventDefault()} type="button">+</button><button aria-label={decrementLabel} disabled={resolvedDisabled || readOnly || effectiveValue == null || (bounds.min != null && effectiveValue <= bounds.min)} onClick={() => changeBy(-1)} onPointerDown={(event) => event.preventDefault()} type="button">−</button></span></span>
+  return <span className={`app-number-box${resolvedDisabled ? ' app-number-box--disabled' : ''}`}><input {...rest} aria-describedby={ariaDescribedBy ?? field?.describedBy} aria-invalid={(ariaInvalid ?? field?.invalid) || undefined} aria-valuemax={bounds.max} aria-valuemin={bounds.min} aria-valuenow={committedValue ?? undefined} aria-valuetext={formattedCommittedValue} disabled={resolvedDisabled} id={id ?? field?.controlId} inputMode="decimal" onBlur={handleBlur} onChange={(event) => setEditingText(event.target.value)} onKeyDown={handleKeyDown} readOnly={readOnly} ref={ref} required={required ?? field?.required} role="spinbutton" type="text" value={editingText} /><span className="app-number-box__buttons"><button aria-label={messages.numberBox.increase} disabled={resolvedDisabled || readOnly || effectiveValue == null || (bounds.max != null && effectiveValue >= bounds.max)} onClick={() => changeBy(1)} onPointerDown={(event) => event.preventDefault()} type="button">+</button><button aria-label={messages.numberBox.decrease} disabled={resolvedDisabled || readOnly || effectiveValue == null || (bounds.min != null && effectiveValue <= bounds.min)} onClick={() => changeBy(-1)} onPointerDown={(event) => event.preventDefault()} type="button">−</button></span></span>
 })

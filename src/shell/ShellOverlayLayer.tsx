@@ -2,7 +2,6 @@ import type { AppContextMenuState } from '../context-menu/AppContextMenuLayer'
 import { AppContextMenuLayer } from '../context-menu/AppContextMenuLayer'
 import type { AppDialogRegistration } from '../dialog/AppDialogContext'
 import { AppDialogLayer } from '../dialog/AppDialogLayer'
-import type { AppToastLocale } from '../toast/types'
 import { AppToastHost, type useToastStore } from '../toast/AppToastHost'
 import type { RefCallback } from 'react'
 
@@ -12,7 +11,6 @@ export function ShellOverlayLayer({
   onCloseContextMenu,
   overlayHostRef,
   toastStore,
-  toastLocale,
   hasModalDialog,
 }: {
   dialogs: AppDialogRegistration[]
@@ -20,7 +18,6 @@ export function ShellOverlayLayer({
   onCloseContextMenu: () => void
   overlayHostRef: RefCallback<HTMLDivElement>
   toastStore: ReturnType<typeof useToastStore>
-  toastLocale: AppToastLocale
   hasModalDialog: boolean
 }) {
   return (
@@ -29,7 +26,6 @@ export function ShellOverlayLayer({
       <AppDialogLayer dialogs={dialogs} />
       <AppToastHost
         toasts={toastStore.toasts}
-        locale={toastLocale}
         interactive={!hasModalDialog}
         onDismiss={toastStore.toast.dismiss}
         onExited={toastStore.removeToast}

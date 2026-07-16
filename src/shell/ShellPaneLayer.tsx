@@ -1,6 +1,7 @@
 import { cloneElement, isValidElement, useMemo } from 'react'
 import type { ReactElement, ReactNode } from 'react'
 import type { AppRailProps } from '../navigation/types'
+import { useAppLocale } from '../localization/useAppLocale'
 import type { PaneController } from './usePaneController'
 
 function MenuIcon() {
@@ -130,6 +131,7 @@ export function ShellPaneLayer({
   icon: ReactNode
   ariaLabel: string
 }) {
+  const { messages } = useAppLocale()
   const renderedRail = useMemo(() => {
     if (!rail) {
       return null
@@ -166,7 +168,7 @@ export function ShellPaneLayer({
         .join(' ')}
     >
       <button
-        aria-label="Close navigation"
+        aria-label={messages.shell.closeNavigation}
         className="app-shell__pane-backdrop"
         onClick={pane.close}
         type="button"

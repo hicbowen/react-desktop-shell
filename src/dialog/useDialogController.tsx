@@ -1,11 +1,10 @@
 import { useCallback, useMemo, useRef, useState } from 'react'
-import type { AppMessageBoxLocale } from './types'
+import type { AppLocaleMessages } from '../localization/types'
 import type {
   AppDialogRegistration,
   AppDialogRegistry,
 } from './AppDialogContext'
 import {
-  defaultMessageBoxLocale,
   renderMessageBoxActions,
   renderMessageBoxContent,
   useMessageBoxQueue,
@@ -13,7 +12,7 @@ import {
 } from './AppMessageBoxHost'
 
 export function useDialogController(
-  locale: Partial<AppMessageBoxLocale> | undefined,
+  locale: Pick<AppLocaleMessages['common'], 'confirm' | 'cancel'>,
   onModalOpen: () => void,
 ) {
   const dialogRegistryRef = useRef(new Map<string, AppDialogRegistration>())
@@ -23,10 +22,6 @@ export function useDialogController(
     options: MessageBoxRequest['options']
     restoreFocusElement: HTMLElement | null
   } | null>(null)
-  const resolvedLocale = useMemo(
-    () => ({ ...defaultMessageBoxLocale, ...locale }),
-    [locale],
-  )
   const syncDialogs = useCallback(() => {
     setDialogs(Array.from(dialogRegistryRef.current.values()))
   }, [])
@@ -63,7 +58,7 @@ export function useDialogController(
     [onModalOpen],
   )
   const { messageBox, completeCurrent } = useMessageBoxQueue(
-    resolvedLocale,
+    locale,
     registerMessageBox,
   )
   const renderedDialogs = useMemo<AppDialogRegistration[]>(

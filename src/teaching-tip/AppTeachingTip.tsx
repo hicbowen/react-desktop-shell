@@ -13,6 +13,7 @@ import { OVERLAY_SURFACE_FALLBACK_STYLE } from '../overlay/surfaceFallback'
 import { getElementRef, useMergedRefs } from '../overlay/trigger'
 import { useAnchoredOverlayPosition } from '../overlay/useAnchoredOverlayPosition'
 import { useOverlayDismiss } from '../overlay/useOverlayDismiss'
+import { useAppLocale } from '../localization/useAppLocale'
 import {
   OverlayParentContext,
   useOverlayTree,
@@ -41,10 +42,9 @@ function CloseIcon() {
 }
 
 export function AppTeachingTip({
-  ariaLabel = 'Teaching tip',
+  ariaLabel,
   children,
   className,
-  closeAriaLabel = 'Close',
   closeOnOutsidePointerDown = true,
   content,
   dismissible = true,
@@ -56,6 +56,7 @@ export function AppTeachingTip({
   secondaryAction,
   title,
 }: AppTeachingTipProps) {
+  const { messages } = useAppLocale()
   const triggerRef = useRef<HTMLElement | null>(null)
   const overlayRef = useRef<HTMLDivElement | null>(null)
   const closeRequestedRef = useRef(false)
@@ -149,7 +150,9 @@ export function AppTeachingTip({
         <OverlayParentContext.Provider value={overlayTree.overlayId}>
           <div
           aria-describedby={contentId}
-          aria-label={title ? undefined : ariaLabel}
+          aria-label={
+            title ? undefined : (ariaLabel ?? messages.teachingTip.label)
+          }
           aria-labelledby={title ? titleId : undefined}
           aria-modal="false"
           className={tipClassName}
@@ -179,7 +182,7 @@ export function AppTeachingTip({
               )}
               {dismissible ? (
                 <button
-                  aria-label={closeAriaLabel}
+                  aria-label={messages.teachingTip.close}
                   className="app-teaching-tip__close"
                   onClick={closeAndRestoreFocus}
                   type="button"

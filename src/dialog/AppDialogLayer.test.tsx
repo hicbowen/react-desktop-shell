@@ -8,6 +8,7 @@ import {
   type AppDialogRegistration,
 } from './AppDialogContext'
 import { AppDialog } from './AppDialog'
+import { enUSMessages } from '../localization/locales/en-US'
 import { AppDialogLayer } from './AppDialogLayer'
 import { AppPopover } from '../popover/AppPopover'
 import { useDialogController } from './useDialogController'
@@ -420,7 +421,7 @@ describe('AppDialogLayer', () => {
     let messageBox: AppMessageBox | undefined
 
     function Harness({ children }: { children?: ReactNode }) {
-      const controller = useDialogController(undefined, () => {})
+      const controller = useDialogController(enUSMessages.common, () => {})
       messageBox = controller.messageBox
 
       return (
