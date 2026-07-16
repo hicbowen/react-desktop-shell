@@ -217,6 +217,15 @@ reorderable tabs, large filter sets, overflow menus, or routing.
 
 ## Fluent Cards
 
+## Button primitives
+
+`AppButton` provides standard, primary, subtle, and danger desktop commands in compact or standard sizes. It supports leading or trailing icons, stable loading states, native button attributes, and ref forwarding. Use `AppIconButton` for icon-only commands and always supply `ariaLabel` or `aria-label`; compose tooltips with `AppTooltip`.
+
+```tsx
+<AppButton appearance="primary" icon={<Save />} loading={saving}>Save</AppButton>
+<AppIconButton ariaLabel="More actions" appearance="subtle" icon={<MoreHorizontal />} />
+```
+
 `AppCard` is a low-contrast Fluent content surface for desktop tools, settings,
 status summaries, recent projects, and utility entry points. It is not a fixed
 web-dashboard panel: cards have no strong shadow or title divider by default,

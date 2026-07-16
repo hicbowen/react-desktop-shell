@@ -1,4 +1,5 @@
 export { AppShell } from './shell/AppShell'
+export { AppButton, AppIconButton } from './button'
 export { AppCard, AppCardFooter, AppCardGroup, AppCardHeader } from './card'
 export { AppContextMenu } from './context-menu/AppContextMenu'
 export { AppDialog } from './dialog/AppDialog'
@@ -22,6 +23,10 @@ export { useAppContextMenu } from './context-menu/AppContextMenuContext'
 export { useAppToast } from './toast/AppToastContext'
 
 export type {
+  AppButtonAppearance,
+  AppButtonProps,
+  AppButtonSize,
+  AppIconButtonProps,
   AppClipboardAdapter,
   AppCardAppearance,
   AppCardFooterProps,

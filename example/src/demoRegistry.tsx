@@ -1,5 +1,5 @@
 import type { ComponentType, ReactNode } from 'react'
-import { Bell, Boxes, CircleHelp, Columns3, CreditCard, Info, LayoutDashboard, LayoutPanelTop, Lightbulb, ListChecks, Menu, MessageSquare, MousePointerClick, Navigation, PanelRight, Rows3, ScrollText, Settings, SlidersHorizontal, Table2, UploadCloud, Wrench } from 'lucide-react'
+import { Bell, Boxes, CircleHelp, Columns3, CreditCard, Info, LayoutDashboard, LayoutPanelTop, Lightbulb, ListChecks, Menu, MessageSquare, MousePointerClick, Navigation, PanelRight, Rows3, ScrollText, Settings, SlidersHorizontal, Table2, UploadCloud, Wrench, SquareMousePointer } from 'lucide-react'
 import type { RailEntry, RailItem } from '../../src'
 import { OverviewPage } from './pages/OverviewPage'
 import { AppPagePage, AppShellPage, AppSidePanePage, AppTitleBarPage } from './pages/shell/ShellPages'
@@ -14,6 +14,7 @@ import { AppScrollAreaPage } from './pages/content/ScrollAreaPage'
 import { AppTooltipPage } from './pages/feedback/TooltipPage'
 import { AppMenuFlyoutPage } from './pages/actions/MenuFlyoutPage'
 import { AppSplitButtonPage } from './pages/actions/SplitButtonPage'
+import { ButtonsPage } from './pages/actions/ButtonsPage'
 import { AppTeachingTipPage } from './pages/feedback/TeachingTipPage'
 import { AppFileDropOverlayPage } from './pages/feedback/FileDropOverlayPage'
 
@@ -38,6 +39,7 @@ export const demoPages: DemoPageDefinition[] = [
   { key: 'app-dialog', group: 'Feedback', label: 'AppDialog', description: 'Modal content with controlled state and custom actions.', icon: <MessageSquare size={16} />, component: AppDialogPage },
   { key: 'message-box', group: 'Feedback', label: 'Message Box', description: 'Promise-based confirmation and decision dialogs.', icon: <MessageSquare size={16} />, component: MessageBoxPage },
   { key: 'app-toolbar', group: 'Actions', label: 'AppToolbar', description: 'Start, status, and end regions for page-level actions.', icon: <Wrench size={16} />, component: AppToolbarPage },
+  { key: 'buttons', group: 'Actions', label: 'Buttons', description: 'Desktop command buttons, icon buttons, states, and composition.', icon: <SquareMousePointer size={16} />, component: ButtonsPage },
   { key: 'app-menu-flyout', group: 'Actions', label: 'AppMenuFlyout', description: 'Anchored one-level command menus with keyboard navigation.', icon: <ListChecks size={16} />, component: AppMenuFlyoutPage },
   { key: 'app-split-button', group: 'Actions', label: 'AppSplitButton', description: 'A default command paired with alternate menu actions.', icon: <Columns3 size={16} />, component: AppSplitButtonPage },
   { key: 'context-menu', group: 'Actions', label: 'Context Menu', description: 'Nested contextual commands and native text actions.', icon: <MousePointerClick size={16} />, component: ContextMenuPage },
