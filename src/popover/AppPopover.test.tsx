@@ -56,14 +56,15 @@ describe('AppPopover', () => {
     expect(trigger().getAttribute('aria-expanded')).toBe('true')
   })
 
-  it('is explicitly non-modal', () => {
+  it('uses non-modal popover semantics', () => {
     act(() => root.render(
       <AppPopover defaultOpen trigger={<button type="button">Open</button>}>
         Content
       </AppPopover>,
     ))
-    expect(popover()?.getAttribute('role')).toBe('dialog')
+    expect(popover()?.hasAttribute('role')).toBe(false)
     expect(popover()?.hasAttribute('aria-modal')).toBe(false)
+    expect(trigger().getAttribute('aria-haspopup')).toBe('true')
   })
 
   it('keeps the popover open when an input is clicked', () => {

@@ -1,2 +1,74 @@
-import { useRef, useState } from 'react'; import { Info, MoreHorizontal } from 'lucide-react'; import { AppButton, AppIconButton, AppPopover, AppTextBox } from '../../../../src'; import { DemoPage, DemoPreview, DemoSection } from '../../components/DemoPage'
-export function PopoverPage() { const [open, setOpen] = useState(false); const inputRef = useRef<HTMLInputElement>(null); return <DemoPage><DemoSection title="Placements"><DemoPreview className="demo-component-row"><AppPopover placement="bottom-start" trigger={<AppButton>Bottom start</AppButton>}><strong>Lightweight details</strong><p>Popover content may include text and controls.</p></AppPopover><AppPopover placement="top" trigger={<AppButton>Top</AppButton>}>Positioning flips or shifts near viewport edges.</AppPopover><AppPopover placement="right" trigger={<AppIconButton ariaLabel="Open details" icon={<MoreHorizontal />} />}><p>Icon buttons work as triggers.</p></AppPopover></DemoPreview></DemoSection><DemoSection title="Interactive and controlled"><DemoPreview className="demo-component-row"><AppPopover initialFocusRef={inputRef} matchTriggerWidth trigger={<AppButton>Enter a note</AppButton>}><AppTextBox placeholder="Note" ref={inputRef} /><div style={{ marginTop: 8 }}><AppButton appearance="primary">Save</AppButton></div></AppPopover><AppPopover onOpenChange={setOpen} open={open} trigger={<AppButton icon={<Info />}>Controlled</AppButton>}>Controlled popover state.</AppPopover></DemoPreview></DemoSection><DemoSection title="Choosing an overlay"><p className="demo-note"><strong>Popover</strong> hosts interactive supporting content. Use Tooltip for a short non-interactive description, TeachingTip for guided instruction, MenuFlyout for commands, and Dialog for modal decisions.</p></DemoSection></DemoPage> }
+import { useRef, useState } from 'react'
+import { Info, MoreHorizontal } from 'lucide-react'
+import {
+  AppButton,
+  AppIconButton,
+  AppPopover,
+  AppSelect,
+  AppTextBox,
+} from '../../../../src'
+import { DemoPage, DemoPreview, DemoSection } from '../../components/DemoPage'
+
+const priorityOptions = [
+  { label: 'Normal', value: 'normal' },
+  { label: 'High', value: 'high' },
+]
+
+export function PopoverPage() {
+  const [open, setOpen] = useState(false)
+  const inputRef = useRef<HTMLInputElement>(null)
+
+  return <DemoPage>
+    <DemoSection title="Supporting content">
+      <DemoPreview className="demo-component-row">
+        <AppPopover placement="bottom-start" trigger={<AppButton>View details</AppButton>}>
+          <strong>Lightweight details</strong>
+          <p>This text stays close to its trigger without blocking the page.</p>
+        </AppPopover>
+        <AppPopover placement="top" trigger={<AppButton>Top</AppButton>}>
+          Positioning flips or shifts near viewport edges.
+        </AppPopover>
+        <AppPopover
+          placement="right"
+          trigger={<AppIconButton ariaLabel="Open details" icon={<MoreHorizontal />} />}
+        >
+          <p>Icon buttons work as triggers.</p>
+        </AppPopover>
+      </DemoPreview>
+    </DemoSection>
+
+    <DemoSection title="Interactive popover">
+      <DemoPreview className="demo-component-row">
+        <AppPopover
+          initialFocusRef={inputRef}
+          matchTriggerWidth
+          trigger={<AppButton>Quick edit</AppButton>}
+        >
+          <div className="demo-form-stack">
+            <AppTextBox placeholder="Note" ref={inputRef} />
+            <AppSelect defaultValue="normal" options={priorityOptions} />
+            <AppButton appearance="primary">Save</AppButton>
+          </div>
+        </AppPopover>
+        <AppPopover
+          onOpenChange={setOpen}
+          open={open}
+          trigger={<AppButton icon={<Info />}>Controlled</AppButton>}
+        >
+          Controlled popover state.
+        </AppPopover>
+      </DemoPreview>
+    </DemoSection>
+
+    <DemoSection title="Popover compared with Dialog">
+      <p className="demo-note">
+        <strong>Popover is non-modal:</strong> it keeps the surrounding page available for supporting
+        information and compact edits. <strong>Dialog is modal:</strong> use it when a decision or
+        workflow must hold attention and block background interaction.
+      </p>
+      <p className="demo-note">
+        Use MenuFlyout for commands, TeachingTip for guided instruction, and Tooltip for a short hint.
+      </p>
+    </DemoSection>
+  </DemoPage>
+}
