@@ -1,4 +1,5 @@
 export { AppDatePicker } from './AppDatePicker'
+export { AppDateRangePicker } from './AppDateRangePicker'
 export {
   compareAppDates,
 } from './dateMath'

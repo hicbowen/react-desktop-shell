@@ -11,6 +11,7 @@ export { AppExpander } from './expander'
 export { AppPopover } from './popover'
 export {
   AppDatePicker,
+  AppDateRangePicker,
   compareAppDates,
   formatAppDateISO,
   parseAppDateISO,
