@@ -9,6 +9,7 @@ export type { AppCheckBoxProps, AppToggleSwitchProps } from './selection-control
 export type { AppNumberBoxProps, AppSelectOption, AppSelectProps } from './number-select/types'
 export type { AppListViewItemProps, AppListViewProps } from './list-view/types'
 export type { AppExpanderProps } from './expander/types'
+export type { AppPopoverProps } from './popover/types'
 
 export type {
   AppCardAppearance,

@@ -21,6 +21,7 @@ import { ButtonsPage } from './pages/actions/ButtonsPage'
 import { AppTeachingTipPage } from './pages/feedback/TeachingTipPage'
 import { AppFileDropOverlayPage } from './pages/feedback/FileDropOverlayPage'
 import { ProgressStatusPage } from './pages/feedback/ProgressStatusPage'
+import { PopoverPage } from './pages/feedback/PopoverPage'
 import { TextInputsPage } from './pages/forms/TextInputsPage'
 import { SelectionControlsPage } from './pages/forms/SelectionControlsPage'
 import { NumberSelectPage } from './pages/forms/NumberSelectPage'
@@ -43,6 +44,7 @@ export const demoPages: DemoPageDefinition[] = [
   { key: 'expander', group: 'Content', label: 'Expander', description: 'Collapsible settings, release notes, and low-frequency details.', icon: <Columns3 size={16} />, component: ExpanderPage },
   { key: 'app-info-bar', group: 'Feedback', label: 'AppInfoBar', description: 'Inline informational, success, warning, and error states.', icon: <Info size={16} />, component: AppInfoBarPage },
   { key: 'progress-status', group: 'Feedback', label: 'Progress & Status', description: 'Indeterminate and determinate progress with semantic status badges.', icon: <Clock3 size={16} />, component: ProgressStatusPage },
+  { key: 'popover', group: 'Feedback', label: 'Popover', description: 'Portal-based non-modal supporting content with anchored placement.', icon: <MessageSquare size={16} />, component: PopoverPage },
   { key: 'app-tooltip', group: 'Feedback', label: 'AppTooltip', description: 'Non-interactive descriptions for hover and keyboard focus.', icon: <CircleHelp size={16} />, component: AppTooltipPage },
   { key: 'app-teaching-tip', group: 'Feedback', label: 'AppTeachingTip', description: 'Controlled anchored guidance with title, content, and actions.', icon: <Lightbulb size={16} />, component: AppTeachingTipPage },
   { key: 'app-file-drop-overlay', group: 'Feedback', label: 'AppFileDropOverlay', description: 'Accepting and rejecting overlays for local file drags.', icon: <UploadCloud size={16} />, component: AppFileDropOverlayPage },

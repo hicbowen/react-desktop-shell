@@ -8,6 +8,7 @@ export { AppCheckBox, AppToggleSwitch } from './selection-controls'
 export { AppNumberBox, AppSelect } from './number-select'
 export { AppListView, AppListViewItem } from './list-view'
 export { AppExpander } from './expander'
+export { AppPopover } from './popover'
 export { AppCard, AppCardFooter, AppCardGroup, AppCardHeader } from './card'
 export { AppContextMenu } from './context-menu/AppContextMenu'
 export { AppDialog } from './dialog/AppDialog'
@@ -49,6 +50,7 @@ export type {
   AppListViewItemProps,
   AppListViewProps,
   AppExpanderProps,
+  AppPopoverProps,
   AppIconButtonProps,
   AppClipboardAdapter,
   AppCardAppearance,
