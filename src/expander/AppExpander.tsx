@@ -144,7 +144,11 @@ export function AppExpander({
             ? <span className="app-expander__description">{description}</span>
             : null}
         </span>
-        <span aria-hidden="true" className="app-expander__chevron">⌄</span>
+        <span aria-hidden="true" className="app-expander__chevron">
+          <svg focusable="false" viewBox="0 0 16 16">
+            <path d="M4 6L8 10L12 6" />
+          </svg>
+        </span>
       </button>
       {actions ? <div className="app-expander__actions">{actions}</div> : null}
     </header>
