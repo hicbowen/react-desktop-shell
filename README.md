@@ -265,7 +265,7 @@ Use `AppProgressRing` for indeterminate work, `AppProgressBar` for determinate o
 
 ## Selection controls
 
-`AppCheckBox` uses a native checkbox and supports controlled, uncontrolled, and indeterminate states. `AppToggleSwitch` exposes switch semantics, immediate state changes, label placement, and compact sizing.
+`AppCheckBox` uses a native checkbox and supports controlled, uncontrolled, and indeterminate states. While `indeterminate` remains true, the native property and `aria-checked="mixed"` are restored after every interaction; `onCheckedChange` reports the browser's resulting boolean checked value, and the parent decides when to clear `indeterminate`. `AppToggleSwitch` exposes switch semantics, immediate state changes, label placement, and compact sizing.
 
 ```tsx
 <AppCheckBox checked={selected} onCheckedChange={setSelected} label="Include suggestions" />
