@@ -45,7 +45,7 @@ export function AppListView({ activationMode = 'selection', ariaLabel, children,
       else if (isSelectionList) { event.preventDefault(); select(itemValue) }
       return
     } else if (event.key === 'Enter') {
-      if (onItemInvoke) { event.preventDefault(); invoke(itemValue) }
+      if (isInvokeList) { event.preventDefault(); invoke(itemValue) }
       return
     } else return
     event.preventDefault()
