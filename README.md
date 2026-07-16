@@ -607,59 +607,21 @@ popups, form controls, or every element on the page. Do not wrap an existing
 scroll container in another `AppScrollArea`, use it as a substitute for virtual
 lists, or expect overflow to occur without a constrained size.
 
-## Optional Ant Design Integration
+## Dependencies and theming
 
-Ant Design support is an optional theme preset. Normal `react-desktop-shell` usage does not require AntD; install it only when importing the `/antd` entry point.
+The core component library does not depend on a third-party UI component
+library. Built-in controls automatically follow the `light`, `dark`, or
+`system` theme configured on `AppShell`.
 
-```bash
-npm install react-desktop-shell antd
-```
+Table features use TanStack Table only when the optional data entry point is
+imported. Icons are supplied by the application; the Example uses
+`lucide-react`.
 
-The preset configures global Ant Design tokens without wrapping AntD components or adding component-specific overrides.
+### Migrating to 0.9
 
-```tsx
-import { ConfigProvider } from 'antd'
-import { createAntdTheme } from 'react-desktop-shell/antd'
-
-const themeConfig = createAntdTheme({
-  mode: 'dark',
-})
-
-<ConfigProvider theme={themeConfig}>
-  <AppShell theme="dark">
-    <App />
-  </AppShell>
-</ConfigProvider>
-```
-
-`createAntdTheme` accepts only resolved `light` or `dark` modes. Applications using the shell's `system` mode should resolve the operating-system preference in application state before creating the AntD theme; the preset does not access browser APIs or manage theme state.
-
-Override any global token when creating the preset:
-
-```tsx
-createAntdTheme({
-  mode: 'light',
-  token: {
-    colorPrimary: '#7c5cff',
-    borderRadius: 8,
-  },
-})
-```
-
-Component-level Ant Design customization remains the consumer's responsibility. Extend the returned config when a particular component needs additional tuning:
-
-```tsx
-const baseTheme = createAntdTheme({ mode: 'light' })
-
-const themeConfig = {
-  ...baseTheme,
-  components: {
-    Table: {
-      cellPaddingBlock: 8,
-    },
-  },
-}
-```
+Version 0.9 removes the former `react-desktop-shell/antd` entry point and
+`createAntdTheme`. Applications that also use Ant Design must manage that
+library and its theme configuration independently.
 
 ## Optional Data View
 

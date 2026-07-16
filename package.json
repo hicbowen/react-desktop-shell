@@ -1,6 +1,6 @@
 {
   "name": "react-desktop-shell",
-  "version": "0.8.1",
+  "version": "0.9.0",
   "type": "module",
   "description": "A lightweight native-like desktop app shell for building React desktop applications.",
   "license": "MIT",
@@ -33,10 +33,6 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
     },
-    "./antd": {
-      "types": "./dist/antd/index.d.ts",
-      "import": "./dist/antd/index.js"
-    },
     "./data": {
       "types": "./dist/data/index.d.ts",
       "import": "./dist/data/index.js"
@@ -60,15 +56,11 @@
   },
   "peerDependencies": {
     "@tanstack/react-table": ">=8.21.0 <9.0.0",
-    "antd": ">=5.0.0 <7.0.0",
     "react": ">=18",
     "react-dom": ">=18"
   },
   "peerDependenciesMeta": {
     "@tanstack/react-table": {
-      "optional": true
-    },
-    "antd": {
       "optional": true
     }
   },
@@ -80,7 +72,6 @@
     "@types/react": "^19.2.5",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^5.1.1",
-    "antd": "^6.5.0",
     "eslint": "^9.39.1",
     "eslint-plugin-react-hooks": "^7.0.1",
     "eslint-plugin-react-refresh": "^0.4.24",

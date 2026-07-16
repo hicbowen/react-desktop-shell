@@ -670,18 +670,6 @@
     max-width: 820px;
 }
 
-.demo-antd {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 10px;
-}
-
-.demo-antd .ant-input,
-.demo-antd .ant-select {
-    width: 170px;
-}
-
 @media (max-width: 720px) {
     .demo-preview {
         padding: 12px;

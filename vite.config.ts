@@ -7,7 +7,6 @@ export default defineConfig({
     lib: {
       entry: {
         index: resolve(__dirname, 'src/index.ts'),
-        'antd/index': resolve(__dirname, 'src/antd/index.ts'),
         'data/index': resolve(__dirname, 'src/data/index.ts'),
       },
       formats: ['es'],
@@ -20,9 +19,7 @@ export default defineConfig({
         id === 'react-dom' ||
         id === 'react/jsx-runtime' ||
         id === '@tanstack/react-table' ||
-        id.startsWith('@tanstack/react-table/') ||
-        id === 'antd' ||
-        id.startsWith('antd/'),
+        id.startsWith('@tanstack/react-table/'),
     },
   },
   plugins: [react()],

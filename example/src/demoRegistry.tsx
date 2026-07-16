@@ -8,7 +8,6 @@ import { AppDialogPage, AppInfoBarPage, AppToastPage, MessageBoxPage } from './p
 import { AppToolbarPage, ContextMenuPage } from './pages/actions/ActionPages'
 import { AppDataTablePage, AppSelectionBarPage } from './pages/data/DataPages'
 import { AppSettingsGroupPage, AppSettingsRowPage, ThemeControlsPage } from './pages/settings/SettingsPages'
-import { AntdThemePage } from './pages/integrations/AntdThemePage'
 import { AppCardPage } from './pages/content/CardPages'
 import { FieldEmptyStatePage } from './pages/content/FieldEmptyStatePage'
 import { ListViewPage } from './pages/content/ListViewPage'
@@ -72,7 +71,6 @@ export const demoPages: DemoPageDefinition[] = [
   { key: 'app-settings-group', group: 'Settings', label: 'AppSettingsGroup', description: 'Headings and containers for related preference rows.', icon: <Settings size={16} />, component: AppSettingsGroupPage },
   { key: 'app-settings-row', group: 'Settings', label: 'AppSettingsRow', description: 'Aligned preference labels, descriptions, controls, and states.', icon: <Settings size={16} />, component: AppSettingsRowPage },
   { key: 'theme-controls', group: 'Settings', label: 'Theme Controls', description: 'Live system, light, and dark application themes.', icon: <SlidersHorizontal size={16} />, component: ThemeControlsPage },
-  { key: 'antd-theme', group: 'Integrations', label: 'Ant Design Theme', description: 'Theme tokens shared between the shell and Ant Design controls.', icon: <Boxes size={16} />, component: AntdThemePage },
 ]
 
 export const railItems: RailEntry[] = demoPages.flatMap((page, index) => {

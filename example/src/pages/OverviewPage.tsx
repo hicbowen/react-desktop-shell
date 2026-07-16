@@ -1,4 +1,4 @@
-import { Boxes, Database, LayoutPanelTop, MessageSquare, MousePointerClick, Settings } from 'lucide-react'
+import { Database, LayoutPanelTop, MessageSquare, MousePointerClick, Settings } from 'lucide-react'
 import { DemoPage } from '../components/DemoPage'
 
 const categories = [
@@ -7,7 +7,6 @@ const categories = [
   [MousePointerClick, 'Actions', 'Toolbars and contextual commands.'],
   [Database, 'Data', 'Tables, composed data views, and selection actions.'],
   [Settings, 'Settings', 'Structured preferences and live theme controls.'],
-  [Boxes, 'Integrations', 'Adapters for adjacent component ecosystems.'],
 ] as const
 
 export function OverviewPage() {
