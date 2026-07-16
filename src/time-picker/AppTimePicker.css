@@ -139,9 +139,13 @@
 }
 
 .app-time-picker__popup {
+  position: fixed;
   box-sizing: border-box;
+  width: max-content;
+  max-width: calc(100vw - 16px);
   min-width: var(--app-time-picker-popup-width, 210px);
   overflow: hidden;
+  pointer-events: auto;
   color: var(--app-shell-text-color, #1f1f1f);
   background: var(--app-shell-card-bg, #fff);
   border: 1px solid var(--app-shell-border-color, rgb(0 0 0 / 14%));

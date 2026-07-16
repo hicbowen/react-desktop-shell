@@ -8,7 +8,7 @@ import {
 import { createPortal } from 'react-dom'
 import { useAppFieldContext } from '../field/AppFieldContext'
 import { OverlayParentContext } from '../overlay/OverlayTreeContext'
-import { OVERLAY_SURFACE_FALLBACK_STYLE } from '../overlay/surfaceFallback'
+import { getAnchoredOverlaySurfaceStyle } from '../overlay/getAnchoredOverlaySurfaceStyle'
 import { AppTimePanel } from './AppTimePanel'
 import { formatAppTime, formatAppTimeISO } from './timeFormat'
 import {
@@ -209,21 +209,10 @@ export function AppTimeRangePicker({
         className="app-time-picker__popup app-time-range-picker__popup"
         data-placement={overlay.position.placement}
         ref={overlayRef}
-        style={{
-          ...(overlay.overlayHost
-            ? undefined
-            : OVERLAY_SURFACE_FALLBACK_STYLE),
-          left: overlay.position.x,
-          maxHeight: overlay.position.measured
-            ? overlay.position.maxHeight
-            : undefined,
-          maxWidth: overlay.position.measured
-            ? overlay.position.maxWidth
-            : undefined,
-          pointerEvents: overlay.position.measured ? 'auto' : 'none',
-          top: overlay.position.y,
-          visibility: overlay.position.measured ? 'visible' : 'hidden',
-        }}
+        style={getAnchoredOverlaySurfaceStyle({
+          position: overlay.position,
+          hasOverlayHost: Boolean(overlay.overlayHost),
+        })}
       >
         <div
           aria-label="Time range part"
