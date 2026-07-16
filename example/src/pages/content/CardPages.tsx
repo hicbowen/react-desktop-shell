@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import { Button } from 'antd'
 import {
   Blend,
   CheckCircle2,
@@ -13,10 +12,12 @@ import {
   Users,
 } from 'lucide-react'
 import {
+  AppButton,
   AppCard,
   AppCardFooter,
   AppCardGroup,
   AppCardHeader,
+  AppIconButton,
 } from '../../../../src'
 import { DemoPage, DemoPreview, DemoSection } from '../../components/DemoPage'
 
@@ -55,13 +56,13 @@ export function AppCardPage() {
               title="Data backup"
               description="Protect local application data"
               action={
-                <Button aria-label="More backup options" icon={<Ellipsis size={16} />} size="small" type="text" />
+                <AppIconButton appearance="subtle" ariaLabel="More backup options" icon={<Ellipsis size={16} />} size="compact" />
               }
             />
             <div>Last backup: today at 10:30</div>
             <AppCardFooter
               start={<span>24.6 MB total</span>}
-              end={<Button type="primary">Back up now</Button>}
+              end={<AppButton appearance="primary">Back up now</AppButton>}
             />
           </AppCard>
         </DemoPreview>
@@ -72,11 +73,11 @@ export function AppCardPage() {
           <div className="demo-card-grid demo-card-grid--comparison">
             <AppCard>
               <div>Default footer</div>
-              <AppCardFooter end={<Button>Update</Button>} start="10:30" />
+              <AppCardFooter end={<AppButton>Update</AppButton>} start="10:30" />
             </AppCard>
             <AppCard>
               <div>Divided Footer</div>
-              <AppCardFooter divided end={<Button>Update</Button>} start="10:30" />
+              <AppCardFooter divided end={<AppButton>Update</AppButton>} start="10:30" />
             </AppCard>
           </div>
         </DemoPreview>
@@ -100,7 +101,7 @@ export function AppCardPage() {
               <strong>Data import</strong>
               <span>Import student information from Excel</span>
             </div>
-            <Button>Select file</Button>
+            <AppButton>Select file</AppButton>
           </AppCard>
         </DemoPreview>
       </DemoSection>
@@ -179,28 +180,28 @@ export function AppCardPage() {
               title="Interactive tool card"
               description="Internal controls do not activate the card"
               action={
-                <Button
-                  size="small"
+                <AppButton
+                  size="compact"
                   onClick={() => setInternalStatus('Header action completed')}
                 >
                   More
-                </Button>
+                </AppButton>
               }
             />
-            <Button
+            <AppButton
               onClick={() => setInternalStatus('Content action completed')}
             >
               Content action
-            </Button>
+            </AppButton>
             <AppCardFooter
               start={internalStatus}
               end={
-                <Button
-                  type="primary"
+                <AppButton
+                  appearance="primary"
                   onClick={() => setInternalStatus('Footer action completed')}
                 >
                   Complete
-                </Button>
+                </AppButton>
               }
             />
           </AppCard>

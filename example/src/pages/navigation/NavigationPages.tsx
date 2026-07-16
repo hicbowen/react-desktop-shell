@@ -12,10 +12,12 @@ import {
   LockKeyhole,
 } from 'lucide-react'
 import {
+  AppButton,
   AppRail,
   AppSelectorBar,
   AppSelectorPanel,
   AppSelectorPanels,
+  AppTextBox,
 } from '../../../../src'
 import {
   DemoControls,
@@ -242,10 +244,10 @@ function SelectorPanelStateDemo({ label }: { label: string }) {
   return (
     <div className="demo-selector-panel-state">
       <strong>{label} panel</strong>
-      <input aria-label={`${label} note`} placeholder="Type a note" />
-      <button type="button" onClick={() => setCount((value) => value + 1)}>
+      <AppTextBox aria-label={`${label} note`} placeholder="Type a note" />
+      <AppButton onClick={() => setCount((value) => value + 1)}>
         Count: {count}
-      </button>
+      </AppButton>
     </div>
   )
 }

@@ -1,6 +1,5 @@
-import { Button } from 'antd'
 import { Folder, Home, RefreshCw, Settings } from 'lucide-react'
-import { AppRail, AppTooltip, type RailEntry } from '../../../../src'
+import { AppButton, AppRail, AppTooltip, type RailEntry } from '../../../../src'
 import { DemoPage, DemoPreview, DemoSection } from '../../components/DemoPage'
 
 const compactRailItems: RailEntry[] = [
@@ -23,7 +22,7 @@ export function AppTooltipPage() {
       >
         <DemoPreview className="demo-tooltip-row">
           <AppTooltip content="Refresh the current data">
-            <Button>Standard button</Button>
+            <AppButton>Standard button</AppButton>
           </AppTooltip>
           <AppTooltip content="Refresh data">
             <button
@@ -50,7 +49,7 @@ export function AppTooltipPage() {
               key={placement}
               placement={placement}
             >
-              <Button>{placement}</Button>
+              <AppButton>{placement}</AppButton>
             </AppTooltip>
           ))}
           <AppTooltip
@@ -58,11 +57,11 @@ export function AppTooltipPage() {
             maxWidth={220}
             placement="bottom-start"
           >
-            <Button>Long content</Button>
+            <AppButton>Long content</AppButton>
           </AppTooltip>
           <span className="demo-tooltip-edge-trigger">
             <AppTooltip content="This right placement flips when the viewport edge is too close." placement="right">
-              <Button>Near the edge</Button>
+              <AppButton>Near the edge</AppButton>
             </AppTooltip>
           </span>
         </DemoPreview>

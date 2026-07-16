@@ -1,7 +1,6 @@
 import type { RowSelectionState, SortingState } from '@tanstack/react-table'
-import { Button, Switch } from 'antd'
 import { useState } from 'react'
-import { AppToolbar, useAppContextMenu, useAppToast } from '../../../../src'
+import { AppButton, AppToggleSwitch, AppToolbar, useAppContextMenu, useAppToast } from '../../../../src'
 import { AppDataTable, AppDataView, AppSelectionBar } from '../../../../src/data'
 import { DemoControls, DemoPage, DemoPreview, DemoSection } from '../../components/DemoPage'
 import { tableRows } from '../../fixtures/tableRows'
@@ -42,32 +41,13 @@ export function AppDataTablePage() {
   return (
     <DemoPage className={fill ? 'demo-page--fill' : ''}>
       <DemoControls>
-        <span>
-          <Switch checked={sticky} onChange={setSticky} /> Sticky header
-        </span>
-        <span>
-          <Switch checked={resizing} onChange={setResizing} /> Column resizing
-        </span>
-        <span>
-          <Switch checked={stickyCategory} onChange={setStickyCategory} /> Sticky Category column
-        </span>
-        <span>
-          <Switch checked={fixedHeight} onChange={handleFixedHeightChange} /> Fixed height
-        </span>
-        <span>
-          <Switch checked={fill} onChange={handleFillChange} /> Fill remaining height
-        </span>
-        <span>
-          <Switch checked={pagination} onChange={setPagination} /> Pagination
-        </span>
-        <span>
-          <Switch
-            checked={virtualized}
-            disabled={!fill && !fixedHeight}
-            onChange={setVirtualized}
-          />{' '}
-          Vertical virtualization
-        </span>
+        <AppToggleSwitch checked={sticky} label="Sticky header" onCheckedChange={setSticky} size="compact" />
+        <AppToggleSwitch checked={resizing} label="Column resizing" onCheckedChange={setResizing} size="compact" />
+        <AppToggleSwitch checked={stickyCategory} label="Sticky Category column" onCheckedChange={setStickyCategory} size="compact" />
+        <AppToggleSwitch checked={fixedHeight} label="Fixed height" onCheckedChange={handleFixedHeightChange} size="compact" />
+        <AppToggleSwitch checked={fill} label="Fill remaining height" onCheckedChange={handleFillChange} size="compact" />
+        <AppToggleSwitch checked={pagination} label="Pagination" onCheckedChange={setPagination} size="compact" />
+        <AppToggleSwitch checked={virtualized} disabled={!fill && !fixedHeight} label="Vertical virtualization" onCheckedChange={setVirtualized} size="compact" />
         <span>Right-click a data row for row-specific actions</span>
       </DemoControls>
       <DemoSection
@@ -84,8 +64,8 @@ export function AppDataTablePage() {
               status={<span>{tableRows.length} rows</span>}
               end={
                 <>
-                  <Button>Refresh</Button>
-                  <Button type="primary">Add item</Button>
+                  <AppButton>Refresh</AppButton>
+                  <AppButton appearance="primary">Add item</AppButton>
                 </>
               }
             />
@@ -98,8 +78,8 @@ export function AppDataTablePage() {
                 onClear={() => setSelection({})}
                 actions={
                   <>
-                    <Button>Archive</Button>
-                    <Button danger>Delete</Button>
+                    <AppButton>Archive</AppButton>
+                    <AppButton appearance="danger">Delete</AppButton>
                   </>
                 }
               />
@@ -153,7 +133,6 @@ export function AppDataTablePage() {
               value: selection,
               onChange: setSelection,
               selectAllMode: 'page',
-              getRowAriaLabel: (row) => `Select ${row.original.name}`,
             }}
             stickyHeader={sticky}
             stickyColumns={stickyCategory ? ['category'] : undefined}
@@ -173,16 +152,14 @@ export function AppSelectionBarPage() {
   return (
     <DemoPage>
       <DemoControls>
-        <Button onClick={() => setCount((value) => value + 1)}>Increase count</Button>
-        <Button
+        <AppButton onClick={() => setCount((value) => value + 1)}>Increase count</AppButton>
+        <AppButton
           disabled={count === 0}
           onClick={() => setCount((value) => Math.max(0, value - 1))}
         >
           Decrease count
-        </Button>
-        <span>
-          <Switch checked={disabled} onChange={setDisabled} /> Disabled actions
-        </span>
+        </AppButton>
+        <AppToggleSwitch checked={disabled} label="Disabled actions" onCheckedChange={setDisabled} size="compact" />
       </DemoControls>
       <DemoSection title="Selection actions">
         <DemoPreview className="demo-selection-bar-preview">
@@ -194,10 +171,10 @@ export function AppSelectionBarPage() {
                 onClear={() => setCount(0)}
                 actions={
                   <>
-                    <Button disabled={disabled}>Primary action</Button>
-                    <Button danger disabled={disabled}>
+                    <AppButton disabled={disabled}>Primary action</AppButton>
+                    <AppButton appearance="danger" disabled={disabled}>
                       Remove
-                    </Button>
+                    </AppButton>
                   </>
                 }
               />

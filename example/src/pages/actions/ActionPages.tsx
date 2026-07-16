@@ -1,12 +1,12 @@
 import { useState } from 'react'
-import { Button } from 'antd'
 import { Copy, Pencil, Plus, RefreshCw, Trash2 } from 'lucide-react'
-import { AppContextMenu, AppToolbar, useAppContextMenu } from '../../../../src'
+import { AppButton, AppCheckBox, AppContextMenu, AppSelect, AppTextBox, AppToolbar, useAppContextMenu } from '../../../../src'
 import { DemoControls, DemoPage, DemoPreview, DemoSection } from '../../components/DemoPage'
 
 export function AppToolbarPage() {
   const [compact, setCompact] = useState(false)
-  return <DemoPage><DemoControls><label><input type="checkbox" checked={compact} onChange={(event) => setCompact(event.target.checked)} /> Compact controls</label></DemoControls><DemoSection title="Three aligned regions"><DemoPreview><AppToolbar start={<><input className="demo-input" aria-label="Filter items" placeholder="Filter items" /><select className="demo-input" aria-label="Status"><option>All states</option><option>Ready</option></select></>} status={<span>24 items</span>} end={<><Button>Secondary</Button><Button type="primary">Primary action</Button></>} /></DemoPreview><p className="demo-note">The compact toggle is page-local: {compact ? 'on' : 'off'}.</p></DemoSection></DemoPage>
+  const size = compact ? 'compact' : 'standard'
+  return <DemoPage><DemoControls><AppCheckBox checked={compact} label="Compact controls" onCheckedChange={setCompact} /></DemoControls><DemoSection title="Three aligned regions"><DemoPreview><AppToolbar start={<><AppTextBox aria-label="Filter items" placeholder="Filter items" size={size} /><AppSelect aria-label="Status" defaultValue="all" options={[{ value: 'all', label: 'All states' }, { value: 'ready', label: 'Ready' }]} size={size} /></>} status={<span>24 items</span>} end={<><AppButton size={size}>Secondary</AppButton><AppButton appearance="primary" size={size}>Primary action</AppButton></>} /></DemoPreview><p className="demo-note">The compact toggle is page-local: {compact ? 'on' : 'off'}.</p></DemoSection></DemoPage>
 }
 
 export function ContextMenuPage() {

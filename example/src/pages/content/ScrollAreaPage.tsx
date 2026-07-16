@@ -1,7 +1,7 @@
 import { useState } from 'react'
-import { Button } from 'antd'
 import { Clock3, FileClock, Settings2 } from 'lucide-react'
 import {
+  AppButton,
   AppCard,
   AppCardFooter,
   AppCardHeader,
@@ -97,9 +97,9 @@ export function AppScrollAreaPage() {
       <DemoSection title="Gutter stability">
         <DemoPreview>
           <div className="demo-scroll-toolbar">
-            <Button onClick={() => setShowOverflow((value) => !value)}>
+            <AppButton onClick={() => setShowOverflow((value) => !value)}>
               {showOverflow ? 'Reduce content' : 'Add content'}
-            </Button>
+            </AppButton>
           </div>
           <div className="demo-scroll-comparison">
             {(['auto', 'stable'] as const).map((gutter) => (
@@ -147,7 +147,7 @@ export function AppScrollAreaPage() {
             >
               <ScrollRows count={14} />
             </AppScrollArea>
-            <AppCardFooter start="Version 0.6.0" end={<Button type="primary">Check for updates</Button>} />
+            <AppCardFooter start="Version 0.6.0" end={<AppButton appearance="primary">Check for updates</AppButton>} />
           </AppCard>
         </DemoPreview>
       </DemoSection>
@@ -164,7 +164,7 @@ export function AppScrollAreaPage() {
                     icon={<Clock3 />}
                     title={`Option ${index + 1}`}
                     description="Example configuration for a desktop tool"
-                    control={<Button size="small">Configure</Button>}
+                    control={<AppButton size="compact">Configure</AppButton>}
                   />
                 ))}
               </AppSettingsGroup>
