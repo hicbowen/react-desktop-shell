@@ -192,26 +192,24 @@ describe('AppMenuFlyout', () => {
     expect(menu()).toBeNull()
   })
 
-  it('dismisses on external scroll but ignores menu-internal scroll', () => {
+  it('stays open for internal and external scroll repositioning', () => {
     renderMenu()
     click(trigger())
     act(() => menu()!.dispatchEvent(new Event('scroll')))
     expect(menu()).not.toBeNull()
 
     act(() => window.dispatchEvent(new Event('scroll')))
-    expect(menu()).toBeNull()
+    expect(menu()).not.toBeNull()
   })
 
-  it('dismisses on resize and window blur without forcing trigger focus', () => {
+  it('stays open on resize and dismisses on window blur without forcing focus', () => {
     renderMenu()
     click(trigger())
     act(() => outside.focus())
     act(() => window.dispatchEvent(new Event('resize')))
-    expect(menu()).toBeNull()
+    expect(menu()).not.toBeNull()
     expect(document.activeElement).toBe(outside)
 
-    click(trigger())
-    act(() => outside.focus())
     act(() => window.dispatchEvent(new Event('blur')))
     expect(menu()).toBeNull()
     expect(document.activeElement).toBe(outside)

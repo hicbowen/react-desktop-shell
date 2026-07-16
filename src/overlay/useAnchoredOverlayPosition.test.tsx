@@ -69,6 +69,10 @@ describe('useAnchoredOverlayPosition', () => {
   let root: Root
   let frames: Map<number, FrameRequestCallback>
   let nextFrame: number
+  let triggerPosition: DOMRect
+  let resizeCallbacks: ResizeObserverCallback[]
+  let resizeDisconnect: ReturnType<typeof vi.fn<() => void>>
+  let resizeObserve: ReturnType<typeof vi.fn<(element: Element) => void>>
 
   beforeEach(() => {
     ;(globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean })
@@ -78,6 +82,10 @@ describe('useAnchoredOverlayPosition', () => {
     root = createRoot(container)
     frames = new Map()
     nextFrame = 1
+    triggerPosition = rect(100, 100, 100, 30)
+    resizeCallbacks = []
+    resizeDisconnect = vi.fn()
+    resizeObserve = vi.fn()
     vi.stubGlobal(
       'requestAnimationFrame',
       vi.fn((callback: FrameRequestCallback) => {
@@ -92,10 +100,26 @@ describe('useAnchoredOverlayPosition', () => {
     )
     vi.stubGlobal('innerWidth', 800)
     vi.stubGlobal('innerHeight', 600)
+    vi.stubGlobal(
+      'ResizeObserver',
+      class ResizeObserverMock {
+        constructor(callback: ResizeObserverCallback) {
+          resizeCallbacks.push(callback)
+        }
+
+        observe(element: Element) {
+          resizeObserve(element)
+        }
+
+        disconnect() {
+          resizeDisconnect()
+        }
+      },
+    )
     vi.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(
       function (this: HTMLElement) {
         return this.tagName === 'BUTTON'
-          ? rect(100, 100, 100, 30)
+          ? triggerPosition
           : rect(0, 0, 200, 100)
       },
     )
@@ -179,5 +203,79 @@ describe('useAnchoredOverlayPosition', () => {
     expect(overlay().dataset.measured).toBe('true')
     expect(overlay().dataset.placement).toBe('bottom-end')
     expect(overlay().style.left).toBe('400px')
+  })
+
+  it('remeasures scroll and resize changes through one animation frame', () => {
+    render({ open: true })
+    flushFrame()
+    expect(overlay().style.left).toBe('100px')
+    expect(overlay().style.top).toBe('134px')
+
+    triggerPosition = rect(240, 180, 100, 30)
+    act(() => {
+      container.dispatchEvent(new Event('scroll'))
+      container.dispatchEvent(new Event('scroll'))
+      container.dispatchEvent(new Event('scroll'))
+    })
+    expect(frames).toHaveLength(1)
+    flushFrame()
+    expect(overlay().style.left).toBe('240px')
+    expect(overlay().style.top).toBe('214px')
+
+    triggerPosition = rect(320, 220, 100, 30)
+    act(() => window.dispatchEvent(new Event('resize')))
+    expect(frames).toHaveLength(1)
+    flushFrame()
+    expect(overlay().style.left).toBe('320px')
+    expect(overlay().style.top).toBe('254px')
+  })
+
+  it('remeasures trigger and overlay ResizeObserver changes', () => {
+    render({ open: true })
+    flushFrame()
+    expect(resizeCallbacks).toHaveLength(1)
+    expect(resizeObserve).toHaveBeenCalledTimes(2)
+    expect(resizeObserve).toHaveBeenCalledWith(
+      container.querySelector('button'),
+    )
+    expect(resizeObserve).toHaveBeenCalledWith(overlay())
+
+    triggerPosition = rect(180, 140, 100, 30)
+    act(() => resizeCallbacks[0]?.([], {} as ResizeObserver))
+    expect(frames).toHaveLength(1)
+    flushFrame()
+    expect(overlay().style.left).toBe('180px')
+
+    triggerPosition = rect(200, 160, 100, 30)
+    act(() => resizeCallbacks[0]?.([], {} as ResizeObserver))
+    flushFrame()
+    expect(overlay().style.top).toBe('194px')
+  })
+
+  it('removes listeners, observers, and pending frames on cleanup', () => {
+    render({ open: true })
+    expect(frames).toHaveLength(1)
+
+    act(() => root.unmount())
+    expect(frames).toHaveLength(0)
+    expect(resizeDisconnect).toHaveBeenCalledOnce()
+
+    const scheduledBeforeEvents = vi.mocked(requestAnimationFrame).mock.calls
+      .length
+    act(() => {
+      window.dispatchEvent(new Event('scroll'))
+      window.dispatchEvent(new Event('resize'))
+    })
+    expect(requestAnimationFrame).toHaveBeenCalledTimes(scheduledBeforeEvents)
+  })
+
+  it('hides a previously measured overlay when its trigger disappears', () => {
+    render({ open: true })
+    flushFrame()
+    expect(overlay().dataset.measured).toBe('true')
+
+    render({ open: true, dependency: 2, renderTrigger: false })
+    flushFrame()
+    expect(overlay().dataset.measured).toBe('false')
   })
 })

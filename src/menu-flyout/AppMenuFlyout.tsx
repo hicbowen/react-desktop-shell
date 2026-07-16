@@ -164,6 +164,8 @@ function AppMenuFlyoutInner(
     overlayRef,
     onDismiss: closeMenu,
     closeOnEscape: true,
+    closeOnExternalScroll: false,
+    closeOnResize: false,
     restoreFocus: true,
     isInsideBranch: overlayTree.isInsideBranch,
     isTopMost: overlayTree.isTopMost,

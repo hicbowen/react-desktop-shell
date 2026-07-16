@@ -37,7 +37,8 @@ export function PopoverPage() {
       </DemoPreview>
       <p className="demo-note">
         Controls inside a popover support normal focus, typing, and clicks. Only an outside click or
-        Escape dismisses the popover.
+        Escape dismisses the popover. Keep it open while scrolling or resizing to verify that it
+        continues to follow its trigger.
       </p>
     </DemoSection>
 

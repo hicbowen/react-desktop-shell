@@ -237,7 +237,7 @@ describe('AppTeachingTip', () => {
 
     renderTip({ onOpenChange, open: false })
     renderTip({ onOpenChange, open: true })
-    act(() => window.dispatchEvent(new Event('resize')))
+    act(() => window.dispatchEvent(new Event('blur')))
     expect(onOpenChange).toHaveBeenCalledTimes(2)
   })
 

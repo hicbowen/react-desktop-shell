@@ -164,19 +164,15 @@ describe('AppTooltip', () => {
     expect(tooltip()).toBeNull()
   })
 
-  it('closes on resize, external scroll, and window blur', () => {
+  it('stays open to reposition on resize and scroll, then closes on blur', () => {
     renderTooltip({ delay: 0 })
     pointerEnter()
     act(() => window.dispatchEvent(new Event('resize')))
-    expect(tooltip()).toBeNull()
+    expect(tooltip()).not.toBeNull()
 
-    pointerLeave()
-    pointerEnter()
     act(() => window.dispatchEvent(new Event('scroll')))
-    expect(tooltip()).toBeNull()
+    expect(tooltip()).not.toBeNull()
 
-    pointerLeave()
-    pointerEnter()
     act(() => window.dispatchEvent(new Event('blur')))
     expect(tooltip()).toBeNull()
   })

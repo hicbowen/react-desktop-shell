@@ -157,6 +157,8 @@ function AppTooltipInner({
     overlayRef,
     onDismiss: closeTooltip,
     closeOnEscape: true,
+    closeOnExternalScroll: false,
+    closeOnResize: false,
     restoreFocus: false,
     isInsideBranch: overlayTree.isInsideBranch,
     isTopMost: overlayTree.isTopMost,

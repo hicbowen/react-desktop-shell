@@ -85,6 +85,7 @@ export function useAnchoredOverlayPosition({
     initialPosition(preferredPlacement),
   )
   const dependencyVersion = useDependencyVersion(dependencies)
+  const frameRef = useRef<number | null>(null)
 
   useBrowserLayoutEffect(() => {
     if (!open || typeof window === 'undefined') {
@@ -104,6 +105,7 @@ export function useAnchoredOverlayPosition({
       const overlay = overlayRef.current
 
       if (!resolvedTriggerRect || !overlay) {
+        setPosition(initialPosition(preferredPlacement))
         return
       }
 
@@ -123,14 +125,50 @@ export function useAnchoredOverlayPosition({
         measured: true,
       })
     }
-    const frame = window.requestAnimationFrame?.(measure)
+    const scheduleMeasure = () => {
+      if (frameRef.current !== null) {
+        return
+      }
 
-    if (frame === undefined) {
-      measure()
-      return
+      if (typeof window.requestAnimationFrame !== 'function') {
+        measure()
+        return
+      }
+
+      frameRef.current = window.requestAnimationFrame(() => {
+        frameRef.current = null
+        measure()
+      })
     }
 
-    return () => window.cancelAnimationFrame(frame)
+    scheduleMeasure()
+    window.addEventListener('resize', scheduleMeasure)
+    window.addEventListener('scroll', scheduleMeasure, true)
+
+    const resizeObserver =
+      typeof ResizeObserver === 'undefined'
+        ? null
+        : new ResizeObserver(scheduleMeasure)
+    const trigger = triggerRef?.current
+    const overlay = overlayRef.current
+
+    if (trigger) {
+      resizeObserver?.observe(trigger)
+    }
+    if (overlay) {
+      resizeObserver?.observe(overlay)
+    }
+
+    return () => {
+      window.removeEventListener('resize', scheduleMeasure)
+      window.removeEventListener('scroll', scheduleMeasure, true)
+      resizeObserver?.disconnect()
+
+      if (frameRef.current !== null) {
+        window.cancelAnimationFrame(frameRef.current)
+        frameRef.current = null
+      }
+    }
   }, [
     dependencyVersion,
     gap,

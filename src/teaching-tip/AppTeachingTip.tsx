@@ -117,6 +117,8 @@ export function AppTeachingTip({
     overlayRef,
     onDismiss: close,
     closeOnOutsidePointerDown,
+    closeOnExternalScroll: false,
+    closeOnResize: false,
     restoreFocus: true,
     isInsideBranch: overlayTree.isInsideBranch,
     isTopMost: overlayTree.isTopMost,
