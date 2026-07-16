@@ -231,10 +231,18 @@ reorderable tabs, large filter sets, overflow menus, or routing.
 `AppField` supplies label, description or error messaging, required state, and vertical or settings-friendly horizontal layout without controlling its child input. `AppEmptyState` presents a restrained regular or compact empty state with optional icon, description, and action.
 
 ```tsx
-<AppField label="Student name" htmlFor="student-name" required error={error}>
-  <input id="student-name" aria-describedby={errorId} />
+<AppField id="student-name" label="Student name" description="Used in feedback reports" required error={error}>
+  <AppTextBox />
 </AppField>
 <AppEmptyState title="No students yet" description="Add a student to begin." action={<AppButton>Add student</AppButton>} />
+```
+
+RDS inputs consume field associations automatically. For a native or third-party control, provide matching identifiers manually:
+
+```tsx
+<AppField htmlFor="external-name" messageId="external-name-help" label="Name" description="Shown in reports">
+  <input id="external-name" aria-describedby="external-name-help" />
+</AppField>
 ```
 
 ## Progress and status

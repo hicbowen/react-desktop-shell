@@ -3,7 +3,8 @@
 .app-field__label-wrap { min-width: 0; }
 .app-field--horizontal .app-field__label-wrap { padding-top: 7px; }
 .app-field__label { display: inline-flex; align-items: baseline; gap: 6px; font-weight: 500; }
-.app-field__required { color: var(--app-shell-secondary-text-color, rgb(0 0 0 / 58%)); font-size: 11px; font-weight: 400; }
+.app-field__required { color: var(--app-shell-secondary-text-color, rgb(0 0 0 / 58%)); font-size: 13px; font-weight: 500; }
+.app-field__sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 .app-field__body, .app-field__control { min-width: 0; }
 .app-field__message { margin-top: 5px; color: var(--app-shell-secondary-text-color, rgb(0 0 0 / 62%)); font-size: 12px; line-height: 1.35; }
 .app-field__message--error { color: var(--app-shell-danger-color, #c42b1c); }
