@@ -1,0 +1,4 @@
+import type { InputHTMLAttributes, SelectHTMLAttributes } from 'react'
+export interface AppNumberBoxProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'value' | 'defaultValue' | 'onChange' | 'type' | 'size'> { value?: number | null; defaultValue?: number | null; onValueChange?: (value: number | null) => void; min?: number; max?: number; step?: number; precision?: number; allowEmpty?: boolean; formatValue?: (value: number) => string; parseValue?: (value: string) => number | null; incrementLabel?: string; decrementLabel?: string }
+export interface AppSelectOption { value: string | number; label: React.ReactNode; disabled?: boolean }
+export interface AppSelectProps extends Omit<SelectHTMLAttributes<HTMLSelectElement>, 'value' | 'defaultValue' | 'size'> { options: AppSelectOption[]; value?: string | number; defaultValue?: string | number; onValueChange?: (value: string | number) => void; placeholder?: string; invalid?: boolean; size?: 'compact' | 'standard' }

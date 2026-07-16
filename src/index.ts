@@ -5,6 +5,7 @@ export { AppField } from './field'
 export { AppProgressBar, AppProgressRing, AppStatusBadge } from './progress'
 export { AppTextArea, AppTextBox } from './text-input'
 export { AppCheckBox, AppToggleSwitch } from './selection-controls'
+export { AppNumberBox, AppSelect } from './number-select'
 export { AppCard, AppCardFooter, AppCardGroup, AppCardHeader } from './card'
 export { AppContextMenu } from './context-menu/AppContextMenu'
 export { AppDialog } from './dialog/AppDialog'
@@ -40,6 +41,9 @@ export type {
   AppTextBoxProps,
   AppCheckBoxProps,
   AppToggleSwitchProps,
+  AppNumberBoxProps,
+  AppSelectOption,
+  AppSelectProps,
   AppIconButtonProps,
   AppClipboardAdapter,
   AppCardAppearance,

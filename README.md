@@ -264,6 +264,15 @@ Use `AppProgressRing` for indeterminate work, `AppProgressBar` for determinate o
 <AppToggleSwitch defaultChecked label="Automatic updates" />
 ```
 
+## Number and select controls
+
+`AppNumberBox` offers step buttons, arrow keys, precision, boundary normalization, and intentional empty values. `AppSelect` visually wraps a native single-value select and preserves string or numeric option values.
+
+```tsx
+<AppNumberBox value={duration} min={1} max={180} step={5} onValueChange={setDuration} />
+<AppSelect options={courses} value={course} onValueChange={setCourse} />
+```
+
 `AppCard` is a low-contrast Fluent content surface for desktop tools, settings,
 status summaries, recent projects, and utility entry points. It is not a fixed
 web-dashboard panel: cards have no strong shadow or title divider by default,
