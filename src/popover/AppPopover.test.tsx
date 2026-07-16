@@ -110,6 +110,22 @@ describe('AppPopover', () => {
     expect(popover()).not.toBeNull()
   })
 
+  it('keeps arbitrary interactive and React content inside the popover', () => {
+    act(() => root.render(
+      <AppPopover defaultOpen trigger={<button type="button">Open</button>}>
+        <textarea aria-label="Description" />
+        <select aria-label="Priority"><option>Normal</option></select>
+        <input aria-label="Enabled" type="checkbox" />
+        <span data-testid="custom-content">Custom content</span>
+      </AppPopover>,
+    ))
+    const content = popover()!
+    for (const element of content.querySelectorAll('textarea, select, input, [data-testid]')) {
+      pointerDown(element)
+      expect(popover()).not.toBeNull()
+    }
+  })
+
   it('closes only after an outside pointer down', () => {
     act(() => root.render(
       <AppPopover defaultOpen trigger={<button type="button">Open</button>}>
