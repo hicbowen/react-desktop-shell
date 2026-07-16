@@ -1,0 +1,59 @@
+.app-time-panel {
+  --app-time-picker-column-height: 220px;
+  --app-time-picker-option-height: 32px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(86px, 1fr));
+  gap: 8px;
+  padding: 10px;
+  color: var(--app-shell-text-color, #1f1f1f);
+  font-size: 13px;
+}
+
+.app-time-panel__column {
+  min-width: 0;
+}
+
+.app-time-panel__label {
+  height: 24px;
+  color: var(--app-shell-muted-text-color, rgb(0 0 0 / 62%));
+  font-size: 11px;
+  font-weight: 600;
+  text-align: center;
+}
+
+.app-time-panel__list {
+  height: var(--app-time-picker-column-height);
+  display: grid;
+  align-content: start;
+  overflow-y: auto;
+  border: 1px solid var(--app-shell-border-color, rgb(0 0 0 / 12%));
+  border-radius: 6px;
+}
+
+.app-time-panel__option {
+  min-height: var(--app-time-picker-option-height);
+  padding: 0 8px;
+  color: inherit;
+  background: transparent;
+  border: 0;
+  border-radius: 4px;
+  font: inherit;
+}
+
+.app-time-panel__option:hover:not(:disabled) {
+  background: var(--app-shell-hover-bg, rgb(0 0 0 / 5%));
+}
+
+.app-time-panel__option[aria-selected='true'] {
+  color: var(--app-shell-accent-text-color, #fff);
+  background: var(--app-shell-accent-color, #005fb8);
+}
+
+.app-time-panel__option:focus-visible {
+  outline: 2px solid var(--app-shell-accent-color, #005fb8);
+  outline-offset: -2px;
+}
+
+.app-time-panel__option:disabled {
+  color: var(--app-shell-disabled-text-color, rgb(0 0 0 / 36%));
+}
