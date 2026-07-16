@@ -14,6 +14,8 @@ describe('AppDateRangePicker', () => {
   let outside: HTMLButtonElement
   let root: Root
   let frames: FrameRequestCallback[]
+  let triggerLeft: number
+  let triggerTop: number
 
   beforeEach(() => {
     ;(globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean })
@@ -23,6 +25,10 @@ describe('AppDateRangePicker', () => {
     document.body.append(container, outside)
     root = createRoot(container)
     frames = []
+    triggerLeft = 320
+    triggerTop = 180
+    vi.stubGlobal('innerWidth', 1440)
+    vi.stubGlobal('innerHeight', 900)
     vi.useFakeTimers()
     vi.setSystemTime(new Date(2026, 6, 16, 12))
     vi.stubGlobal(
@@ -33,14 +39,28 @@ describe('AppDateRangePicker', () => {
       }),
     )
     vi.stubGlobal('cancelAnimationFrame', vi.fn())
-    vi.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockReturnValue({
-      bottom: 132,
-      height: 32,
-      left: 100,
-      right: 500,
-      top: 100,
-      width: 400,
-    } as DOMRect)
+    vi.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(
+      function (this: HTMLElement) {
+        if (this.classList.contains('app-date-range-picker')) {
+          return {
+            bottom: triggerTop + 32,
+            height: 32,
+            left: triggerLeft,
+            right: triggerLeft + 400,
+            top: triggerTop,
+            width: 400,
+          } as DOMRect
+        }
+        return {
+          bottom: 400,
+          height: 360,
+          left: 0,
+          right: 600,
+          top: 40,
+          width: 600,
+        } as DOMRect
+      },
+    )
   })
 
   afterEach(() => {
@@ -336,6 +356,29 @@ describe('AppDateRangePicker', () => {
     expect(
       container.querySelector('.app-dialog__overlay-host')?.contains(popup()),
     ).toBe(true)
+    expect(popup()?.style.position).toBe('fixed')
+    expect(popup()?.style.width).toBe('max-content')
+    expect(popup()?.style.left).toBe('320px')
+    expect(popup()?.style.top).toBe('217px')
+  })
+
+  it('uses its own anchor and repositions on scroll and resize', () => {
+    render(<AppDateRangePicker defaultOpen visibleMonths={1} />)
+    flushFrames()
+    expect(popup()?.style.position).toBe('fixed')
+    expect(popup()?.style.width).toBe('max-content')
+    expect(popup()?.style.left).toBe('320px')
+    expect(popup()?.style.top).toBe('217px')
+
+    triggerLeft = 410
+    act(() => window.dispatchEvent(new Event('scroll')))
+    flushFrames()
+    expect(popup()?.style.left).toBe('410px')
+
+    triggerTop = 260
+    act(() => window.dispatchEvent(new Event('resize')))
+    flushFrames()
+    expect(popup()?.style.top).toBe('297px')
   })
 
   it('coordinates dismissal when nested inside another overlay', () => {

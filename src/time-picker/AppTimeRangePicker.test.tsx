@@ -14,6 +14,8 @@ describe('AppTimeRangePicker', () => {
   let outside: HTMLButtonElement
   let root: Root
   let frames: FrameRequestCallback[]
+  let triggerLeft: number
+  let triggerTop: number
 
   beforeEach(() => {
     ;(globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean })
@@ -23,6 +25,10 @@ describe('AppTimeRangePicker', () => {
     document.body.append(container, outside)
     root = createRoot(container)
     frames = []
+    triggerLeft = 760
+    triggerTop = 340
+    vi.stubGlobal('innerWidth', 1440)
+    vi.stubGlobal('innerHeight', 900)
     vi.useFakeTimers()
     vi.setSystemTime(new Date(2026, 6, 16, 9, 0))
     vi.stubGlobal(
@@ -33,14 +39,28 @@ describe('AppTimeRangePicker', () => {
       }),
     )
     vi.stubGlobal('cancelAnimationFrame', vi.fn())
-    vi.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockReturnValue({
-      bottom: 132,
-      height: 32,
-      left: 100,
-      right: 440,
-      top: 100,
-      width: 340,
-    } as DOMRect)
+    vi.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(
+      function (this: HTMLElement) {
+        if (this.classList.contains('app-time-range-picker')) {
+          return {
+            bottom: triggerTop + 32,
+            height: 32,
+            left: triggerLeft,
+            right: triggerLeft + 340,
+            top: triggerTop,
+            width: 340,
+          } as DOMRect
+        }
+        return {
+          bottom: 380,
+          height: 340,
+          left: 0,
+          right: 420,
+          top: 40,
+          width: 420,
+        } as DOMRect
+      },
+    )
     Object.defineProperty(HTMLElement.prototype, 'scrollIntoView', {
       configurable: true,
       value: vi.fn(),
@@ -304,6 +324,10 @@ describe('AppTimeRangePicker', () => {
     expect(
       container.querySelector('.app-dialog__overlay-host')?.contains(popup()),
     ).toBe(true)
+    expect(popup()?.style.position).toBe('fixed')
+    expect(popup()?.style.width).toBe('max-content')
+    expect(popup()?.style.left).toBe('760px')
+    expect(popup()?.style.top).toBe('377px')
 
     render(
       <AppPopover
@@ -326,5 +350,24 @@ describe('AppTimeRangePicker', () => {
     )
     expect(popup()).toBeNull()
     expect(document.body.querySelector('.app-popover')).not.toBeNull()
+  })
+
+  it('uses its own anchor and repositions on scroll and resize', () => {
+    render(<AppTimeRangePicker defaultOpen />)
+    flushFrames()
+    expect(popup()?.style.position).toBe('fixed')
+    expect(popup()?.style.width).toBe('max-content')
+    expect(popup()?.style.left).toBe('760px')
+    expect(popup()?.style.top).toBe('377px')
+
+    triggerLeft = 820
+    act(() => window.dispatchEvent(new Event('scroll')))
+    flushFrames()
+    expect(popup()?.style.left).toBe('820px')
+
+    triggerTop = 420
+    act(() => window.dispatchEvent(new Event('resize')))
+    flushFrames()
+    expect(popup()?.style.top).toBe('457px')
   })
 })

@@ -14,6 +14,7 @@ describe('AppTimePicker', () => {
   let root: Root
   let frames: FrameRequestCallback[]
   let triggerLeft: number
+  let triggerTop: number
 
   beforeEach(() => {
     ;(globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean })
@@ -23,7 +24,10 @@ describe('AppTimePicker', () => {
     document.body.append(container, outside)
     root = createRoot(container)
     frames = []
-    triggerLeft = 100
+    triggerLeft = 540
+    triggerTop = 260
+    vi.stubGlobal('innerWidth', 1440)
+    vi.stubGlobal('innerHeight', 900)
     vi.useFakeTimers()
     vi.setSystemTime(new Date(2026, 6, 16, 9, 28))
     vi.stubGlobal(
@@ -38,11 +42,11 @@ describe('AppTimePicker', () => {
       function (this: HTMLElement) {
         const picker = this.classList.contains('app-time-picker')
         return {
-          bottom: picker ? 132 : 340,
+          bottom: picker ? triggerTop + 32 : 340,
           height: picker ? 32 : 300,
           left: picker ? triggerLeft : 0,
           right: picker ? triggerLeft + 220 : 220,
-          top: picker ? 100 : 40,
+          top: picker ? triggerTop : 40,
           width: 220,
         } as DOMRect
       },
@@ -232,16 +236,30 @@ describe('AppTimePicker', () => {
     expect(
       container.querySelector('.app-dialog__overlay-host')?.contains(popup()),
     ).toBe(true)
+    expect(popup()?.style.position).toBe('fixed')
+    expect(popup()?.style.width).toBe('max-content')
+    expect(popup()?.style.left).toBe('540px')
+    expect(popup()?.style.top).toBe('297px')
   })
 
-  it('repositions on scroll and is safe when unmounted open', () => {
+  it('uses its own anchor and repositions on scroll and resize', () => {
     render(<AppTimePicker defaultOpen />)
     flushFrames()
-    expect(popup()?.style.left).toBe('100px')
-    triggerLeft = 250
+    expect(popup()?.style.position).toBe('fixed')
+    expect(popup()?.style.width).toBe('max-content')
+    expect(popup()?.style.left).toBe('540px')
+    expect(popup()?.style.top).toBe('297px')
+
+    triggerLeft = 620
     act(() => window.dispatchEvent(new Event('scroll')))
     flushFrames()
-    expect(popup()?.style.left).toBe('250px')
+    expect(popup()?.style.left).toBe('620px')
+
+    triggerTop = 320
+    act(() => window.dispatchEvent(new Event('resize')))
+    flushFrames()
+    expect(popup()?.style.top).toBe('357px')
+
     expect(() => act(() => root.unmount())).not.toThrow()
   })
 })

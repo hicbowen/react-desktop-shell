@@ -14,6 +14,7 @@ describe('AppDatePicker', () => {
   let root: Root
   let frames: FrameRequestCallback[]
   let triggerLeft: number
+  let triggerTop: number
 
   beforeEach(() => {
     ;(globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean })
@@ -25,6 +26,9 @@ describe('AppDatePicker', () => {
     root = createRoot(container)
     frames = []
     triggerLeft = 100
+    triggerTop = 100
+    vi.stubGlobal('innerWidth', 1440)
+    vi.stubGlobal('innerHeight', 900)
     vi.useFakeTimers()
     vi.setSystemTime(new Date(2026, 6, 16, 12))
     vi.stubGlobal(
@@ -39,11 +43,11 @@ describe('AppDatePicker', () => {
       function (this: HTMLElement) {
         if (this.classList.contains('app-date-picker')) {
           return {
-            bottom: 132,
+            bottom: triggerTop + 32,
             height: 32,
             left: triggerLeft,
             right: triggerLeft + 220,
-            top: 100,
+            top: triggerTop,
             width: 220,
           } as DOMRect
         }
@@ -233,7 +237,22 @@ describe('AppDatePicker', () => {
     expect(popup()).toBeNull()
   })
 
-  it('portals into a dialog-local overlay host', () => {
+  it('uses fixed content-sized geometry in the AppShell host', () => {
+    render(
+      <AppShell>
+        <AppDatePicker defaultOpen />
+      </AppShell>,
+    )
+    flushFrames()
+    const shellHost = container.querySelector('.app-shell__overlay-host')
+    expect(shellHost?.contains(popup())).toBe(true)
+    expect(popup()?.style.position).toBe('fixed')
+    expect(popup()?.style.width).toBe('max-content')
+    expect(popup()?.style.left).toBe('100px')
+    expect(popup()?.style.top).toBe('137px')
+  })
+
+  it('portals into a dialog-local overlay host with viewport geometry', () => {
     render(
       <AppShell>
         <AppDialog
@@ -248,9 +267,13 @@ describe('AppDatePicker', () => {
     expect(localHost?.contains(popup())).toBe(true)
     expect(container.querySelector('.app-shell__overlay-host')?.contains(popup()))
       .toBe(false)
+    expect(popup()?.style.position).toBe('fixed')
+    expect(popup()?.style.width).toBe('max-content')
+    expect(popup()?.style.left).toBe('100px')
+    expect(popup()?.style.top).toBe('137px')
   })
 
-  it('repositions on scroll and is safe when unmounted while open', () => {
+  it('repositions on scroll and resize and is safe when unmounted open', () => {
     render(<AppDatePicker defaultOpen />)
     flushFrames()
     expect(popup()?.style.left).toBe('100px')
@@ -259,6 +282,11 @@ describe('AppDatePicker', () => {
     act(() => window.dispatchEvent(new Event('scroll')))
     flushFrames()
     expect(popup()?.style.left).toBe('260px')
+
+    triggerTop = 220
+    act(() => window.dispatchEvent(new Event('resize')))
+    flushFrames()
+    expect(popup()?.style.top).toBe('257px')
 
     expect(() => act(() => root.unmount())).not.toThrow()
   })
