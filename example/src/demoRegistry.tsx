@@ -11,6 +11,7 @@ import { AppSettingsGroupPage, AppSettingsRowPage, ThemeControlsPage } from './p
 import { AntdThemePage } from './pages/integrations/AntdThemePage'
 import { AppCardPage } from './pages/content/CardPages'
 import { FieldEmptyStatePage } from './pages/content/FieldEmptyStatePage'
+import { ListViewPage } from './pages/content/ListViewPage'
 import { AppScrollAreaPage } from './pages/content/ScrollAreaPage'
 import { AppTooltipPage } from './pages/feedback/TooltipPage'
 import { AppMenuFlyoutPage } from './pages/actions/MenuFlyoutPage'
@@ -37,6 +38,7 @@ export const demoPages: DemoPageDefinition[] = [
   { key: 'app-card', group: 'Content', label: 'AppCard', description: 'Fluent content surfaces, composition, interaction states, and continuous groups.', icon: <CreditCard size={16} />, component: AppCardPage },
   { key: 'app-scroll-area', group: 'Content', label: 'AppScrollArea', description: 'Native scrolling with Fluent overflow, scrollbar, and gutter styling.', icon: <ScrollText size={16} />, component: AppScrollAreaPage },
   { key: 'field-empty-state', group: 'Content', label: 'Field & Empty State', description: 'Accessible field structure and compact or regular empty content.', icon: <Rows3 size={16} />, component: FieldEmptyStatePage },
+  { key: 'list-view', group: 'Content', label: 'List View', description: 'Desktop information lists with selection, invocation, and keyboard navigation.', icon: <ListChecks size={16} />, component: ListViewPage },
   { key: 'app-info-bar', group: 'Feedback', label: 'AppInfoBar', description: 'Inline informational, success, warning, and error states.', icon: <Info size={16} />, component: AppInfoBarPage },
   { key: 'progress-status', group: 'Feedback', label: 'Progress & Status', description: 'Indeterminate and determinate progress with semantic status badges.', icon: <Clock3 size={16} />, component: ProgressStatusPage },
   { key: 'app-tooltip', group: 'Feedback', label: 'AppTooltip', description: 'Non-interactive descriptions for hover and keyboard focus.', icon: <CircleHelp size={16} />, component: AppTooltipPage },

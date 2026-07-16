@@ -273,6 +273,16 @@ Use `AppProgressRing` for indeterminate work, `AppProgressBar` for determinate o
 <AppSelect options={courses} value={course} onValueChange={setCourse} />
 ```
 
+## List view
+
+`AppListView` and `AppListViewItem` form a desktop information list with none, single, or multiple selection, separate invoke behavior, and Arrow/Home/End/Space/Enter keyboard support. Interactive trailing content is isolated from row activation.
+
+```tsx
+<AppListView ariaLabel="Students" selectionMode="multiple" value={selected} onValueChange={setSelected}>
+  <AppListViewItem value="ada" title="Ada" description="Grade 5 · Python" />
+</AppListView>
+```
+
 `AppCard` is a low-contrast Fluent content surface for desktop tools, settings,
 status summaries, recent projects, and utility entry points. It is not a fixed
 web-dashboard panel: cards have no strong shadow or title divider by default,
