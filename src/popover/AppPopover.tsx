@@ -38,7 +38,7 @@ type PopoverDismissReason =
   | 'controlled'
 
 export function AppPopover({
-  ariaLabel = 'Popover',
+  ariaLabel,
   children,
   className,
   closeOnEscape = true,
@@ -177,6 +177,7 @@ export function AppPopover({
         data-placement={position.placement}
         id={id}
         ref={overlayRef}
+        role={ariaLabel ? 'region' : undefined}
         style={{
           ...(overlayHost ? undefined : OVERLAY_SURFACE_FALLBACK_STYLE),
           ...style,

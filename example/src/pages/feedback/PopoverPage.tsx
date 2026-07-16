@@ -44,6 +44,7 @@ export function PopoverPage() {
     <DemoSection title="Interactive popover">
       <DemoPreview className="demo-component-row">
         <AppPopover
+          ariaLabel="Quick edit"
           initialFocusRef={inputRef}
           matchTriggerWidth
           trigger={<AppButton>Quick edit</AppButton>}

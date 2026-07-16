@@ -99,15 +99,46 @@ describe('AppPopover', () => {
     expect(popover()?.style.pointerEvents).toBe('auto')
   })
 
-  it('uses non-modal popover semantics', () => {
+  it('uses unnamed non-modal popover semantics by default', () => {
     act(() => root.render(
       <AppPopover defaultOpen trigger={<button type="button">Open</button>}>
         Content
       </AppPopover>,
     ))
     expect(popover()?.hasAttribute('role')).toBe(false)
+    expect(popover()?.hasAttribute('aria-label')).toBe(false)
     expect(popover()?.hasAttribute('aria-modal')).toBe(false)
     expect(trigger().getAttribute('aria-haspopup')).toBe('true')
+  })
+
+  it('exposes a named region when an accessible label is provided', () => {
+    act(() => root.render(
+      <AppPopover
+        ariaLabel="Quick edit"
+        defaultOpen
+        trigger={<button type="button">Open</button>}
+      >
+        Content
+      </AppPopover>,
+    ))
+    expect(popover()?.getAttribute('role')).toBe('region')
+    expect(popover()?.getAttribute('aria-label')).toBe('Quick edit')
+    expect(popover()?.hasAttribute('aria-modal')).toBe(false)
+  })
+
+  it('links the trigger to the popover only while open', () => {
+    act(() => root.render(
+      <AppPopover trigger={<button type="button">Open</button>}>
+        Content
+      </AppPopover>,
+    ))
+    expect(trigger().getAttribute('aria-expanded')).toBe('false')
+    expect(trigger().hasAttribute('aria-controls')).toBe(false)
+
+    act(() => trigger().click())
+
+    expect(trigger().getAttribute('aria-expanded')).toBe('true')
+    expect(trigger().getAttribute('aria-controls')).toBe(popover()?.id)
   })
 
   it('keeps the popover open when an input is clicked', () => {
