@@ -303,7 +303,7 @@ Use `AppProgressRing` for indeterminate work, `AppProgressBar` for determinate o
 
 ## Popover
 
-`AppPopover` renders lightweight, non-menu supporting content in the overlay portal. It supports controlled or uncontrolled state, anchored placement with collision handling, outside/Escape dismissal, focus restoration, optional initial focus, and trigger-width matching.
+`AppPopover` renders lightweight, non-menu supporting content in the overlay portal. It is always non-modal: it does not lock focus, make the page inert, or prevent interaction elsewhere. It supports controlled or uncontrolled state, anchored placement with collision handling, outside/Escape dismissal, focus restoration, optional initial focus, and trigger-width matching. The trigger must be a ref-capable DOM element or `forwardRef` component, not a Fragment.
 
 ```tsx
 <AppPopover trigger={<AppButton>View details</AppButton>} placement="bottom-start">
@@ -311,7 +311,7 @@ Use `AppProgressRing` for indeterminate work, `AppProgressBar` for determinate o
 </AppPopover>
 ```
 
-Use `AppTooltip` for short non-interactive descriptions, `AppTeachingTip` for guidance, `AppMenuFlyout` for commands, and `AppDialog` for modal decisions.
+Use `AppTooltip` for short non-interactive descriptions, `AppTeachingTip` for guidance, `AppMenuFlyout` for commands, and `AppDialog` for any modal content or decision.
 
 `AppCard` is a low-contrast Fluent content surface for desktop tools, settings,
 status summaries, recent projects, and utility entry points. It is not a fixed
