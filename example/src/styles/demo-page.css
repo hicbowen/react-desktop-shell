@@ -341,7 +341,7 @@
     font-weight: 600;
 }
 
-.demo-field input,
+.demo-field > input,
 .demo-input {
     min-height: 32px;
     padding: 6px 9px;
