@@ -1,9 +1,13 @@
 // @vitest-environment jsdom
 
-import { act, type ReactNode } from 'react'
+import { act, createRef, type ReactNode } from 'react'
 import { createRoot, type Root } from 'react-dom/client'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import type { AppDialogRegistration } from './AppDialogContext'
+import {
+  AppDialogContext,
+  type AppDialogRegistration,
+} from './AppDialogContext'
+import { AppDialog } from './AppDialog'
 import { AppDialogLayer } from './AppDialogLayer'
 import { AppPopover } from '../popover/AppPopover'
 import { useDialogController } from './useDialogController'
@@ -244,6 +248,172 @@ describe('AppDialogLayer', () => {
     expect(hosts[0]?.textContent).not.toContain('Upper popover')
     expect(hosts[1]?.textContent).toContain('Upper popover')
     expect(hosts[1]?.textContent).not.toContain('Lower popover')
+  })
+
+  it('preserves focused content across title, children, and action updates', () => {
+    vi.spyOn(HTMLElement.prototype, 'offsetParent', 'get').mockReturnValue(
+      container,
+    )
+
+    render([
+      registration('focus-update', {
+        children: (
+          <>
+            <input aria-label="First field" />
+            <input aria-label="Second field" />
+          </>
+        ),
+        actions: <button type="button">Save</button>,
+      }),
+    ])
+
+    const second = container.querySelector<HTMLInputElement>(
+      '[aria-label="Second field"]',
+    )!
+    expect(document.activeElement).toBe(
+      container.querySelector('[aria-label="First field"]'),
+    )
+    act(() => second.focus())
+
+    render([
+      registration('focus-update', {
+        title: 'Updated title',
+        children: (
+          <>
+            <input aria-label="First field" />
+            <input aria-label="Second field" />
+          </>
+        ),
+        actions: (
+          <button disabled type="button">
+            Saving
+          </button>
+        ),
+      }),
+    ])
+
+    expect(document.activeElement).toBe(second)
+  })
+
+  it('focuses the lower dialog when it becomes top without restoring background', () => {
+    vi.useFakeTimers()
+    vi.spyOn(HTMLElement.prototype, 'offsetParent', 'get').mockReturnValue(
+      container,
+    )
+    const background = document.createElement('button')
+    document.body.append(background)
+
+    render([
+      registration('lower-focus', {
+        children: <input aria-label="Lower field" />,
+        restoreFocusElement: background,
+      }),
+      registration('upper-focus', {
+        children: <input aria-label="Upper field" />,
+        restoreFocusElement: background,
+      }),
+    ])
+    expect(document.activeElement).toBe(
+      container.querySelector('[aria-label="Upper field"]'),
+    )
+
+    render([
+      registration('lower-focus', {
+        children: <input aria-label="Lower field" />,
+        restoreFocusElement: background,
+      }),
+    ])
+    const lower = container.querySelector('[aria-label="Lower field"]')
+    expect(document.activeElement).toBe(lower)
+
+    act(() => vi.advanceTimersByTime(180))
+    expect(document.activeElement).toBe(lower)
+    background.remove()
+  })
+
+  it('restores the opener only after the final dialog exits', () => {
+    vi.useFakeTimers()
+    const opener = document.createElement('button')
+    document.body.append(opener)
+    act(() => opener.focus())
+
+    render([
+      registration('restore-final', {
+        children: <input />,
+        restoreFocusElement: opener,
+      }),
+    ])
+    render([])
+    expect(document.activeElement).not.toBe(opener)
+
+    act(() => vi.advanceTimersByTime(180))
+    expect(document.activeElement).toBe(opener)
+    opener.remove()
+  })
+
+  it('does not restore a removed opener', () => {
+    vi.useFakeTimers()
+    const opener = document.createElement('button')
+    document.body.append(opener)
+
+    render([
+      registration('missing-opener', {
+        restoreFocusElement: opener,
+      }),
+    ])
+    opener.remove()
+    render([])
+
+    expect(() => act(() => vi.advanceTimersByTime(180))).not.toThrow()
+  })
+
+  it('updates an open AppDialog registration without unregistering it', () => {
+    const register = vi.fn()
+    const unregister = vi.fn()
+    const registry = { register, unregister }
+
+    act(() =>
+      root.render(
+        <AppDialogContext.Provider value={registry}>
+          <AppDialog open title="First title" />
+        </AppDialogContext.Provider>,
+      ),
+    )
+    act(() =>
+      root.render(
+        <AppDialogContext.Provider value={registry}>
+          <AppDialog open title="Updated title" />
+        </AppDialogContext.Provider>,
+      ),
+    )
+
+    expect(register).toHaveBeenCalledTimes(2)
+    expect(unregister).not.toHaveBeenCalled()
+  })
+
+  it('uses an initial focus target inside the dialog overlay scope', () => {
+    const initialFocus = createRef<HTMLInputElement>()
+
+    render([
+      registration('overlay-initial-focus', {
+        initialFocus,
+        children: (
+          <AppPopover
+            defaultOpen
+            trigger={<button type="button">Open overlay</button>}
+          >
+            <input aria-label="Overlay initial field" ref={initialFocus} />
+          </AppPopover>
+        ),
+      }),
+    ])
+
+    expect(document.activeElement).toBe(initialFocus.current)
+    expect(
+      container
+        .querySelector('.app-dialog__overlay-host')
+        ?.contains(initialFocus.current),
+    ).toBe(true)
   })
 
   it('keeps message box resolve and cancel behavior working', async () => {

@@ -57,10 +57,6 @@ export function AppDialog(props: AppDialogProps) {
       className,
       restoreFocusElement: restoreFocusRef.current,
     })
-
-    return () => {
-      registry.unregister(id)
-    }
   }, [
     actions,
     children,
@@ -76,6 +72,13 @@ export function AppDialog(props: AppDialogProps) {
     title,
     width,
   ])
+
+  useEffect(
+    () => () => {
+      registry?.unregister(id)
+    },
+    [id, registry],
+  )
 
   return null
 }

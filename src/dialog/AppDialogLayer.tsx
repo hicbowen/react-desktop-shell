@@ -112,6 +112,10 @@ export function AppDialogLayer({ dialogs }: AppDialogLayerProps) {
           top={entry.dialog.id === topOpenId}
           stackIndex={index}
           onExited={() => {
+            if (entry.exiting && dialogs.length === 0 && index === 0) {
+              restoreDialogFocus(entry.dialog.restoreFocusElement)
+            }
+
             setRenderState((current) => ({
               ...current,
               rendered: current.rendered.filter(
@@ -142,6 +146,8 @@ function AppDialogSurface({
   const dialogOverlayHostRef = useRef<HTMLDivElement | null>(null)
   const [dialogOverlayHost, setDialogOverlayHost] =
     useState<HTMLDivElement | null>(null)
+  const wasTopRef = useRef(false)
+  const pendingLocalInitialFocusRef = useRef(false)
   const setOverlayHost = useCallback((node: HTMLDivElement | null) => {
     dialogOverlayHostRef.current = node
     setDialogOverlayHost(node)
@@ -174,25 +180,41 @@ function AppDialogSurface({
   }, [exiting, onExited])
 
   useLayoutEffect(() => {
+    const becameTop = top && !exiting && !wasTopRef.current
+    wasTopRef.current = top && !exiting
+
+    if (becameTop) {
+      const surface = surfaceRef.current
+      const requestedFocus = dialog.initialFocus?.current
+      const focusTarget =
+        requestedFocus ?? getTabbableElements(surface)[0] ?? surface
+
+      pendingLocalInitialFocusRef.current = Boolean(
+        dialog.initialFocus &&
+        (!requestedFocus ||
+          (!surface?.contains(requestedFocus) &&
+            !dialogOverlayHost?.contains(requestedFocus))),
+      )
+
+      focusTarget?.focus({ preventScroll: true })
+    }
+
+    const localInitialFocus = dialog.initialFocus?.current
+    if (
+      top &&
+      !exiting &&
+      pendingLocalInitialFocusRef.current &&
+      localInitialFocus &&
+      dialogOverlayHost?.contains(localInitialFocus)
+    ) {
+      pendingLocalInitialFocusRef.current = false
+      localInitialFocus.focus({ preventScroll: true })
+    }
+
     if (!top || exiting) {
-      return
+      pendingLocalInitialFocusRef.current = false
     }
-
-    const focusTarget =
-      dialog.initialFocus?.current ??
-      getTabbableElements(surfaceRef.current)[0] ??
-      surfaceRef.current
-
-    focusTarget?.focus({ preventScroll: true })
-
-    return () => {
-      const restore = dialog.restoreFocusElement
-
-      if (restore && document.contains(restore)) {
-        restore.focus({ preventScroll: true })
-      }
-    }
-  }, [dialog, exiting, top])
+  }, [dialog.id, dialog.initialFocus, dialogOverlayHost, exiting, top])
 
   useEffect(() => {
     if (!top || exiting) {
@@ -354,6 +376,12 @@ function isInsideDialogScope(
   return Boolean(
     node && (surface?.contains(node) || overlayHost?.contains(node)),
   )
+}
+
+function restoreDialogFocus(restore: HTMLElement | null) {
+  if (restore && document.contains(restore)) {
+    restore.focus({ preventScroll: true })
+  }
 }
 
 function isTextEntryElement(element: Element | null) {
