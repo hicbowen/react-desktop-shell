@@ -246,6 +246,15 @@ Use `AppProgressRing` for indeterminate work, `AppProgressBar` for determinate o
 <AppStatusBadge status="success">Complete</AppStatusBadge>
 ```
 
+## Text inputs
+
+`AppTextBox` wraps native input behavior with optional icons, clear and loading affordances. `AppTextArea` supports character counts and dependency-free automatic height within row limits. Both forward refs and compose with `AppField`.
+
+```tsx
+<AppTextBox value={name} onChange={(event) => setName(event.target.value)} clearable />
+<AppTextArea autoResize minRows={2} maxRows={8} showCount maxLength={500} />
+```
+
 `AppCard` is a low-contrast Fluent content surface for desktop tools, settings,
 status summaries, recent projects, and utility entry points. It is not a fixed
 web-dashboard panel: cards have no strong shadow or title divider by default,

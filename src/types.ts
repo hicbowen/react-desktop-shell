@@ -4,6 +4,7 @@ export type { AppButtonAppearance, AppButtonProps, AppButtonSize, AppIconButtonP
 export type { AppEmptyStateProps } from './empty-state/types'
 export type { AppFieldProps } from './field/types'
 export type { AppProgressBarProps, AppProgressRingProps, AppStatusBadgeProps } from './progress/types'
+export type { AppTextAreaProps, AppTextBoxProps } from './text-input/types'
 
 export type {
   AppCardAppearance,

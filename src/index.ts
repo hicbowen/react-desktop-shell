@@ -3,6 +3,7 @@ export { AppButton, AppIconButton } from './button'
 export { AppEmptyState } from './empty-state'
 export { AppField } from './field'
 export { AppProgressBar, AppProgressRing, AppStatusBadge } from './progress'
+export { AppTextArea, AppTextBox } from './text-input'
 export { AppCard, AppCardFooter, AppCardGroup, AppCardHeader } from './card'
 export { AppContextMenu } from './context-menu/AppContextMenu'
 export { AppDialog } from './dialog/AppDialog'
@@ -34,6 +35,8 @@ export type {
   AppProgressBarProps,
   AppProgressRingProps,
   AppStatusBadgeProps,
+  AppTextAreaProps,
+  AppTextBoxProps,
   AppIconButtonProps,
   AppClipboardAdapter,
   AppCardAppearance,
