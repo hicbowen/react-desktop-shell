@@ -3,7 +3,10 @@
 import { act, useRef } from 'react'
 import { createRoot, type Root } from 'react-dom/client'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { useOverlayDismiss } from './useOverlayDismiss'
+import {
+  useOverlayDismiss,
+  type OverlayDismissReason,
+} from './useOverlayDismiss'
 
 function Harness({
   open,
@@ -11,7 +14,7 @@ function Harness({
   restoreFocus = false,
 }: {
   open: boolean
-  onDismiss: () => void
+  onDismiss: (reason: OverlayDismissReason) => void
   restoreFocus?: boolean
 }) {
   const triggerRef = useRef<HTMLButtonElement | null>(null)
@@ -39,7 +42,9 @@ function Harness({
 describe('useOverlayDismiss', () => {
   let container: HTMLDivElement
   let root: Root
-  let onDismiss: () => void
+  let onDismiss: ReturnType<
+    typeof vi.fn<(reason: OverlayDismissReason) => void>
+  >
 
   beforeEach(() => {
     ;(globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean })
@@ -65,6 +70,7 @@ describe('useOverlayDismiss', () => {
     act(() => buttons()[2]?.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true })))
 
     expect(onDismiss).toHaveBeenCalledOnce()
+    expect(onDismiss).toHaveBeenCalledWith('outside-pointer')
   })
 
   it('does not dismiss for the trigger or overlay content', () => {
@@ -81,6 +87,7 @@ describe('useOverlayDismiss', () => {
     act(() => document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true })))
 
     expect(onDismiss).toHaveBeenCalledOnce()
+    expect(onDismiss).toHaveBeenCalledWith('escape')
     expect(document.activeElement).toBe(buttons()[0])
   })
 
@@ -91,6 +98,9 @@ describe('useOverlayDismiss', () => {
     act(() => window.dispatchEvent(new Event('scroll')))
 
     expect(onDismiss).toHaveBeenCalledTimes(3)
+    expect(onDismiss).toHaveBeenNthCalledWith(1, 'resize')
+    expect(onDismiss).toHaveBeenNthCalledWith(2, 'window-blur')
+    expect(onDismiss).toHaveBeenNthCalledWith(3, 'scroll')
   })
 
   it('does not dismiss when the overlay scrolls internally', () => {

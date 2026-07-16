@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { act, createRef } from 'react'
+import { act, createRef, useState } from 'react'
 import { createRoot } from 'react-dom/client'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { AppOverlayHostContext } from '../overlay/AppOverlayHostContext'
@@ -188,6 +188,93 @@ describe('AppPopover', () => {
       </AppPopover>,
     ))
     act(() => document.dispatchEvent(new KeyboardEvent('keydown', { bubbles: true, key: 'Escape' })))
+    expect(popover()).toBeNull()
+    expect(document.activeElement).toBe(trigger())
+  })
+
+  it('preserves focus on an outside button after dismissal', () => {
+    act(() => root.render(<>
+      <AppPopover defaultOpen trigger={<button type="button">Open</button>}>
+        Content
+      </AppPopover>
+      <button type="button">Outside action</button>
+    </>))
+    const outside = Array.from(host.querySelectorAll('button')).find(
+      (button) => button.textContent === 'Outside action',
+    )!
+    act(() => {
+      outside.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true }))
+      outside.focus()
+      outside.click()
+    })
+    expect(popover()).toBeNull()
+    expect(document.activeElement).toBe(outside)
+  })
+
+  it('preserves focus on an outside input after dismissal', () => {
+    act(() => root.render(<>
+      <AppPopover defaultOpen trigger={<button type="button">Open</button>}>
+        Content
+      </AppPopover>
+      <input aria-label="Outside field" />
+    </>))
+    const outside = host.querySelector<HTMLInputElement>('[aria-label="Outside field"]')!
+    act(() => {
+      outside.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true }))
+      outside.focus()
+      outside.click()
+    })
+    expect(popover()).toBeNull()
+    expect(document.activeElement).toBe(outside)
+  })
+
+  it('does not move focus when the trigger closes the popover', () => {
+    act(() => root.render(
+      <AppPopover defaultOpen trigger={<button type="button">Open</button>}>
+        Content
+      </AppPopover>,
+    ))
+    act(() => {
+      trigger().focus()
+      trigger().click()
+    })
+    expect(popover()).toBeNull()
+    expect(document.activeElement).toBe(trigger())
+  })
+
+  it('does not move focus when a controlled parent rejects dismissal', () => {
+    const change = vi.fn()
+    act(() => root.render(
+      <AppPopover onOpenChange={change} open trigger={<button type="button">Open</button>}>
+        <input aria-label="Inside field" />
+      </AppPopover>,
+    ))
+    const input = popover()!.querySelector<HTMLInputElement>('input')!
+    act(() => {
+      input.focus()
+      document.dispatchEvent(new KeyboardEvent('keydown', { bubbles: true, key: 'Escape' }))
+    })
+    expect(change).toHaveBeenCalledWith(false)
+    expect(popover()).not.toBeNull()
+    expect(document.activeElement).toBe(input)
+  })
+
+  it('restores focus after a controlled parent accepts Escape dismissal', () => {
+    function Harness() {
+      const [open, setOpen] = useState(true)
+      return <AppPopover
+        onOpenChange={setOpen}
+        open={open}
+        trigger={<button type="button">Open</button>}
+      >
+        <input aria-label="Inside field" />
+      </AppPopover>
+    }
+    act(() => root.render(<Harness />))
+    act(() => popover()?.querySelector<HTMLInputElement>('input')?.focus())
+    act(() => document.dispatchEvent(
+      new KeyboardEvent('keydown', { bubbles: true, key: 'Escape' }),
+    ))
     expect(popover()).toBeNull()
     expect(document.activeElement).toBe(trigger())
   })

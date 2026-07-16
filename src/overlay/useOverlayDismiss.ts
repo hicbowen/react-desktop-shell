@@ -1,10 +1,17 @@
 import { useEffect, useRef, type RefObject } from 'react'
 
+export type OverlayDismissReason =
+  | 'escape'
+  | 'outside-pointer'
+  | 'resize'
+  | 'scroll'
+  | 'window-blur'
+
 export interface UseOverlayDismissOptions {
   open: boolean
   overlayRef: RefObject<HTMLElement | null>
   triggerRef?: RefObject<HTMLElement | null>
-  onDismiss: () => void
+  onDismiss: (reason: OverlayDismissReason) => void
   closeOnEscape?: boolean
   closeOnOutsidePointerDown?: boolean
   closeOnResize?: boolean
@@ -40,7 +47,8 @@ export function useOverlayDismiss({
       return
     }
 
-    const dismiss = () => onDismissRef.current()
+    const dismiss = (reason: OverlayDismissReason) =>
+      onDismissRef.current(reason)
     const handlePointerDown = (event: PointerEvent) => {
       const target = event.target
 
@@ -55,7 +63,7 @@ export function useOverlayDismiss({
         return
       }
 
-      dismiss()
+      dismiss('outside-pointer')
     }
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key !== 'Escape') {
@@ -63,7 +71,7 @@ export function useOverlayDismiss({
       }
 
       event.preventDefault()
-      dismiss()
+      dismiss('escape')
 
       if (restoreFocus) {
         triggerRef?.current?.focus({ preventScroll: true })
@@ -76,8 +84,10 @@ export function useOverlayDismiss({
         return
       }
 
-      dismiss()
+      dismiss('scroll')
     }
+    const handleResize = () => dismiss('resize')
+    const handleWindowBlur = () => dismiss('window-blur')
 
     if (closeOnOutsidePointerDown) {
       document.addEventListener('pointerdown', handlePointerDown, true)
@@ -86,21 +96,21 @@ export function useOverlayDismiss({
       document.addEventListener('keydown', handleKeyDown, true)
     }
     if (closeOnResize) {
-      window.addEventListener('resize', dismiss)
+      window.addEventListener('resize', handleResize)
     }
     if (closeOnExternalScroll) {
       window.addEventListener('scroll', handleScroll, true)
     }
     if (closeOnWindowBlur) {
-      window.addEventListener('blur', dismiss)
+      window.addEventListener('blur', handleWindowBlur)
     }
 
     return () => {
       document.removeEventListener('pointerdown', handlePointerDown, true)
       document.removeEventListener('keydown', handleKeyDown, true)
-      window.removeEventListener('resize', dismiss)
+      window.removeEventListener('resize', handleResize)
       window.removeEventListener('scroll', handleScroll, true)
-      window.removeEventListener('blur', dismiss)
+      window.removeEventListener('blur', handleWindowBlur)
     }
   }, [
     closeOnEscape,
