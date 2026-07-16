@@ -7,6 +7,10 @@ import { AppMessageBoxContext } from '../dialog/AppMessageBoxContext'
 import { useDialogController } from '../dialog/useDialogController'
 import { AppToastContext } from '../toast/AppToastContext'
 import { AppOverlayHostContext } from '../overlay/AppOverlayHostContext'
+import { AppLocaleContext } from '../localization/AppLocaleContext'
+import { appLocaleSettings } from '../localization/localeSettings'
+import { appLocaleMessages } from '../localization/messages'
+import { useResolvedAppLocale } from '../localization/resolveAppLocale'
 import {
   defaultToastLocale,
   useToastStore,
@@ -27,6 +31,7 @@ import { ShellOverlayLayer } from './ShellOverlayLayer'
 import { usePaneController } from './usePaneController'
 
 export function AppShell({
+  locale = 'system',
   theme = 'system',
   contextMenu = 'native',
   clipboard = defaultClipboardAdapter,
@@ -47,6 +52,16 @@ export function AppShell({
   contentStyle,
 }: AppShellProps) {
   const rootRef = useRef<HTMLDivElement | null>(null)
+  const resolvedLocale = useResolvedAppLocale(locale)
+  const localeContextValue = useMemo(() => {
+    const settings = appLocaleSettings[resolvedLocale]
+    return {
+      locale: settings.intlLocale,
+      messages: appLocaleMessages[resolvedLocale],
+      firstDayOfWeek: settings.firstDayOfWeek,
+      hourCycle: settings.hourCycle,
+    }
+  }, [resolvedLocale])
   const [overlayHost, setOverlayHost] = useState<HTMLDivElement | null>(null)
   const pane = usePaneController({ sidebar, containerRef: rootRef })
   const sidebarCollapsible = pane.collapsible
@@ -145,11 +160,12 @@ export function AppShell({
       : 'Collapse navigation'
 
   return (
-    <AppToastContext.Provider value={toastStore.toast}>
-      <AppMessageBoxContext.Provider value={dialogController.messageBox}>
-        <AppDialogContext.Provider value={dialogController.registry}>
-          <AppContextMenuContext.Provider value={contextMenuController.contextValue}>
-            <AppOverlayHostContext.Provider value={overlayHost}>
+    <AppLocaleContext.Provider value={localeContextValue}>
+      <AppToastContext.Provider value={toastStore.toast}>
+        <AppMessageBoxContext.Provider value={dialogController.messageBox}>
+          <AppDialogContext.Provider value={dialogController.registry}>
+            <AppContextMenuContext.Provider value={contextMenuController.contextValue}>
+              <AppOverlayHostContext.Provider value={overlayHost}>
               <div
                 ref={rootRef}
                 className={rootClassName}
@@ -218,10 +234,11 @@ export function AppShell({
                   hasModalDialog={dialogController.hasModalDialog}
               />
               </div>
-            </AppOverlayHostContext.Provider>
-          </AppContextMenuContext.Provider>
-        </AppDialogContext.Provider>
-      </AppMessageBoxContext.Provider>
-    </AppToastContext.Provider>
+              </AppOverlayHostContext.Provider>
+            </AppContextMenuContext.Provider>
+          </AppDialogContext.Provider>
+        </AppMessageBoxContext.Provider>
+      </AppToastContext.Provider>
+    </AppLocaleContext.Provider>
   )
 }

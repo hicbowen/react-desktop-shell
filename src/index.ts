@@ -1,4 +1,5 @@
 export { AppShell } from './shell/AppShell'
+export type { AppLocale } from './localization'
 export { AppButton, AppIconButton } from './button'
 export { AppEmptyState } from './empty-state'
 export { AppField } from './field'

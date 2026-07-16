@@ -6,11 +6,13 @@ import type {
 } from '../context-menu/types'
 import type { AppMessageBoxLocale } from '../dialog/types'
 import type { AppToastHostOptions, AppToastLocale } from '../toast/types'
+import type { AppLocale } from '../localization/types'
 
 export type AppTheme = 'system' | 'light' | 'dark'
 export type PaneDisplayMode = 'expanded' | 'compact' | 'minimal' | 'auto'
 
 export interface AppShellProps {
+  locale?: AppLocale
   theme?: AppTheme
   contextMenu?: AppContextMenuMode
   clipboard?: AppClipboardAdapter
