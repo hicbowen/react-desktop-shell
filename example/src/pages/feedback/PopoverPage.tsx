@@ -35,6 +35,10 @@ export function PopoverPage() {
           <p>Icon buttons work as triggers.</p>
         </AppPopover>
       </DemoPreview>
+      <p className="demo-note">
+        Controls inside a popover support normal focus, typing, and clicks. Only an outside click or
+        Escape dismisses the popover.
+      </p>
     </DemoSection>
 
     <DemoSection title="Interactive popover">

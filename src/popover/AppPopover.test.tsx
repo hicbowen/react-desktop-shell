@@ -2,12 +2,14 @@
 import { act, createRef } from 'react'
 import { createRoot } from 'react-dom/client'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { AppOverlayHostContext } from '../overlay/AppOverlayHostContext'
 import { AppPopover } from './AppPopover'
 
 describe('AppPopover', () => {
   let host: HTMLDivElement
   let root: ReturnType<typeof createRoot>
   let frames: FrameRequestCallback[]
+  let overlayHosts: HTMLDivElement[]
 
   beforeEach(() => {
     ;(globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true
@@ -15,6 +17,7 @@ describe('AppPopover', () => {
     document.body.append(host)
     root = createRoot(host)
     frames = []
+    overlayHosts = []
     vi.stubGlobal('requestAnimationFrame', vi.fn((callback: FrameRequestCallback) => {
       frames.push(callback)
       return frames.length
@@ -33,6 +36,7 @@ describe('AppPopover', () => {
   afterEach(() => {
     act(() => root.unmount())
     host.remove()
+    overlayHosts.forEach((overlayHost) => overlayHost.remove())
     vi.restoreAllMocks()
     vi.unstubAllGlobals()
   })
@@ -41,6 +45,9 @@ describe('AppPopover', () => {
   const popover = () => document.body.querySelector<HTMLElement>('.app-popover')
   const pointerDown = (target: EventTarget) => act(() => {
     target.dispatchEvent(new Event('pointerdown', { bubbles: true }))
+  })
+  const flushFrames = () => act(() => {
+    while (frames.length > 0) frames.shift()?.(0)
   })
 
   it('opens in a portal and preserves trigger events', () => {
@@ -54,6 +61,42 @@ describe('AppPopover', () => {
     expect(original).toHaveBeenCalledOnce()
     expect(popover()?.parentElement).toBe(document.body)
     expect(trigger().getAttribute('aria-expanded')).toBe('true')
+  })
+
+  it('is non-interactive until positioning finishes', () => {
+    act(() => root.render(
+      <AppPopover defaultOpen trigger={<button type="button">Open</button>}>
+        Content
+      </AppPopover>,
+    ))
+    expect(popover()?.style.pointerEvents).toBe('none')
+    expect(popover()?.style.visibility).toBe('hidden')
+
+    flushFrames()
+
+    expect(popover()?.style.pointerEvents).toBe('auto')
+    expect(popover()?.style.visibility).toBe('visible')
+  })
+
+  it('restores pointer interactions inside an overlay host', () => {
+    const overlayHost = document.createElement('div')
+    overlayHost.className = 'app-shell__overlay-host'
+    overlayHost.style.pointerEvents = 'none'
+    document.body.append(overlayHost)
+    overlayHosts.push(overlayHost)
+
+    act(() => root.render(
+      <AppOverlayHostContext.Provider value={overlayHost}>
+        <AppPopover defaultOpen trigger={<button type="button">Open</button>}>
+          Content
+        </AppPopover>
+      </AppOverlayHostContext.Provider>,
+    ))
+    flushFrames()
+
+    expect(popover()?.parentElement).toBe(overlayHost)
+    expect(getComputedStyle(overlayHost).pointerEvents).toBe('none')
+    expect(popover()?.style.pointerEvents).toBe('auto')
   })
 
   it('uses non-modal popover semantics', () => {
@@ -124,6 +167,8 @@ describe('AppPopover', () => {
       pointerDown(element)
       expect(popover()).not.toBeNull()
     }
+    pointerDown(content)
+    expect(popover()).not.toBeNull()
   })
 
   it('closes only after an outside pointer down', () => {
@@ -174,7 +219,7 @@ describe('AppPopover', () => {
         <input ref={initialFocusRef} />
       </AppPopover>,
     ))
-    act(() => frames.splice(0).forEach((frame) => frame(0)))
+    flushFrames()
     expect(popover()?.style.minWidth).toBe('120px')
     expect(document.activeElement).toBe(initialFocusRef.current)
   })

@@ -137,7 +137,7 @@ export function AppPopover({
           maxHeight: position.measured ? position.maxHeight : undefined,
           maxWidth: position.measured ? position.maxWidth : undefined,
           minWidth: matchTriggerWidth ? triggerWidth : undefined,
-          pointerEvents: position.measured ? undefined : 'none',
+          pointerEvents: position.measured ? 'auto' : 'none',
           top: position.y,
           visibility: position.measured ? 'visible' : 'hidden',
         } as CSSProperties}
