@@ -272,6 +272,67 @@ Use `AppProgressRing` for indeterminate work, `AppProgressBar` for determinate o
 <AppToggleSwitch defaultChecked label="Automatic updates" />
 ```
 
+## Date picker
+
+`AppDatePicker` selects a calendar date represented by `AppDateValue`, which
+contains only `year`, `month`, and `day` and therefore has no time or time zone.
+The component supports controlled or uncontrolled values and open state,
+minimum and maximum dates, unavailable-date callbacks, `AppField`, clear
+actions, and dialog-local overlays.
+
+```tsx
+const [date, setDate] = useState<AppDateValue | null>(null)
+
+<AppDatePicker
+  allowClear
+  name="courseDate"
+  onValueChange={setDate}
+  value={date}
+/>
+```
+
+When `name` is supplied, a hidden input submits `YYYY-MM-DD`. The visible
+formatted value remains locale-aware. `readOnly` allows opening the calendar
+for inspection but prevents selection and clearing; `disabled` prevents all
+interaction.
+
+## Date range picker
+
+`AppDateRangePicker` uses a complete `AppDateRangeValue` for committed state.
+Selections inside the calendar remain pending until Apply is pressed. Cancel,
+Escape, and outside pointer dismissal discard pending dates without calling
+`onValueChange`. Range lengths include both endpoints.
+
+```tsx
+const [range, setRange] =
+  useState<AppDateRangeValue | null>(null)
+
+<AppDateRangePicker
+  endName="endDate"
+  onValueChange={setRange}
+  startName="startDate"
+  value={range}
+  visibleMonths="responsive"
+/>
+```
+
+Use `minDuration` and `maxDuration` to validate inclusive natural-day lengths.
+The start and end dates must be selectable; unavailable dates may still occur
+inside the range. Separate `startName` and `endName` hidden inputs submit ISO
+calendar dates.
+
+### `Date` and `AppDateValue`
+
+`AppDateValue` represents a calendar date without a time or time zone. Use
+`parseAppDateISO` and `formatAppDateISO` for strict `YYYY-MM-DD` interchange.
+Do not pass an ISO date-only string directly to `new Date(value)`, because that
+syntax is parsed as UTC and can display a different local day. When a native
+`Date` is required, construct it from local fields:
+
+```ts
+new Date(value.year, value.month - 1, value.day)
+```
+
 ## Number and select controls
 
 `AppNumberBox` separates temporary editing text from its committed value. Blur and Enter commit valid input, Escape restores the committed value, and buttons or Arrow keys apply normalized steps. Pointer step buttons keep the input focused and apply pending valid text as a single final update. In controlled mode, rejected parent updates restore the current prop value. `AppSelect` visually wraps a native single-value select. Its values are strings, matching native form behavior; convert domain numbers at the application boundary.
