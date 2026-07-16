@@ -84,6 +84,13 @@ export const zhCNMessages = {
     increase: '增加数值',
     decrease: '减少数值',
   },
+  statusBadge: {
+    neutral: '中性',
+    info: '信息',
+    success: '成功',
+    warning: '警告',
+    danger: '危险',
+  },
   teachingTip: {
     label: '教学提示',
     close: '关闭',

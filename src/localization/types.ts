@@ -73,6 +73,13 @@ export interface AppLocaleMessages {
     increase: string
     decrease: string
   }
+  statusBadge: {
+    neutral: string
+    info: string
+    success: string
+    warning: string
+    danger: string
+  }
   teachingTip: {
     label: string
     close: string

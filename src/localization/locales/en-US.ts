@@ -89,6 +89,13 @@ export const enUSMessages = {
     increase: 'Increase value',
     decrease: 'Decrease value',
   },
+  statusBadge: {
+    neutral: 'Neutral',
+    info: 'Information',
+    success: 'Success',
+    warning: 'Warning',
+    danger: 'Danger',
+  },
   teachingTip: {
     label: 'Teaching tip',
     close: 'Close',
