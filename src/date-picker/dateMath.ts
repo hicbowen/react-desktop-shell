@@ -2,6 +2,14 @@ import type { AppDateRangeValue, AppDateValue } from './types'
 
 const DAY_MS = 24 * 60 * 60 * 1000
 
+export interface DateRangeValidationOptions {
+  minValue?: AppDateValue
+  maxValue?: AppDateValue
+  isDateUnavailable?: (value: AppDateValue) => boolean
+  minDuration?: number
+  maxDuration?: number
+}
+
 export function isLeapYear(year: number) {
   return year % 4 === 0 && (year % 100 !== 0 || year % 400 === 0)
 }
@@ -150,6 +158,35 @@ export function getDateRangeLength(range: AppDateRangeValue) {
         toUTCDate(normalized.start).getTime()) /
         DAY_MS,
     ) + 1
+  )
+}
+
+export function isSelectableDateRange(
+  range: AppDateRangeValue,
+  {
+    minValue,
+    maxValue,
+    isDateUnavailable,
+    minDuration,
+    maxDuration,
+  }: DateRangeValidationOptions = {},
+) {
+  if (
+    !isValidAppDate(range.start) ||
+    !isValidAppDate(range.end) ||
+    compareAppDates(range.start, range.end) > 0 ||
+    (minValue && compareAppDates(range.start, minValue) < 0) ||
+    (maxValue && compareAppDates(range.end, maxValue) > 0) ||
+    isDateUnavailable?.(range.start) ||
+    isDateUnavailable?.(range.end)
+  ) {
+    return false
+  }
+
+  const duration = getDateRangeLength(range)
+  return (
+    (minDuration == null || duration >= minDuration) &&
+    (maxDuration == null || duration <= maxDuration)
   )
 }
 

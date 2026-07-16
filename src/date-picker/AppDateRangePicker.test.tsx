@@ -373,6 +373,55 @@ describe('AppDateRangePicker', () => {
     expect(action('Apply').disabled).toBe(true)
   })
 
+  it('rejects invalid, out-of-bounds, and unavailable external ranges', () => {
+    expect(() =>
+      render(
+        <AppDateRangePicker
+          defaultOpen
+          value={{
+            start: { year: 2026, month: 2, day: 30 },
+            end: { year: 2026, month: 3, day: 2 },
+          }}
+          visibleMonths={1}
+        />,
+      ),
+    ).not.toThrow()
+    flushFrames()
+    expect(container.textContent).toContain('2026-02-30')
+    expect(action('Apply').disabled).toBe(true)
+
+    render(
+      <AppDateRangePicker
+        defaultOpen
+        key="bounds"
+        maxValue={{ year: 2026, month: 7, day: 20 }}
+        minValue={{ year: 2026, month: 7, day: 10 }}
+        value={{
+          start: { year: 2026, month: 7, day: 9 },
+          end: { year: 2026, month: 7, day: 21 },
+        }}
+        visibleMonths={1}
+      />,
+    )
+    flushFrames()
+    expect(action('Apply').disabled).toBe(true)
+
+    render(
+      <AppDateRangePicker
+        defaultOpen
+        isDateUnavailable={(date) => date.day === 12}
+        key="unavailable"
+        value={{
+          start: { year: 2026, month: 7, day: 10 },
+          end: { year: 2026, month: 7, day: 12 },
+        }}
+        visibleMonths={1}
+      />,
+    )
+    flushFrames()
+    expect(action('Apply').disabled).toBe(true)
+  })
+
   it('renders two months and portals into a dialog-local host', () => {
     render(
       <AppShell>

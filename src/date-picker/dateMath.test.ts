@@ -14,6 +14,7 @@ import {
   isDateInRange,
   isLeapYear,
   isSameAppDate,
+  isSelectableDateRange,
   isValidAppDate,
   normalizeDateRange,
   startOfMonth,
@@ -99,6 +100,54 @@ describe('date value utilities', () => {
       }),
     ).toBe(1)
     expect(isDateInRange({ year: 2026, month: 7, day: 2 }, range)).toBe(true)
+  })
+
+  it('validates selectable ranges against endpoints and duration', () => {
+    const range = {
+      start: { year: 2026, month: 7, day: 10 },
+      end: { year: 2026, month: 7, day: 12 },
+    }
+    expect(
+      isSelectableDateRange(range, {
+        minValue: { year: 2026, month: 7, day: 1 },
+        maxValue: { year: 2026, month: 7, day: 31 },
+        minDuration: 3,
+        maxDuration: 3,
+      }),
+    ).toBe(true)
+    expect(
+      isSelectableDateRange(
+        {
+          start: { year: 2026, month: 7, day: 12 },
+          end: { year: 2026, month: 7, day: 10 },
+        },
+        {},
+      ),
+    ).toBe(false)
+    expect(
+      isSelectableDateRange(
+        {
+          start: { year: 2026, month: 2, day: 30 },
+          end: { year: 2026, month: 3, day: 1 },
+        },
+        {},
+      ),
+    ).toBe(false)
+    expect(
+      isSelectableDateRange(range, {
+        isDateUnavailable: (date) => date.day === 12,
+      }),
+    ).toBe(false)
+    expect(
+      isSelectableDateRange(range, {
+        minValue: { year: 2026, month: 7, day: 11 },
+      }),
+    ).toBe(false)
+    expect(
+      isSelectableDateRange(range, {
+        maxValue: { year: 2026, month: 7, day: 11 },
+      }),
+    ).toBe(false)
   })
 
   it('formats and strictly parses ISO dates', () => {

@@ -17,6 +17,8 @@ import {
   compareAppDates,
   getDateRangeLength,
   getTodayAppDate,
+  isSelectableDateRange,
+  isValidAppDate,
   normalizeDateRange,
   startOfMonth,
 } from './dateMath'
@@ -68,7 +70,7 @@ function toCompleteRange(
   pending: PendingDateRange,
 ): AppDateRangeValue | null {
   return pending.start && pending.end
-    ? normalizeDateRange(pending.start, pending.end)
+    ? { start: pending.start, end: pending.end }
     : null
 }
 
@@ -83,6 +85,7 @@ function getInitialDate(
   const today = clampAppDate(getTodayAppDate(), minValue, maxValue)
   const candidate =
     selected &&
+    isValidAppDate(selected) &&
     !isCalendarDateDisabled(
       selected,
       minValue,
@@ -220,12 +223,14 @@ export function AppDateRangePicker({
     onValueChange?.(next)
   }
   const formatDate = (date: AppDateValue) =>
-    formatValue?.(date, locale) ??
-    new Intl.DateTimeFormat(locale, {
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-    }).format(appDateToLocalDate(date))
+    isValidAppDate(date)
+      ? formatValue?.(date, locale) ??
+        new Intl.DateTimeFormat(locale, {
+          year: 'numeric',
+          month: '2-digit',
+          day: '2-digit',
+        }).format(appDateToLocalDate(date))
+      : `${String(date.year).padStart(4, '0')}-${String(date.month).padStart(2, '0')}-${String(date.day).padStart(2, '0')}`
   const openFor = (target: RangeEditTarget) => {
     if (resolvedDisabled) return
     setEditTarget(target)
@@ -268,14 +273,23 @@ export function AppDateRangePicker({
     })
   }
   const completePending = toCompleteRange(pending)
-  const duration = completePending
+  const duration =
+    completePending &&
+    isValidAppDate(completePending.start) &&
+    isValidAppDate(completePending.end) &&
+    compareAppDates(completePending.start, completePending.end) <= 0
     ? getDateRangeLength(completePending)
     : null
   const canApply = Boolean(
     !readOnly &&
       completePending &&
-      (minDuration == null || (duration ?? 0) >= minDuration) &&
-      (maxDuration == null || (duration ?? 0) <= maxDuration),
+      isSelectableDateRange(completePending, {
+        minValue,
+        maxValue,
+        isDateUnavailable,
+        minDuration,
+        maxDuration,
+      }),
   )
   const previewRange =
     pending.start && !pending.end && hoveredDate
@@ -322,7 +336,7 @@ export function AppDateRangePicker({
           previewRange={previewRange}
           previousMonthLabel={resolvedLocaleText.previousMonthLabel}
           selectedDate={pending.start && !pending.end ? pending.start : null}
-          selectedRange={completePending}
+          selectedRange={duration == null ? null : completePending}
           selectionDisabled={readOnly}
           showOutsideDays={showOutsideDays}
           visibleMonths={resolvedVisibleMonths}
@@ -460,7 +474,9 @@ export function AppDateRangePicker({
           name={startName}
           type="hidden"
           value={
-            committedValue ? formatAppDateISO(committedValue.start) : ''
+            committedValue && isValidAppDate(committedValue.start)
+              ? formatAppDateISO(committedValue.start)
+              : ''
           }
         />
       ) : null}
@@ -469,7 +485,11 @@ export function AppDateRangePicker({
           disabled={resolvedDisabled}
           name={endName}
           type="hidden"
-          value={committedValue ? formatAppDateISO(committedValue.end) : ''}
+          value={
+            committedValue && isValidAppDate(committedValue.end)
+              ? formatAppDateISO(committedValue.end)
+              : ''
+          }
         />
       ) : null}
       {popup
