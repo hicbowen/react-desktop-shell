@@ -1,0 +1,21 @@
+.app-check-box, .app-toggle-switch { display: inline-flex; align-items: flex-start; gap: 9px; color: var(--app-shell-text-color, #1f1f1f); font-size: 13px; cursor: default; }
+.app-check-box { position: relative; }
+.app-check-box input, .app-toggle-switch input { position: absolute; width: 1px; height: 1px; opacity: 0; }
+.app-check-box__box { width: 18px; height: 18px; box-sizing: border-box; display: grid; flex: 0 0 18px; place-items: center; color: transparent; background: var(--app-shell-card-bg, #fff); border: 1px solid var(--app-shell-secondary-text-color, rgb(0 0 0 / 58%)); border-radius: 4px; font-size: 14px; line-height: 1; }
+.app-check-box input:checked + .app-check-box__box, .app-check-box input:indeterminate + .app-check-box__box { color: var(--app-shell-accent-text-color, #fff); background: var(--app-shell-accent-color, #005fb8); border-color: var(--app-shell-accent-color, #005fb8); }
+.app-check-box input:focus-visible + .app-check-box__box, .app-toggle-switch input:focus-visible + .app-toggle-switch__track { outline: 2px solid var(--app-shell-accent-color, #005fb8); outline-offset: 2px; }
+.app-selection-label { display: grid; gap: 2px; padding-top: 1px; line-height: 1.35; }
+.app-selection-description { color: var(--app-shell-secondary-text-color, rgb(0 0 0 / 62%)); font-size: 12px; }
+.app-toggle-switch { align-items: flex-start; }
+.app-toggle-switch--label-start { justify-content: space-between; }
+.app-toggle-switch__control { position: relative; display: inline-flex; flex: 0 0 auto; }
+.app-toggle-switch__track { width: 40px; height: 20px; box-sizing: border-box; padding: 2px; background: var(--app-shell-card-bg, #fff); border: 1px solid var(--app-shell-secondary-text-color, rgb(0 0 0 / 58%)); border-radius: 999px; transition: background-color var(--rds-motion-fast, 120ms) ease; }
+.app-toggle-switch__thumb { width: 14px; height: 14px; display: block; background: var(--app-shell-secondary-text-color, #666); border-radius: 50%; transition: transform var(--rds-motion-fast, 120ms) ease, background-color var(--rds-motion-fast, 120ms) ease; }
+.app-toggle-switch input:checked + .app-toggle-switch__track { background: var(--app-shell-accent-color, #005fb8); border-color: var(--app-shell-accent-color, #005fb8); }
+.app-toggle-switch input:checked + .app-toggle-switch__track .app-toggle-switch__thumb { background: var(--app-shell-accent-text-color, #fff); transform: translateX(20px); }
+.app-toggle-switch--compact .app-toggle-switch__track { width: 34px; height: 18px; }
+.app-toggle-switch--compact .app-toggle-switch__thumb { width: 12px; height: 12px; }
+.app-toggle-switch--compact input:checked + .app-toggle-switch__track .app-toggle-switch__thumb { transform: translateX(16px); }
+.app-check-box--disabled, .app-toggle-switch--disabled { color: var(--app-shell-disabled-text-color, rgb(0 0 0 / 36%)); }
+.app-check-box--disabled .app-check-box__box, .app-toggle-switch--disabled .app-toggle-switch__track { opacity: .55; }
+@media (prefers-reduced-motion: reduce) { .app-toggle-switch__track, .app-toggle-switch__thumb { transition: none; } }

@@ -255,6 +255,15 @@ Use `AppProgressRing` for indeterminate work, `AppProgressBar` for determinate o
 <AppTextArea autoResize minRows={2} maxRows={8} showCount maxLength={500} />
 ```
 
+## Selection controls
+
+`AppCheckBox` uses a native checkbox and supports controlled, uncontrolled, and indeterminate states. `AppToggleSwitch` exposes switch semantics, immediate state changes, label placement, and compact sizing.
+
+```tsx
+<AppCheckBox checked={selected} onCheckedChange={setSelected} label="Include suggestions" />
+<AppToggleSwitch defaultChecked label="Automatic updates" />
+```
+
 `AppCard` is a low-contrast Fluent content surface for desktop tools, settings,
 status summaries, recent projects, and utility entry points. It is not a fixed
 web-dashboard panel: cards have no strong shadow or title divider by default,
