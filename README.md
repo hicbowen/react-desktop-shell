@@ -274,7 +274,7 @@ Use `AppProgressRing` for indeterminate work, `AppProgressBar` for determinate o
 
 ## Number and select controls
 
-`AppNumberBox` offers step buttons, arrow keys, precision, boundary normalization, and intentional empty values. `AppSelect` visually wraps a native single-value select and preserves string or numeric option values.
+`AppNumberBox` separates temporary editing text from its committed value. Blur and Enter commit valid input, Escape restores the committed value, and buttons or Arrow keys apply normalized steps. In controlled mode, rejected parent updates restore the current prop value. `AppSelect` visually wraps a native single-value select.
 
 ```tsx
 <AppNumberBox value={duration} min={1} max={180} step={5} onValueChange={setDuration} />
