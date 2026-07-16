@@ -43,6 +43,9 @@ describe('AppListView', () => {
     </AppListView>,
   ))
   const rows = () => host.querySelectorAll<HTMLElement>('[data-value]')
+  const items = () => host.querySelectorAll<HTMLElement>('.app-list-view-item')
+  const selectionControls = () =>
+    host.querySelectorAll<HTMLInputElement>('.app-list-view-item__selection')
   const key = (row: HTMLElement, value: string) => act(() => row.dispatchEvent(
     new KeyboardEvent('keydown', { bubbles: true, key: value }),
   ))
@@ -56,31 +59,66 @@ describe('AppListView', () => {
     expect(rows()[0]?.tabIndex).toBe(-1)
   })
 
-  it('uses listbox/option semantics and selects multiple values', () => {
+  it('uses list/listitem and native checkbox semantics for multiple selection', () => {
     const change = vi.fn()
     render({ selectionMode: 'multiple', onValueChange: change })
-    expect(host.querySelector('[role=listbox]')?.getAttribute('aria-multiselectable')).toBe('true')
-    expect(rows()[0]?.getAttribute('role')).toBe('option')
-    act(() => rows()[0]!.click())
+    expect(host.querySelector('[role=list]')).not.toBeNull()
+    expect(host.querySelector('[role=option]')).toBeNull()
+    expect(items()[0]?.getAttribute('role')).toBe('listitem')
+    expect(selectionControls()[0]?.type).toBe('checkbox')
+    act(() => selectionControls()[0]!.click())
     expect(change).toHaveBeenLastCalledWith(['a'])
-    act(() => rows()[2]!.click())
+    act(() => selectionControls()[2]!.click())
     expect(change).toHaveBeenLastCalledWith(['a', 'c'])
   })
 
-  it('selects a single value with click and Space', () => {
+  it('selects only one value through native radio controls and row labels', () => {
     const change = vi.fn()
     render({ selectionMode: 'single', onValueChange: change })
-    act(() => rows()[0]!.click())
+    expect(selectionControls()[0]?.type).toBe('radio')
+    expect(selectionControls()[0]?.name).toBe(selectionControls()[2]?.name)
+    act(() => items()[0]!.querySelector('label')?.click())
     expect(change).toHaveBeenLastCalledWith(['a'])
-    key(rows()[2]!, ' ')
+    act(() => selectionControls()[2]!.click())
     expect(change).toHaveBeenLastCalledWith(['c'])
   })
 
-  it('moves selection focus while skipping disabled and static items', () => {
+  it('uses native focus behavior and disables unavailable selection controls', () => {
     render({ selectionMode: 'single' })
-    act(() => rows()[0]!.focus())
-    key(rows()[0]!, 'ArrowDown')
-    expect(document.activeElement).toBe(rows()[2])
+    act(() => selectionControls()[0]!.focus())
+    expect(document.activeElement).toBe(selectionControls()[0])
+    expect(selectionControls()[1]?.disabled).toBe(true)
+    expect(items()[3]?.querySelector('input')).toBeNull()
+  })
+
+  it('keeps trailing actions outside selection labels and does not select', () => {
+    const change = vi.fn()
+    render({ selectionMode: 'multiple', onValueChange: change })
+    const trailingButton = items()[2]!.querySelector('button')!
+    const label = items()[2]?.querySelector('label')
+
+    expect(label?.contains(trailingButton)).toBe(false)
+    act(() => trailingButton.click())
+    expect(change).not.toHaveBeenCalled()
+    expect(selectionControls()[2]?.checked).toBe(false)
+  })
+
+  it('supports controlled and uncontrolled selection values', () => {
+    render({ selectionMode: 'multiple', defaultValue: ['c'] })
+    expect(selectionControls()[2]?.checked).toBe(true)
+    act(() => selectionControls()[2]!.click())
+    expect(selectionControls()[2]?.checked).toBe(false)
+
+    const controlledChange = vi.fn()
+    render({
+      selectionMode: 'multiple',
+      value: ['a'],
+      onValueChange: controlledChange,
+    })
+    expect(selectionControls()[0]?.checked).toBe(true)
+    act(() => selectionControls()[2]!.click())
+    expect(controlledChange).toHaveBeenCalledWith(['a', 'c'])
+    expect(selectionControls()[2]?.checked).toBe(false)
   })
 
   it('separates invoke actions from trailing buttons', () => {
@@ -115,10 +153,9 @@ describe('AppListView', () => {
 
   it('handles empty and dynamically changing selection children safely', () => {
     render({ selectionMode: 'single' }, false)
-    expect(host.querySelector('[role=listbox]')?.children).toHaveLength(0)
+    expect(host.querySelector('[role=list]')?.children).toHaveLength(0)
     render({ selectionMode: 'single', value: ['removed'] })
-    expect(rows()[0]?.tabIndex).toBe(0)
-    expect(rows()[0]?.getAttribute('aria-selected')).toBe('false')
+    expect(selectionControls()[0]?.checked).toBe(false)
   })
 
   it('keeps disabled and static invoke rows out of the tab order', () => {

@@ -1,19 +1,18 @@
-import { Children, cloneElement, isValidElement, useMemo, useState } from 'react'
+import { Children, cloneElement, isValidElement, useId, useMemo, useState } from 'react'
 import type { AppListViewItemInternalProps, AppListViewProps } from './types'
 import { AppListViewItem } from './AppListViewItem'
 import './AppListView.css'
-
-const selectionInteractiveSelector = 'button,a,input,select,textarea,[role="button"],[role="link"],[data-list-action]'
 
 export function AppListView({ activationMode = 'selection', ariaLabel, children, className, defaultValue = [], density = 'standard', onItemInvoke, onValueChange, selectionMode = 'none', style, value }: AppListViewProps) {
   const controlled = value !== undefined
   const [internal, setInternal] = useState(defaultValue)
   const selected = controlled ? value : internal
   const [active, setActive] = useState<string | null>(null)
+  const selectionName = useId()
   const items = useMemo(() => Children.toArray(children).filter((child): child is React.ReactElement<AppListViewItemInternalProps> => isValidElement(child) && child.type === AppListViewItem), [children])
   const isSelectionList = selectionMode !== 'none'
   const isInvokeList = activationMode === 'invoke'
-  const isFocusable = (item: React.ReactElement<AppListViewItemInternalProps>) => !item.props.disabled && item.props.interactive !== false && (isSelectionList || isInvokeList)
+  const isFocusable = (item: React.ReactElement<AppListViewItemInternalProps>) => !item.props.disabled && item.props.interactive !== false && isInvokeList
   const enabled = items.filter(isFocusable).map((item) => item.props.value)
   const activeValue = active && enabled.includes(active) ? active : enabled[0] ?? null
 
@@ -24,13 +23,11 @@ export function AppListView({ activationMode = 'selection', ariaLabel, children,
     onValueChange?.(next)
   }
   const invoke = (itemValue: string) => onItemInvoke?.(itemValue)
-  const click = (itemValue: string, event: React.MouseEvent<HTMLDivElement>) => {
-    if (!isInvokeList && (event.target as Element).closest(selectionInteractiveSelector) && event.target !== event.currentTarget) return
+  const click = (itemValue: string) => {
     const item = items.find((entry) => entry.props.value === itemValue)
     if (!item || !isFocusable(item)) return
     setActive(itemValue)
-    if (isInvokeList) invoke(itemValue)
-    else select(itemValue)
+    invoke(itemValue)
   }
   const keyDown = (itemValue: string, event: React.KeyboardEvent<HTMLDivElement>) => {
     if (event.target !== event.currentTarget || enabled.length === 0) return
@@ -42,7 +39,6 @@ export function AppListView({ activationMode = 'selection', ariaLabel, children,
     else if (event.key === 'End') next = enabled.length - 1
     else if (event.key === ' ') {
       if (isInvokeList) { event.preventDefault(); invoke(itemValue) }
-      else if (isSelectionList) { event.preventDefault(); select(itemValue) }
       return
     } else if (event.key === 'Enter') {
       if (isInvokeList) { event.preventDefault(); invoke(itemValue) }
@@ -54,9 +50,10 @@ export function AppListView({ activationMode = 'selection', ariaLabel, children,
     Array.from(event.currentTarget.closest('.app-list-view')?.querySelectorAll<HTMLElement>('[data-value]') ?? []).find((node) => node.dataset.value === target)?.focus()
   }
 
-  return <div aria-label={ariaLabel} aria-multiselectable={isSelectionList && selectionMode === 'multiple' || undefined} className={['app-list-view', `app-list-view--${density}`, className].filter(Boolean).join(' ')} role={isSelectionList ? 'listbox' : 'list'} style={style}>{items.map((item) => {
+  return <div aria-label={ariaLabel} className={['app-list-view', `app-list-view--${density}`, className].filter(Boolean).join(' ')} role="list" style={style}>{items.map((item) => {
     const focusable = isFocusable(item)
-    const itemRole = item.props.interactive === false ? 'listitem' : isSelectionList ? 'option' : isInvokeList ? 'button' : 'listitem'
-    return cloneElement(item, { focusable, itemRole, onItemClick: click, onItemKeyDown: keyDown, selected: selected.includes(item.props.value), selectionMode, tabIndex: focusable && item.props.value === activeValue ? 0 : -1 })
+    const itemRole = item.props.interactive === false ? 'listitem' : isInvokeList ? 'button' : 'listitem'
+    const itemSelectionMode = isSelectionList && item.props.interactive !== false ? selectionMode : 'none'
+    return cloneElement(item, { focusable, itemRole, onItemClick: click, onItemKeyDown: keyDown, onItemSelect: select, selected: selected.includes(item.props.value), selectionMode: itemSelectionMode, selectionName, tabIndex: focusable && item.props.value === activeValue ? 0 : -1 })
   })}</div>
 }

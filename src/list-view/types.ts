@@ -58,8 +58,10 @@ export interface AppListViewItemInternalProps extends AppListViewItemProps {
   selected?: boolean
   tabIndex?: number
   selectionMode?: 'none' | 'single' | 'multiple'
-  itemRole?: 'option' | 'listitem' | 'button'
+  selectionName?: string
+  itemRole?: 'listitem' | 'button'
   focusable?: boolean
+  onItemSelect?: (value: string) => void
   onItemClick?: (
     value: string,
     event: React.MouseEvent<HTMLDivElement>,
