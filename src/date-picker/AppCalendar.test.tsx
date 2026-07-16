@@ -201,4 +201,14 @@ describe('AppCalendar', () => {
     expect(container.textContent).toContain('July 2026')
     expect(container.textContent).toContain('August 2026')
   })
+
+  it('removes the second month from focus navigation when reduced to one', () => {
+    render(<CalendarHarness visibleMonths={2} />)
+    expect(container.querySelectorAll('.app-calendar__grid')).toHaveLength(2)
+
+    render(<CalendarHarness visibleMonths={1} />)
+    expect(container.querySelectorAll('.app-calendar__grid')).toHaveLength(1)
+    expect(container.querySelectorAll('[tabindex="0"]')).toHaveLength(1)
+    expect(document.activeElement).toBe(focused())
+  })
 })

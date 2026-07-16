@@ -174,15 +174,6 @@
   opacity: 0.48;
 }
 
-@media (max-width: 640px) {
-  .app-date-range-picker__popup--responsive
-    .app-calendar__grid:nth-child(2),
-  .app-date-range-picker__popup--responsive
-    .app-calendar__title:nth-child(2) {
-    display: none;
-  }
-}
-
 .app-calendar__header {
   min-height: 34px;
   display: grid;

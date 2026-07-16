@@ -27,6 +27,7 @@ import type {
   AppDateValue,
 } from './types'
 import { useDatePickerOverlay } from './useDatePickerOverlay'
+import { useResolvedVisibleMonths } from './useResolvedVisibleMonths'
 import './AppDatePicker.css'
 
 type RangeEditTarget = 'start' | 'end'
@@ -153,6 +154,7 @@ export function AppDateRangePicker({
     startPlaceholder ?? resolvedLocaleText.startPlaceholder
   const resolvedEndPlaceholder =
     endPlaceholder ?? resolvedLocaleText.endPlaceholder
+  const resolvedVisibleMonths = useResolvedVisibleMonths(visibleMonths)
   const anchorRef = useRef<HTMLDivElement | null>(null)
   const startRef = useRef<HTMLButtonElement | null>(null)
   const calendarButtonRef = useRef<HTMLButtonElement | null>(null)
@@ -186,7 +188,7 @@ export function AppDateRangePicker({
     overlayRef,
     focusRef: calendarButtonRef,
     onDismiss: resetPending,
-    dependencies: [locale, visibleMonths],
+    dependencies: [locale, resolvedVisibleMonths],
   })
 
   useEffect(() => {
@@ -279,7 +281,6 @@ export function AppDateRangePicker({
     pending.start && !pending.end && hoveredDate
       ? normalizeDateRange(pending.start, hoveredDate)
       : null
-  const calendarMonths = visibleMonths === 1 ? 1 : 2
   const handleSegmentKeyDown = (
     target: RangeEditTarget,
     event: KeyboardEvent<HTMLButtonElement>,
@@ -295,9 +296,6 @@ export function AppDateRangePicker({
         className={[
           'app-date-picker__popup',
           'app-date-range-picker__popup',
-          visibleMonths === 'responsive'
-            ? 'app-date-range-picker__popup--responsive'
-            : '',
         ]
           .filter(Boolean)
           .join(' ')}
@@ -327,7 +325,7 @@ export function AppDateRangePicker({
           selectedRange={completePending}
           selectionDisabled={readOnly}
           showOutsideDays={showOutsideDays}
-          visibleMonths={calendarMonths}
+          visibleMonths={resolvedVisibleMonths}
         />
         <footer className="app-date-range-picker__footer">
           <div

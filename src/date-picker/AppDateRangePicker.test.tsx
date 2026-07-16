@@ -16,6 +16,8 @@ describe('AppDateRangePicker', () => {
   let frames: FrameRequestCallback[]
   let triggerLeft: number
   let triggerTop: number
+  let mediaMatches: boolean
+  let mediaListeners: Set<() => void>
 
   beforeEach(() => {
     ;(globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean })
@@ -27,8 +29,27 @@ describe('AppDateRangePicker', () => {
     frames = []
     triggerLeft = 320
     triggerTop = 180
+    mediaMatches = false
+    mediaListeners = new Set()
     vi.stubGlobal('innerWidth', 1440)
     vi.stubGlobal('innerHeight', 900)
+    vi.stubGlobal(
+      'matchMedia',
+      vi.fn(() => ({
+        get matches() {
+          return mediaMatches
+        },
+        media: '(max-width: 640px)',
+        onchange: null,
+        addEventListener: (_type: string, listener: () => void) =>
+          mediaListeners.add(listener),
+        removeEventListener: (_type: string, listener: () => void) =>
+          mediaListeners.delete(listener),
+        addListener: vi.fn(),
+        removeListener: vi.fn(),
+        dispatchEvent: vi.fn(),
+      })),
+    )
     vi.useFakeTimers()
     vi.setSystemTime(new Date(2026, 6, 16, 12))
     vi.stubGlobal(
@@ -51,13 +72,21 @@ describe('AppDateRangePicker', () => {
             width: 400,
           } as DOMRect
         }
+        const isRangePopup = this.classList.contains(
+          'app-date-range-picker__popup',
+        )
+        const width = isRangePopup
+          ? this.querySelectorAll('.app-calendar__grid').length === 2
+            ? 600
+            : 300
+          : 600
         return {
           bottom: 400,
           height: 360,
           left: 0,
-          right: 600,
+          right: width,
           top: 40,
-          width: 600,
+          width,
         } as DOMRect
       },
     )
@@ -81,6 +110,11 @@ describe('AppDateRangePicker', () => {
   const flushFrames = () =>
     act(() => {
       while (frames.length) frames.shift()?.(0)
+    })
+  const setNarrowViewport = (matches: boolean) =>
+    act(() => {
+      mediaMatches = matches
+      mediaListeners.forEach((listener) => listener())
     })
   const clickDate = (date: string) =>
     act(() =>
@@ -379,6 +413,42 @@ describe('AppDateRangePicker', () => {
     act(() => window.dispatchEvent(new Event('resize')))
     flushFrames()
     expect(popup()?.style.top).toBe('297px')
+  })
+
+  it('renders responsive months in state and repositions after changes', () => {
+    triggerLeft = 1050
+    render(<AppDateRangePicker defaultOpen />)
+    flushFrames()
+    expect(popup()?.querySelectorAll('.app-calendar__grid')).toHaveLength(2)
+    expect(popup()?.style.left).toBe('832px')
+
+    setNarrowViewport(true)
+    flushFrames()
+    expect(popup()?.querySelectorAll('.app-calendar__grid')).toHaveLength(1)
+    expect(popup()?.style.left).toBe('1050px')
+    expect(
+      popup()?.querySelectorAll('[tabindex="0"]'),
+    ).toHaveLength(1)
+
+    setNarrowViewport(false)
+    flushFrames()
+    expect(popup()?.querySelectorAll('.app-calendar__grid')).toHaveLength(2)
+    expect(popup()?.style.left).toBe('832px')
+  })
+
+  it('keeps explicit visible month counts independent of the breakpoint', () => {
+    setNarrowViewport(true)
+    render(
+      <>
+        <AppDateRangePicker defaultOpen visibleMonths={2} />
+      </>,
+    )
+    flushFrames()
+    expect(popup()?.querySelectorAll('.app-calendar__grid')).toHaveLength(2)
+
+    render(<AppDateRangePicker defaultOpen visibleMonths={1} />)
+    flushFrames()
+    expect(popup()?.querySelectorAll('.app-calendar__grid')).toHaveLength(1)
   })
 
   it('coordinates dismissal when nested inside another overlay', () => {
