@@ -6,7 +6,7 @@ const categories = [
   [MessageSquare, 'Feedback', 'Inline, transient, and modal feedback patterns.'],
   [MousePointerClick, 'Actions', 'Toolbars and contextual commands.'],
   [Database, 'Data', 'Tables, composed data views, and selection actions.'],
-  [Settings, 'Settings', 'Structured preferences and live theme controls.'],
+  [Settings, 'Settings', 'Settings groups, rows, appearance, language, and application preferences.'],
 ] as const
 
 export function OverviewPage() {

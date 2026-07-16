@@ -7,7 +7,7 @@ import { AppRailPage, AppSelectorBarPage, NavigationModesPage } from './pages/na
 import { AppDialogPage, AppInfoBarPage, AppToastPage, MessageBoxPage } from './pages/feedback/FeedbackPages'
 import { AppToolbarPage, ContextMenuPage } from './pages/actions/ActionPages'
 import { AppDataTablePage, AppSelectionBarPage } from './pages/data/DataPages'
-import { AppSettingsGroupPage, AppSettingsRowPage, ThemeControlsPage } from './pages/settings/SettingsPages'
+import { SettingsPage } from './pages/settings/SettingsPages'
 import { AppCardPage } from './pages/content/CardPages'
 import { FieldEmptyStatePage } from './pages/content/FieldEmptyStatePage'
 import { ListViewPage } from './pages/content/ListViewPage'
@@ -68,18 +68,17 @@ export const demoPages: DemoPageDefinition[] = [
   { key: 'time-range-picker', group: 'Forms', label: 'Time Range Picker', description: 'Start and end time editing with duration validation and no overnight ranges.', icon: <Timer size={16} />, component: TimeRangePickerPage },
   { key: 'app-data-table', group: 'Data', label: 'AppDataTable', description: 'A complete data surface with page actions, selection actions, built-in controls, sorting, sizing, and fill layouts.', icon: <Table2 size={16} />, component: AppDataTablePage, layout: 'fill' },
   { key: 'app-selection-bar', group: 'Data', label: 'AppSelectionBar', description: 'Actions and clear behavior for selected data rows.', icon: <Rows3 size={16} />, component: AppSelectionBarPage },
-  { key: 'app-settings-group', group: 'Settings', label: 'AppSettingsGroup', description: 'Headings and containers for related preference rows.', icon: <Settings size={16} />, component: AppSettingsGroupPage },
-  { key: 'app-settings-row', group: 'Settings', label: 'AppSettingsRow', description: 'Aligned preference labels, descriptions, controls, and states.', icon: <Settings size={16} />, component: AppSettingsRowPage },
-  { key: 'theme-controls', group: 'Settings', label: 'Theme Controls', description: 'Live system, light, and dark application themes.', icon: <SlidersHorizontal size={16} />, component: ThemeControlsPage },
+  { key: 'settings', group: 'Settings', label: 'Settings', description: 'Application appearance, language, preferences, and information.', icon: <Settings size={16} />, component: SettingsPage },
 ]
 
-export const railItems: RailEntry[] = demoPages.flatMap((page, index) => {
-  const previous = demoPages[index - 1]
+const mainDemoPages = demoPages.filter((page) => page.key !== 'settings')
+
+export const railItems: RailEntry[] = mainDemoPages.flatMap((page, index) => {
+  const previous = mainDemoPages[index - 1]
   const group = page.group !== previous?.group && page.group !== 'Overview' ? [{ type: 'group' as const, label: page.group }] : []
-  const item = page.key === 'app-settings-group' ? [] : [{ key: page.key, label: page.label, icon: page.icon }]
-  return [...group, ...item]
+  return [...group, { key: page.key, label: page.label, icon: page.icon }]
 })
 
 export const railFooterItems: RailItem[] = [
-  { key: 'app-settings-group', label: 'Settings', icon: <Settings size={16} /> },
+  { key: 'settings', label: 'Settings', icon: <Settings size={16} /> },
 ]
