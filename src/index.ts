@@ -9,6 +9,12 @@ export { AppNumberBox, AppSelect } from './number-select'
 export { AppListView, AppListViewItem } from './list-view'
 export { AppExpander } from './expander'
 export { AppPopover } from './popover'
+export {
+  AppDatePicker,
+  compareAppDates,
+  formatAppDateISO,
+  parseAppDateISO,
+} from './date-picker'
 export { AppCard, AppCardFooter, AppCardGroup, AppCardHeader } from './card'
 export { AppContextMenu } from './context-menu/AppContextMenu'
 export { AppDialog } from './dialog/AppDialog'
@@ -51,6 +57,13 @@ export type {
   AppListViewProps,
   AppExpanderProps,
   AppPopoverProps,
+  AppDatePickerLocale,
+  AppDatePickerProps,
+  AppDateRangePickerLocale,
+  AppDateRangePickerProps,
+  AppDateRangeValue,
+  AppDateValue,
+  AppWeekDay,
   AppIconButtonProps,
   AppClipboardAdapter,
   AppCardAppearance,

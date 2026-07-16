@@ -10,6 +10,15 @@ export type { AppNumberBoxProps, AppSelectOption, AppSelectProps } from './numbe
 export type { AppListViewItemProps, AppListViewProps } from './list-view/types'
 export type { AppExpanderProps } from './expander/types'
 export type { AppPopoverProps } from './popover/types'
+export type {
+  AppDatePickerLocale,
+  AppDatePickerProps,
+  AppDateRangePickerLocale,
+  AppDateRangePickerProps,
+  AppDateRangeValue,
+  AppDateValue,
+  AppWeekDay,
+} from './date-picker/types'
 
 export type {
   AppCardAppearance,
