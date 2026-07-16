@@ -293,7 +293,7 @@ Use `AppProgressRing` for indeterminate work, `AppProgressBar` for determinate o
 
 ## Expander
 
-`AppExpander` reveals low-frequency settings or details with controlled or uncontrolled state. Its header uses a linked `aria-expanded` button, while optional header actions remain independent.
+`AppExpander` reveals low-frequency settings or details with controlled or uncontrolled state. Its header uses a linked `aria-expanded` button, while optional header actions remain independent. Collapsed content becomes inert during closing and is hidden after the transition, preventing controls from leaking into the Tab order; reduced-motion users switch immediately.
 
 ```tsx
 <AppExpander title="Advanced settings" description="Usually no changes are needed.">

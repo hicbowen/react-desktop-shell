@@ -17,4 +17,5 @@
 .app-expander__region-inner { min-height: 0; overflow: hidden; }
 .app-expander__content { padding: 4px 12px 14px; border-top: 1px solid var(--app-shell-border-color, rgb(0 0 0 / 10%)); font-size: 13px; }
 .app-expander--disabled { color: var(--app-shell-disabled-text-color, rgb(0 0 0 / 36%)); }
-@media (prefers-reduced-motion: reduce) { .app-expander__chevron, .app-expander__region { transition: none; } }
+.app-expander__region[hidden] { display: none; }
+@media (prefers-reduced-motion: reduce) { .app-expander__chevron, .app-expander__region { transition: none !important; } }
