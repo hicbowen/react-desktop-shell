@@ -204,3 +204,68 @@
     animation: none;
   }
 }
+
+.app-time-range-picker {
+  min-width: 310px;
+}
+
+.app-time-range-picker__segment {
+  min-width: 0;
+  min-height: 30px;
+  flex: 1;
+  padding: 0 7px;
+  overflow: hidden;
+  color: inherit;
+  background: transparent;
+  border: 0;
+  outline: 0;
+  font: inherit;
+  font-size: 13px;
+  text-align: left;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.app-time-range-picker__segment--placeholder {
+  color: var(--app-shell-muted-text-color, rgb(0 0 0 / 58%));
+}
+
+.app-time-range-picker__separator {
+  color: var(--app-shell-muted-text-color, rgb(0 0 0 / 58%));
+}
+
+.app-time-range-picker__tabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3px;
+  margin: 10px 10px 0;
+  padding: 3px;
+  background: var(--app-shell-hover-bg, rgb(0 0 0 / 5%));
+  border-radius: 6px;
+}
+
+.app-time-range-picker__tabs button {
+  height: 28px;
+  color: inherit;
+  background: transparent;
+  border: 0;
+  border-radius: 4px;
+  font: inherit;
+  font-size: 12px;
+}
+
+.app-time-range-picker__tabs button[aria-pressed='true'] {
+  background: var(--app-shell-card-bg, #fff);
+  box-shadow: 0 1px 2px rgb(0 0 0 / 12%);
+}
+
+.app-time-range-picker__summary {
+  min-width: 180px;
+  flex: 1;
+  color: var(--app-shell-muted-text-color, rgb(0 0 0 / 62%));
+  font-size: 12px;
+}
+
+.app-time-range-picker__summary--invalid {
+  color: var(--app-shell-danger-color, #c42b1c);
+}

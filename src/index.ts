@@ -18,6 +18,7 @@ export {
 } from './date-picker'
 export {
   AppTimePicker,
+  AppTimeRangePicker,
   compareAppTimes,
   formatAppTimeISO,
   parseAppTimeISO,
