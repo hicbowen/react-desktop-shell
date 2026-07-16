@@ -274,7 +274,7 @@ Use `AppProgressRing` for indeterminate work, `AppProgressBar` for determinate o
 
 ## Number and select controls
 
-`AppNumberBox` separates temporary editing text from its committed value. Blur and Enter commit valid input, Escape restores the committed value, and buttons or Arrow keys apply normalized steps. In controlled mode, rejected parent updates restore the current prop value. `AppSelect` visually wraps a native single-value select.
+`AppNumberBox` separates temporary editing text from its committed value. Blur and Enter commit valid input, Escape restores the committed value, and buttons or Arrow keys apply normalized steps. In controlled mode, rejected parent updates restore the current prop value. `AppSelect` visually wraps a native single-value select. Its values are strings, matching native form behavior; convert domain numbers at the application boundary.
 
 ```tsx
 <AppNumberBox value={duration} min={1} max={180} step={5} onValueChange={setDuration} />
@@ -283,7 +283,7 @@ Use `AppProgressRing` for indeterminate work, `AppProgressBar` for determinate o
 
 ## List view
 
-`AppListView` and `AppListViewItem` form a desktop information list with none, single, or multiple selection, separate invoke behavior, and Arrow/Home/End/Space/Enter keyboard support. Interactive trailing content is isolated from row activation.
+`AppListView` and `AppListViewItem` form a desktop information list with none, single, or multiple selection, separate invoke behavior, and Arrow/Home/End/Space/Enter keyboard support. Information mode uses list/listitem semantics, selection modes use listbox/options, and invoke rows expose button semantics without nesting trailing buttons. Interactive trailing content is isolated from row activation.
 
 ```tsx
 <AppListView ariaLabel="Students" selectionMode="multiple" value={selected} onValueChange={setSelected}>
