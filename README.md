@@ -247,16 +247,50 @@ RDS inputs consume field associations automatically. For a native or third-party
 
 ## Progress and status
 
-Use `AppProgressRing` for indeterminate work, `AppProgressBar` for determinate or inline indeterminate progress, and `AppStatusBadge` for one of the fixed semantic statuses. Supply `statusLabel` when the hidden status name needs localization. All progress controls expose native ARIA roles and static reduced-motion fallbacks.
+Use `AppProgressRing` for indeterminate work, `AppProgressBar` for determinate or inline indeterminate progress, and `AppStatusBadge` for one of the fixed semantic statuses. Built-in progress and status labels follow the `AppShell` locale. All progress controls expose native ARIA roles and static reduced-motion fallbacks.
 
 ```tsx
 <AppProgressBar value={68} label="Importing students" showValue />
 <AppStatusBadge status="success">Complete</AppStatusBadge>
 ```
 
+## Localization
+
+`AppShell` is the single public localization entry point. The component library
+includes fixed Simplified Chinese and US English messages and does not require
+an external i18n dependency.
+
+```tsx
+import { AppShell, type AppLocale } from 'react-desktop-shell'
+
+const [locale, setLocale] = useState<AppLocale>('system')
+
+<AppShell locale={locale}>
+  <App />
+</AppShell>
+```
+
+Use `locale="zh-CN"` or `locale="en-US"` to select a language explicitly.
+The default, `locale="system"`, maps every Chinese system language, including
+Traditional Chinese language tags, to the built-in Simplified Chinese locale;
+all other system languages use US English. Changing `locale` at runtime updates
+regular content and shell-managed overlays, dialogs, menus, and toasts.
+
+Built-in labels, placeholders, date formatting, weekday order, and time display
+are intentionally controlled only by `AppShell`. Component-level localization
+props are not supported. Applications should continue to localize their own
+content, such as field labels, table column names, empty states, and custom
+actions.
+
+When migrating from an earlier release, remove Date/Time Picker props such as
+`locale`, `localeText`, `placeholder`, `startPlaceholder`, `endPlaceholder`,
+`formatValue`, `firstDayOfWeek`, and `hourCycle`. Also remove the former
+`AppShell` `contextMenuLocale`, `messageBoxLocale`, and `toastLocale` props and
+DataTable control or pagination locale overrides.
+
 ## Text inputs
 
-`AppTextBox` wraps native input behavior with optional icons, clear and loading affordances. Use `clearLabel` and `loadingLabel` to localize their accessible text. `AppTextArea` supports character counts and dependency-free automatic height within row limits, including padding and borders. Both forward refs and compose with `AppField`.
+`AppTextBox` wraps native input behavior with optional icons, clear and loading affordances. Their built-in accessible labels follow the `AppShell` locale. `AppTextArea` supports character counts and dependency-free automatic height within row limits, including padding and borders. Both forward refs and compose with `AppField`.
 
 ```tsx
 <AppTextBox value={name} onChange={(event) => setName(event.target.value)} clearable />
@@ -356,7 +390,8 @@ const [time, setTime] =
 ```
 
 Use `minValue` and `maxValue` to constrain selectable combinations and
-`hourCycle={12}` for a localized 12-hour display. Hidden form inputs always
+the resolved `AppShell` locale controls the display: Simplified Chinese uses a
+24-hour clock and US English uses a 12-hour clock. Hidden form inputs always
 submit strict `HH:mm` values regardless of display format.
 
 ## Time range picker
@@ -1181,7 +1216,6 @@ export interface AppSelectionBarProps {
   label?: ReactNode
   actions?: ReactNode
   onClear?: () => void
-  clearAriaLabel?: string
   className?: string
   style?: CSSProperties
 }
@@ -1191,14 +1225,6 @@ export interface AppDataTableSelectionOptions<TData> {
   onChange: OnChangeFn<RowSelectionState>
   enableRowSelection?: TableOptions<TData>['enableRowSelection']
   selectAllMode?: 'all' | 'filtered' | 'page'
-  selectAllAriaLabel?: string
-  getRowAriaLabel?: (row: Row<TData>) => string
-}
-
-export interface AppDataTableSearchOptions {
-  placeholder?: string
-  ariaLabel?: string
-  clearAriaLabel?: string
 }
 
 export interface AppDataTableFilterOption {
@@ -1215,34 +1241,9 @@ export interface AppDataTableFilterDefinition<TData> {
 }
 
 export interface AppDataTableControlsOptions<TData> {
-  search?: boolean | AppDataTableSearchOptions
+  search?: boolean
   filters?: AppDataTableFilterDefinition<TData>[]
   clearAll?: boolean
-  locale?: Partial<AppDataTableControlsLocale>
-}
-
-export interface AppDataTableControlsLocale {
-  searchPlaceholder: string
-  searchAriaLabel: string
-  clearSearchAriaLabel: string
-  filtersLabel: string
-  activeFiltersAriaLabel: (count: number) => string
-  unnamedFilterAriaLabel: (index: number) => string
-  clearFilterLabel: string
-  clearFilterAriaLabel: (label: string) => string
-  clearFiltersLabel: string
-  clearAllLabel: string
-  clearAllAriaLabel: string
-}
-
-export interface AppDataTablePaginationLocale {
-  rowsPerPageLabel: string
-  rangeLabel: (start: number, end: number, total: number) => string
-  pageLabel: (page: number, pageCount: number) => string
-  firstPageAriaLabel: string
-  previousPageAriaLabel: string
-  nextPageAriaLabel: string
-  lastPageAriaLabel: string
 }
 
 export interface AppDataTablePaginationOptions {
@@ -1253,7 +1254,6 @@ export interface AppDataTablePaginationOptions {
   showPageSizeSelector?: boolean
   showFirstLastButtons?: boolean
   autoResetPageIndex?: boolean
-  locale?: Partial<AppDataTablePaginationLocale>
 }
 
 export interface AppDataTableVirtualizationOptions {
@@ -2139,12 +2139,10 @@ Calling `show` again with the same id updates the existing toast. At most four t
 
 | Prop               | Type            | Default     | Description                                      |
 | ------------------ | --------------- | ----------- | ------------------------------------------------ |
+| `locale`           | `'system' \| 'zh-CN' \| 'en-US'` | `'system'` | Controls all built-in component language, date formatting, weekday order, and time display. |
 | `theme`            | `'system' \| 'light' \| 'dark'` | `'system'` | Controls the shell color theme. |
 | `contextMenu`      | `'native' \| 'app'` | `'native'` | Controls whether native or shell-managed context menus are used. |
 | `clipboard`        | `AppClipboardAdapter` | Web Clipboard API | Optional clipboard bridge used by shell-managed menus. |
-| `contextMenuLocale` | `Partial<AppContextMenuLocale>` | English labels | Optional labels for built-in context menu items. |
-| `messageBoxLocale` | `Partial<AppMessageBoxLocale>` | English labels | Optional default confirm/cancel labels for message boxes. |
-| `toastLocale`      | `Partial<AppToastLocale>` | English labels | Optional labels for toast controls. |
 | `toastOptions`     | `AppToastHostOptions` | `{ maxVisible: 4 }` | Optional toast host options. |
 | `title`            | `ReactNode`     | `undefined` | App title rendered in the default sidebar header. |
 | `icon`             | `ReactNode`     | `undefined` | Optional app icon rendered before the sidebar title. |
