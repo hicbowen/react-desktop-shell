@@ -333,6 +333,59 @@ syntax is parsed as UTC and can display a different local day. When a native
 new Date(value.year, value.month - 1, value.day)
 ```
 
+## Time picker
+
+`AppTimePicker` uses `AppTimeValue`, a local wall-clock time containing only
+`hour` and `minute`. It has no date or time zone. Changes in the panel remain
+pending until Apply is pressed; Cancel, Escape, and outside pointer dismissal
+discard pending changes.
+
+```tsx
+const [time, setTime] =
+  useState<AppTimeValue | null>({
+    hour: 18,
+    minute: 30,
+  })
+
+<AppTimePicker
+  allowClear
+  minuteStep={5}
+  onValueChange={setTime}
+  value={time}
+/>
+```
+
+Use `minValue` and `maxValue` to constrain selectable combinations and
+`hourCycle={12}` for a localized 12-hour display. Hidden form inputs always
+submit strict `HH:mm` values regardless of display format.
+
+## Time range picker
+
+`AppTimeRangePicker` represents a range within one calendar day. The end must
+be later than the start; equal, reversed, overnight, and cross-midnight ranges
+are invalid and are never automatically reordered.
+
+```tsx
+const [range, setRange] =
+  useState<AppTimeRangeValue | null>({
+    start: { hour: 9, minute: 0 },
+    end: { hour: 10, minute: 30 },
+  })
+
+<AppTimeRangePicker
+  endName="endTime"
+  minuteStep={5}
+  onValueChange={setRange}
+  startName="startTime"
+  value={range}
+/>
+```
+
+The start and end editors share one compact time panel. Apply commits the
+pending range; Cancel, Escape, and outside pointer dismissal do not submit.
+`minDuration` and `maxDuration` are measured in minutes. Separate hidden inputs
+submit the start and end as `HH:mm`.
+
 ## Number and select controls
 
 `AppNumberBox` separates temporary editing text from its committed value. Blur and Enter commit valid input, Escape restores the committed value, and buttons or Arrow keys apply normalized steps. Pointer step buttons keep the input focused and apply pending valid text as a single final update. In controlled mode, rejected parent updates restore the current prop value. `AppSelect` visually wraps a native single-value select. Its values are strings, matching native form behavior; convert domain numbers at the application boundary.
