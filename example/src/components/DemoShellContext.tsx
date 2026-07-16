@@ -1,9 +1,11 @@
 import { createContext, useContext } from 'react'
-import type { AppTheme, PaneDisplayMode } from '../../../src'
+import type { AppLocale, AppTheme, PaneDisplayMode } from '../../../src'
 
 type DemoShellValue = {
   theme: AppTheme
   setTheme: (theme: AppTheme) => void
+  locale: AppLocale
+  setLocale: (locale: AppLocale) => void
   railDisplayMode: PaneDisplayMode
   setRailDisplayMode: (mode: PaneDisplayMode) => void
 }

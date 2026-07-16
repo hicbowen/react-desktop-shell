@@ -16,6 +16,28 @@ export function AppSettingsRowPage() {
 }
 
 export function ThemeControlsPage() {
-  const { theme, setTheme } = useDemoShell()
-  return <DemoPage><DemoSection title="Live application theme" description="Theme controls update the real outer AppShell and its integrated feedback surfaces."><div className="demo-choice-grid">{(['system', 'light', 'dark'] as const).map((value) => <button className={theme === value ? 'demo-choice demo-choice--active' : 'demo-choice'} key={value} type="button" onClick={() => setTheme(value)}><strong>{value}</strong><small>{value === 'system' ? 'Follow operating system' : `Always use ${value} mode`}</small></button>)}</div></DemoSection></DemoPage>
+  const { locale, setLocale, theme, setTheme } = useDemoShell()
+  const localeOptions = [
+    { value: 'system', label: '跟随系统 / System' },
+    { value: 'zh-CN', label: '简体中文' },
+    { value: 'en-US', label: 'English' },
+  ] as const
+  return <DemoPage>
+    <DemoSection title="Live application theme" description="Theme controls update the real outer AppShell and its integrated feedback surfaces."><div className="demo-choice-grid">{(['system', 'light', 'dark'] as const).map((value) => <button className={theme === value ? 'demo-choice demo-choice--active' : 'demo-choice'} key={value} type="button" onClick={() => setTheme(value)}><strong>{value}</strong><small>{value === 'system' ? 'Follow operating system' : `Always use ${value} mode`}</small></button>)}</div></DemoSection>
+    <DemoSection title="Built-in component language" description="Language changes update the outer AppShell and every open picker without refreshing the page.">
+      <div className="demo-choice-grid">
+        {localeOptions.map((option) => (
+          <button
+            className={locale === option.value ? 'demo-choice demo-choice--active' : 'demo-choice'}
+            key={option.value}
+            onClick={() => setLocale(option.value)}
+            type="button"
+          >
+            <strong>{option.label}</strong>
+            <small>{option.value}</small>
+          </button>
+        ))}
+      </div>
+    </DemoSection>
+  </DemoPage>
 }

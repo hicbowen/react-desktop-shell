@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { ConfigProvider } from 'antd'
-import { AppPage, AppRail, AppShell, AppTitleBar, type AppTheme, type PaneDisplayMode } from '../../src'
+import { AppPage, AppRail, AppShell, AppTitleBar, type AppLocale, type AppTheme, type PaneDisplayMode } from '../../src'
 import { createAntdTheme, type AntdThemeMode } from '../../src/antd'
 import { DemoShellContext } from './components/DemoShellContext'
 import { demoPages, railFooterItems, railItems } from './demoRegistry'
@@ -13,6 +13,7 @@ export function ExampleApp() {
   const [activeKey, setActiveKey] = useState('overview')
   const [maximized, setMaximized] = useState(false)
   const [theme, setTheme] = useState<AppTheme>('system')
+  const [locale, setLocale] = useState<AppLocale>('system')
   const [railDisplayMode, setRailDisplayMode] = useState<PaneDisplayMode>('auto')
   const [resolvedTheme, setResolvedTheme] = useState<AntdThemeMode>(systemTheme)
 
@@ -29,13 +30,24 @@ export function ExampleApp() {
   const antdTheme = useMemo(() => createAntdTheme({ mode: effectiveTheme }), [effectiveTheme])
   const currentPage = demoPages.find((page) => page.key === activeKey) ?? demoPages[0]!
   const Page = currentPage.component
-  const shellContext = useMemo(() => ({ theme, setTheme, railDisplayMode, setRailDisplayMode }), [theme, railDisplayMode])
+  const shellContext = useMemo(
+    () => ({
+      theme,
+      setTheme,
+      locale,
+      setLocale,
+      railDisplayMode,
+      setRailDisplayMode,
+    }),
+    [locale, theme, railDisplayMode],
+  )
 
   return (
     <ConfigProvider theme={antdTheme}>
       <DemoShellContext.Provider value={shellContext}>
         <AppShell
           contextMenu="app"
+          locale={locale}
           title="React Desktop Shell"
           sidebar={{ displayMode: railDisplayMode, onDisplayModeChange: setRailDisplayMode, expandedWidth: 292 }}
           theme={theme}
