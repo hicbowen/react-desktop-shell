@@ -104,6 +104,14 @@ describe('AppTimeRangePicker', () => {
         '.app-time-picker__action',
       ),
     ).find((button) => button.textContent === label)!
+  const segments = () =>
+    container.querySelectorAll<HTMLButtonElement>(
+      '.app-time-range-picker__segment',
+    )
+  const timeButton = () =>
+    container.querySelector<HTMLButtonElement>(
+      '[aria-label="Open time range picker"]',
+    )!
 
   it('initializes an empty range and submits pending only on Apply', () => {
     const change = vi.fn()
@@ -328,6 +336,8 @@ describe('AppTimeRangePicker', () => {
     expect(popup()?.style.width).toBe('max-content')
     expect(popup()?.style.left).toBe('760px')
     expect(popup()?.style.top).toBe('377px')
+    expect(popup()?.getAttribute('role')).toBe('dialog')
+    expect(popup()?.getAttribute('aria-label')).toBe('Choose a time range')
 
     render(
       <AppPopover
@@ -369,5 +379,41 @@ describe('AppTimeRangePicker', () => {
     act(() => window.dispatchEvent(new Event('resize')))
     flushFrames()
     expect(popup()?.style.top).toBe('457px')
+  })
+
+  it('focuses the active hour and restores each actual opener', () => {
+    render(
+      <AppTimeRangePicker
+        value={{
+          start: { hour: 9, minute: 0 },
+          end: { hour: 10, minute: 0 },
+        }}
+      />,
+    )
+
+    act(() => segments()[0]!.click())
+    flushFrames()
+    expect(document.activeElement).toBe(option(0, '09'))
+    act(() => action('Cancel').click())
+    expect(document.activeElement).toBe(segments()[0])
+
+    act(() => segments()[1]!.click())
+    flushFrames()
+    expect(document.activeElement).toBe(option(0, '10'))
+    act(() => action('Cancel').click())
+    expect(document.activeElement).toBe(segments()[1])
+
+    act(() => timeButton().click())
+    flushFrames()
+    act(() =>
+      document.dispatchEvent(
+        new KeyboardEvent('keydown', {
+          bubbles: true,
+          cancelable: true,
+          key: 'Escape',
+        }),
+      ),
+    )
+    expect(document.activeElement).toBe(timeButton())
   })
 })

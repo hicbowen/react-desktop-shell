@@ -45,6 +45,7 @@ export interface AppTimePickerProps {
 }
 
 export interface AppTimeRangePickerLocale extends AppTimePickerLocale {
+  dialogLabel: string
   startLabel: string
   endLabel: string
   startPlaceholder: string

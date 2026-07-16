@@ -91,6 +91,7 @@ export function AppTimePicker({
   const anchorRef = useRef<HTMLDivElement | null>(null)
   const displayRef = useRef<HTMLButtonElement | null>(null)
   const timeButtonRef = useRef<HTMLButtonElement | null>(null)
+  const openerRef = useRef<HTMLElement | null>(null)
   const overlayRef = useRef<HTMLDivElement | null>(null)
   const [pendingValue, setPendingValue] = useState(() =>
     initialTime(committedValue ?? null, step, minValue, maxValue),
@@ -109,7 +110,7 @@ export function AppTimePicker({
     onOpenChange,
     anchorRef,
     overlayRef,
-    focusRef: timeButtonRef,
+    focusRef: openerRef,
     onDismiss: resetPending,
     dependencies: [locale, hourCycle, step],
   })
@@ -123,32 +124,39 @@ export function AppTimePicker({
     if (!controlled) setInternalValue(next)
     onValueChange?.(next)
   }
-  const openPanel = () => {
-    if (!resolvedDisabled) overlay.setVisible(true)
+  const openPanel = (opener: HTMLElement) => {
+    if (!resolvedDisabled) {
+      openerRef.current = opener
+      overlay.setVisible(true)
+    }
   }
   const cancel = () => {
     resetPending()
     overlay.setVisible(false)
-    timeButtonRef.current?.focus({ preventScroll: true })
+    openerRef.current?.focus({ preventScroll: true })
   }
   const handleDisplayKeyDown = (event: KeyboardEvent<HTMLButtonElement>) => {
     if (event.altKey && event.key === 'ArrowDown') {
       event.preventDefault()
-      openPanel()
+      openPanel(event.currentTarget)
     }
   }
   const popup = overlay.visible && typeof document !== 'undefined' ? (
     <OverlayParentContext.Provider value={overlay.overlayTree.overlayId}>
       <div
+        aria-label={resolvedLocaleText.timeButtonLabel}
+        aria-modal="false"
         className="app-time-picker__popup"
         data-placement={overlay.position.placement}
         ref={overlayRef}
+        role="dialog"
         style={getAnchoredOverlaySurfaceStyle({
           position: overlay.position,
           hasOverlayHost: Boolean(overlay.overlayHost),
         })}
       >
         <AppTimePanel
+          autoFocus={overlay.position.measured}
           hourCycle={hourCycle}
           hourLabel={resolvedLocaleText.hourLabel}
           locale={locale}
@@ -175,7 +183,7 @@ export function AppTimePicker({
               if (readOnly) return
               setCommittedValue(pendingValue)
               overlay.setVisible(false)
-              timeButtonRef.current?.focus({ preventScroll: true })
+              openerRef.current?.focus({ preventScroll: true })
             }}
             type="button"
           >
@@ -217,7 +225,7 @@ export function AppTimePicker({
             .join(' ')}
           disabled={resolvedDisabled}
           id={id ?? field?.controlId}
-          onClick={openPanel}
+          onClick={(event) => openPanel(event.currentTarget)}
           onKeyDown={handleDisplayKeyDown}
           ref={displayRef}
           type="button"
@@ -243,9 +251,9 @@ export function AppTimePicker({
           aria-haspopup="dialog"
           className="app-time-picker__icon-button"
           disabled={resolvedDisabled}
-          onClick={() => {
+          onClick={(event) => {
             if (overlay.visible) cancel()
-            else openPanel()
+            else openPanel(event.currentTarget)
           }}
           ref={timeButtonRef}
           type="button"

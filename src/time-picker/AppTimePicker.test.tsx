@@ -88,6 +88,10 @@ describe('AppTimePicker', () => {
         '.app-time-picker__action',
       ),
     ).find((button) => button.textContent === label)!
+  const timeButton = () =>
+    container.querySelector<HTMLButtonElement>(
+      '[aria-label="Open time picker"]',
+    )!
 
   it('initializes pending from current time and submits only on Apply', () => {
     const change = vi.fn()
@@ -240,6 +244,35 @@ describe('AppTimePicker', () => {
     expect(popup()?.style.width).toBe('max-content')
     expect(popup()?.style.left).toBe('540px')
     expect(popup()?.style.top).toBe('297px')
+    expect(popup()?.getAttribute('role')).toBe('dialog')
+    expect(popup()?.getAttribute('aria-label')).toBe('Open time picker')
+  })
+
+  it('focuses the selected hour and restores the actual opener', () => {
+    render(
+      <AppTimePicker
+        defaultValue={{ hour: 9, minute: 30 }}
+      />,
+    )
+    act(() => display().click())
+    flushFrames()
+    expect(document.activeElement).toBe(option(0, '09'))
+    act(() => action('Cancel').click())
+    expect(document.activeElement).toBe(display())
+
+    act(() => timeButton().click())
+    flushFrames()
+    expect(document.activeElement).toBe(option(0, '09'))
+    act(() =>
+      document.dispatchEvent(
+        new KeyboardEvent('keydown', {
+          bubbles: true,
+          cancelable: true,
+          key: 'Escape',
+        }),
+      ),
+    )
+    expect(document.activeElement).toBe(timeButton())
   })
 
   it('uses its own anchor and repositions on scroll and resize', () => {

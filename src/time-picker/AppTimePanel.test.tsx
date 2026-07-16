@@ -13,6 +13,7 @@ function Harness({
   minValue,
   maxValue,
   readOnly = false,
+  autoFocus = false,
   onChange,
 }: {
   initial?: AppTimeValue
@@ -21,11 +22,13 @@ function Harness({
   minValue?: AppTimeValue
   maxValue?: AppTimeValue
   readOnly?: boolean
+  autoFocus?: boolean
   onChange?: (value: AppTimeValue) => void
 }) {
   const [value, setValue] = useState(initial)
   return (
     <AppTimePanel
+      autoFocus={autoFocus}
       hourCycle={hourCycle}
       hourLabel="Hour"
       locale="en-US"
@@ -140,6 +143,14 @@ describe('AppTimePanel', () => {
     expect(document.activeElement).toBe(selected(1))
     keyDown(1, 'ArrowLeft')
     await act(async () => Promise.resolve())
+    expect(document.activeElement).toBe(selected(0))
+  })
+
+  it('focuses the selected hour only when autoFocus is enabled', () => {
+    render(<Harness />)
+    expect(document.activeElement).not.toBe(selected(0))
+
+    render(<Harness autoFocus />)
     expect(document.activeElement).toBe(selected(0))
   })
 

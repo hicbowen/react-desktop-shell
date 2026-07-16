@@ -25,6 +25,7 @@ interface AppTimePanelProps {
   readOnly?: boolean
   hourLabel: string
   minuteLabel: string
+  autoFocus?: boolean
 }
 
 type TimeColumn = 'hour' | 'minute'
@@ -97,6 +98,7 @@ export function AppTimePanel({
   readOnly = false,
   hourLabel,
   minuteLabel,
+  autoFocus = false,
 }: AppTimePanelProps) {
   const step = normalizeMinuteStep(minuteStep)
   const normalized = normalizePanelValue(value, step, minValue, maxValue)
@@ -129,6 +131,12 @@ export function AppTimePanel({
         element.scrollIntoView?.({ block: 'nearest' }),
       )
   }, [normalized.hour, normalized.minute])
+
+  useEffect(() => {
+    if (autoFocus) {
+      hourRefs.current[normalized.hour]?.focus({ preventScroll: true })
+    }
+  }, [autoFocus, normalized.hour])
 
   const focusValue = (column: TimeColumn, value: number) => {
     queueMicrotask(() => {

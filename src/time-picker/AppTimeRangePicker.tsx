@@ -34,6 +34,7 @@ type TimeRangeEditTarget = 'start' | 'end'
 
 const defaultLocaleText: AppTimeRangePickerLocale = {
   timeButtonLabel: 'Open time range picker',
+  dialogLabel: 'Choose a time range',
   clearButtonLabel: 'Clear time range',
   hourLabel: 'Hour',
   minuteLabel: 'Minute',
@@ -135,7 +136,9 @@ export function AppTimeRangePicker({
   const step = normalizeMinuteStep(minuteStep)
   const anchorRef = useRef<HTMLDivElement | null>(null)
   const startRef = useRef<HTMLButtonElement | null>(null)
+  const endRef = useRef<HTMLButtonElement | null>(null)
   const timeButtonRef = useRef<HTMLButtonElement | null>(null)
+  const openerRef = useRef<HTMLElement | null>(null)
   const overlayRef = useRef<HTMLDivElement | null>(null)
   const [editTarget, setEditTarget] =
     useState<TimeRangeEditTarget>('start')
@@ -156,7 +159,7 @@ export function AppTimeRangePicker({
     onOpenChange,
     anchorRef,
     overlayRef,
-    focusRef: timeButtonRef,
+    focusRef: openerRef,
     onDismiss: resetPending,
     dependencies: [locale, hourCycle, step],
   })
@@ -172,8 +175,12 @@ export function AppTimeRangePicker({
   }
   const formatTime = (time: AppTimeValue) =>
     formatAppTime(time, locale, hourCycle)
-  const openFor = (target: TimeRangeEditTarget) => {
+  const openFor = (
+    target: TimeRangeEditTarget,
+    opener: HTMLElement,
+  ) => {
     if (resolvedDisabled) return
+    openerRef.current = opener
     setEditTarget(target)
     if (!overlay.visible) resetPending()
     overlay.setVisible(true)
@@ -181,7 +188,7 @@ export function AppTimeRangePicker({
   const cancel = () => {
     resetPending()
     overlay.setVisible(false)
-    timeButtonRef.current?.focus({ preventScroll: true })
+    openerRef.current?.focus({ preventScroll: true })
   }
   const duration = isValidTimeRange(pending)
     ? getTimeRangeDuration(pending)
@@ -200,15 +207,18 @@ export function AppTimeRangePicker({
   ) => {
     if (event.altKey && event.key === 'ArrowDown') {
       event.preventDefault()
-      openFor(target)
+      openFor(target, event.currentTarget)
     }
   }
   const popup = overlay.visible && typeof document !== 'undefined' ? (
     <OverlayParentContext.Provider value={overlay.overlayTree.overlayId}>
       <div
+        aria-label={resolvedLocaleText.dialogLabel}
+        aria-modal="false"
         className="app-time-picker__popup app-time-range-picker__popup"
         data-placement={overlay.position.placement}
         ref={overlayRef}
+        role="dialog"
         style={getAnchoredOverlaySurfaceStyle({
           position: overlay.position,
           hasOverlayHost: Boolean(overlay.overlayHost),
@@ -235,6 +245,7 @@ export function AppTimeRangePicker({
           </button>
         </div>
         <AppTimePanel
+          autoFocus={overlay.position.measured}
           hourCycle={hourCycle}
           hourLabel={resolvedLocaleText.hourLabel}
           locale={locale}
@@ -281,7 +292,7 @@ export function AppTimeRangePicker({
               if (!canApply) return
               setCommittedValue(pending)
               overlay.setVisible(false)
-              timeButtonRef.current?.focus({ preventScroll: true })
+              openerRef.current?.focus({ preventScroll: true })
             }}
             type="button"
           >
@@ -323,7 +334,7 @@ export function AppTimeRangePicker({
             .join(' ')}
           disabled={resolvedDisabled}
           id={id ?? field?.controlId}
-          onClick={() => openFor('start')}
+          onClick={(event) => openFor('start', event.currentTarget)}
           onKeyDown={(event) => handleSegmentKeyDown('start', event)}
           ref={startRef}
           type="button"
@@ -347,8 +358,9 @@ export function AppTimeRangePicker({
             .filter(Boolean)
             .join(' ')}
           disabled={resolvedDisabled}
-          onClick={() => openFor('end')}
+          onClick={(event) => openFor('end', event.currentTarget)}
           onKeyDown={(event) => handleSegmentKeyDown('end', event)}
+          ref={endRef}
           type="button"
         >
           {committedValue?.end
@@ -374,9 +386,9 @@ export function AppTimeRangePicker({
           aria-haspopup="dialog"
           className="app-time-picker__icon-button"
           disabled={resolvedDisabled}
-          onClick={() => {
+          onClick={(event) => {
             if (overlay.visible) cancel()
-            else openFor('start')
+            else openFor('start', event.currentTarget)
           }}
           ref={timeButtonRef}
           type="button"
