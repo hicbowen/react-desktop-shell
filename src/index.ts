@@ -16,6 +16,12 @@ export {
   formatAppDateISO,
   parseAppDateISO,
 } from './date-picker'
+export {
+  AppTimePicker,
+  compareAppTimes,
+  formatAppTimeISO,
+  parseAppTimeISO,
+} from './time-picker'
 export { AppCard, AppCardFooter, AppCardGroup, AppCardHeader } from './card'
 export { AppContextMenu } from './context-menu/AppContextMenu'
 export { AppDialog } from './dialog/AppDialog'
@@ -65,6 +71,12 @@ export type {
   AppDateRangeValue,
   AppDateValue,
   AppWeekDay,
+  AppTimePickerLocale,
+  AppTimePickerProps,
+  AppTimeRangePickerLocale,
+  AppTimeRangePickerProps,
+  AppTimeRangeValue,
+  AppTimeValue,
   AppIconButtonProps,
   AppClipboardAdapter,
   AppCardAppearance,

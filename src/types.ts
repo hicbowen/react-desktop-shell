@@ -19,6 +19,14 @@ export type {
   AppDateValue,
   AppWeekDay,
 } from './date-picker/types'
+export type {
+  AppTimePickerLocale,
+  AppTimePickerProps,
+  AppTimeRangePickerLocale,
+  AppTimeRangePickerProps,
+  AppTimeRangeValue,
+  AppTimeValue,
+} from './time-picker/types'
 
 export type {
   AppCardAppearance,
