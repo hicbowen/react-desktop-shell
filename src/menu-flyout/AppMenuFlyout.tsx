@@ -25,6 +25,10 @@ import {
 } from '../overlay/trigger'
 import { useAnchoredOverlayPosition } from '../overlay/useAnchoredOverlayPosition'
 import { useOverlayDismiss } from '../overlay/useOverlayDismiss'
+import {
+  OverlayParentContext,
+  useOverlayTree,
+} from '../overlay/OverlayTreeContext'
 import type {
   AppMenuFlyoutEntry,
   AppMenuFlyoutItem,
@@ -83,6 +87,7 @@ function AppMenuFlyoutInner(
   const focusedForOpenRef = useRef(false)
   const overlayHost = useAppOverlayHost()
   const menuId = useId()
+  const overlayTree = useOverlayTree(effectiveOpen, overlayRef)
   const resolvedMaxHeight = Math.max(0, maxHeight)
   const resolvedMaxWidth = Math.max(0, maxWidth)
   const child = children as ReactElement<MenuTriggerProps>
@@ -153,34 +158,15 @@ function AppMenuFlyoutInner(
     }
   }, [effectiveOpen, firstEnabledIndex, lastEnabledIndex, position.measured])
 
-  useEffect(() => {
-    if (!effectiveOpen || typeof document === 'undefined') {
-      return
-    }
-
-    const handleEscape = (event: KeyboardEvent) => {
-      if (event.key !== 'Escape' || event.defaultPrevented) {
-        return
-      }
-
-      event.preventDefault()
-      focusedForOpenRef.current = false
-      setOpen(false)
-      setActiveIndex(-1)
-      triggerRef.current?.focus({ preventScroll: true })
-    }
-
-    document.addEventListener('keydown', handleEscape)
-    return () => document.removeEventListener('keydown', handleEscape)
-  }, [effectiveOpen])
-
   useOverlayDismiss({
     open: effectiveOpen,
     triggerRef,
     overlayRef,
     onDismiss: closeMenu,
-    closeOnEscape: false,
-    restoreFocus: false,
+    closeOnEscape: true,
+    restoreFocus: true,
+    isInsideBranch: overlayTree.isInsideBranch,
+    isTopMost: overlayTree.isTopMost,
   })
 
   const openMenu = (intent: FocusIntent) => {
@@ -334,7 +320,8 @@ function AppMenuFlyoutInner(
     <>
       {trigger}
       {createPortal(
-        <div
+        <OverlayParentContext.Provider value={overlayTree.overlayId}>
+          <div
           aria-label={ariaLabel}
           className={menuClassName}
           data-placement={position.placement}
@@ -395,7 +382,8 @@ function AppMenuFlyoutInner(
               </button>
             )
           })}
-        </div>,
+          </div>
+        </OverlayParentContext.Provider>,
         overlayHost ?? document.body,
       )}
     </>

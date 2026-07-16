@@ -18,6 +18,8 @@ export interface UseOverlayDismissOptions {
   closeOnExternalScroll?: boolean
   closeOnWindowBlur?: boolean
   restoreFocus?: boolean
+  isInsideBranch?: (target: Node) => boolean
+  isTopMost?: () => boolean
 }
 
 export function useOverlayDismiss({
@@ -31,6 +33,8 @@ export function useOverlayDismiss({
   closeOnExternalScroll = true,
   closeOnWindowBlur = true,
   restoreFocus = false,
+  isInsideBranch,
+  isTopMost,
 }: UseOverlayDismissOptions) {
   const onDismissRef = useRef(onDismiss)
 
@@ -49,6 +53,7 @@ export function useOverlayDismiss({
 
     const dismiss = (reason: OverlayDismissReason) =>
       onDismissRef.current(reason)
+    const canDismiss = () => isTopMost?.() ?? true
     const handlePointerDown = (event: PointerEvent) => {
       const target = event.target
 
@@ -58,8 +63,13 @@ export function useOverlayDismiss({
 
       if (
         triggerRef?.current?.contains(target) ||
-        overlayRef.current?.contains(target)
+        overlayRef.current?.contains(target) ||
+        isInsideBranch?.(target)
       ) {
+        return
+      }
+
+      if (!canDismiss()) {
         return
       }
 
@@ -67,6 +77,10 @@ export function useOverlayDismiss({
     }
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key !== 'Escape') {
+        return
+      }
+
+      if (event.defaultPrevented || !canDismiss()) {
         return
       }
 
@@ -84,10 +98,18 @@ export function useOverlayDismiss({
         return
       }
 
+      if (!canDismiss()) {
+        return
+      }
+
       dismiss('scroll')
     }
-    const handleResize = () => dismiss('resize')
-    const handleWindowBlur = () => dismiss('window-blur')
+    const handleResize = () => {
+      if (canDismiss()) dismiss('resize')
+    }
+    const handleWindowBlur = () => {
+      if (canDismiss()) dismiss('window-blur')
+    }
 
     if (closeOnOutsidePointerDown) {
       document.addEventListener('pointerdown', handlePointerDown, true)
@@ -122,5 +144,7 @@ export function useOverlayDismiss({
     overlayRef,
     restoreFocus,
     triggerRef,
+    isInsideBranch,
+    isTopMost,
   ])
 }

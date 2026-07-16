@@ -20,6 +20,10 @@ import {
   type OverlayDismissReason,
 } from '../overlay/useOverlayDismiss'
 import { OVERLAY_SURFACE_FALLBACK_STYLE } from '../overlay/surfaceFallback'
+import {
+  OverlayParentContext,
+  useOverlayTree,
+} from '../overlay/OverlayTreeContext'
 import type { AppPopoverProps } from './types'
 import './AppPopover.css'
 
@@ -65,6 +69,7 @@ export function AppPopover({
   const closeRequestRef = useRef(0)
   const overlayHost = useAppOverlayHost()
   const id = useId()
+  const overlayTree = useOverlayTree(visible, overlayRef)
 
   const setVisible = (
     next: boolean,
@@ -134,6 +139,8 @@ export function AppPopover({
     closeOnExternalScroll: false,
     closeOnResize: false,
     closeOnWindowBlur: false,
+    isInsideBranch: overlayTree.isInsideBranch,
+    isTopMost: overlayTree.isTopMost,
   })
 
   const child = trigger as ReactElement<TriggerProps>
@@ -171,7 +178,8 @@ export function AppPopover({
   return <>
     {renderedTrigger}
     {createPortal(
-      <div
+      <OverlayParentContext.Provider value={overlayTree.overlayId}>
+        <div
         aria-label={ariaLabel}
         className={['app-popover', className].filter(Boolean).join(' ')}
         data-placement={position.placement}
@@ -191,7 +199,8 @@ export function AppPopover({
         } as CSSProperties}
       >
         {children}
-      </div>,
+        </div>
+      </OverlayParentContext.Provider>,
       overlayHost ?? document.body,
     )}
   </>

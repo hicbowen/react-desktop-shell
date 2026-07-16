@@ -13,6 +13,10 @@ import { OVERLAY_SURFACE_FALLBACK_STYLE } from '../overlay/surfaceFallback'
 import { getElementRef, useMergedRefs } from '../overlay/trigger'
 import { useAnchoredOverlayPosition } from '../overlay/useAnchoredOverlayPosition'
 import { useOverlayDismiss } from '../overlay/useOverlayDismiss'
+import {
+  OverlayParentContext,
+  useOverlayTree,
+} from '../overlay/OverlayTreeContext'
 import type { AppTeachingTipAction, AppTeachingTipProps } from './types'
 import './AppTeachingTip.css'
 
@@ -59,6 +63,7 @@ export function AppTeachingTip({
   const tipId = useId()
   const titleId = useId()
   const contentId = useId()
+  const overlayTree = useOverlayTree(open, overlayRef)
   const resolvedMaxWidth = Math.max(0, maxWidth)
   const child = children as ReactElement<TeachingTipTriggerProps>
   const position = useAnchoredOverlayPosition({
@@ -113,6 +118,8 @@ export function AppTeachingTip({
     onDismiss: close,
     closeOnOutsidePointerDown,
     restoreFocus: true,
+    isInsideBranch: overlayTree.isInsideBranch,
+    isTopMost: overlayTree.isTopMost,
   })
 
   const childRef = getElementRef(child)
@@ -137,7 +144,8 @@ export function AppTeachingTip({
     <>
       {trigger}
       {createPortal(
-        <div
+        <OverlayParentContext.Provider value={overlayTree.overlayId}>
+          <div
           aria-describedby={contentId}
           aria-label={title ? undefined : ariaLabel}
           aria-labelledby={title ? titleId : undefined}
@@ -204,7 +212,8 @@ export function AppTeachingTip({
               ) : null}
             </div>
           ) : null}
-        </div>,
+          </div>
+        </OverlayParentContext.Provider>,
         overlayHost ?? document.body,
       )}
     </>

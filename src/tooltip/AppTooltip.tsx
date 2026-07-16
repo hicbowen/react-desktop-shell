@@ -25,6 +25,10 @@ import {
 } from '../overlay/trigger'
 import { useAnchoredOverlayPosition } from '../overlay/useAnchoredOverlayPosition'
 import { useOverlayDismiss } from '../overlay/useOverlayDismiss'
+import {
+  OverlayParentContext,
+  useOverlayTree,
+} from '../overlay/OverlayTreeContext'
 import type { AppTooltipProps } from './types'
 import './AppTooltip.css'
 
@@ -96,6 +100,7 @@ function AppTooltipInner({
   }
 
   const open = canShow && (hovered || focused)
+  const overlayTree = useOverlayTree(open, overlayRef)
   const position = useAnchoredOverlayPosition({
     open,
     triggerRef,
@@ -146,29 +151,15 @@ function AppTooltipInner({
 
   useEffect(() => cancelOpen, [cancelOpen])
 
-  useEffect(() => {
-    if (!open || typeof document === 'undefined') {
-      return
-    }
-
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape' && !event.defaultPrevented) {
-        event.preventDefault()
-        closeTooltip()
-      }
-    }
-
-    document.addEventListener('keydown', handleKeyDown)
-    return () => document.removeEventListener('keydown', handleKeyDown)
-  }, [closeTooltip, open])
-
   useOverlayDismiss({
     open,
     triggerRef,
     overlayRef,
     onDismiss: closeTooltip,
-    closeOnEscape: false,
+    closeOnEscape: true,
     restoreFocus: false,
+    isInsideBranch: overlayTree.isInsideBranch,
+    isTopMost: overlayTree.isTopMost,
   })
 
   const childRef = getElementRef(child)
@@ -270,7 +261,8 @@ function AppTooltipInner({
     <>
       {trigger}
       {createPortal(
-        <div
+        <OverlayParentContext.Provider value={overlayTree.overlayId}>
+          <div
           ref={overlayRef}
           className={tooltipClassName}
           data-placement={position.placement}
@@ -288,7 +280,8 @@ function AppTooltipInner({
           } as CSSProperties}
         >
           {content}
-        </div>,
+          </div>
+        </OverlayParentContext.Provider>,
         overlayHost ?? document.body,
       )}
     </>
