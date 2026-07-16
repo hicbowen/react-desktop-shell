@@ -5,11 +5,11 @@ import {
 } from 'react'
 import { formatAppTime } from './timeFormat'
 import {
-  clampAppTime,
   compareAppTimes,
+  hasAvailableTimeValue,
   isSameAppTime,
+  normalizeTimeToStep,
   normalizeMinuteStep,
-  roundTimeToStep,
 } from './timeMath'
 import type { AppTimeValue } from './types'
 import './AppTimePicker.css'
@@ -26,6 +26,8 @@ interface AppTimePanelProps {
   hourLabel: string
   minuteLabel: string
   autoFocus?: boolean
+  noAvailableTimeLabel: string
+  onAvailabilityChange?: (hasAvailableValue: boolean) => void
 }
 
 type TimeColumn = 'hour' | 'minute'
@@ -64,29 +66,6 @@ function nearestMinute(minutes: number[], current: number) {
   )
 }
 
-function normalizePanelValue(
-  value: AppTimeValue,
-  step: number,
-  minValue?: AppTimeValue,
-  maxValue?: AppTimeValue,
-) {
-  const clamped = clampAppTime(
-    roundTimeToStep(value, step),
-    minValue,
-    maxValue,
-  )
-  const minutes = availableMinutes(
-    clamped.hour,
-    step,
-    minValue,
-    maxValue,
-  )
-  if (minutes.length > 0 && !minutes.includes(clamped.minute)) {
-    return { hour: clamped.hour, minute: nearestMinute(minutes, clamped.minute) }
-  }
-  return clamped
-}
-
 export function AppTimePanel({
   value,
   onValueChange,
@@ -99,9 +78,18 @@ export function AppTimePanel({
   hourLabel,
   minuteLabel,
   autoFocus = false,
+  noAvailableTimeLabel,
+  onAvailabilityChange,
 }: AppTimePanelProps) {
   const step = normalizeMinuteStep(minuteStep)
-  const normalized = normalizePanelValue(value, step, minValue, maxValue)
+  const hasAvailableValue = hasAvailableTimeValue(
+    step,
+    minValue,
+    maxValue,
+  )
+  const normalized = hasAvailableValue
+    ? normalizeTimeToStep(value, step, minValue, maxValue)
+    : null
   const rootRef = useRef<HTMLDivElement | null>(null)
   const hourRefs = useRef<Array<HTMLButtonElement | null>>([])
   const minuteRefs = useRef<Array<HTMLButtonElement | null>>([])
@@ -111,15 +99,16 @@ export function AppTimePanel({
     (hour) =>
       availableMinutes(hour, step, minValue, maxValue).length > 0,
   )
-  const enabledMinutes = availableMinutes(
-    normalized.hour,
-    step,
-    minValue,
-    maxValue,
-  )
+  const enabledMinutes = normalized
+    ? availableMinutes(normalized.hour, step, minValue, maxValue)
+    : []
 
   useEffect(() => {
-    if (!readOnly && !isSameAppTime(value, normalized)) {
+    if (
+      normalized &&
+      !readOnly &&
+      !isSameAppTime(value, normalized)
+    ) {
       onValueChange(normalized)
     }
   }, [normalized, onValueChange, readOnly, value])
@@ -130,13 +119,17 @@ export function AppTimePanel({
       .forEach((element) =>
         element.scrollIntoView?.({ block: 'nearest' }),
       )
-  }, [normalized.hour, normalized.minute])
+  }, [normalized?.hour, normalized?.minute])
 
   useEffect(() => {
-    if (autoFocus) {
+    onAvailabilityChange?.(hasAvailableValue)
+  }, [hasAvailableValue, onAvailabilityChange])
+
+  useEffect(() => {
+    if (autoFocus && normalized) {
       hourRefs.current[normalized.hour]?.focus({ preventScroll: true })
     }
-  }, [autoFocus, normalized.hour])
+  }, [autoFocus, normalized])
 
   const focusValue = (column: TimeColumn, value: number) => {
     queueMicrotask(() => {
@@ -156,14 +149,16 @@ export function AppTimePanel({
       maxValue,
     )
     if (nextMinutes.length === 0) return
-    const minute = nextMinutes.includes(normalized.minute)
-      ? normalized.minute
-      : nearestMinute(nextMinutes, normalized.minute)
+    const currentMinute = normalized?.minute ?? nextMinutes[0]!
+    const minute = nextMinutes.includes(currentMinute)
+      ? currentMinute
+      : nearestMinute(nextMinutes, currentMinute)
     onValueChange({ hour, minute })
   }
   const selectMinute = (minute: number) => {
     if (
       readOnly ||
+      !normalized ||
       !isAvailable({ hour: normalized.hour, minute }, minValue, maxValue)
     ) {
       return
@@ -205,7 +200,9 @@ export function AppTimePanel({
       const target = event.key === 'ArrowLeft' ? 'hour' : 'minute'
       focusValue(
         target,
-        target === 'hour' ? normalized.hour : normalized.minute,
+        target === 'hour'
+          ? normalized?.hour ?? 0
+          : normalized?.minute ?? 0,
       )
       return
     }
@@ -218,6 +215,14 @@ export function AppTimePanel({
 
   return (
     <div className="app-time-panel" ref={rootRef}>
+      {!hasAvailableValue ? (
+        <div
+          className="app-time-panel__empty"
+          role="status"
+        >
+          {noAvailableTimeLabel}
+        </div>
+      ) : null}
       <div className="app-time-panel__column">
         <div className="app-time-panel__label">{hourLabel}</div>
         <div
@@ -227,7 +232,7 @@ export function AppTimePanel({
         >
           {hours.map((hour) => {
             const disabled = !enabledHours.includes(hour)
-            const selected = hour === normalized.hour
+            const selected = hour === normalized?.hour
             return (
               <button
                 aria-selected={selected}
@@ -260,7 +265,7 @@ export function AppTimePanel({
         >
           {minutes.map((minute, index) => {
             const disabled = !enabledMinutes.includes(minute)
-            const selected = minute === normalized.minute
+            const selected = minute === normalized?.minute
             return (
               <button
                 aria-selected={selected}

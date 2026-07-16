@@ -76,6 +76,14 @@ export function isValidTimeRange(range: AppTimeRangeValue) {
   )
 }
 
+export function isTimeAlignedToStep(
+  value: AppTimeValue,
+  minuteStep: number,
+) {
+  const step = normalizeMinuteStep(minuteStep)
+  return isValidAppTime(value) && value.minute % step === 0
+}
+
 export function normalizeMinuteStep(value?: number) {
   const resolved =
     value != null &&
@@ -109,6 +117,71 @@ export function roundTimeToStep(
   const rounded = Math.round(timeToMinutes(value) / step) * step
   const latest = MINUTES_PER_DAY - step
   return minutesToTime(Math.min(rounded, latest))
+}
+
+export function hasAvailableTimeValue(
+  minuteStep: number,
+  minValue?: AppTimeValue,
+  maxValue?: AppTimeValue,
+) {
+  const step = normalizeMinuteStep(minuteStep)
+  const minimum = minValue ? timeToMinutes(minValue) : 0
+  const maximum = maxValue
+    ? timeToMinutes(maxValue)
+    : MINUTES_PER_DAY - 1
+
+  if (minimum > maximum) return false
+  return Math.ceil(minimum / step) * step <= maximum
+}
+
+export function normalizeTimeToStep(
+  value: AppTimeValue,
+  minuteStep: number,
+  minValue?: AppTimeValue,
+  maxValue?: AppTimeValue,
+) {
+  const step = normalizeMinuteStep(minuteStep)
+  const rounded = timeToMinutes(roundTimeToStep(value, step))
+  const minimum = minValue ? timeToMinutes(minValue) : 0
+  const maximum = maxValue
+    ? timeToMinutes(maxValue)
+    : MINUTES_PER_DAY - 1
+
+  if (minimum > maximum) {
+    return value
+  }
+
+  const firstAligned = Math.ceil(minimum / step) * step
+  const lastAligned = Math.floor(maximum / step) * step
+  if (firstAligned > lastAligned) {
+    return clampAppTime(roundTimeToStep(value, step), minValue, maxValue)
+  }
+
+  return minutesToTime(
+    Math.min(Math.max(rounded, firstAligned), lastAligned),
+  )
+}
+
+export function normalizeTimeRangeToStep(
+  range: AppTimeRangeValue,
+  minuteStep: number,
+  minValue?: AppTimeValue,
+  maxValue?: AppTimeValue,
+): AppTimeRangeValue {
+  return {
+    start: normalizeTimeToStep(
+      range.start,
+      minuteStep,
+      minValue,
+      maxValue,
+    ),
+    end: normalizeTimeToStep(
+      range.end,
+      minuteStep,
+      minValue,
+      maxValue,
+    ),
+  }
 }
 
 export function getCurrentAppTime(): AppTimeValue {

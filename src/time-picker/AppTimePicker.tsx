@@ -12,10 +12,13 @@ import { getAnchoredOverlaySurfaceStyle } from '../overlay/getAnchoredOverlaySur
 import { AppTimePanel } from './AppTimePanel'
 import { formatAppTime, formatAppTimeISO } from './timeFormat'
 import {
-  clampAppTime,
+  compareAppTimes,
   getCurrentAppTime,
+  hasAvailableTimeValue,
+  isTimeAlignedToStep,
+  isValidAppTime,
+  normalizeTimeToStep,
   normalizeMinuteStep,
-  roundTimeToStep,
 } from './timeMath'
 import type {
   AppTimePickerLocale,
@@ -32,6 +35,7 @@ const defaultLocaleText: AppTimePickerLocale = {
   minuteLabel: 'Minute',
   cancelLabel: 'Cancel',
   applyLabel: 'Apply',
+  noAvailableTimeLabel: 'No available times',
 }
 
 function TimeIcon() {
@@ -48,8 +52,9 @@ function initialTime(
   minValue?: AppTimeValue,
   maxValue?: AppTimeValue,
 ) {
-  return clampAppTime(
-    roundTimeToStep(value ?? getCurrentAppTime(), step),
+  return normalizeTimeToStep(
+    value ?? getCurrentAppTime(),
+    step,
     minValue,
     maxValue,
   )
@@ -96,6 +101,9 @@ export function AppTimePicker({
   const [pendingValue, setPendingValue] = useState(() =>
     initialTime(committedValue ?? null, step, minValue, maxValue),
   )
+  const [hasAvailableValue, setHasAvailableValue] = useState(() =>
+    hasAvailableTimeValue(step, minValue, maxValue),
+  )
   const wasOpenRef = useRef(false)
   const resetPending = useCallback(
     () =>
@@ -141,6 +149,13 @@ export function AppTimePicker({
       openPanel(event.currentTarget)
     }
   }
+  const canApply =
+    !readOnly &&
+    hasAvailableValue &&
+    isValidAppTime(pendingValue) &&
+    isTimeAlignedToStep(pendingValue, step) &&
+    (!minValue || compareAppTimes(pendingValue, minValue) >= 0) &&
+    (!maxValue || compareAppTimes(pendingValue, maxValue) <= 0)
   const popup = overlay.visible && typeof document !== 'undefined' ? (
     <OverlayParentContext.Provider value={overlay.overlayTree.overlayId}>
       <div
@@ -164,6 +179,8 @@ export function AppTimePicker({
           minValue={minValue}
           minuteLabel={resolvedLocaleText.minuteLabel}
           minuteStep={step}
+          noAvailableTimeLabel={resolvedLocaleText.noAvailableTimeLabel}
+          onAvailabilityChange={setHasAvailableValue}
           onValueChange={setPendingValue}
           readOnly={readOnly}
           value={pendingValue}
@@ -178,9 +195,9 @@ export function AppTimePicker({
           </button>
           <button
             className="app-time-picker__action app-time-picker__action--primary"
-            disabled={readOnly}
+            disabled={!canApply}
             onClick={() => {
-              if (readOnly) return
+              if (!canApply) return
               setCommittedValue(pendingValue)
               overlay.setVisible(false)
               openerRef.current?.focus({ preventScroll: true })

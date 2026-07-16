@@ -17,6 +17,7 @@ export interface AppTimePickerLocale {
   minuteLabel: string
   cancelLabel: string
   applyLabel: string
+  noAvailableTimeLabel: string
 }
 
 export interface AppTimePickerProps {

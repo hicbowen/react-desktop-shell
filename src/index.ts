@@ -21,6 +21,8 @@ export {
   AppTimeRangePicker,
   compareAppTimes,
   formatAppTimeISO,
+  isTimeAlignedToStep,
+  normalizeTimeRangeToStep,
   parseAppTimeISO,
 } from './time-picker'
 export { AppCard, AppCardFooter, AppCardGroup, AppCardHeader } from './card'

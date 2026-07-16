@@ -6,11 +6,15 @@ import {
   compareAppTimes,
   getCurrentAppTime,
   getTimeRangeDuration,
+  hasAvailableTimeValue,
   isSameAppTime,
+  isTimeAlignedToStep,
   isValidAppTime,
   isValidTimeRange,
   minutesToTime,
   normalizeMinuteStep,
+  normalizeTimeRangeToStep,
+  normalizeTimeToStep,
   roundTimeToStep,
   timeToMinutes,
 } from './timeMath'
@@ -92,6 +96,50 @@ describe('time value utilities', () => {
     expect(warning).toHaveBeenCalled()
   })
 
+  it('checks step alignment and normalizes both range endpoints', () => {
+    expect(isTimeAlignedToStep({ hour: 9, minute: 30 }, 15)).toBe(true)
+    expect(isTimeAlignedToStep({ hour: 9, minute: 28 }, 15)).toBe(false)
+    expect(
+      normalizeTimeToStep(
+        { hour: 9, minute: 28 },
+        15,
+        { hour: 9, minute: 17 },
+        { hour: 10, minute: 50 },
+      ),
+    ).toEqual({ hour: 9, minute: 30 })
+    expect(
+      normalizeTimeRangeToStep(
+        {
+          start: { hour: 9, minute: 28 },
+          end: { hour: 10, minute: 52 },
+        },
+        15,
+        { hour: 9, minute: 17 },
+        { hour: 10, minute: 50 },
+      ),
+    ).toEqual({
+      start: { hour: 9, minute: 30 },
+      end: { hour: 10, minute: 45 },
+    })
+  })
+
+  it('detects bounds with no aligned time value', () => {
+    expect(
+      hasAvailableTimeValue(
+        15,
+        { hour: 9, minute: 17 },
+        { hour: 9, minute: 18 },
+      ),
+    ).toBe(false)
+    expect(
+      hasAvailableTimeValue(
+        15,
+        { hour: 9, minute: 17 },
+        { hour: 9, minute: 30 },
+      ),
+    ).toBe(true)
+  })
+
   it('validates same-day ranges and returns duration minutes', () => {
     expect(
       getTimeRangeDuration({
@@ -114,6 +162,9 @@ describe('time value utilities', () => {
   })
 
   it('formats 12 and 24 hour displays and reads local current time', () => {
+    expect(formatAppTime({ hour: 0, minute: 0 }, 'en-US', 24)).toBe(
+      '00:00',
+    )
     expect(formatAppTime({ hour: 18, minute: 30 }, 'en-US', 24)).toBe(
       '18:30',
     )

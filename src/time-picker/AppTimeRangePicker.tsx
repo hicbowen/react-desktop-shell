@@ -13,13 +13,16 @@ import { AppTimePanel } from './AppTimePanel'
 import { formatAppTime, formatAppTimeISO } from './timeFormat'
 import {
   addMinutes,
-  clampAppTime,
   compareAppTimes,
   getCurrentAppTime,
   getTimeRangeDuration,
+  hasAvailableTimeValue,
+  isTimeAlignedToStep,
+  isValidAppTime,
   isValidTimeRange,
+  normalizeTimeRangeToStep,
+  normalizeTimeToStep,
   normalizeMinuteStep,
-  roundTimeToStep,
 } from './timeMath'
 import type {
   AppTimeRangePickerLocale,
@@ -40,6 +43,7 @@ const defaultLocaleText: AppTimeRangePickerLocale = {
   minuteLabel: 'Minute',
   cancelLabel: 'Cancel',
   applyLabel: 'Apply',
+  noAvailableTimeLabel: 'No available times',
   startLabel: 'Start time',
   endLabel: 'End time',
   startPlaceholder: 'Start time',
@@ -61,8 +65,9 @@ function initialStart(
   minValue?: AppTimeValue,
   maxValue?: AppTimeValue,
 ) {
-  return clampAppTime(
-    roundTimeToStep(getCurrentAppTime(), step),
+  return normalizeTimeToStep(
+    getCurrentAppTime(),
+    step,
     minValue,
     maxValue,
   )
@@ -74,7 +79,9 @@ function initialRange(
   minValue?: AppTimeValue,
   maxValue?: AppTimeValue,
 ) {
-  if (value) return value
+  if (value) {
+    return normalizeTimeRangeToStep(value, step, minValue, maxValue)
+  }
   const start = initialStart(step, minValue, maxValue)
   const oneHour = addMinutes(start, 60)
   if (
@@ -145,6 +152,9 @@ export function AppTimeRangePicker({
   const [pending, setPending] = useState(() =>
     initialRange(committedValue ?? null, step, minValue, maxValue),
   )
+  const [hasAvailableValue, setHasAvailableValue] = useState(() =>
+    hasAvailableTimeValue(step, minValue, maxValue),
+  )
   const wasOpenRef = useRef(false)
   const resetPending = useCallback(
     () =>
@@ -195,6 +205,11 @@ export function AppTimeRangePicker({
     : null
   const canApply = Boolean(
     !readOnly &&
+      hasAvailableValue &&
+      isValidAppTime(pending.start) &&
+      isValidAppTime(pending.end) &&
+      isTimeAlignedToStep(pending.start, step) &&
+      isTimeAlignedToStep(pending.end, step) &&
       duration != null &&
       (minDuration == null || duration >= minDuration) &&
       (maxDuration == null || duration <= maxDuration) &&
@@ -253,6 +268,8 @@ export function AppTimeRangePicker({
           minValue={minValue}
           minuteLabel={resolvedLocaleText.minuteLabel}
           minuteStep={step}
+          noAvailableTimeLabel={resolvedLocaleText.noAvailableTimeLabel}
+          onAvailabilityChange={setHasAvailableValue}
           onValueChange={(next) =>
             setPending((current) => ({
               ...current,

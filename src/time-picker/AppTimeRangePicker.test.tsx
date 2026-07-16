@@ -254,6 +254,54 @@ describe('AppTimeRangePicker', () => {
     expect(action('Apply').disabled).toBe(true)
   })
 
+  it('normalizes both endpoints to step before applying', () => {
+    const change = vi.fn()
+    render(
+      <AppTimeRangePicker
+        defaultOpen
+        defaultValue={{
+          start: { hour: 9, minute: 28 },
+          end: { hour: 10, minute: 52 },
+        }}
+        maxValue={{ hour: 10, minute: 50 }}
+        minValue={{ hour: 9, minute: 17 }}
+        minuteStep={15}
+        onValueChange={change}
+      />,
+    )
+    flushFrames()
+
+    expect(option(0, '09').getAttribute('aria-selected')).toBe('true')
+    expect(option(1, '30').getAttribute('aria-selected')).toBe('true')
+    act(() => tab('End time').click())
+    expect(option(0, '10').getAttribute('aria-selected')).toBe('true')
+    expect(option(1, '45').getAttribute('aria-selected')).toBe('true')
+    act(() => action('Apply').click())
+    expect(change).toHaveBeenCalledWith({
+      start: { hour: 9, minute: 30 },
+      end: { hour: 10, minute: 45 },
+    })
+  })
+
+  it('shows an empty state when no step-aligned time is available', () => {
+    const change = vi.fn()
+    render(
+      <AppTimeRangePicker
+        defaultOpen
+        maxValue={{ hour: 9, minute: 18 }}
+        minValue={{ hour: 9, minute: 17 }}
+        minuteStep={15}
+        onValueChange={change}
+      />,
+    )
+    flushFrames()
+
+    expect(popup()?.textContent).toContain('No available times')
+    expect(action('Apply').disabled).toBe(true)
+    act(() => action('Apply').click())
+    expect(change).not.toHaveBeenCalled()
+  })
+
   it('supports controlled values, clear, hidden inputs, and AppField', () => {
     const change = vi.fn()
     render(

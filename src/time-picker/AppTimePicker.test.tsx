@@ -219,6 +219,28 @@ describe('AppTimePicker', () => {
     expect(action('Apply').disabled).toBe(true)
   })
 
+  it('disables Apply when bounds contain no step-aligned value', () => {
+    const change = vi.fn()
+    render(
+      <AppTimePicker
+        defaultOpen
+        maxValue={{ hour: 9, minute: 18 }}
+        minValue={{ hour: 9, minute: 17 }}
+        minuteStep={15}
+        onValueChange={change}
+      />,
+    )
+    flushFrames()
+
+    expect(popup()?.textContent).toContain('No available times')
+    expect(action('Apply').disabled).toBe(true)
+    expect(popup()?.querySelectorAll('[aria-selected="true"]')).toHaveLength(
+      0,
+    )
+    act(() => action('Apply').click())
+    expect(change).not.toHaveBeenCalled()
+  })
+
   it('inherits AppField state and portals into a dialog-local host', () => {
     render(
       <AppShell>

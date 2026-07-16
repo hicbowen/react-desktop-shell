@@ -14,6 +14,8 @@ function Harness({
   maxValue,
   readOnly = false,
   autoFocus = false,
+  noAvailableTimeLabel = 'No available times',
+  onAvailabilityChange,
   onChange,
 }: {
   initial?: AppTimeValue
@@ -23,6 +25,8 @@ function Harness({
   maxValue?: AppTimeValue
   readOnly?: boolean
   autoFocus?: boolean
+  noAvailableTimeLabel?: string
+  onAvailabilityChange?: (hasAvailableValue: boolean) => void
   onChange?: (value: AppTimeValue) => void
 }) {
   const [value, setValue] = useState(initial)
@@ -36,6 +40,8 @@ function Harness({
       minValue={minValue}
       minuteLabel="Minute"
       minuteStep={step}
+      noAvailableTimeLabel={noAvailableTimeLabel}
+      onAvailabilityChange={onAvailabilityChange}
       onValueChange={(next) => {
         setValue(next)
         onChange?.(next)
@@ -177,5 +183,23 @@ describe('AppTimePanel', () => {
     )
     act(() => options(0)[10]!.click())
     expect(change).not.toHaveBeenCalled()
+  })
+
+  it('reports and displays when bounds contain no step-aligned value', () => {
+    const availability = vi.fn()
+    render(
+      <Harness
+        maxValue={{ hour: 9, minute: 18 }}
+        minValue={{ hour: 9, minute: 17 }}
+        onAvailabilityChange={availability}
+        step={15}
+      />,
+    )
+
+    expect(container.textContent).toContain('No available times')
+    expect(availability).toHaveBeenLastCalledWith(false)
+    expect(container.querySelectorAll('[aria-selected="true"]')).toHaveLength(
+      0,
+    )
   })
 })

@@ -27,6 +27,6 @@ export function formatAppTime(
   return new Intl.DateTimeFormat(locale, {
     hour: 'numeric',
     minute: '2-digit',
-    hour12: hourCycle === 12,
+    hourCycle: hourCycle === 12 ? 'h12' : 'h23',
   }).format(date)
 }
