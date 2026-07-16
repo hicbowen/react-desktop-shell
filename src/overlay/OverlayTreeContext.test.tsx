@@ -129,6 +129,38 @@ describe('overlay tree coordination', () => {
     expect(document.querySelector('.app-popover')).toBeNull()
   })
 
+  it('prioritizes a descendant when parent and child mount open together', () => {
+    act(() =>
+      root.render(
+        <AppPopover
+          defaultOpen
+          trigger={<button type="button">Parent trigger</button>}
+        >
+          <AppPopover
+            defaultOpen
+            trigger={<button type="button">Child trigger</button>}
+          >
+            Child content
+          </AppPopover>
+        </AppPopover>,
+      ),
+    )
+    expect(document.querySelectorAll('.app-popover')).toHaveLength(2)
+
+    act(() => {
+      document.dispatchEvent(
+        new KeyboardEvent('keydown', {
+          bubbles: true,
+          cancelable: true,
+          key: 'Escape',
+        }),
+      )
+    })
+    const popovers = document.querySelectorAll('.app-popover')
+    expect(popovers).toHaveLength(1)
+    expect(popovers[0]?.textContent).not.toContain('Child content')
+  })
+
   it('closes a child when its parent surface is pressed', () => {
     renderNested()
 

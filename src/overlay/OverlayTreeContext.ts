@@ -69,7 +69,20 @@ function isInsideOverlayTree(overlayId: string, target: Node) {
 }
 
 function isTopOverlay(overlayId: string) {
-  return stack.at(-1) === overlayId
+  const topLeaf = [...stack].reverse().find((candidateId) => {
+    for (const otherId of entries.keys()) {
+      if (
+        otherId !== candidateId &&
+        isDescendantOf(otherId, candidateId)
+      ) {
+        return false
+      }
+    }
+
+    return true
+  })
+
+  return topLeaf === overlayId
 }
 
 export function useOverlayTree(
