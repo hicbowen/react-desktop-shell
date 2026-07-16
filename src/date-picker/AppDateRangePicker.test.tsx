@@ -210,6 +210,53 @@ describe('AppDateRangePicker', () => {
     expect(change).not.toHaveBeenCalled()
   })
 
+  it('preserves pending range when controlled close is rejected', () => {
+    const change = vi.fn()
+    const openChange = vi.fn()
+    render(
+      <AppDateRangePicker
+        onOpenChange={openChange}
+        onValueChange={change}
+        open
+        value={null}
+        visibleMonths={1}
+      />,
+    )
+    flushFrames()
+    clickDate('2026-07-10')
+    clickDate('2026-07-12')
+
+    act(() =>
+      outside.dispatchEvent(
+        new PointerEvent('pointerdown', {
+          bubbles: true,
+          cancelable: true,
+        }),
+      ),
+    )
+    expect(openChange).toHaveBeenCalledWith(false)
+    expect(popup()).not.toBeNull()
+    expect(action('Apply').disabled).toBe(false)
+
+    act(() => action('Apply').click())
+    expect(change).toHaveBeenCalledWith({
+      start: { year: 2026, month: 7, day: 10 },
+      end: { year: 2026, month: 7, day: 12 },
+    })
+    expect(popup()).not.toBeNull()
+
+    render(
+      <AppDateRangePicker
+        onOpenChange={openChange}
+        onValueChange={change}
+        open={false}
+        value={null}
+        visibleMonths={1}
+      />,
+    )
+    expect(popup()).toBeNull()
+  })
+
   it('supports same-day ranges and duration limits', () => {
     render(
       <AppDateRangePicker

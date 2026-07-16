@@ -157,6 +157,53 @@ describe('AppTimePicker', () => {
     expect(change).not.toHaveBeenCalled()
   })
 
+  it('preserves pending time when controlled close is rejected', () => {
+    const change = vi.fn()
+    const openChange = vi.fn()
+    render(
+      <AppTimePicker
+        minuteStep={5}
+        onOpenChange={openChange}
+        onValueChange={change}
+        open
+        value={{ hour: 9, minute: 0 }}
+      />,
+    )
+    flushFrames()
+    act(() => option(0, '10').click())
+    act(() => option(1, '35').click())
+
+    act(() =>
+      outside.dispatchEvent(
+        new PointerEvent('pointerdown', {
+          bubbles: true,
+          cancelable: true,
+        }),
+      ),
+    )
+    expect(openChange).toHaveBeenCalledWith(false)
+    expect(popup()).not.toBeNull()
+    expect(list(0).querySelector('[aria-selected="true"]')?.textContent)
+      .toBe('10')
+    expect(list(1).querySelector('[aria-selected="true"]')?.textContent)
+      .toBe('35')
+
+    act(() => action('Apply').click())
+    expect(change).toHaveBeenCalledWith({ hour: 10, minute: 35 })
+    expect(popup()).not.toBeNull()
+
+    render(
+      <AppTimePicker
+        minuteStep={5}
+        onOpenChange={openChange}
+        onValueChange={change}
+        open={false}
+        value={{ hour: 9, minute: 0 }}
+      />,
+    )
+    expect(popup()).toBeNull()
+  })
+
   it('supports controlled values, clear, 12-hour display, and hidden ISO', () => {
     const change = vi.fn()
     render(

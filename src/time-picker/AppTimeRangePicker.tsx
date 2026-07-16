@@ -169,8 +169,12 @@ export function AppTimeRangePicker({
     onOpenChange,
     anchorRef,
     overlayRef,
-    focusRef: openerRef,
-    onDismiss: resetPending,
+    onAfterClose: () => {
+      resetPending()
+      ;(openerRef.current ?? timeButtonRef.current)?.focus({
+        preventScroll: true,
+      })
+    },
     dependencies: [locale, hourCycle, step],
   })
 
@@ -196,9 +200,7 @@ export function AppTimeRangePicker({
     overlay.setVisible(true)
   }
   const cancel = () => {
-    resetPending()
-    overlay.setVisible(false)
-    openerRef.current?.focus({ preventScroll: true })
+    overlay.requestClose('cancel')
   }
   const duration = isValidTimeRange(pending)
     ? getTimeRangeDuration(pending)
@@ -308,8 +310,7 @@ export function AppTimeRangePicker({
             onClick={() => {
               if (!canApply) return
               setCommittedValue(pending)
-              overlay.setVisible(false)
-              openerRef.current?.focus({ preventScroll: true })
+              overlay.requestClose('apply')
             }}
             type="button"
           >

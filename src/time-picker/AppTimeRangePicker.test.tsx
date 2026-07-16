@@ -198,6 +198,59 @@ describe('AppTimeRangePicker', () => {
     expect(change).not.toHaveBeenCalled()
   })
 
+  it('preserves pending range when controlled close is rejected', () => {
+    const change = vi.fn()
+    const openChange = vi.fn()
+    render(
+      <AppTimeRangePicker
+        onOpenChange={openChange}
+        onValueChange={change}
+        open
+        value={{
+          start: { hour: 9, minute: 0 },
+          end: { hour: 10, minute: 0 },
+        }}
+      />,
+    )
+    flushFrames()
+    act(() => option(0, '08').click())
+    act(() => tab('End time').click())
+    act(() => option(0, '11').click())
+    act(() => option(1, '30').click())
+
+    act(() =>
+      outside.dispatchEvent(
+        new PointerEvent('pointerdown', {
+          bubbles: true,
+          cancelable: true,
+        }),
+      ),
+    )
+    expect(openChange).toHaveBeenCalledWith(false)
+    expect(popup()).not.toBeNull()
+    expect(action('Apply').disabled).toBe(false)
+
+    act(() => action('Apply').click())
+    expect(change).toHaveBeenCalledWith({
+      start: { hour: 8, minute: 0 },
+      end: { hour: 11, minute: 30 },
+    })
+    expect(popup()).not.toBeNull()
+
+    render(
+      <AppTimeRangePicker
+        onOpenChange={openChange}
+        onValueChange={change}
+        open={false}
+        value={{
+          start: { hour: 9, minute: 0 },
+          end: { hour: 10, minute: 0 },
+        }}
+      />,
+    )
+    expect(popup()).toBeNull()
+  })
+
   it('keeps start and end semantics without sorting invalid ranges', () => {
     render(
       <AppTimeRangePicker

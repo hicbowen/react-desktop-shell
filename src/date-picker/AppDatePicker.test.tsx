@@ -161,6 +161,49 @@ describe('AppDatePicker', () => {
     expect(popup()).toBeNull()
   })
 
+  it('keeps controlled popup state when a close request is rejected', () => {
+    const openChange = vi.fn()
+    const valueChange = vi.fn()
+    render(
+      <AppDatePicker
+        onOpenChange={openChange}
+        onValueChange={valueChange}
+        open
+        value={{ year: 2026, month: 7, day: 16 }}
+      />,
+    )
+    flushFrames()
+
+    act(() =>
+      outside.dispatchEvent(
+        new PointerEvent('pointerdown', {
+          bubbles: true,
+          cancelable: true,
+        }),
+      ),
+    )
+    expect(openChange).toHaveBeenCalledWith(false)
+    expect(popup()).not.toBeNull()
+
+    clickDate('2026-07-20')
+    expect(valueChange).toHaveBeenCalledWith({
+      year: 2026,
+      month: 7,
+      day: 20,
+    })
+    expect(popup()).not.toBeNull()
+
+    render(
+      <AppDatePicker
+        onOpenChange={openChange}
+        onValueChange={valueChange}
+        open={false}
+        value={{ year: 2026, month: 7, day: 16 }}
+      />,
+    )
+    expect(popup()).toBeNull()
+  })
+
   it('honors disabled, readOnly, min, max, and unavailable dates', () => {
     const change = vi.fn()
     render(<AppDatePicker disabled onValueChange={change} />)

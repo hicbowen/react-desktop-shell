@@ -117,6 +117,7 @@ export function AppDatePicker({
   const anchorRef = useRef<HTMLDivElement | null>(null)
   const displayRef = useRef<HTMLButtonElement | null>(null)
   const calendarButtonRef = useRef<HTMLButtonElement | null>(null)
+  const openerRef = useRef<HTMLElement | null>(null)
   const overlayRef = useRef<HTMLDivElement | null>(null)
   const initialDate = getInitialDate(
     selectedValue ?? null,
@@ -135,7 +136,10 @@ export function AppDatePicker({
     onOpenChange,
     anchorRef,
     overlayRef,
-    focusRef: calendarButtonRef,
+    onAfterClose: () =>
+      (openerRef.current ?? calendarButtonRef.current)?.focus({
+        preventScroll: true,
+      }),
     dependencies: [locale],
   })
 
@@ -174,16 +178,18 @@ export function AppDatePicker({
   const selectDate = (next: AppDateValue) => {
     if (readOnly) return
     setValue(next)
-    overlay.setVisible(false)
-    calendarButtonRef.current?.focus({ preventScroll: true })
+    overlay.requestClose('apply')
   }
-  const openCalendar = () => {
-    if (!resolvedDisabled) overlay.setVisible(true)
+  const openCalendar = (opener: HTMLElement) => {
+    if (!resolvedDisabled) {
+      openerRef.current = opener
+      overlay.setVisible(true)
+    }
   }
   const handleDisplayKeyDown = (event: KeyboardEvent<HTMLButtonElement>) => {
     if (event.altKey && event.key === 'ArrowDown') {
       event.preventDefault()
-      openCalendar()
+      openCalendar(event.currentTarget)
     }
   }
   const popup = overlay.visible && typeof document !== 'undefined' ? (
@@ -247,7 +253,7 @@ export function AppDatePicker({
             .join(' ')}
           disabled={resolvedDisabled}
           id={id ?? field?.controlId}
-          onClick={openCalendar}
+          onClick={(event) => openCalendar(event.currentTarget)}
           onKeyDown={handleDisplayKeyDown}
           ref={displayRef}
           type="button"
@@ -273,7 +279,10 @@ export function AppDatePicker({
           aria-haspopup="dialog"
           className="app-date-picker__icon-button"
           disabled={resolvedDisabled}
-          onClick={() => overlay.setVisible(!overlay.visible)}
+          onClick={(event) => {
+            if (overlay.visible) overlay.requestClose('trigger')
+            else openCalendar(event.currentTarget)
+          }}
           ref={calendarButtonRef}
           type="button"
         >

@@ -1,11 +1,11 @@
-import { useState, type RefObject } from 'react'
+import { useEffect, useRef, useState, type RefObject } from 'react'
 import { useAppOverlayHost } from '../overlay/AppOverlayHostContext'
 import { useOverlayTree } from '../overlay/OverlayTreeContext'
 import { useAnchoredOverlayPosition } from '../overlay/useAnchoredOverlayPosition'
 import {
   useOverlayDismiss,
-  type OverlayDismissReason,
 } from '../overlay/useOverlayDismiss'
+import type { PickerCloseReason } from '../overlay/pickerCloseReason'
 
 interface UseTimePickerOverlayOptions {
   open?: boolean
@@ -13,8 +13,7 @@ interface UseTimePickerOverlayOptions {
   onOpenChange?: (open: boolean) => void
   anchorRef: RefObject<HTMLElement | null>
   overlayRef: RefObject<HTMLElement | null>
-  focusRef: RefObject<HTMLElement | null>
-  onDismiss?: (reason: OverlayDismissReason) => void
+  onAfterClose?: (reason: PickerCloseReason | null) => void
   dependencies?: readonly unknown[]
 }
 
@@ -24,8 +23,7 @@ export function useTimePickerOverlay({
   onOpenChange,
   anchorRef,
   overlayRef,
-  focusRef,
-  onDismiss,
+  onAfterClose,
   dependencies = [],
 }: UseTimePickerOverlayOptions) {
   const controlled = open !== undefined
@@ -33,6 +31,9 @@ export function useTimePickerOverlay({
   const visible = controlled ? open : internalOpen
   const overlayHost = useAppOverlayHost()
   const overlayTree = useOverlayTree(visible, overlayRef)
+  const previousVisibleRef = useRef(visible)
+  const pendingCloseReasonRef = useRef<PickerCloseReason | null>(null)
+  const onAfterCloseRef = useRef(onAfterClose)
   const position = useAnchoredOverlayPosition({
     open: visible,
     triggerRef: anchorRef,
@@ -44,22 +45,35 @@ export function useTimePickerOverlay({
     maxWidth: 520,
     dependencies,
   })
+  useEffect(() => {
+    onAfterCloseRef.current = onAfterClose
+  }, [onAfterClose])
+
+  useEffect(() => {
+    const didClose = previousVisibleRef.current && !visible
+    if (didClose) {
+      onAfterCloseRef.current?.(pendingCloseReasonRef.current)
+      pendingCloseReasonRef.current = null
+    }
+    previousVisibleRef.current = visible
+  }, [visible])
+
   const setVisible = (next: boolean) => {
+    if (next) pendingCloseReasonRef.current = null
     if (!controlled) setInternalOpen(next)
     onOpenChange?.(next)
+  }
+  const requestClose = (reason: PickerCloseReason) => {
+    pendingCloseReasonRef.current = reason
+    if (!controlled) setInternalOpen(false)
+    onOpenChange?.(false)
   }
 
   useOverlayDismiss({
     open: visible,
     overlayRef,
     triggerRef: anchorRef,
-    onDismiss: (reason) => {
-      onDismiss?.(reason)
-      setVisible(false)
-      if (reason === 'escape') {
-        focusRef.current?.focus({ preventScroll: true })
-      }
-    },
+    onDismiss: requestClose,
     closeOnExternalScroll: false,
     closeOnResize: false,
     closeOnWindowBlur: true,
@@ -71,6 +85,7 @@ export function useTimePickerOverlay({
   return {
     visible,
     setVisible,
+    requestClose,
     overlayHost,
     overlayTree,
     position,

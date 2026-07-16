@@ -118,8 +118,12 @@ export function AppTimePicker({
     onOpenChange,
     anchorRef,
     overlayRef,
-    focusRef: openerRef,
-    onDismiss: resetPending,
+    onAfterClose: () => {
+      resetPending()
+      ;(openerRef.current ?? timeButtonRef.current)?.focus({
+        preventScroll: true,
+      })
+    },
     dependencies: [locale, hourCycle, step],
   })
 
@@ -139,9 +143,7 @@ export function AppTimePicker({
     }
   }
   const cancel = () => {
-    resetPending()
-    overlay.setVisible(false)
-    openerRef.current?.focus({ preventScroll: true })
+    overlay.requestClose('cancel')
   }
   const handleDisplayKeyDown = (event: KeyboardEvent<HTMLButtonElement>) => {
     if (event.altKey && event.key === 'ArrowDown') {
@@ -199,8 +201,7 @@ export function AppTimePicker({
             onClick={() => {
               if (!canApply) return
               setCommittedValue(pendingValue)
-              overlay.setVisible(false)
-              openerRef.current?.focus({ preventScroll: true })
+              overlay.requestClose('apply')
             }}
             type="button"
           >

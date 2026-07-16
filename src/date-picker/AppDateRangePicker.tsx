@@ -160,7 +160,9 @@ export function AppDateRangePicker({
   const resolvedVisibleMonths = useResolvedVisibleMonths(visibleMonths)
   const anchorRef = useRef<HTMLDivElement | null>(null)
   const startRef = useRef<HTMLButtonElement | null>(null)
+  const endRef = useRef<HTMLButtonElement | null>(null)
   const calendarButtonRef = useRef<HTMLButtonElement | null>(null)
+  const openerRef = useRef<HTMLElement | null>(null)
   const overlayRef = useRef<HTMLDivElement | null>(null)
   const [editTarget, setEditTarget] = useState<RangeEditTarget>('start')
   const [pending, setPending] = useState<PendingDateRange>(() =>
@@ -189,8 +191,12 @@ export function AppDateRangePicker({
     onOpenChange,
     anchorRef,
     overlayRef,
-    focusRef: calendarButtonRef,
-    onDismiss: resetPending,
+    onAfterClose: () => {
+      resetPending()
+      ;(openerRef.current ?? calendarButtonRef.current)?.focus({
+        preventScroll: true,
+      })
+    },
     dependencies: [locale, resolvedVisibleMonths],
   })
 
@@ -231,8 +237,9 @@ export function AppDateRangePicker({
           day: '2-digit',
         }).format(appDateToLocalDate(date))
       : `${String(date.year).padStart(4, '0')}-${String(date.month).padStart(2, '0')}-${String(date.day).padStart(2, '0')}`
-  const openFor = (target: RangeEditTarget) => {
+  const openFor = (target: RangeEditTarget, opener: HTMLElement) => {
     if (resolvedDisabled) return
+    openerRef.current = opener
     setEditTarget(target)
     if (!overlay.visible) {
       setPending(toPending(committedValue ?? null))
@@ -241,9 +248,7 @@ export function AppDateRangePicker({
     overlay.setVisible(true)
   }
   const cancel = () => {
-    resetPending()
-    overlay.setVisible(false)
-    calendarButtonRef.current?.focus({ preventScroll: true })
+    overlay.requestClose('cancel')
   }
   const selectDate = (date: AppDateValue) => {
     if (readOnly) return
@@ -301,7 +306,7 @@ export function AppDateRangePicker({
   ) => {
     if (event.altKey && event.key === 'ArrowDown') {
       event.preventDefault()
-      openFor(target)
+      openFor(target, event.currentTarget)
     }
   }
   const popup = overlay.visible && typeof document !== 'undefined' ? (
@@ -363,8 +368,7 @@ export function AppDateRangePicker({
             onClick={() => {
               if (!completePending || !canApply) return
               setCommittedValue(completePending)
-              overlay.setVisible(false)
-              calendarButtonRef.current?.focus({ preventScroll: true })
+              overlay.requestClose('apply')
             }}
             type="button"
           >
@@ -406,7 +410,7 @@ export function AppDateRangePicker({
             .join(' ')}
           disabled={resolvedDisabled}
           id={id ?? field?.controlId}
-          onClick={() => openFor('start')}
+          onClick={(event) => openFor('start', event.currentTarget)}
           onKeyDown={(event) => handleSegmentKeyDown('start', event)}
           ref={startRef}
           type="button"
@@ -430,8 +434,9 @@ export function AppDateRangePicker({
             .filter(Boolean)
             .join(' ')}
           disabled={resolvedDisabled}
-          onClick={() => openFor('end')}
+          onClick={(event) => openFor('end', event.currentTarget)}
           onKeyDown={(event) => handleSegmentKeyDown('end', event)}
+          ref={endRef}
           type="button"
         >
           {committedValue?.end
@@ -458,9 +463,9 @@ export function AppDateRangePicker({
           aria-haspopup="dialog"
           className="app-date-picker__icon-button"
           disabled={resolvedDisabled}
-          onClick={() => {
+          onClick={(event) => {
             if (overlay.visible) cancel()
-            else openFor('start')
+            else openFor('start', event.currentTarget)
           }}
           ref={calendarButtonRef}
           type="button"
