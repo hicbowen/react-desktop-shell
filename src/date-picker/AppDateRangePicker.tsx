@@ -44,7 +44,6 @@ const defaultLocaleText: AppDateRangePickerLocale = {
   clearButtonLabel: 'Clear date range',
   previousMonthLabel: 'Previous month',
   nextMonthLabel: 'Next month',
-  todayLabel: 'Today',
   startPlaceholder: 'Start date',
   endPlaceholder: 'End date',
   cancelLabel: 'Cancel',

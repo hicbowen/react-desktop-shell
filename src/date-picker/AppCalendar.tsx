@@ -1,4 +1,4 @@
-import { useEffect, useRef, type KeyboardEvent } from 'react'
+import { useEffect, useId, useRef, type KeyboardEvent } from 'react'
 import {
   addDays,
   addMonths,
@@ -82,6 +82,7 @@ export function AppCalendar({
   selectionDisabled = false,
 }: AppCalendarProps) {
   const rootRef = useRef<HTMLDivElement | null>(null)
+  const titleId = useId()
   const firstMonth = startOfMonth(displayedMonth)
   const months = Array.from({ length: visibleMonths }, (_, index) =>
     addMonths(firstMonth, index),
@@ -192,6 +193,7 @@ export function AppCalendar({
 
   return (
     <div
+      aria-labelledby={titleId}
       aria-modal="false"
       aria-readonly={selectionDisabled || undefined}
       className={[
@@ -213,7 +215,11 @@ export function AppCalendar({
         >
           <PreviousIcon />
         </button>
-        <div aria-live="polite" className="app-calendar__titles">
+        <div
+          aria-live="polite"
+          className="app-calendar__titles"
+          id={titleId}
+        >
           {months.map((month) => (
             <div className="app-calendar__title" key={`${month.year}-${month.month}`}>
               {monthFormatter.format(appDateToLocalDate(month))}

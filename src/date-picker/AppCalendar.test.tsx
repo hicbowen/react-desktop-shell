@@ -196,10 +196,16 @@ describe('AppCalendar', () => {
 
   it('renders two months with shared navigation', () => {
     render(<CalendarHarness visibleMonths={2} />)
+    const dialog = container.querySelector<HTMLElement>('[role="dialog"]')!
+    const title = document.getElementById(
+      dialog.getAttribute('aria-labelledby')!,
+    )
     expect(container.querySelectorAll('.app-calendar__grid')).toHaveLength(2)
     expect(container.querySelectorAll('.app-calendar__nav')).toHaveLength(2)
     expect(container.textContent).toContain('July 2026')
     expect(container.textContent).toContain('August 2026')
+    expect(title?.textContent).toContain('July 2026')
+    expect(title?.textContent).toContain('August 2026')
   })
 
   it('removes the second month from focus navigation when reduced to one', () => {

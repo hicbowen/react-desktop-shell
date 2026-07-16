@@ -18,7 +18,6 @@ export interface AppDatePickerLocale {
   clearButtonLabel: string
   previousMonthLabel: string
   nextMonthLabel: string
-  todayLabel: string
 }
 
 export interface AppDatePickerProps {

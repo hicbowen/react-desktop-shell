@@ -32,7 +32,6 @@ const defaultLocaleText: AppDatePickerLocale = {
   clearButtonLabel: 'Clear date',
   previousMonthLabel: 'Previous month',
   nextMonthLabel: 'Next month',
-  todayLabel: 'Today',
 }
 
 function CalendarIcon() {
