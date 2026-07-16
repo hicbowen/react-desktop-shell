@@ -283,6 +283,16 @@ Use `AppProgressRing` for indeterminate work, `AppProgressBar` for determinate o
 </AppListView>
 ```
 
+## Expander
+
+`AppExpander` reveals low-frequency settings or details with controlled or uncontrolled state. Its header uses a linked `aria-expanded` button, while optional header actions remain independent.
+
+```tsx
+<AppExpander title="Advanced settings" description="Usually no changes are needed.">
+  <AdvancedSettings />
+</AppExpander>
+```
+
 `AppCard` is a low-contrast Fluent content surface for desktop tools, settings,
 status summaries, recent projects, and utility entry points. It is not a fixed
 web-dashboard panel: cards have no strong shadow or title divider by default,

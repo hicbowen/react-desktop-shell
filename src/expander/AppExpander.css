@@ -1,0 +1,20 @@
+.app-expander { color: var(--app-shell-text-color, #1f1f1f); background: var(--app-shell-card-bg, #fff); border: 1px solid var(--app-shell-border-color, rgb(0 0 0 / 12%)); border-radius: 7px; }
+.app-expander--subtle { background: transparent; border-color: transparent; border-radius: 0; }
+.app-expander__header { display: flex; align-items: center; }
+.app-expander__trigger { min-width: 0; min-height: 46px; display: flex; flex: 1; align-items: center; gap: 10px; padding: 7px 12px; color: inherit; background: transparent; border: 0; border-radius: inherit; text-align: start; font: inherit; }
+.app-expander__trigger:hover:not(:disabled) { background: var(--app-shell-card-hover-bg, rgb(0 0 0 / 4%)); }
+.app-expander__trigger:focus-visible { outline: 2px solid var(--app-shell-accent-color, #005fb8); outline-offset: -2px; }
+.app-expander__icon { width: 18px; height: 18px; display: inline-flex; flex: 0 0 18px; color: var(--app-shell-secondary-text-color, rgb(0 0 0 / 62%)); }
+.app-expander__icon > svg { width: 100%; height: 100%; }
+.app-expander__heading { min-width: 0; display: grid; flex: 1; gap: 2px; }
+.app-expander__title { font-size: 13px; font-weight: 600; }
+.app-expander__description { color: var(--app-shell-secondary-text-color, rgb(0 0 0 / 62%)); font-size: 12px; line-height: 1.35; }
+.app-expander__chevron { font-size: 16px; transition: transform var(--rds-motion-fast, 120ms) ease; }
+.app-expander--expanded .app-expander__chevron { transform: rotate(180deg); }
+.app-expander__actions { display: inline-flex; align-items: center; gap: 5px; padding-right: 8px; }
+.app-expander__region { display: grid; grid-template-rows: 0fr; transition: grid-template-rows var(--rds-motion-fast, 120ms) ease; }
+.app-expander--expanded .app-expander__region { grid-template-rows: 1fr; }
+.app-expander__region-inner { min-height: 0; overflow: hidden; }
+.app-expander__content { padding: 4px 12px 14px; border-top: 1px solid var(--app-shell-border-color, rgb(0 0 0 / 10%)); font-size: 13px; }
+.app-expander--disabled { color: var(--app-shell-disabled-text-color, rgb(0 0 0 / 36%)); }
+@media (prefers-reduced-motion: reduce) { .app-expander__chevron, .app-expander__region { transition: none; } }

@@ -7,6 +7,7 @@ export { AppTextArea, AppTextBox } from './text-input'
 export { AppCheckBox, AppToggleSwitch } from './selection-controls'
 export { AppNumberBox, AppSelect } from './number-select'
 export { AppListView, AppListViewItem } from './list-view'
+export { AppExpander } from './expander'
 export { AppCard, AppCardFooter, AppCardGroup, AppCardHeader } from './card'
 export { AppContextMenu } from './context-menu/AppContextMenu'
 export { AppDialog } from './dialog/AppDialog'
@@ -47,6 +48,7 @@ export type {
   AppSelectProps,
   AppListViewItemProps,
   AppListViewProps,
+  AppExpanderProps,
   AppIconButtonProps,
   AppClipboardAdapter,
   AppCardAppearance,
