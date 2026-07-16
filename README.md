@@ -237,6 +237,15 @@ reorderable tabs, large filter sets, overflow menus, or routing.
 <AppEmptyState title="No students yet" description="Add a student to begin." action={<AppButton>Add student</AppButton>} />
 ```
 
+## Progress and status
+
+Use `AppProgressRing` for indeterminate work, `AppProgressBar` for determinate or inline indeterminate progress, and `AppStatusBadge` for one of the fixed semantic statuses. All progress controls expose native ARIA roles and reduced-motion fallbacks.
+
+```tsx
+<AppProgressBar value={68} label="Importing students" showValue />
+<AppStatusBadge status="success">Complete</AppStatusBadge>
+```
+
 `AppCard` is a low-contrast Fluent content surface for desktop tools, settings,
 status summaries, recent projects, and utility entry points. It is not a fixed
 web-dashboard panel: cards have no strong shadow or title divider by default,

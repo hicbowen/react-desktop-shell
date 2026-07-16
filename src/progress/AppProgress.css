@@ -1,0 +1,28 @@
+.app-progress-ring { display: inline-flex; align-items: center; gap: 8px; color: var(--app-shell-text-color, #1f1f1f); font-size: 13px; }
+.app-progress-ring--label-bottom { flex-direction: column; }
+.app-progress-ring__indicator { width: 20px; height: 20px; box-sizing: border-box; border: 2px solid var(--app-shell-border-color, rgb(0 0 0 / 18%)); border-top-color: var(--app-shell-accent-color, #005fb8); border-radius: 50%; animation: app-progress-spin .85s linear infinite; }
+.app-progress-ring--small .app-progress-ring__indicator { width: 14px; height: 14px; }
+.app-progress-ring--large .app-progress-ring__indicator { width: 30px; height: 30px; border-width: 3px; }
+.app-progress-bar { min-width: 120px; display: grid; gap: 6px; color: var(--app-shell-text-color, #1f1f1f); font-size: 13px; }
+.app-progress-bar__header { display: flex; justify-content: space-between; gap: 12px; }
+.app-progress-bar__value, .app-progress-bar__description { color: var(--app-shell-secondary-text-color, rgb(0 0 0 / 62%)); font-size: 12px; }
+.app-progress-bar__track { height: 4px; overflow: hidden; background: var(--app-shell-border-color, rgb(0 0 0 / 14%)); border-radius: 4px; }
+.app-progress-bar__indicator { display: block; height: 100%; background: var(--app-shell-accent-color, #005fb8); border-radius: inherit; transition: width var(--rds-motion-fast, 120ms) ease; }
+.app-progress-bar--success .app-progress-bar__indicator { background: var(--app-shell-success-color, #107c10); }
+.app-progress-bar--error .app-progress-bar__indicator { background: var(--app-shell-danger-color, #c42b1c); }
+.app-progress-bar--indeterminate .app-progress-bar__indicator { width: 38%; animation: app-progress-slide 1.35s ease-in-out infinite; }
+.app-status-badge { --badge-color: var(--app-shell-secondary-text-color, #5c5c5c); --badge-bg: rgb(92 92 92 / 10%); display: inline-flex; align-items: center; gap: 5px; min-height: 22px; box-sizing: border-box; padding: 2px 8px; color: var(--badge-color); background: var(--badge-bg); border: 1px solid transparent; border-radius: 999px; font-size: 12px; line-height: 1.2; white-space: nowrap; }
+.app-status-badge--info { --badge-color: var(--app-shell-accent-color, #005fb8); --badge-bg: rgb(0 95 184 / 10%); }
+.app-status-badge--success { --badge-color: var(--app-shell-success-color, #107c10); --badge-bg: rgb(16 124 16 / 10%); }
+.app-status-badge--warning { --badge-color: var(--app-shell-warning-color, #8a5d00); --badge-bg: rgb(138 93 0 / 12%); }
+.app-status-badge--danger { --badge-color: var(--app-shell-danger-color, #c42b1c); --badge-bg: rgb(196 43 28 / 10%); }
+.app-status-badge--filled { color: var(--app-shell-accent-text-color, #fff); background: var(--badge-color); }
+.app-status-badge--outline { background: transparent; border-color: currentColor; }
+.app-status-badge--small { min-height: 18px; padding: 1px 6px; font-size: 11px; }
+.app-status-badge__marker { display: inline-flex; align-items: center; }
+.app-status-badge__icon { width: 12px; height: 12px; display: inline-flex; }
+.app-status-badge__icon > svg { width: 100%; height: 100%; }
+.app-status-badge__sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+@keyframes app-progress-spin { to { transform: rotate(360deg); } }
+@keyframes app-progress-slide { from { transform: translateX(-110%); } 50% { transform: translateX(90%); } to { transform: translateX(270%); } }
+@media (prefers-reduced-motion: reduce) { .app-progress-ring__indicator { animation-duration: 1.7s; } .app-progress-bar__indicator { transition: none; } .app-progress-bar--indeterminate .app-progress-bar__indicator { animation: none; width: 55%; opacity: .72; } }

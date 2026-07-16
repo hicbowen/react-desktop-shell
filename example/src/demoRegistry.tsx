@@ -1,5 +1,5 @@
 import type { ComponentType, ReactNode } from 'react'
-import { Bell, Boxes, CircleHelp, Columns3, CreditCard, Info, LayoutDashboard, LayoutPanelTop, Lightbulb, ListChecks, Menu, MessageSquare, MousePointerClick, Navigation, PanelRight, Rows3, ScrollText, Settings, SlidersHorizontal, Table2, UploadCloud, Wrench, SquareMousePointer } from 'lucide-react'
+import { Bell, Boxes, CircleHelp, Columns3, CreditCard, Info, LayoutDashboard, LayoutPanelTop, Lightbulb, ListChecks, Menu, MessageSquare, MousePointerClick, Navigation, PanelRight, Rows3, ScrollText, Settings, SlidersHorizontal, Table2, UploadCloud, Wrench, SquareMousePointer, Clock3 } from 'lucide-react'
 import type { RailEntry, RailItem } from '../../src'
 import { OverviewPage } from './pages/OverviewPage'
 import { AppPagePage, AppShellPage, AppSidePanePage, AppTitleBarPage } from './pages/shell/ShellPages'
@@ -18,6 +18,7 @@ import { AppSplitButtonPage } from './pages/actions/SplitButtonPage'
 import { ButtonsPage } from './pages/actions/ButtonsPage'
 import { AppTeachingTipPage } from './pages/feedback/TeachingTipPage'
 import { AppFileDropOverlayPage } from './pages/feedback/FileDropOverlayPage'
+import { ProgressStatusPage } from './pages/feedback/ProgressStatusPage'
 
 export type DemoPageDefinition = { key: string; group: string; label: string; description: string; icon: ReactNode; component: ComponentType; layout?: 'default' | 'fill' }
 
@@ -34,6 +35,7 @@ export const demoPages: DemoPageDefinition[] = [
   { key: 'app-scroll-area', group: 'Content', label: 'AppScrollArea', description: 'Native scrolling with Fluent overflow, scrollbar, and gutter styling.', icon: <ScrollText size={16} />, component: AppScrollAreaPage },
   { key: 'field-empty-state', group: 'Content', label: 'Field & Empty State', description: 'Accessible field structure and compact or regular empty content.', icon: <Rows3 size={16} />, component: FieldEmptyStatePage },
   { key: 'app-info-bar', group: 'Feedback', label: 'AppInfoBar', description: 'Inline informational, success, warning, and error states.', icon: <Info size={16} />, component: AppInfoBarPage },
+  { key: 'progress-status', group: 'Feedback', label: 'Progress & Status', description: 'Indeterminate and determinate progress with semantic status badges.', icon: <Clock3 size={16} />, component: ProgressStatusPage },
   { key: 'app-tooltip', group: 'Feedback', label: 'AppTooltip', description: 'Non-interactive descriptions for hover and keyboard focus.', icon: <CircleHelp size={16} />, component: AppTooltipPage },
   { key: 'app-teaching-tip', group: 'Feedback', label: 'AppTeachingTip', description: 'Controlled anchored guidance with title, content, and actions.', icon: <Lightbulb size={16} />, component: AppTeachingTipPage },
   { key: 'app-file-drop-overlay', group: 'Feedback', label: 'AppFileDropOverlay', description: 'Accepting and rejecting overlays for local file drags.', icon: <UploadCloud size={16} />, component: AppFileDropOverlayPage },

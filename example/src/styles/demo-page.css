@@ -698,3 +698,7 @@
   gap: 10px;
 }
 .demo-form-stack { display: grid; gap: 18px; }
+.demo-progress-stack { display: grid; gap: 20px; }
+.demo-status-list { display: grid; gap: 8px; margin-top: 14px; }
+.demo-list-placeholder { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 9px 10px; border-bottom: 1px solid var(--app-shell-border-color, rgb(0 0 0 / 12%)); }
+.demo-list-placeholder > span { display: inline-flex; align-items: center; gap: 8px; }
