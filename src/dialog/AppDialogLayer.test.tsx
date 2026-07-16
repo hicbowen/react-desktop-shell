@@ -5,6 +5,7 @@ import { createRoot, type Root } from 'react-dom/client'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import type { AppDialogRegistration } from './AppDialogContext'
 import { AppDialogLayer } from './AppDialogLayer'
+import { AppPopover } from '../popover/AppPopover'
 import { useDialogController } from './useDialogController'
 import type { AppMessageBox } from './types'
 
@@ -155,6 +156,94 @@ describe('AppDialogLayer', () => {
     expect(overlays).toHaveLength(1)
     expect(overlays[0]?.textContent).toContain('Lower latest')
     expect(overlays[0]?.dataset.topDialog).toBe('true')
+  })
+
+  it('hosts a popover inside the owning dialog focus scope', () => {
+    const closeDialog = vi.fn()
+
+    render([
+      registration('with-popover', {
+        onOpenChange: closeDialog,
+        children: (
+          <AppPopover defaultOpen trigger={<button type="button">Open</button>}>
+            <input aria-label="Popover first value" />
+            <input aria-label="Popover last value" />
+          </AppPopover>
+        ),
+      }),
+    ])
+
+    const overlay = container.querySelector('.app-dialog-overlay')
+    const localHost = overlay?.querySelector('.app-dialog__overlay-host')
+    const popover = localHost?.querySelector('.app-popover')
+    const inputs = popover?.querySelectorAll('input')
+    const input = inputs?.[0]
+    const trigger = overlay?.querySelector('button')
+
+    expect(localHost).not.toBeNull()
+    expect(popover?.parentElement).toBe(localHost)
+    expect(document.body.querySelector(':scope > .app-popover')).toBeNull()
+
+    Object.defineProperty(trigger, 'offsetParent', {
+      configurable: true,
+      value: overlay,
+    })
+    Object.defineProperty(input, 'offsetParent', {
+      configurable: true,
+      value: localHost,
+    })
+    Object.defineProperty(inputs?.[1], 'offsetParent', {
+      configurable: true,
+      value: localHost,
+    })
+
+    act(() => input?.focus())
+    expect(document.activeElement).toBe(input)
+
+    act(() => {
+      input?.dispatchEvent(
+        new KeyboardEvent('keydown', { bubbles: true, key: 'Tab' }),
+      )
+    })
+    expect(document.activeElement).toBe(input)
+
+    act(() => {
+      document.dispatchEvent(
+        new KeyboardEvent('keydown', {
+          bubbles: true,
+          cancelable: true,
+          key: 'Escape',
+        }),
+      )
+    })
+    expect(localHost?.querySelector('.app-popover')).toBeNull()
+    expect(closeDialog).not.toHaveBeenCalled()
+  })
+
+  it('keeps overlay hosts isolated across stacked dialogs', () => {
+    render([
+      registration('lower-overlay', {
+        children: (
+          <AppPopover defaultOpen trigger={<button type="button">Lower</button>}>
+            Lower popover
+          </AppPopover>
+        ),
+      }),
+      registration('upper-overlay', {
+        children: (
+          <AppPopover defaultOpen trigger={<button type="button">Upper</button>}>
+            Upper popover
+          </AppPopover>
+        ),
+      }),
+    ])
+
+    const hosts = container.querySelectorAll('.app-dialog__overlay-host')
+    expect(hosts).toHaveLength(2)
+    expect(hosts[0]?.textContent).toContain('Lower popover')
+    expect(hosts[0]?.textContent).not.toContain('Upper popover')
+    expect(hosts[1]?.textContent).toContain('Upper popover')
+    expect(hosts[1]?.textContent).not.toContain('Lower popover')
   })
 
   it('keeps message box resolve and cancel behavior working', async () => {

@@ -25,6 +25,8 @@
 }
 
 .app-dialog {
+  position: relative;
+  z-index: 0;
   width: var(--app-dialog-width);
   max-width: calc(100vw - 32px);
   max-height: calc(100vh - 32px);
@@ -38,6 +40,13 @@
   box-shadow: var(--app-shell-dialog-shadow);
   outline: 0;
   animation: app-dialog-enter var(--rds-motion-normal) var(--rds-ease-enter);
+}
+
+.app-dialog__overlay-host {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
 }
 
 .app-dialog--exit {

@@ -1,4 +1,5 @@
 import {
+  useCallback,
   useEffect,
   useId,
   useLayoutEffect,
@@ -7,6 +8,7 @@ import {
   useState,
 } from 'react'
 import type { CSSProperties } from 'react'
+import { AppOverlayHostContext } from '../overlay/AppOverlayHostContext'
 import type { AppDialogRegistration } from './AppDialogContext'
 import './AppDialogLayer.css'
 import '../scroll-area/AppScrollArea.css'
@@ -137,6 +139,13 @@ function AppDialogSurface({
   onExited: () => void
 }) {
   const surfaceRef = useRef<HTMLDivElement | null>(null)
+  const dialogOverlayHostRef = useRef<HTMLDivElement | null>(null)
+  const [dialogOverlayHost, setDialogOverlayHost] =
+    useState<HTMLDivElement | null>(null)
+  const setOverlayHost = useCallback((node: HTMLDivElement | null) => {
+    dialogOverlayHostRef.current = node
+    setDialogOverlayHost(node)
+  }, [])
   const titleId = `${useId()}-title`
   const descriptionId = `${useId()}-description`
   const closeOnEscape = dialog.closeOnEscape ?? true
@@ -192,6 +201,10 @@ function AppDialogSurface({
 
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
+        if (event.defaultPrevented) {
+          return
+        }
+
         if (closeOnEscape) {
           event.preventDefault()
           dialog.onOpenChange?.(false)
@@ -215,12 +228,16 @@ function AppDialogSurface({
       }
 
       const surface = surfaceRef.current
+      const overlayHost = dialogOverlayHostRef.current
 
       if (!surface) {
         return
       }
 
-      const tabbable = getTabbableElements(surface)
+      const tabbable = [
+        ...getTabbableElements(surface),
+        ...getTabbableElements(overlayHost),
+      ]
 
       if (tabbable.length === 0) {
         event.preventDefault()
@@ -233,7 +250,10 @@ function AppDialogSurface({
       const active = document.activeElement
 
       if (event.shiftKey) {
-        if (active === first || !surface.contains(active)) {
+        if (
+          active === first ||
+          !isInsideDialogScope(active, surface, overlayHost)
+        ) {
           event.preventDefault()
           last.focus({ preventScroll: true })
         }
@@ -241,16 +261,19 @@ function AppDialogSurface({
         return
       }
 
-      if (active === last || !surface.contains(active)) {
+      if (
+        active === last ||
+        !isInsideDialogScope(active, surface, overlayHost)
+      ) {
         event.preventDefault()
         first.focus({ preventScroll: true })
       }
     }
 
-    document.addEventListener('keydown', handleKeyDown, true)
+    document.addEventListener('keydown', handleKeyDown)
 
     return () => {
-      document.removeEventListener('keydown', handleKeyDown, true)
+      document.removeEventListener('keydown', handleKeyDown)
     }
   }, [closeOnEscape, dialog, exiting, top])
 
@@ -274,46 +297,62 @@ function AppDialogSurface({
         }
       }}
     >
+      <AppOverlayHostContext.Provider value={dialogOverlayHost}>
+        <div
+          ref={surfaceRef}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby={dialog.title ? titleId : undefined}
+          aria-describedby={dialog.description ? descriptionId : undefined}
+          tabIndex={-1}
+          className={[
+            'app-dialog',
+            dialog.className ?? '',
+            exiting ? 'app-dialog--exit' : '',
+          ]
+            .filter(Boolean)
+            .join(' ')}
+          style={surfaceStyle}
+        >
+          {dialog.title || dialog.description ? (
+            <header className="app-dialog__header">
+              {dialog.title ? (
+                <div className="app-dialog__title" id={titleId}>
+                  {dialog.title}
+                </div>
+              ) : null}
+              {dialog.description ? (
+                <div className="app-dialog__description" id={descriptionId}>
+                  {dialog.description}
+                </div>
+              ) : null}
+            </header>
+          ) : null}
+          {dialog.children ? (
+            <div className="app-dialog__content app-scrollbar">
+              {dialog.children}
+            </div>
+          ) : null}
+          {dialog.actions ? (
+            <footer className="app-dialog__actions">{dialog.actions}</footer>
+          ) : null}
+        </div>
+      </AppOverlayHostContext.Provider>
       <div
-        ref={surfaceRef}
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby={dialog.title ? titleId : undefined}
-        aria-describedby={dialog.description ? descriptionId : undefined}
-        tabIndex={-1}
-        className={[
-          'app-dialog',
-          dialog.className ?? '',
-          exiting ? 'app-dialog--exit' : '',
-        ]
-          .filter(Boolean)
-          .join(' ')}
-        style={surfaceStyle}
-      >
-        {dialog.title || dialog.description ? (
-          <header className="app-dialog__header">
-            {dialog.title ? (
-              <div className="app-dialog__title" id={titleId}>
-                {dialog.title}
-              </div>
-            ) : null}
-            {dialog.description ? (
-              <div className="app-dialog__description" id={descriptionId}>
-                {dialog.description}
-              </div>
-            ) : null}
-          </header>
-        ) : null}
-        {dialog.children ? (
-          <div className="app-dialog__content app-scrollbar">
-            {dialog.children}
-          </div>
-        ) : null}
-        {dialog.actions ? (
-          <footer className="app-dialog__actions">{dialog.actions}</footer>
-        ) : null}
-      </div>
+        className="app-dialog__overlay-host"
+        ref={setOverlayHost}
+      />
     </div>
+  )
+}
+
+function isInsideDialogScope(
+  node: Node | null,
+  surface: HTMLElement | null,
+  overlayHost: HTMLElement | null,
+) {
+  return Boolean(
+    node && (surface?.contains(node) || overlayHost?.contains(node)),
   )
 }
 
