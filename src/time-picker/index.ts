@@ -7,9 +7,7 @@ export {
 } from './timeMath'
 export { formatAppTimeISO, parseAppTimeISO } from './timeFormat'
 export type {
-  AppTimePickerLocale,
   AppTimePickerProps,
-  AppTimeRangePickerLocale,
   AppTimeRangePickerProps,
   AppTimeRangeValue,
   AppTimeValue,

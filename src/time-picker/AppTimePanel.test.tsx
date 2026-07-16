@@ -1,10 +1,33 @@
 // @vitest-environment jsdom
 
-import { act, useState } from 'react'
+import { act, useState, type ReactNode } from 'react'
 import { createRoot, type Root } from 'react-dom/client'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { AppLocaleContext } from '../localization/AppLocaleContext'
+import { enUSMessages } from '../localization/locales/en-US'
 import { AppTimePanel } from './AppTimePanel'
 import type { AppTimeValue } from './types'
+
+function TestLocaleBoundary({
+  children,
+  hourCycle,
+}: {
+  children: ReactNode
+  hourCycle: 12 | 24
+}) {
+  return (
+    <AppLocaleContext.Provider
+      value={{
+        locale: 'en-US',
+        messages: enUSMessages,
+        firstDayOfWeek: 0,
+        hourCycle,
+      }}
+    >
+      {children}
+    </AppLocaleContext.Provider>
+  )
+}
 
 function Harness({
   initial = { hour: 9, minute: 30 },
@@ -14,7 +37,6 @@ function Harness({
   maxValue,
   readOnly = false,
   autoFocus = false,
-  noAvailableTimeLabel = 'No available times',
   onAvailabilityChange,
   onChange,
 }: {
@@ -25,30 +47,26 @@ function Harness({
   maxValue?: AppTimeValue
   readOnly?: boolean
   autoFocus?: boolean
-  noAvailableTimeLabel?: string
   onAvailabilityChange?: (hasAvailableValue: boolean) => void
   onChange?: (value: AppTimeValue) => void
 }) {
   const [value, setValue] = useState(initial)
   return (
-    <AppTimePanel
-      autoFocus={autoFocus}
-      hourCycle={hourCycle}
-      hourLabel="Hour"
-      locale="en-US"
-      maxValue={maxValue}
-      minValue={minValue}
-      minuteLabel="Minute"
-      minuteStep={step}
-      noAvailableTimeLabel={noAvailableTimeLabel}
-      onAvailabilityChange={onAvailabilityChange}
-      onValueChange={(next) => {
-        setValue(next)
-        onChange?.(next)
-      }}
-      readOnly={readOnly}
-      value={value}
-    />
+    <TestLocaleBoundary hourCycle={hourCycle}>
+      <AppTimePanel
+        autoFocus={autoFocus}
+        maxValue={maxValue}
+        minValue={minValue}
+        minuteStep={step}
+        onAvailabilityChange={onAvailabilityChange}
+        onValueChange={(next) => {
+          setValue(next)
+          onChange?.(next)
+        }}
+        readOnly={readOnly}
+        value={value}
+      />
+    </TestLocaleBoundary>
   )
 }
 

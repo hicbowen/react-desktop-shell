@@ -7,6 +7,7 @@ import {
 } from 'react'
 import { createPortal } from 'react-dom'
 import { useAppFieldContext } from '../field/AppFieldContext'
+import { useAppLocale } from '../localization/useAppLocale'
 import { OverlayParentContext } from '../overlay/OverlayTreeContext'
 import { getAnchoredOverlaySurfaceStyle } from '../overlay/getAnchoredOverlaySurfaceStyle'
 import { AppTimePanel } from './AppTimePanel'
@@ -21,22 +22,11 @@ import {
   normalizeMinuteStep,
 } from './timeMath'
 import type {
-  AppTimePickerLocale,
   AppTimePickerProps,
   AppTimeValue,
 } from './types'
 import { useTimePickerOverlay } from './useTimePickerOverlay'
 import './AppTimePicker.css'
-
-const defaultLocaleText: AppTimePickerLocale = {
-  timeButtonLabel: 'Open time picker',
-  clearButtonLabel: 'Clear time',
-  hourLabel: 'Hour',
-  minuteLabel: 'Minute',
-  cancelLabel: 'Cancel',
-  applyLabel: 'Apply',
-  noAvailableTimeLabel: 'No available times',
-}
 
 function TimeIcon() {
   return (
@@ -70,9 +60,6 @@ export function AppTimePicker({
   minValue,
   maxValue,
   minuteStep,
-  hourCycle = 24,
-  locale = 'en-US',
-  placeholder = 'Select a time',
   allowClear = false,
   disabled,
   readOnly = false,
@@ -82,16 +69,15 @@ export function AppTimePicker({
   id,
   className,
   style,
-  localeText,
 }: AppTimePickerProps) {
   const field = useAppFieldContext()
+  const { locale, messages, hourCycle } = useAppLocale()
   const controlled = value !== undefined
   const [internalValue, setInternalValue] = useState(defaultValue)
   const committedValue = controlled ? value : internalValue
   const resolvedDisabled = disabled ?? field?.disabled ?? false
   const resolvedRequired = required ?? field?.required
   const resolvedInvalid = invalid ?? field?.invalid
-  const resolvedLocaleText = { ...defaultLocaleText, ...localeText }
   const step = normalizeMinuteStep(minuteStep)
   const anchorRef = useRef<HTMLDivElement | null>(null)
   const displayRef = useRef<HTMLButtonElement | null>(null)
@@ -161,7 +147,7 @@ export function AppTimePicker({
   const popup = overlay.visible && typeof document !== 'undefined' ? (
     <OverlayParentContext.Provider value={overlay.overlayTree.overlayId}>
       <div
-        aria-label={resolvedLocaleText.timeButtonLabel}
+        aria-label={messages.timePicker.dialogLabel}
         aria-modal="false"
         className="app-time-picker__popup"
         data-placement={overlay.position.placement}
@@ -174,14 +160,9 @@ export function AppTimePicker({
       >
         <AppTimePanel
           autoFocus={overlay.position.measured}
-          hourCycle={hourCycle}
-          hourLabel={resolvedLocaleText.hourLabel}
-          locale={locale}
           maxValue={maxValue}
           minValue={minValue}
-          minuteLabel={resolvedLocaleText.minuteLabel}
           minuteStep={step}
-          noAvailableTimeLabel={resolvedLocaleText.noAvailableTimeLabel}
           onAvailabilityChange={setHasAvailableValue}
           onValueChange={setPendingValue}
           readOnly={readOnly}
@@ -193,7 +174,7 @@ export function AppTimePicker({
             onClick={cancel}
             type="button"
           >
-            {resolvedLocaleText.cancelLabel}
+            {messages.common.cancel}
           </button>
           <button
             className="app-time-picker__action app-time-picker__action--primary"
@@ -205,7 +186,7 @@ export function AppTimePicker({
             }}
             type="button"
           >
-            {resolvedLocaleText.applyLabel}
+            {messages.common.apply}
           </button>
         </footer>
       </div>
@@ -248,11 +229,11 @@ export function AppTimePicker({
           ref={displayRef}
           type="button"
         >
-          {displayText ?? placeholder}
+          {displayText ?? messages.timePicker.placeholder}
         </button>
         {allowClear && committedValue && !resolvedDisabled && !readOnly ? (
           <button
-            aria-label={resolvedLocaleText.clearButtonLabel}
+            aria-label={messages.timePicker.clearLabel}
             className="app-time-picker__icon-button"
             onClick={() => {
               setCommittedValue(null)
@@ -264,7 +245,7 @@ export function AppTimePicker({
           </button>
         ) : null}
         <button
-          aria-label={resolvedLocaleText.timeButtonLabel}
+          aria-label={messages.timePicker.openLabel}
           aria-expanded={overlay.visible}
           aria-haspopup="dialog"
           className="app-time-picker__icon-button"

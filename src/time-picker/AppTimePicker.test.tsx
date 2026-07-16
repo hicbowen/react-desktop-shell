@@ -1,12 +1,29 @@
 // @vitest-environment jsdom
 
-import { act } from 'react'
+import { act, type ReactNode } from 'react'
 import { createRoot, type Root } from 'react-dom/client'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { AppDialog } from '../dialog/AppDialog'
 import { AppField } from '../field/AppField'
+import { AppLocaleContext } from '../localization/AppLocaleContext'
+import { enUSMessages } from '../localization/locales/en-US'
 import { AppShell } from '../shell/AppShell'
 import { AppTimePicker } from './AppTimePicker'
+
+function TestLocaleBoundary({ children }: { children: ReactNode }) {
+  return (
+    <AppLocaleContext.Provider
+      value={{
+        locale: 'en-US',
+        messages: enUSMessages,
+        firstDayOfWeek: 0,
+        hourCycle: 24,
+      }}
+    >
+      {children}
+    </AppLocaleContext.Provider>
+  )
+}
 
 describe('AppTimePicker', () => {
   let container: HTMLDivElement
@@ -67,7 +84,7 @@ describe('AppTimePicker', () => {
   })
 
   const render = (node: React.ReactNode) =>
-    act(() => root.render(node))
+    act(() => root.render(<TestLocaleBoundary>{node}</TestLocaleBoundary>))
   const display = () =>
     container.querySelector<HTMLButtonElement>('.app-time-picker__display')!
   const popup = () =>
@@ -207,13 +224,14 @@ describe('AppTimePicker', () => {
   it('supports controlled values, clear, 12-hour display, and hidden ISO', () => {
     const change = vi.fn()
     render(
-      <AppTimePicker
-        allowClear
-        hourCycle={12}
-        name="reminder"
-        onValueChange={change}
-        value={{ hour: 18, minute: 30 }}
-      />,
+      <AppShell locale="en-US">
+        <AppTimePicker
+          allowClear
+          name="reminder"
+          onValueChange={change}
+          value={{ hour: 18, minute: 30 }}
+        />
+      </AppShell>,
     )
     expect(display().textContent).toBe('6:30 PM')
     expect(
@@ -314,7 +332,46 @@ describe('AppTimePicker', () => {
     expect(popup()?.style.left).toBe('540px')
     expect(popup()?.style.top).toBe('297px')
     expect(popup()?.getAttribute('role')).toBe('dialog')
-    expect(popup()?.getAttribute('aria-label')).toBe('Open time picker')
+    expect(popup()?.getAttribute('aria-label')).toBe('Time picker')
+  })
+
+  it('uses global language for display, labels, actions, and hidden ISO', () => {
+    render(
+      <AppShell locale="zh-CN">
+        <AppTimePicker
+          defaultOpen
+          name="localized-time"
+          value={{ hour: 18, minute: 30 }}
+        />
+      </AppShell>,
+    )
+    flushFrames()
+    expect(display().textContent).toBe('18:30')
+    expect(popup()?.textContent).toContain('小时')
+    expect(action('取消')).toBeDefined()
+    expect(
+      container.querySelector<HTMLInputElement>('[name="localized-time"]')
+        ?.value,
+    ).toBe('18:30')
+
+    render(
+      <AppShell locale="en-US">
+        <AppTimePicker
+          defaultOpen
+          name="localized-time"
+          value={{ hour: 18, minute: 30 }}
+        />
+      </AppShell>,
+    )
+    flushFrames()
+    expect(display().textContent).toBe('6:30 PM')
+    expect(popup()).not.toBeNull()
+    expect(popup()?.textContent).toContain('Hour')
+    expect(action('Cancel')).toBeDefined()
+    expect(
+      container.querySelector<HTMLInputElement>('[name="localized-time"]')
+        ?.value,
+    ).toBe('18:30')
   })
 
   it('focuses the selected hour and restores the actual opener', () => {

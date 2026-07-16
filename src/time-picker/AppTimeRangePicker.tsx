@@ -7,6 +7,7 @@ import {
 } from 'react'
 import { createPortal } from 'react-dom'
 import { useAppFieldContext } from '../field/AppFieldContext'
+import { useAppLocale } from '../localization/useAppLocale'
 import { OverlayParentContext } from '../overlay/OverlayTreeContext'
 import { getAnchoredOverlaySurfaceStyle } from '../overlay/getAnchoredOverlaySurfaceStyle'
 import { AppTimePanel } from './AppTimePanel'
@@ -25,7 +26,6 @@ import {
   normalizeMinuteStep,
 } from './timeMath'
 import type {
-  AppTimeRangePickerLocale,
   AppTimeRangePickerProps,
   AppTimeRangeValue,
   AppTimeValue,
@@ -34,23 +34,6 @@ import { useTimePickerOverlay } from './useTimePickerOverlay'
 import './AppTimePicker.css'
 
 type TimeRangeEditTarget = 'start' | 'end'
-
-const defaultLocaleText: AppTimeRangePickerLocale = {
-  timeButtonLabel: 'Open time range picker',
-  dialogLabel: 'Choose a time range',
-  clearButtonLabel: 'Clear time range',
-  hourLabel: 'Hour',
-  minuteLabel: 'Minute',
-  cancelLabel: 'Cancel',
-  applyLabel: 'Apply',
-  noAvailableTimeLabel: 'No available times',
-  startLabel: 'Start time',
-  endLabel: 'End time',
-  startPlaceholder: 'Start time',
-  endPlaceholder: 'End time',
-  durationLabel: (minutes) => `${minutes} minutes`,
-  invalidRangeLabel: 'End time must be later than start time',
-}
 
 function TimeIcon() {
   return (
@@ -112,10 +95,6 @@ export function AppTimeRangePicker({
   minuteStep,
   minDuration,
   maxDuration,
-  hourCycle = 24,
-  locale = 'en-US',
-  startPlaceholder,
-  endPlaceholder,
   allowClear = false,
   disabled,
   readOnly = false,
@@ -126,20 +105,15 @@ export function AppTimeRangePicker({
   id,
   className,
   style,
-  localeText,
 }: AppTimeRangePickerProps) {
   const field = useAppFieldContext()
+  const { locale, messages, hourCycle } = useAppLocale()
   const controlled = value !== undefined
   const [internalValue, setInternalValue] = useState(defaultValue)
   const committedValue = controlled ? value : internalValue
   const resolvedDisabled = disabled ?? field?.disabled ?? false
   const resolvedRequired = required ?? field?.required
   const resolvedInvalid = invalid ?? field?.invalid
-  const resolvedLocaleText = { ...defaultLocaleText, ...localeText }
-  const resolvedStartPlaceholder =
-    startPlaceholder ?? resolvedLocaleText.startPlaceholder
-  const resolvedEndPlaceholder =
-    endPlaceholder ?? resolvedLocaleText.endPlaceholder
   const step = normalizeMinuteStep(minuteStep)
   const anchorRef = useRef<HTMLDivElement | null>(null)
   const startRef = useRef<HTMLButtonElement | null>(null)
@@ -230,7 +204,7 @@ export function AppTimeRangePicker({
   const popup = overlay.visible && typeof document !== 'undefined' ? (
     <OverlayParentContext.Provider value={overlay.overlayTree.overlayId}>
       <div
-        aria-label={resolvedLocaleText.dialogLabel}
+        aria-label={messages.timeRangePicker.dialogLabel}
         aria-modal="false"
         className="app-time-picker__popup app-time-range-picker__popup"
         data-placement={overlay.position.placement}
@@ -242,7 +216,7 @@ export function AppTimeRangePicker({
         })}
       >
         <div
-          aria-label="Time range part"
+          aria-label={messages.timeRangePicker.dialogLabel}
           className="app-time-range-picker__tabs"
           role="group"
         >
@@ -251,26 +225,21 @@ export function AppTimeRangePicker({
             onClick={() => setEditTarget('start')}
             type="button"
           >
-            {resolvedLocaleText.startLabel}
+            {messages.timeRangePicker.startLabel}
           </button>
           <button
             aria-pressed={editTarget === 'end'}
             onClick={() => setEditTarget('end')}
             type="button"
           >
-            {resolvedLocaleText.endLabel}
+            {messages.timeRangePicker.endLabel}
           </button>
         </div>
         <AppTimePanel
           autoFocus={overlay.position.measured}
-          hourCycle={hourCycle}
-          hourLabel={resolvedLocaleText.hourLabel}
-          locale={locale}
           maxValue={maxValue}
           minValue={minValue}
-          minuteLabel={resolvedLocaleText.minuteLabel}
           minuteStep={step}
-          noAvailableTimeLabel={resolvedLocaleText.noAvailableTimeLabel}
           onAvailabilityChange={setHasAvailableValue}
           onValueChange={(next) =>
             setPending((current) => ({
@@ -294,15 +263,19 @@ export function AppTimeRangePicker({
               .join(' ')}
           >
             {duration == null
-              ? resolvedLocaleText.invalidRangeLabel
-              : resolvedLocaleText.durationLabel(duration)}
+              ? messages.timeRangePicker.invalidRange
+              : minDuration != null && duration < minDuration
+                ? messages.timeRangePicker.durationTooShort(minDuration)
+                : maxDuration != null && duration > maxDuration
+                  ? messages.timeRangePicker.durationTooLong(maxDuration)
+                  : messages.timeRangePicker.duration(duration)}
           </div>
           <button
             className="app-time-picker__action"
             onClick={cancel}
             type="button"
           >
-            {resolvedLocaleText.cancelLabel}
+            {messages.common.cancel}
           </button>
           <button
             className="app-time-picker__action app-time-picker__action--primary"
@@ -314,7 +287,7 @@ export function AppTimeRangePicker({
             }}
             type="button"
           >
-            {resolvedLocaleText.applyLabel}
+            {messages.common.apply}
           </button>
         </footer>
       </div>
@@ -359,7 +332,7 @@ export function AppTimeRangePicker({
         >
           {committedValue?.start
             ? formatTime(committedValue.start)
-            : resolvedStartPlaceholder}
+            : messages.timeRangePicker.startPlaceholder}
         </button>
         <span aria-hidden="true" className="app-time-range-picker__separator">
           →
@@ -383,11 +356,11 @@ export function AppTimeRangePicker({
         >
           {committedValue?.end
             ? formatTime(committedValue.end)
-            : resolvedEndPlaceholder}
+            : messages.timeRangePicker.endPlaceholder}
         </button>
         {allowClear && committedValue && !resolvedDisabled && !readOnly ? (
           <button
-            aria-label={resolvedLocaleText.clearButtonLabel}
+            aria-label={messages.timeRangePicker.clearLabel}
             className="app-time-picker__icon-button"
             onClick={() => {
               setCommittedValue(null)
@@ -399,7 +372,7 @@ export function AppTimeRangePicker({
           </button>
         ) : null}
         <button
-          aria-label={resolvedLocaleText.timeButtonLabel}
+          aria-label={messages.timeRangePicker.openLabel}
           aria-expanded={overlay.visible}
           aria-haspopup="dialog"
           className="app-time-picker__icon-button"

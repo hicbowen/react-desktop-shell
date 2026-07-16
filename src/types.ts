@@ -17,9 +17,7 @@ export type {
   AppDateValue,
 } from './date-picker/types'
 export type {
-  AppTimePickerLocale,
   AppTimePickerProps,
-  AppTimeRangePickerLocale,
   AppTimeRangePickerProps,
   AppTimeRangeValue,
   AppTimeValue,

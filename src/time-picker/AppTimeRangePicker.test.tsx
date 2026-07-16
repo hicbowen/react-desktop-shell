@@ -1,13 +1,30 @@
 // @vitest-environment jsdom
 
-import { act } from 'react'
+import { act, type ReactNode } from 'react'
 import { createRoot, type Root } from 'react-dom/client'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { AppDialog } from '../dialog/AppDialog'
 import { AppField } from '../field/AppField'
+import { AppLocaleContext } from '../localization/AppLocaleContext'
+import { enUSMessages } from '../localization/locales/en-US'
 import { AppPopover } from '../popover/AppPopover'
 import { AppShell } from '../shell/AppShell'
 import { AppTimeRangePicker } from './AppTimeRangePicker'
+
+function TestLocaleBoundary({ children }: { children: ReactNode }) {
+  return (
+    <AppLocaleContext.Provider
+      value={{
+        locale: 'en-US',
+        messages: enUSMessages,
+        firstDayOfWeek: 0,
+        hourCycle: 24,
+      }}
+    >
+      {children}
+    </AppLocaleContext.Provider>
+  )
+}
 
 describe('AppTimeRangePicker', () => {
   let container: HTMLDivElement
@@ -77,7 +94,7 @@ describe('AppTimeRangePicker', () => {
   })
 
   const render = (node: React.ReactNode) =>
-    act(() => root.render(node))
+    act(() => root.render(<TestLocaleBoundary>{node}</TestLocaleBoundary>))
   const popup = () =>
     document.body.querySelector<HTMLElement>(
       '.app-time-range-picker__popup',
@@ -123,7 +140,7 @@ describe('AppTimeRangePicker', () => {
       />,
     )
     flushFrames()
-    expect(popup()?.textContent).toContain('60 minutes')
+    expect(popup()?.textContent).toContain('1 hour')
     act(() => option(0, '10').click())
     expect(popup()?.textContent).toContain(
       'End time must be later than start time',
@@ -388,21 +405,22 @@ describe('AppTimeRangePicker', () => {
         ?.click(),
     )
     expect(change).toHaveBeenCalledWith(null)
-    expect(container.textContent).toContain('09:00')
+    expect(container.textContent).toContain('9:00')
   })
 
   it('closes after controlled Apply while preserving external 12-hour display', () => {
     const change = vi.fn()
     render(
-      <AppTimeRangePicker
-        defaultOpen
-        hourCycle={12}
-        onValueChange={change}
-        value={{
-          start: { hour: 9, minute: 0 },
-          end: { hour: 10, minute: 0 },
-        }}
-      />,
+      <AppShell locale="en-US">
+        <AppTimeRangePicker
+          defaultOpen
+          onValueChange={change}
+          value={{
+            start: { hour: 9, minute: 0 },
+            end: { hour: 10, minute: 0 },
+          }}
+        />
+      </AppShell>,
     )
     flushFrames()
     act(() => tab('End time').click())
@@ -438,7 +456,7 @@ describe('AppTimeRangePicker', () => {
     expect(popup()?.style.left).toBe('760px')
     expect(popup()?.style.top).toBe('377px')
     expect(popup()?.getAttribute('role')).toBe('dialog')
-    expect(popup()?.getAttribute('aria-label')).toBe('Choose a time range')
+    expect(popup()?.getAttribute('aria-label')).toBe('Time range picker')
 
     render(
       <AppPopover
@@ -461,6 +479,37 @@ describe('AppTimeRangePicker', () => {
     )
     expect(popup()).toBeNull()
     expect(document.body.querySelector('.app-popover')).not.toBeNull()
+  })
+
+  it('uses global language for labels, duration, and time display', () => {
+    const value = {
+      start: { hour: 9, minute: 0 },
+      end: { hour: 10, minute: 30 },
+    }
+    render(
+      <AppShell locale="zh-CN">
+        <AppTimeRangePicker defaultOpen value={value} />
+      </AppShell>,
+    )
+    flushFrames()
+    expect(container.textContent).toContain('9:00')
+    expect(container.textContent).toContain('10:30')
+    expect(popup()?.textContent).toContain('1 小时 30 分钟')
+    expect(tab('开始时间')).toBeDefined()
+    expect(action('应用')).toBeDefined()
+
+    render(
+      <AppShell locale="en-US">
+        <AppTimeRangePicker defaultOpen value={value} />
+      </AppShell>,
+    )
+    flushFrames()
+    expect(container.textContent).toContain('9:00 AM')
+    expect(container.textContent).toContain('10:30 AM')
+    expect(popup()).not.toBeNull()
+    expect(popup()?.textContent).toContain('1 hour 30 minutes')
+    expect(tab('Start time')).toBeDefined()
+    expect(action('Apply')).toBeDefined()
   })
 
   it('uses its own anchor and repositions on scroll and resize', () => {

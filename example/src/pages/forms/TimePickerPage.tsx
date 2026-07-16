@@ -52,7 +52,6 @@ export function TimePickerPage() {
           />
           <AppTimePicker
             defaultValue={defaultTime}
-            hourCycle={12}
             minuteStep={5}
           />
         </DemoPreview>

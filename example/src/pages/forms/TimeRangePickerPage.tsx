@@ -77,7 +77,6 @@ export function TimeRangePickerPage() {
           />
           <AppTimeRangePicker
             defaultValue={defaultRange}
-            hourCycle={12}
             minuteStep={5}
           />
         </DemoPreview>

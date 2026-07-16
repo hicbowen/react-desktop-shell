@@ -10,16 +10,6 @@ export interface AppTimeRangeValue {
   end: AppTimeValue
 }
 
-export interface AppTimePickerLocale {
-  timeButtonLabel: string
-  clearButtonLabel: string
-  hourLabel: string
-  minuteLabel: string
-  cancelLabel: string
-  applyLabel: string
-  noAvailableTimeLabel: string
-}
-
 export interface AppTimePickerProps {
   value?: AppTimeValue | null
   defaultValue?: AppTimeValue | null
@@ -30,9 +20,6 @@ export interface AppTimePickerProps {
   minValue?: AppTimeValue
   maxValue?: AppTimeValue
   minuteStep?: number
-  hourCycle?: 12 | 24
-  locale?: string
-  placeholder?: string
   allowClear?: boolean
   disabled?: boolean
   readOnly?: boolean
@@ -42,17 +29,6 @@ export interface AppTimePickerProps {
   id?: string
   className?: string
   style?: CSSProperties
-  localeText?: Partial<AppTimePickerLocale>
-}
-
-export interface AppTimeRangePickerLocale extends AppTimePickerLocale {
-  dialogLabel: string
-  startLabel: string
-  endLabel: string
-  startPlaceholder: string
-  endPlaceholder: string
-  durationLabel: (minutes: number) => string
-  invalidRangeLabel: string
 }
 
 export interface AppTimeRangePickerProps {
@@ -67,10 +43,6 @@ export interface AppTimeRangePickerProps {
   minuteStep?: number
   minDuration?: number
   maxDuration?: number
-  hourCycle?: 12 | 24
-  locale?: string
-  startPlaceholder?: string
-  endPlaceholder?: string
   allowClear?: boolean
   disabled?: boolean
   readOnly?: boolean
@@ -81,5 +53,4 @@ export interface AppTimeRangePickerProps {
   id?: string
   className?: string
   style?: CSSProperties
-  localeText?: Partial<AppTimeRangePickerLocale>
 }

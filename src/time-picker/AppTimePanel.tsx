@@ -3,6 +3,7 @@ import {
   useRef,
   type KeyboardEvent,
 } from 'react'
+import { useAppLocale } from '../localization/useAppLocale'
 import { formatAppTime } from './timeFormat'
 import {
   compareAppTimes,
@@ -20,13 +21,8 @@ interface AppTimePanelProps {
   minValue?: AppTimeValue
   maxValue?: AppTimeValue
   minuteStep: number
-  hourCycle: 12 | 24
-  locale: string
   readOnly?: boolean
-  hourLabel: string
-  minuteLabel: string
   autoFocus?: boolean
-  noAvailableTimeLabel: string
   onAvailabilityChange?: (hasAvailableValue: boolean) => void
 }
 
@@ -72,15 +68,11 @@ export function AppTimePanel({
   minValue,
   maxValue,
   minuteStep,
-  hourCycle,
-  locale,
   readOnly = false,
-  hourLabel,
-  minuteLabel,
   autoFocus = false,
-  noAvailableTimeLabel,
   onAvailabilityChange,
 }: AppTimePanelProps) {
+  const { locale, messages, hourCycle } = useAppLocale()
   const step = normalizeMinuteStep(minuteStep)
   const hasAvailableValue = hasAvailableTimeValue(
     step,
@@ -220,13 +212,15 @@ export function AppTimePanel({
           className="app-time-panel__empty"
           role="status"
         >
-          {noAvailableTimeLabel}
+          {messages.timePicker.noAvailableTime}
         </div>
       ) : null}
       <div className="app-time-panel__column">
-        <div className="app-time-panel__label">{hourLabel}</div>
+        <div className="app-time-panel__label">
+          {messages.timePicker.hourLabel}
+        </div>
         <div
-          aria-label={hourLabel}
+          aria-label={messages.timePicker.hourLabel}
           className="app-time-panel__list app-scrollbar"
           role="listbox"
         >
@@ -257,9 +251,11 @@ export function AppTimePanel({
         </div>
       </div>
       <div className="app-time-panel__column">
-        <div className="app-time-panel__label">{minuteLabel}</div>
+        <div className="app-time-panel__label">
+          {messages.timePicker.minuteLabel}
+        </div>
         <div
-          aria-label={minuteLabel}
+          aria-label={messages.timePicker.minuteLabel}
           className="app-time-panel__list app-scrollbar"
           role="listbox"
         >
