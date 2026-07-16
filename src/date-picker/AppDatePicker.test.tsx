@@ -295,9 +295,42 @@ describe('AppDatePicker', () => {
     expect(popup()?.style.top).toBe('137px')
   })
 
+  it('uses global locale and updates an open calendar immediately', () => {
+    const value = { year: 2026, month: 7, day: 16 }
+    render(
+      <AppShell locale="zh-CN">
+        <AppDatePicker value={value} />
+      </AppShell>,
+    )
+    expect(display().textContent).toBe('2026/07/16')
+    expect(
+      container.querySelector('[aria-label="打开日期选择器"]'),
+    ).not.toBeNull()
+
+    act(() => display().click())
+    flushFrames()
+    expect(popup()?.querySelector('th')?.textContent).toBe('一')
+    expect(
+      popup()?.querySelector('[aria-label="下个月"]'),
+    ).not.toBeNull()
+
+    render(
+      <AppShell locale="en-US">
+        <AppDatePicker value={value} />
+      </AppShell>,
+    )
+    flushFrames()
+    expect(display().textContent).toBe('07/16/2026')
+    expect(popup()).not.toBeNull()
+    expect(popup()?.querySelector('th')?.textContent).toBe('S')
+    expect(
+      popup()?.querySelector('[aria-label="Next month"]'),
+    ).not.toBeNull()
+  })
+
   it('portals into a dialog-local overlay host with viewport geometry', () => {
     render(
-      <AppShell>
+      <AppShell locale="zh-CN">
         <AppDialog
           open
           title="Schedule"
@@ -314,6 +347,9 @@ describe('AppDatePicker', () => {
     expect(popup()?.style.width).toBe('max-content')
     expect(popup()?.style.left).toBe('100px')
     expect(popup()?.style.top).toBe('137px')
+    expect(
+      popup()?.querySelector('[aria-label="下个月"]'),
+    ).not.toBeNull()
   })
 
   it('repositions on scroll and resize and is safe when unmounted open', () => {

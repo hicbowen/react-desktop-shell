@@ -1,4 +1,5 @@
 import type { KeyboardEvent } from 'react'
+import { useAppLocale } from '../localization/useAppLocale'
 import {
   appDateToLocalDate,
   getTodayAppDate,
@@ -13,7 +14,6 @@ import {
 import type {
   AppDateRangeValue,
   AppDateValue,
-  AppWeekDay,
 } from './types'
 
 export interface CalendarDayState {
@@ -41,8 +41,6 @@ interface AppCalendarGridProps {
   minValue?: AppDateValue
   maxValue?: AppDateValue
   isDateUnavailable?: (value: AppDateValue) => boolean
-  locale: string
-  firstDayOfWeek: AppWeekDay
   showOutsideDays: boolean
   selectionDisabled?: boolean
   onDateSelect: (value: AppDateValue) => void
@@ -53,7 +51,7 @@ interface AppCalendarGridProps {
   ) => void
 }
 
-function getWeekDays(locale: string, firstDayOfWeek: AppWeekDay) {
+function getWeekDays(locale: string, firstDayOfWeek: 0 | 1) {
   const shortFormatter = new Intl.DateTimeFormat(locale, { weekday: 'narrow' })
   const longFormatter = new Intl.DateTimeFormat(locale, { weekday: 'long' })
   const sunday = new Date(2024, 0, 7)
@@ -87,14 +85,13 @@ export function AppCalendarGrid({
   minValue,
   maxValue,
   isDateUnavailable,
-  locale,
-  firstDayOfWeek,
   showOutsideDays,
   selectionDisabled = false,
   onDateSelect,
   onDateHover,
   onDayKeyDown,
 }: AppCalendarGridProps) {
+  const { locale, firstDayOfWeek } = useAppLocale()
   const today = getTodayAppDate()
   const dateLabel = new Intl.DateTimeFormat(locale, {
     dateStyle: 'full',

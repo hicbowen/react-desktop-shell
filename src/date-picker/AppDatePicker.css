@@ -226,6 +226,17 @@
   font-weight: 600;
 }
 
+.app-calendar__dialog-label {
+  clip: rect(0, 0, 0, 0);
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  position: absolute;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
 .app-calendar__months {
   display: flex;
   gap: 14px;

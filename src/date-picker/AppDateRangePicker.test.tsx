@@ -511,6 +511,33 @@ describe('AppDateRangePicker', () => {
     expect(popup()?.style.top).toBe('297px')
   })
 
+  it('uses global locale without losing open pending selection', () => {
+    render(
+      <AppShell locale="zh-CN">
+        <AppDateRangePicker defaultOpen visibleMonths={1} />
+      </AppShell>,
+    )
+    flushFrames()
+    expect(container.textContent).toContain('开始日期')
+    expect(container.textContent).toContain('结束日期')
+    clickDate('2026-07-10')
+    clickDate('2026-07-12')
+    expect(popup()?.textContent).toContain('已选择 3 天')
+    expect(action('应用')).toBeDefined()
+
+    render(
+      <AppShell locale="en-US">
+        <AppDateRangePicker defaultOpen visibleMonths={1} />
+      </AppShell>,
+    )
+    flushFrames()
+    expect(popup()).not.toBeNull()
+    expect(container.textContent).toContain('Start date')
+    expect(container.textContent).toContain('End date')
+    expect(popup()?.textContent).toContain('3 selected days')
+    expect(action('Apply')).toBeDefined()
+  })
+
   it('renders responsive months in state and repositions after changes', () => {
     triggerLeft = 1050
     render(<AppDateRangePicker defaultOpen />)

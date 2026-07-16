@@ -1,22 +1,48 @@
 // @vitest-environment jsdom
 
-import { act, useState } from 'react'
+import { act, useState, type ReactNode } from 'react'
 import { createRoot, type Root } from 'react-dom/client'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { AppLocaleContext } from '../localization/AppLocaleContext'
+import { appLocaleSettings } from '../localization/localeSettings'
+import { appLocaleMessages } from '../localization/messages'
+import type { ResolvedAppLocale } from '../localization/types'
 import { AppCalendar } from './AppCalendar'
 import { getCalendarMonthDays } from './calendarMath'
-import type { AppDateValue, AppWeekDay } from './types'
+import type { AppDateValue } from './types'
 import './AppDatePicker.css'
+
+function LocaleBoundary({
+  children,
+  locale = 'en-US',
+}: {
+  children: ReactNode
+  locale?: ResolvedAppLocale
+}) {
+  const settings = appLocaleSettings[locale]
+  return (
+    <AppLocaleContext.Provider
+      value={{
+        locale,
+        messages: appLocaleMessages[locale],
+        firstDayOfWeek: settings.firstDayOfWeek,
+        hourCycle: settings.hourCycle,
+      }}
+    >
+      {children}
+    </AppLocaleContext.Provider>
+  )
+}
 
 function CalendarHarness({
   initialFocus = { year: 2026, month: 7, day: 16 },
-  firstDayOfWeek = 0,
+  locale = 'en-US',
   onSelect = () => undefined,
   unavailable,
   visibleMonths = 1,
 }: {
   initialFocus?: AppDateValue
-  firstDayOfWeek?: AppWeekDay
+  locale?: ResolvedAppLocale
   onSelect?: (value: AppDateValue) => void
   unavailable?: (value: AppDateValue) => boolean
   visibleMonths?: 1 | 2
@@ -28,22 +54,21 @@ function CalendarHarness({
   })
 
   return (
-    <AppCalendar
-      displayedMonth={displayedMonth}
-      firstDayOfWeek={firstDayOfWeek}
-      focusedDate={focusedDate}
-      isDateUnavailable={unavailable}
-      locale="en-US"
-      maxValue={{ year: 2027, month: 12, day: 31 }}
-      minValue={{ year: 2025, month: 1, day: 1 }}
-      nextMonthLabel="Next month"
-      onDateSelect={onSelect}
-      onDisplayedMonthChange={setDisplayedMonth}
-      onFocusedDateChange={setFocusedDate}
-      previousMonthLabel="Previous month"
-      showOutsideDays
-      visibleMonths={visibleMonths}
-    />
+    <LocaleBoundary locale={locale}>
+      <AppCalendar
+        dialogLabel={appLocaleMessages[locale].datePicker.dialogLabel}
+        displayedMonth={displayedMonth}
+        focusedDate={focusedDate}
+        isDateUnavailable={unavailable}
+        maxValue={{ year: 2027, month: 12, day: 31 }}
+        minValue={{ year: 2025, month: 1, day: 1 }}
+        onDateSelect={onSelect}
+        onDisplayedMonthChange={setDisplayedMonth}
+        onFocusedDateChange={setFocusedDate}
+        showOutsideDays
+        visibleMonths={visibleMonths}
+      />
+    </LocaleBoundary>
   )
 }
 
@@ -110,7 +135,7 @@ describe('AppCalendar', () => {
   })
 
   it('moves Home and End to the configured week boundaries', () => {
-    render(<CalendarHarness firstDayOfWeek={1} />)
+    render(<CalendarHarness locale="zh-CN" />)
     keyDown('Home')
     expect(focused().dataset.date).toBe('2026-07-13')
     keyDown('End')
@@ -144,27 +169,26 @@ describe('AppCalendar', () => {
 
   it('marks selected, range, and preview states internally', () => {
     render(
-      <AppCalendar
-        displayedMonth={{ year: 2026, month: 7, day: 1 }}
-        firstDayOfWeek={0}
-        focusedDate={{ year: 2026, month: 7, day: 1 }}
-        locale="en-US"
-        nextMonthLabel="Next"
-        onDateSelect={() => undefined}
-        onDisplayedMonthChange={() => undefined}
-        onFocusedDateChange={() => undefined}
-        previewRange={{
-          start: { year: 2026, month: 7, day: 10 },
-          end: { year: 2026, month: 7, day: 12 },
-        }}
-        previousMonthLabel="Previous"
-        selectedRange={{
-          start: { year: 2026, month: 7, day: 1 },
-          end: { year: 2026, month: 7, day: 3 },
-        }}
-        showOutsideDays={false}
-        visibleMonths={1}
-      />,
+      <LocaleBoundary>
+        <AppCalendar
+          dialogLabel="Date picker"
+          displayedMonth={{ year: 2026, month: 7, day: 1 }}
+          focusedDate={{ year: 2026, month: 7, day: 1 }}
+          onDateSelect={() => undefined}
+          onDisplayedMonthChange={() => undefined}
+          onFocusedDateChange={() => undefined}
+          previewRange={{
+            start: { year: 2026, month: 7, day: 10 },
+            end: { year: 2026, month: 7, day: 12 },
+          }}
+          selectedRange={{
+            start: { year: 2026, month: 7, day: 1 },
+            end: { year: 2026, month: 7, day: 3 },
+          }}
+          showOutsideDays={false}
+          visibleMonths={1}
+        />
+      </LocaleBoundary>,
     )
 
     expect(
@@ -206,6 +230,16 @@ describe('AppCalendar', () => {
     expect(container.textContent).toContain('August 2026')
     expect(title?.textContent).toContain('July 2026')
     expect(title?.textContent).toContain('August 2026')
+  })
+
+  it('uses locale-specific month and weekday ordering', () => {
+    render(<CalendarHarness locale="zh-CN" />)
+    expect(container.querySelector('th')?.textContent).toBe('一')
+    expect(container.textContent).toContain('2026年7月')
+
+    render(<CalendarHarness locale="en-US" />)
+    expect(container.querySelector('th')?.textContent).toBe('S')
+    expect(container.textContent).toContain('July 2026')
   })
 
   it('removes the second month from focus navigation when reduced to one', () => {

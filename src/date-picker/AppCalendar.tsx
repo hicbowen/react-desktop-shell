@@ -1,4 +1,5 @@
 import { useEffect, useId, useRef, type KeyboardEvent } from 'react'
+import { useAppLocale } from '../localization/useAppLocale'
 import {
   addDays,
   addMonths,
@@ -15,7 +16,6 @@ import {
 import type {
   AppDateRangeValue,
   AppDateValue,
-  AppWeekDay,
 } from './types'
 
 export interface AppCalendarProps {
@@ -31,12 +31,9 @@ export interface AppCalendarProps {
   minValue?: AppDateValue
   maxValue?: AppDateValue
   isDateUnavailable?: (value: AppDateValue) => boolean
-  locale: string
-  firstDayOfWeek: AppWeekDay
   showOutsideDays: boolean
   visibleMonths: 1 | 2
-  previousMonthLabel: string
-  nextMonthLabel: string
+  dialogLabel: string
   selectionDisabled?: boolean
 }
 
@@ -73,14 +70,12 @@ export function AppCalendar({
   minValue,
   maxValue,
   isDateUnavailable,
-  locale,
-  firstDayOfWeek,
   showOutsideDays,
   visibleMonths,
-  previousMonthLabel,
-  nextMonthLabel,
+  dialogLabel,
   selectionDisabled = false,
 }: AppCalendarProps) {
+  const { locale, messages, firstDayOfWeek } = useAppLocale()
   const rootRef = useRef<HTMLDivElement | null>(null)
   const titleId = useId()
   const firstMonth = startOfMonth(displayedMonth)
@@ -208,7 +203,7 @@ export function AppCalendar({
     >
       <header className="app-calendar__header">
         <button
-          aria-label={previousMonthLabel}
+          aria-label={messages.datePicker.previousMonthLabel}
           className="app-calendar__nav"
           onClick={() => moveMonth(-1)}
           type="button"
@@ -220,6 +215,7 @@ export function AppCalendar({
           className="app-calendar__titles"
           id={titleId}
         >
+          <span className="app-calendar__dialog-label">{dialogLabel}</span>
           {months.map((month) => (
             <div className="app-calendar__title" key={`${month.year}-${month.month}`}>
               {monthFormatter.format(appDateToLocalDate(month))}
@@ -227,7 +223,7 @@ export function AppCalendar({
           ))}
         </div>
         <button
-          aria-label={nextMonthLabel}
+          aria-label={messages.datePicker.nextMonthLabel}
           className="app-calendar__nav"
           onClick={() => moveMonth(1)}
           type="button"
@@ -238,11 +234,9 @@ export function AppCalendar({
       <div className="app-calendar__months">
         {months.map((month) => (
           <AppCalendarGrid
-            firstDayOfWeek={firstDayOfWeek}
             focusedDate={focusedDate}
             isDateUnavailable={isDateUnavailable}
             key={`${month.year}-${month.month}`}
-            locale={locale}
             maxValue={maxValue}
             minValue={minValue}
             month={month}

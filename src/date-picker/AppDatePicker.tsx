@@ -6,6 +6,7 @@ import {
 } from 'react'
 import { createPortal } from 'react-dom'
 import { useAppFieldContext } from '../field/AppFieldContext'
+import { useAppLocale } from '../localization/useAppLocale'
 import {
   OverlayParentContext,
 } from '../overlay/OverlayTreeContext'
@@ -20,19 +21,11 @@ import {
   startOfMonth,
 } from './dateMath'
 import type {
-  AppDatePickerLocale,
   AppDatePickerProps,
   AppDateValue,
 } from './types'
 import { useDatePickerOverlay } from './useDatePickerOverlay'
 import './AppDatePicker.css'
-
-const defaultLocaleText: AppDatePickerLocale = {
-  calendarButtonLabel: 'Open calendar',
-  clearButtonLabel: 'Clear date',
-  previousMonthLabel: 'Previous month',
-  nextMonthLabel: 'Next month',
-}
 
 function CalendarIcon() {
   return (
@@ -89,10 +82,6 @@ export function AppDatePicker({
   minValue,
   maxValue,
   isDateUnavailable,
-  locale = 'en-US',
-  firstDayOfWeek = 0,
-  formatValue,
-  placeholder = 'Select a date',
   allowClear = false,
   showOutsideDays = true,
   disabled,
@@ -103,16 +92,15 @@ export function AppDatePicker({
   id,
   className,
   style,
-  localeText,
 }: AppDatePickerProps) {
   const field = useAppFieldContext()
+  const { locale, messages } = useAppLocale()
   const controlled = value !== undefined
   const [internalValue, setInternalValue] = useState(defaultValue)
   const selectedValue = controlled ? value : internalValue
   const resolvedDisabled = disabled ?? field?.disabled ?? false
   const resolvedRequired = required ?? field?.required
   const resolvedInvalid = invalid ?? field?.invalid
-  const resolvedLocaleText = { ...defaultLocaleText, ...localeText }
   const anchorRef = useRef<HTMLDivElement | null>(null)
   const displayRef = useRef<HTMLButtonElement | null>(null)
   const calendarButtonRef = useRef<HTMLButtonElement | null>(null)
@@ -163,8 +151,7 @@ export function AppDatePicker({
   ])
 
   const displayText = selectedValue
-    ? formatValue?.(selectedValue, locale) ??
-      new Intl.DateTimeFormat(locale, {
+    ? new Intl.DateTimeFormat(locale, {
         year: 'numeric',
         month: '2-digit',
         day: '2-digit',
@@ -203,18 +190,15 @@ export function AppDatePicker({
         })}
       >
         <AppCalendar
+          dialogLabel={messages.datePicker.dialogLabel}
           displayedMonth={displayedMonth}
-          firstDayOfWeek={firstDayOfWeek}
           focusedDate={focusedDate}
           isDateUnavailable={isDateUnavailable}
-          locale={locale}
           maxValue={maxValue}
           minValue={minValue}
-          nextMonthLabel={resolvedLocaleText.nextMonthLabel}
           onDateSelect={selectDate}
           onDisplayedMonthChange={setDisplayedMonth}
           onFocusedDateChange={setFocusedDate}
-          previousMonthLabel={resolvedLocaleText.previousMonthLabel}
           selectedDate={selectedValue}
           selectionDisabled={readOnly}
           showOutsideDays={showOutsideDays}
@@ -257,11 +241,11 @@ export function AppDatePicker({
           ref={displayRef}
           type="button"
         >
-          {displayText ?? placeholder}
+          {displayText ?? messages.datePicker.placeholder}
         </button>
         {allowClear && selectedValue && !resolvedDisabled && !readOnly ? (
           <button
-            aria-label={resolvedLocaleText.clearButtonLabel}
+            aria-label={messages.datePicker.clearLabel}
             className="app-date-picker__icon-button"
             onClick={() => {
               setValue(null)
@@ -273,7 +257,7 @@ export function AppDatePicker({
           </button>
         ) : null}
         <button
-          aria-label={resolvedLocaleText.calendarButtonLabel}
+          aria-label={messages.datePicker.openLabel}
           aria-expanded={overlay.visible}
           aria-haspopup="dialog"
           className="app-date-picker__icon-button"

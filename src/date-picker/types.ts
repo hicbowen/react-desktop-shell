@@ -13,13 +13,6 @@ export interface AppDateRangeValue {
 
 export type AppWeekDay = 0 | 1 | 2 | 3 | 4 | 5 | 6
 
-export interface AppDatePickerLocale {
-  calendarButtonLabel: string
-  clearButtonLabel: string
-  previousMonthLabel: string
-  nextMonthLabel: string
-}
-
 export interface AppDatePickerProps {
   value?: AppDateValue | null
   defaultValue?: AppDateValue | null
@@ -30,10 +23,6 @@ export interface AppDatePickerProps {
   minValue?: AppDateValue
   maxValue?: AppDateValue
   isDateUnavailable?: (value: AppDateValue) => boolean
-  locale?: string
-  firstDayOfWeek?: AppWeekDay
-  formatValue?: (value: AppDateValue, locale: string) => string
-  placeholder?: string
   allowClear?: boolean
   showOutsideDays?: boolean
   disabled?: boolean
@@ -44,15 +33,6 @@ export interface AppDatePickerProps {
   id?: string
   className?: string
   style?: CSSProperties
-  localeText?: Partial<AppDatePickerLocale>
-}
-
-export interface AppDateRangePickerLocale extends AppDatePickerLocale {
-  startPlaceholder: string
-  endPlaceholder: string
-  cancelLabel: string
-  applyLabel: string
-  selectedDaysLabel: (days: number) => string
 }
 
 export interface AppDateRangePickerProps {
@@ -67,11 +47,6 @@ export interface AppDateRangePickerProps {
   isDateUnavailable?: (value: AppDateValue) => boolean
   minDuration?: number
   maxDuration?: number
-  locale?: string
-  firstDayOfWeek?: AppWeekDay
-  formatValue?: (value: AppDateValue, locale: string) => string
-  startPlaceholder?: string
-  endPlaceholder?: string
   allowClear?: boolean
   showOutsideDays?: boolean
   visibleMonths?: 1 | 2 | 'responsive'
@@ -84,5 +59,4 @@ export interface AppDateRangePickerProps {
   id?: string
   className?: string
   style?: CSSProperties
-  localeText?: Partial<AppDateRangePickerLocale>
 }

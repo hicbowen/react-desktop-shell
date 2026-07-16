@@ -6,6 +6,7 @@ import {
 } from 'react'
 import { createPortal } from 'react-dom'
 import { useAppFieldContext } from '../field/AppFieldContext'
+import { useAppLocale } from '../localization/useAppLocale'
 import { OverlayParentContext } from '../overlay/OverlayTreeContext'
 import { getAnchoredOverlaySurfaceStyle } from '../overlay/getAnchoredOverlaySurfaceStyle'
 import { AppCalendar } from './AppCalendar'
@@ -23,7 +24,6 @@ import {
   startOfMonth,
 } from './dateMath'
 import type {
-  AppDateRangePickerLocale,
   AppDateRangePickerProps,
   AppDateRangeValue,
   AppDateValue,
@@ -37,18 +37,6 @@ type RangeEditTarget = 'start' | 'end'
 interface PendingDateRange {
   start: AppDateValue | null
   end: AppDateValue | null
-}
-
-const defaultLocaleText: AppDateRangePickerLocale = {
-  calendarButtonLabel: 'Open calendar',
-  clearButtonLabel: 'Clear date range',
-  previousMonthLabel: 'Previous month',
-  nextMonthLabel: 'Next month',
-  startPlaceholder: 'Start date',
-  endPlaceholder: 'End date',
-  cancelLabel: 'Cancel',
-  applyLabel: 'Apply',
-  selectedDaysLabel: (days) => `${days} selected days`,
 }
 
 function CalendarIcon() {
@@ -125,11 +113,6 @@ export function AppDateRangePicker({
   isDateUnavailable,
   minDuration,
   maxDuration,
-  locale = 'en-US',
-  firstDayOfWeek = 0,
-  formatValue,
-  startPlaceholder,
-  endPlaceholder,
   allowClear = false,
   showOutsideDays = true,
   visibleMonths = 'responsive',
@@ -142,20 +125,15 @@ export function AppDateRangePicker({
   id,
   className,
   style,
-  localeText,
 }: AppDateRangePickerProps) {
   const field = useAppFieldContext()
+  const { locale, messages } = useAppLocale()
   const controlled = value !== undefined
   const [internalValue, setInternalValue] = useState(defaultValue)
   const committedValue = controlled ? value : internalValue
   const resolvedDisabled = disabled ?? field?.disabled ?? false
   const resolvedRequired = required ?? field?.required
   const resolvedInvalid = invalid ?? field?.invalid
-  const resolvedLocaleText = { ...defaultLocaleText, ...localeText }
-  const resolvedStartPlaceholder =
-    startPlaceholder ?? resolvedLocaleText.startPlaceholder
-  const resolvedEndPlaceholder =
-    endPlaceholder ?? resolvedLocaleText.endPlaceholder
   const resolvedVisibleMonths = useResolvedVisibleMonths(visibleMonths)
   const anchorRef = useRef<HTMLDivElement | null>(null)
   const startRef = useRef<HTMLButtonElement | null>(null)
@@ -229,8 +207,7 @@ export function AppDateRangePicker({
   }
   const formatDate = (date: AppDateValue) =>
     isValidAppDate(date)
-      ? formatValue?.(date, locale) ??
-        new Intl.DateTimeFormat(locale, {
+      ? new Intl.DateTimeFormat(locale, {
           year: 'numeric',
           month: '2-digit',
           day: '2-digit',
@@ -325,20 +302,17 @@ export function AppDateRangePicker({
         })}
       >
         <AppCalendar
+          dialogLabel={messages.dateRangePicker.dialogLabel}
           displayedMonth={displayedMonth}
-          firstDayOfWeek={firstDayOfWeek}
           focusedDate={focusedDate}
           isDateUnavailable={isDateUnavailable}
-          locale={locale}
           maxValue={maxValue}
           minValue={minValue}
-          nextMonthLabel={resolvedLocaleText.nextMonthLabel}
           onDateHover={setHoveredDate}
           onDateSelect={selectDate}
           onDisplayedMonthChange={setDisplayedMonth}
           onFocusedDateChange={setFocusedDate}
           previewRange={previewRange}
-          previousMonthLabel={resolvedLocaleText.previousMonthLabel}
           selectedDate={pending.start && !pending.end ? pending.start : null}
           selectedRange={duration == null ? null : completePending}
           selectionDisabled={readOnly}
@@ -351,15 +325,17 @@ export function AppDateRangePicker({
             className="app-date-range-picker__summary"
           >
             {duration
-              ? resolvedLocaleText.selectedDaysLabel(duration)
-              : null}
+              ? messages.dateRangePicker.selectedDays(duration)
+              : completePending
+                ? messages.dateRangePicker.invalidRange
+                : null}
           </div>
           <button
             className="app-date-range-picker__action"
             onClick={cancel}
             type="button"
           >
-            {resolvedLocaleText.cancelLabel}
+            {messages.common.cancel}
           </button>
           <button
             className="app-date-range-picker__action app-date-range-picker__action--primary"
@@ -371,7 +347,7 @@ export function AppDateRangePicker({
             }}
             type="button"
           >
-            {resolvedLocaleText.applyLabel}
+            {messages.common.apply}
           </button>
         </footer>
       </div>
@@ -416,7 +392,7 @@ export function AppDateRangePicker({
         >
           {committedValue?.start
             ? formatDate(committedValue.start)
-            : resolvedStartPlaceholder}
+            : messages.dateRangePicker.startPlaceholder}
         </button>
         <span aria-hidden="true" className="app-date-range-picker__separator">
           →
@@ -440,11 +416,11 @@ export function AppDateRangePicker({
         >
           {committedValue?.end
             ? formatDate(committedValue.end)
-            : resolvedEndPlaceholder}
+            : messages.dateRangePicker.endPlaceholder}
         </button>
         {allowClear && committedValue && !resolvedDisabled && !readOnly ? (
           <button
-            aria-label={resolvedLocaleText.clearButtonLabel}
+            aria-label={messages.dateRangePicker.clearLabel}
             className="app-date-picker__icon-button"
             onClick={() => {
               setCommittedValue(null)
@@ -457,7 +433,7 @@ export function AppDateRangePicker({
           </button>
         ) : null}
         <button
-          aria-label={resolvedLocaleText.calendarButtonLabel}
+          aria-label={messages.dateRangePicker.openLabel}
           aria-expanded={overlay.visible}
           aria-haspopup="dialog"
           className="app-date-picker__icon-button"
