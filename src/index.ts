@@ -5,6 +5,7 @@ export { AppEmptyState } from './empty-state'
 export { AppField } from './field'
 export { AppProgressBar, AppProgressRing, AppStatusBadge } from './progress'
 export { AppTextArea, AppTextBox } from './text-input'
+export { AppComboBox } from './combo-box'
 export { AppCheckBox, AppToggleSwitch } from './selection-controls'
 export { AppNumberBox, AppSelect } from './number-select'
 export { AppListView, AppListViewItem } from './list-view'
@@ -59,6 +60,8 @@ export type {
   AppStatusBadgeProps,
   AppTextAreaProps,
   AppTextBoxProps,
+  AppComboBoxOption,
+  AppComboBoxProps,
   AppCheckBoxProps,
   AppToggleSwitchProps,
   AppNumberBoxProps,

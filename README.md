@@ -430,6 +430,23 @@ submit the start and end as `HH:mm`.
 <AppSelect options={courses} value={course} onValueChange={setCourse} />
 ```
 
+## Combo box
+
+`AppComboBox` combines editable text with a filtered option list. It supports
+controlled and uncontrolled values, custom values, keyboard navigation,
+clearing, and `AppField` associations.
+
+```tsx
+<AppComboBox
+  clearable
+  options={courseTypes}
+  value={courseType}
+  onValueChange={setCourseType}
+/>
+```
+
+Set `allowCustomValue={false}` when the committed value must match an option.
+
 ## List view
 
 `AppListView` and `AppListViewItem` form a desktop information list with mutually exclusive static, selection, and invoke modes. Static mode uses list/listitem semantics. Selection mode keeps each row as a listitem and uses a native radio or checkbox in the main label, so trailing actions remain separate controls; a disabled item disables its selection control and marks its trailing region inert. Invoke mode keeps each `role="button"` main action and its trailing controls as siblings inside a listitem, with Arrow/Home/End navigation and Enter/Space activation.
