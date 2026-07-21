@@ -83,6 +83,11 @@ export interface AppLocaleMessages {
   tag: {
     dismiss: string
   }
+  cascader: {
+    placeholder: string
+    clear: string
+    empty: string
+  }
   teachingTip: {
     label: string
     close: string

@@ -99,6 +99,11 @@ export const enUSMessages = {
   tag: {
     dismiss: 'Remove tag',
   },
+  cascader: {
+    placeholder: 'Select an option',
+    clear: 'Clear selection',
+    empty: 'No options',
+  },
   teachingTip: {
     label: 'Teaching tip',
     close: 'Close',

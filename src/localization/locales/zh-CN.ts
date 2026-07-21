@@ -94,6 +94,11 @@ export const zhCNMessages = {
   tag: {
     dismiss: '移除标签',
   },
+  cascader: {
+    placeholder: '请选择',
+    clear: '清除选择',
+    empty: '暂无选项',
+  },
   teachingTip: {
     label: '教学提示',
     close: '关闭',

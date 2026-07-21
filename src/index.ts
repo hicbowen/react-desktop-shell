@@ -5,6 +5,7 @@ export { AppEmptyState } from './empty-state'
 export { AppField } from './field'
 export { AppProgressBar, AppProgressRing, AppStatusBadge } from './progress'
 export { AppTag } from './tag'
+export { AppCascader } from './cascader'
 export { AppTextArea, AppTextBox } from './text-input'
 export { AppComboBox } from './combo-box'
 export { AppAutoComplete } from './auto-complete'
@@ -63,6 +64,8 @@ export type {
   AppTagAppearance,
   AppTagColor,
   AppTagProps,
+  AppCascaderOption,
+  AppCascaderProps,
   AppTextAreaProps,
   AppTextBoxProps,
   AppComboBoxOption,
