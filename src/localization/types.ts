@@ -80,6 +80,9 @@ export interface AppLocaleMessages {
     warning: string
     danger: string
   }
+  tag: {
+    dismiss: string
+  }
   teachingTip: {
     label: string
     close: string

@@ -1,0 +1,44 @@
+.app-tag {
+  --tag-color: var(--app-shell-secondary-text-color, #5c5c5c);
+  --tag-bg: rgb(92 92 92 / 10%);
+  --tag-filled-fg: #fff;
+  min-height: 24px;
+  max-width: 100%;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  box-sizing: border-box;
+  padding: 2px 8px;
+  color: var(--tag-color);
+  background: var(--tag-bg);
+  border: 1px solid transparent;
+  border-radius: 4px;
+  font-size: 12px;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.app-tag--circular { border-radius: 999px; }
+.app-tag--small { min-height: 20px; padding: 1px 6px; font-size: 11px; }
+.app-tag--brand { --tag-color: var(--app-shell-accent-color, #005fb8); --tag-bg: var(--app-shell-active-bg, rgb(0 95 184 / 10%)); }
+.app-tag--blue { --tag-color: #0f6cbd; --tag-bg: rgb(15 108 189 / 11%); }
+.app-tag--teal { --tag-color: #00796b; --tag-bg: rgb(0 121 107 / 11%); }
+.app-tag--green { --tag-color: #107c10; --tag-bg: rgb(16 124 16 / 11%); }
+.app-tag--yellow { --tag-color: #8a5d00; --tag-bg: rgb(218 165 0 / 15%); --tag-filled-fg: #1f1f1f; }
+.app-tag--orange { --tag-color: #a74100; --tag-bg: rgb(211 84 0 / 12%); }
+.app-tag--red { --tag-color: #c42b1c; --tag-bg: rgb(196 43 28 / 11%); }
+.app-tag--purple { --tag-color: #744da9; --tag-bg: rgb(116 77 169 / 12%); }
+.app-tag--pink { --tag-color: #b1467b; --tag-bg: rgb(177 70 123 / 12%); }
+.app-tag--filled { color: var(--tag-filled-fg); background: var(--tag-color); }
+.app-tag--outline { background: transparent; border-color: currentColor; }
+.app-tag--disabled { opacity: .5; }
+.app-tag__icon { width: 14px; height: 14px; display: inline-flex; align-items: center; justify-content: center; flex: 0 0 auto; }
+.app-tag__icon > svg { width: 100%; height: 100%; }
+.app-tag__content { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+.app-tag__dismiss { width: 18px; height: 18px; display: inline-grid; place-items: center; flex: 0 0 18px; margin: -1px -5px -1px 0; padding: 0; color: inherit; background: transparent; border: 0; border-radius: 3px; }
+.app-tag__dismiss:hover:not(:disabled) { background: rgb(0 0 0 / 8%); }
+.app-tag--filled .app-tag__dismiss:hover:not(:disabled) { background: rgb(255 255 255 / 18%); }
+.app-tag__dismiss:focus-visible { outline: 2px solid currentColor; outline-offset: 0; }
+.app-tag__dismiss > svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; }
+.app-tag--small .app-tag__icon { width: 12px; height: 12px; }
+.app-tag--small .app-tag__dismiss { width: 16px; height: 16px; flex-basis: 16px; }

@@ -91,6 +91,9 @@ export const zhCNMessages = {
     warning: '警告',
     danger: '危险',
   },
+  tag: {
+    dismiss: '移除标签',
+  },
   teachingTip: {
     label: '教学提示',
     close: '关闭',

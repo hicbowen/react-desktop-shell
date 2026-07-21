@@ -4,6 +4,7 @@ export { AppButton, AppIconButton } from './button'
 export { AppEmptyState } from './empty-state'
 export { AppField } from './field'
 export { AppProgressBar, AppProgressRing, AppStatusBadge } from './progress'
+export { AppTag } from './tag'
 export { AppTextArea, AppTextBox } from './text-input'
 export { AppComboBox } from './combo-box'
 export { AppAutoComplete } from './auto-complete'
@@ -59,6 +60,9 @@ export type {
   AppProgressBarProps,
   AppProgressRingProps,
   AppStatusBadgeProps,
+  AppTagAppearance,
+  AppTagColor,
+  AppTagProps,
   AppTextAreaProps,
   AppTextBoxProps,
   AppComboBoxOption,

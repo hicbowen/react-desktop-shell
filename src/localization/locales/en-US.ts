@@ -96,6 +96,9 @@ export const enUSMessages = {
     warning: 'Warning',
     danger: 'Danger',
   },
+  tag: {
+    dismiss: 'Remove tag',
+  },
   teachingTip: {
     label: 'Teaching tip',
     close: 'Close',
