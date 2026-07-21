@@ -6,6 +6,7 @@ export { AppField } from './field'
 export { AppProgressBar, AppProgressRing, AppStatusBadge } from './progress'
 export { AppTag } from './tag'
 export { AppCascader } from './cascader'
+export { AppSlider } from './slider'
 export { AppTextArea, AppTextBox } from './text-input'
 export { AppComboBox } from './combo-box'
 export { AppAutoComplete } from './auto-complete'
@@ -66,6 +67,8 @@ export type {
   AppTagProps,
   AppCascaderOption,
   AppCascaderProps,
+  AppSliderMark,
+  AppSliderProps,
   AppTextAreaProps,
   AppTextBoxProps,
   AppComboBoxOption,

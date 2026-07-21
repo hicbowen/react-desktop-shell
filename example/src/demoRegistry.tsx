@@ -27,6 +27,7 @@ import { SelectionControlsPage } from './pages/forms/SelectionControlsPage'
 import { NumberSelectPage } from './pages/forms/NumberSelectPage'
 import { AutoCompletePage } from './pages/forms/AutoCompletePage'
 import { CascaderPage } from './pages/forms/CascaderPage'
+import { SliderPage } from './pages/forms/SliderPage'
 import { DatePickerPage } from './pages/forms/DatePickerPage'
 import { DateRangePickerPage } from './pages/forms/DateRangePickerPage'
 import { TimePickerPage } from './pages/forms/TimePickerPage'
@@ -68,6 +69,7 @@ export const demoPages: DemoPageDefinition[] = [
   { key: 'number-select', group: 'Forms', label: 'Number & Select', description: 'Stepped numeric input and reliable native option selection.', icon: <SlidersHorizontal size={16} />, component: NumberSelectPage },
   { key: 'auto-complete', group: 'Forms', label: 'AppAutoComplete', description: 'Free text input with filtered suggestions and keyboard navigation.', icon: <SlidersHorizontal size={16} />, component: AutoCompletePage },
   { key: 'cascader', group: 'Forms', label: 'AppCascader', description: 'Choose a leaf value from a hierarchy shown in successive columns.', icon: <Columns3 size={16} />, component: CascaderPage },
+  { key: 'slider', group: 'Forms', label: 'AppSlider', description: 'Adjust a relative numeric value along a styled range track.', icon: <SlidersHorizontal size={16} />, component: SliderPage },
   { key: 'date-picker', group: 'Forms', label: 'Date Picker', description: 'Timezone-free calendar dates with constraints, forms, and dialog overlays.', icon: <CalendarDays size={16} />, component: DatePickerPage },
   { key: 'date-range-picker', group: 'Forms', label: 'Date Range Picker', description: 'Pending range selection with Apply, duration limits, and two-month views.', icon: <CalendarRange size={16} />, component: DateRangePickerPage },
   { key: 'time-picker', group: 'Forms', label: 'Time Picker', description: 'Same-day times with steps, limits, 12-hour display, and confirmed Apply.', icon: <Clock size={16} />, component: TimePickerPage },
