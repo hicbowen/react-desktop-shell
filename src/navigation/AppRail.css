@@ -206,12 +206,12 @@
 }
 
 .app-rail__item--indicator-enter-down::before {
-  animation: app-rail-indicator-enter-down 220ms
+  animation: app-rail-indicator-enter-down 300ms
     cubic-bezier(0.1, 0.9, 0.2, 1);
 }
 
 .app-rail__item--indicator-enter-up::before {
-  animation: app-rail-indicator-enter-up 220ms
+  animation: app-rail-indicator-enter-up 300ms
     cubic-bezier(0.1, 0.9, 0.2, 1);
 }
 
@@ -387,7 +387,7 @@
 @keyframes app-rail-indicator-enter-down {
   from {
     opacity: 0;
-    transform: translateY(calc(-50% - 7px)) scaleY(0.55);
+    transform: translateY(calc(-50% - 14px)) scaleY(0.35);
   }
 
   to {
@@ -399,7 +399,7 @@
 @keyframes app-rail-indicator-enter-up {
   from {
     opacity: 0;
-    transform: translateY(calc(-50% + 7px)) scaleY(0.55);
+    transform: translateY(calc(-50% + 14px)) scaleY(0.35);
   }
 
   to {
