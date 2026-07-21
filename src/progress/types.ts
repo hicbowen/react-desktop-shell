@@ -1,4 +1,4 @@
 import type { CSSProperties, ReactNode } from 'react'
 export interface AppProgressRingProps { size?: 'small' | 'standard' | 'large'; label?: ReactNode; labelPosition?: 'end' | 'bottom' | 'hidden'; ariaLabel?: string; className?: string; style?: CSSProperties }
 export interface AppProgressBarProps { value?: number; max?: number; indeterminate?: boolean; label?: ReactNode; description?: ReactNode; showValue?: boolean; formatValue?: (value: number, max: number) => ReactNode; status?: 'normal' | 'success' | 'error'; className?: string; style?: CSSProperties }
-export interface AppStatusBadgeProps { status?: 'neutral' | 'info' | 'success' | 'warning' | 'danger'; appearance?: 'filled' | 'subtle' | 'outline'; size?: 'small' | 'standard'; icon?: ReactNode; children: ReactNode; className?: string; style?: CSSProperties }
+export interface AppStatusBadgeProps { status?: 'neutral' | 'info' | 'success' | 'warning' | 'danger'; appearance?: 'filled' | 'subtle' | 'outline' | 'ghost'; size?: 'small' | 'standard'; marker?: 'none' | 'dot'; icon?: ReactNode; children: ReactNode; className?: string; style?: CSSProperties }
