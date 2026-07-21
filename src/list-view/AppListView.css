@@ -9,7 +9,7 @@
 .app-list-view-item--interactive:active { background: var(--app-shell-card-pressed-bg, rgb(0 0 0 / 7%)); }
 .app-list-view-item:focus-visible, .app-list-view-item__main-action:focus-visible, .app-list-view-item__selection:focus-visible { outline: 2px solid var(--app-shell-accent-color, #005fb8); outline-offset: 2px; z-index: 1; }
 .app-list-view-item--selected { background: var(--app-shell-accent-subtle-bg, rgb(0 95 184 / 8%)); }
-.app-list-view-item--selected::before { content: ''; position: absolute; left: 2px; top: 25%; bottom: 25%; width: 3px; background: var(--app-shell-accent-color, #005fb8); border-radius: 2px; }
+.app-list-view-item--selected:not(.app-list-view-item--selection)::before { content: ''; position: absolute; left: 2px; top: 25%; bottom: 25%; width: 3px; background: var(--app-shell-accent-color, #005fb8); border-radius: 2px; }
 .app-list-view-item--disabled { color: var(--app-shell-disabled-text-color, rgb(0 0 0 / 36%)); }
 .app-list-view-item__selection { width: 16px; height: 16px; margin: 0; flex: 0 0 16px; appearance: none; background: transparent; border: 1px solid var(--app-shell-border-color, rgb(0 0 0 / 28%)); border-radius: 4px; }
 .app-list-view-item__selection[type='radio'] { border-radius: 50%; }
