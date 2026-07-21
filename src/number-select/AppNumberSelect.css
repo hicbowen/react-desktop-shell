@@ -15,3 +15,93 @@
 .app-select select:disabled { color: var(--app-shell-disabled-text-color, rgb(0 0 0 / 36%)); }
 .app-select__chevron { position: absolute; right: 9px; top: 50%; width: 16px; height: 16px; display: grid; place-items: center; color: var(--app-shell-secondary-text-color, rgb(0 0 0 / 62%)); transform: translateY(-50%); pointer-events: none; }
 .app-select__chevron svg { width: 16px; height: 16px; display: block; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+
+/* Chromium 135+ and other browsers implementing customizable selects expose
+   the native picker to CSS while retaining select's form and keyboard behavior. */
+@supports (appearance: base-select) {
+  .app-select select,
+  .app-select select::picker(select) {
+    appearance: base-select;
+  }
+
+  .app-select select {
+    align-items: center;
+    cursor: default;
+  }
+
+  .app-select select::picker-icon {
+    display: none;
+  }
+
+  .app-select select::picker(select) {
+    max-height: min(320px, calc(100vh - 16px));
+    margin-block: 4px;
+    padding: 4px;
+    overflow-y: auto;
+    color: var(--app-shell-text-color, #1f1f1f);
+    background: var(--app-shell-menu-bg, rgb(249 249 249 / 96%));
+    border: 1px solid var(--app-shell-menu-border-color, rgb(0 0 0 / 12%));
+    border-radius: 8px;
+    box-shadow: var(--app-shell-menu-shadow, 0 6px 18px rgb(0 0 0 / 16%));
+    font: inherit;
+    backdrop-filter: blur(24px);
+    transition: opacity var(--rds-motion-fast, 120ms) var(--rds-ease-enter, ease-out),
+      transform var(--rds-motion-fast, 120ms) var(--rds-ease-enter, ease-out),
+      display var(--rds-motion-fast, 120ms) allow-discrete,
+      overlay var(--rds-motion-fast, 120ms) allow-discrete;
+  }
+
+  .app-select select:open::picker(select) {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+
+  @starting-style {
+    .app-select select:open::picker(select) {
+      opacity: 0;
+      transform: translateY(-2px) scale(.98);
+    }
+  }
+
+  .app-select option {
+    min-height: 32px;
+    align-items: center;
+    gap: 8px;
+    padding: 0 10px;
+    color: inherit;
+    background: transparent;
+    border: 0;
+    border-radius: 6px;
+    font: inherit;
+    font-size: 13px;
+    cursor: default;
+  }
+
+  .app-select option::checkmark {
+    width: 16px;
+    color: var(--app-shell-accent-color, #005fb8);
+    font-weight: 600;
+    order: 1;
+  }
+
+  .app-select option:hover,
+  .app-select option:focus-visible,
+  .app-select option:checked {
+    background: var(--app-shell-hover-bg, rgb(0 0 0 / 4%));
+    outline: 0;
+  }
+
+  .app-select option:disabled {
+    color: var(--app-shell-disabled-text-color, rgb(0 0 0 / 36%));
+  }
+
+  .app-select:has(select:open) .app-select__chevron {
+    transform: translateY(-50%) rotate(180deg);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .app-select select::picker(select) {
+      transition: none;
+    }
+  }
+}
