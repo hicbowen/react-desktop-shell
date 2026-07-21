@@ -1,0 +1,18 @@
+.app-auto-complete { position: relative; box-sizing: border-box; min-height: 32px; display: inline-flex; align-items: center; color: var(--app-shell-text-color, #1f1f1f); background: var(--app-shell-card-bg, #fff); border: 1px solid var(--app-shell-border-color, rgb(0 0 0 / 18%)); border-bottom-color: var(--app-shell-secondary-text-color, rgb(0 0 0 / 42%)); border-radius: 5px; }
+.app-auto-complete:focus-within { border-bottom-color: var(--app-shell-accent-color, #005fb8); box-shadow: inset 0 -1px var(--app-shell-accent-color, #005fb8); }
+.app-auto-complete--compact { min-height: 27px; }
+.app-auto-complete--invalid { border-bottom-color: var(--app-shell-danger-color, #c42b1c); }
+.app-auto-complete--disabled { color: var(--app-shell-disabled-text-color, rgb(0 0 0 / 36%)); background: var(--app-shell-card-hover-bg, rgb(0 0 0 / 4%)); }
+.app-auto-complete__input { width: 100%; min-width: 140px; align-self: stretch; padding: 0 32px 0 9px; color: inherit; background: transparent; border: 0; outline: 0; font: inherit; font-size: 13px; }
+.app-auto-complete__clear { position: absolute; right: 5px; width: 22px; height: 22px; display: grid; place-items: center; padding: 0; color: inherit; background: transparent; border: 0; border-radius: 4px; font: inherit; font-size: 18px; }
+.app-auto-complete__clear:hover { background: var(--app-shell-hover-bg, rgb(0 0 0 / 4%)); }
+.app-auto-complete__clear:focus-visible { outline: 2px solid var(--app-shell-accent-color, #005fb8); outline-offset: 0; }
+.app-auto-complete__loading { position: absolute; right: 9px; width: 12px; height: 12px; box-sizing: border-box; border: 2px solid currentColor; border-right-color: transparent; border-radius: 50%; animation: app-auto-complete-spin .7s linear infinite; }
+.app-auto-complete__listbox { position: absolute; z-index: var(--rds-z-overlay, 1050); top: calc(100% + 4px); left: 0; right: 0; max-height: 240px; display: grid; overflow-y: auto; padding: 4px; color: var(--app-shell-text-color, #1f1f1f); background: var(--app-shell-menu-bg, rgb(249 249 249 / 96%)); border: 1px solid var(--app-shell-menu-border-color, rgb(0 0 0 / 12%)); border-radius: 8px; box-shadow: var(--app-shell-menu-shadow, 0 6px 18px rgb(0 0 0 / 16%)); backdrop-filter: blur(24px); animation: app-auto-complete-enter var(--rds-motion-fast, 120ms) var(--rds-ease-enter, ease-out); }
+.app-auto-complete__option { min-height: 32px; padding: 0 10px; overflow: hidden; color: inherit; background: transparent; border: 0; border-radius: 6px; font: inherit; font-size: 13px; text-align: left; text-overflow: ellipsis; white-space: nowrap; cursor: default; }
+.app-auto-complete__option:hover:not(:disabled), .app-auto-complete__option--active:not(:disabled) { background: var(--app-shell-hover-bg, rgb(0 0 0 / 4%)); outline: 0; }
+.app-auto-complete__option:disabled { color: var(--app-shell-disabled-text-color, rgb(0 0 0 / 36%)); }
+.app-auto-complete__status { min-height: 32px; display: flex; align-items: center; padding: 0 10px; color: var(--app-shell-secondary-text-color, rgb(0 0 0 / 62%)); font-size: 13px; }
+@keyframes app-auto-complete-enter { from { opacity: 0; transform: translateY(-2px) scale(.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
+@keyframes app-auto-complete-spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .app-auto-complete__listbox, .app-auto-complete__loading { animation: none; } }

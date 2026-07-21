@@ -6,6 +6,7 @@ export { AppField } from './field'
 export { AppProgressBar, AppProgressRing, AppStatusBadge } from './progress'
 export { AppTextArea, AppTextBox } from './text-input'
 export { AppComboBox } from './combo-box'
+export { AppAutoComplete } from './auto-complete'
 export { AppCheckBox, AppToggleSwitch } from './selection-controls'
 export { AppNumberBox, AppSelect } from './number-select'
 export { AppListView, AppListViewItem } from './list-view'
@@ -62,6 +63,8 @@ export type {
   AppTextBoxProps,
   AppComboBoxOption,
   AppComboBoxProps,
+  AppAutoCompleteOption,
+  AppAutoCompleteProps,
   AppCheckBoxProps,
   AppToggleSwitchProps,
   AppNumberBoxProps,
