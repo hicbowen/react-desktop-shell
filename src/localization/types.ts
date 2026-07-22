@@ -129,6 +129,14 @@ export interface AppLocaleMessages {
     clear: string
     noColor: string
   }
+  filePicker: {
+    chooseFile: string
+    chooseFiles: string
+    dropHint: string
+    browse: string
+    selectedFiles: string
+    remove: (name: string) => string
+  }
   textBox: {
     clear: string
     loading: string

@@ -1,0 +1,15 @@
+.app-file-picker { min-width: 0; display: grid; gap: 8px; }
+.app-file-picker__input { position: fixed; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+.app-file-picker__drop-zone { min-height: 72px; box-sizing: border-box; padding: 12px; display: grid; grid-template-columns: 28px 1fr auto; align-items: center; gap: 10px; color: var(--app-shell-text-color, #1f1f1f); background: var(--app-shell-card-bg, #fff); border: 1px dashed var(--app-shell-border-color, rgb(0 0 0 / 24%)); border-radius: 7px; }
+.app-file-picker--dragging .app-file-picker__drop-zone { background: var(--app-shell-selection-bg, rgb(0 120 212 / 10%)); border-color: var(--app-shell-accent-color, #005fb8); }
+.app-file-picker--disabled { opacity: .58; }
+.app-file-picker__drop-zone > svg { width: 26px; height: 26px; color: var(--app-shell-accent-color, #005fb8); }
+.app-file-picker__drop-zone div { min-width: 0; display: grid; gap: 3px; }
+.app-file-picker__drop-zone span { color: var(--app-shell-secondary-text-color, #616161); font-size: 12px; }
+.app-file-picker__files { margin: 0; padding: 0; display: grid; gap: 4px; list-style: none; }
+.app-file-picker__files li { min-height: 32px; padding: 0 5px 0 9px; display: flex; align-items: center; justify-content: space-between; gap: 8px; background: var(--app-shell-card-bg, #fff); border: 1px solid var(--app-shell-border-color, rgb(0 0 0 / 12%)); border-radius: 5px; }
+.app-file-picker__files li > span { min-width: 0; display: flex; align-items: center; gap: 7px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.app-file-picker__files svg { width: 16px; height: 16px; flex: 0 0 16px; }
+.app-file-picker__files button { width: 24px; height: 24px; padding: 0; color: inherit; background: transparent; border: 0; border-radius: 4px; font-size: 18px; }
+.app-file-picker__files button:hover:not(:disabled) { background: var(--app-shell-hover-bg, rgb(0 0 0 / 5%)); }
+.app-file-picker__files button:focus-visible { outline: 2px solid var(--app-shell-accent-color, #005fb8); }

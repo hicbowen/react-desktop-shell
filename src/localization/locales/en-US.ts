@@ -141,6 +141,14 @@ export const enUSMessages = {
     clear: 'Clear color',
     noColor: 'No color',
   },
+  filePicker: {
+    chooseFile: 'Choose a file',
+    chooseFiles: 'Choose files',
+    dropHint: 'Drop files here or browse from your device.',
+    browse: 'Browse',
+    selectedFiles: 'Selected files',
+    remove: (name: string) => `Remove ${name}`,
+  },
   textBox: {
     clear: 'Clear input',
     loading: 'Loading',

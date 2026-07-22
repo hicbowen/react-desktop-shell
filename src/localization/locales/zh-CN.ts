@@ -136,6 +136,14 @@ export const zhCNMessages = {
     clear: '清除颜色',
     noColor: '无颜色',
   },
+  filePicker: {
+    chooseFile: '选择文件',
+    chooseFiles: '选择多个文件',
+    dropHint: '将文件拖放到此处，或从设备中浏览。',
+    browse: '浏览',
+    selectedFiles: '已选择的文件',
+    remove: (name: string) => `移除 ${name}`,
+  },
   textBox: {
     clear: '清除输入',
     loading: '正在加载',
