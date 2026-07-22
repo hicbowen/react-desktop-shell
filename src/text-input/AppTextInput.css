@@ -4,6 +4,13 @@
 .app-text-box--compact { min-height: 27px; }
 .app-text-box--disabled { color: var(--app-shell-disabled-text-color, rgb(0 0 0 / 36%)); background: var(--app-shell-card-hover-bg, rgb(0 0 0 / 4%)); }
 .app-text-box__input { width: 100%; min-width: 0; padding: 0; color: inherit; background: transparent; border: 0; outline: 0; font: inherit; font-size: 13px; }
+.app-text-box__input[type='search'] { appearance: none; }
+.app-text-box__input[type='search']::-webkit-search-cancel-button,
+.app-text-box__input[type='search']::-webkit-search-decoration,
+.app-text-box__input[type='search']::-webkit-search-results-button,
+.app-text-box__input[type='search']::-webkit-search-results-decoration { appearance: none; display: none; }
+.app-text-box__input[type='search']::-ms-clear,
+.app-text-box__input[type='search']::-ms-reveal { width: 0; height: 0; display: none; }
 .app-text-box__icon, .app-text-box__loading { width: 16px; height: 16px; display: inline-flex; flex: 0 0 16px; align-items: center; justify-content: center; color: var(--app-shell-secondary-text-color, rgb(0 0 0 / 58%)); }
 .app-text-box__icon > svg { width: 16px; height: 16px; }
 .app-text-box__clear { width: 22px; height: 22px; display: grid; place-items: center; padding: 0; color: inherit; background: transparent; border: 0; border-radius: 4px; font: inherit; font-size: 18px; }
