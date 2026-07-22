@@ -237,6 +237,12 @@ navigation, and explicit `unmount` or `hidden` panel lifecycles.
 />
 ```
 
+## Resizable panes
+
+`AppResizablePaneGroup` creates a host-neutral two-pane workspace. Its separator
+supports pointer dragging, arrow keys, Home/End, controlled sizing, and explicit
+minimum and maximum dimensions.
+
 ## Breadcrumb paths
 
 `AppBreadcrumbBar` shows the current resource path and collapses earlier

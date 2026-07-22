@@ -1,0 +1,10 @@
+.app-resizable-panes { min-width: 0; min-height: 0; display: flex; overflow: hidden; }
+.app-resizable-panes--vertical { flex-direction: column; }
+.app-resizable-panes__primary { min-width: 0; min-height: 0; flex: 0 0 auto; overflow: auto; }
+.app-resizable-panes__secondary { min-width: 0; min-height: 0; flex: 1; overflow: auto; }
+.app-resizable-panes__separator { position: relative; width: 5px; flex: 0 0 5px; cursor: col-resize; touch-action: none; }
+.app-resizable-panes--vertical > .app-resizable-panes__separator { width: auto; height: 5px; flex-basis: 5px; cursor: row-resize; }
+.app-resizable-panes__separator::after { position: absolute; inset: 0 2px; content: ''; background: var(--app-shell-border-color, rgb(0 0 0 / 8%)); }
+.app-resizable-panes--vertical > .app-resizable-panes__separator::after { inset: 2px 0; }
+.app-resizable-panes__separator:hover::after { background: var(--app-shell-accent-color, #115ea3); }
+.app-resizable-panes__separator:focus-visible { outline: 2px solid var(--app-shell-accent-color, #115ea3); outline-offset: -2px; }

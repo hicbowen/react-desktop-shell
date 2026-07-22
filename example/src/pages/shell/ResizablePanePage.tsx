@@ -1,0 +1,2 @@
+import { AppResizablePaneGroup, AppTreeView } from '../../../../src'; import { DemoPage, DemoSection } from '../../components/DemoPage'
+export function AppResizablePanePage(){return <DemoPage><DemoSection title="Resizable workspace"><div style={{height:280}}><AppResizablePaneGroup><AppTreeView items={[{key:'files',label:'Files',children:[{key:'app',label:'App.tsx'}]}]} /><div style={{padding:16}}>Editor workspace</div></AppResizablePaneGroup></div></DemoSection></DemoPage>}
