@@ -1,0 +1,14 @@
+.app-breadcrumb-bar { min-width: 0; color: var(--app-shell-text-color, #1f1f1f); font: inherit; }
+.app-breadcrumb-bar__list { min-width: 0; height: 32px; margin: 0; padding: 0; display: flex; align-items: center; overflow: hidden; list-style: none; }
+.app-breadcrumb-bar__part { min-width: 0; display: flex; align-items: center; }
+.app-breadcrumb-bar__part:last-child { flex: 1; }
+.app-breadcrumb-bar__button { min-width: 0; height: 28px; padding: 0 7px; display: inline-flex; align-items: center; gap: 5px; overflow: hidden; color: inherit; font: inherit; font-size: 13px; background: transparent; border: 0; border-radius: 4px; cursor: default; }
+.app-breadcrumb-bar__button:hover:not(:disabled) { background: var(--app-shell-hover-bg, rgb(0 0 0 / 5%)); }
+.app-breadcrumb-bar__button:focus-visible { outline: 2px solid var(--app-shell-accent-color, #115ea3); outline-offset: -2px; }
+.app-breadcrumb-bar__button[aria-current='page'] { font-weight: 600; }
+.app-breadcrumb-bar__button:disabled { color: inherit; }
+.app-breadcrumb-bar__overflow { flex: 0 0 auto; letter-spacing: 1px; }
+.app-breadcrumb-bar__label { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.app-breadcrumb-bar__icon { width: 16px; height: 16px; display: inline-flex; flex: 0 0 16px; }
+.app-breadcrumb-bar__separator { width: 16px; display: inline-flex; flex: 0 0 16px; align-items: center; justify-content: center; color: var(--app-shell-muted-text-color, #707070); }
+.app-breadcrumb-bar__separator svg { width: 12px; height: 12px; fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 1.2; }

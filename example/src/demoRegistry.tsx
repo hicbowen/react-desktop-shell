@@ -5,6 +5,7 @@ import { OverviewPage } from './pages/OverviewPage'
 import { AppPagePage, AppShellPage, AppSidePanePage, AppTitleBarPage } from './pages/shell/ShellPages'
 import { AppRailPage, AppSelectorBarPage, NavigationModesPage } from './pages/navigation/NavigationPages'
 import { AppTabViewPage } from './pages/navigation/TabViewPage'
+import { AppBreadcrumbBarPage } from './pages/navigation/BreadcrumbBarPage'
 import { AppDialogPage, AppInfoBarPage, AppToastPage, MessageBoxPage } from './pages/feedback/FeedbackPages'
 import { AppCommandPage, AppToolbarPage, ContextMenuPage } from './pages/actions/ActionPages'
 import { AppDataTablePage, AppSelectionBarPage } from './pages/data/DataPages'
@@ -47,6 +48,7 @@ export const demoPages: DemoPageDefinition[] = [
   { key: 'app-rail', group: 'Navigation', label: 'AppRail', description: 'Grouped navigation items, submenus, badges, and footer links.', icon: <Navigation size={16} />, component: AppRailPage },
   { key: 'app-selector-bar', group: 'Navigation', label: 'AppSelectorBar', description: 'Switch between a few mutually exclusive views within the current page.', icon: <Rows3 size={16} />, component: AppSelectorBarPage },
   { key: 'app-tab-view', group: 'Navigation', label: 'AppTabView', description: 'Closable, reorderable document tabs with explicit panel lifecycle.', icon: <Columns3 size={16} />, component: AppTabViewPage },
+  { key: 'breadcrumb-bar', group: 'Navigation', label: 'AppBreadcrumbBar', description: 'Compact resource paths with collapsed ancestor navigation.', icon: <Navigation size={16} />, component: AppBreadcrumbBarPage },
   { key: 'navigation-modes', group: 'Navigation', label: 'Navigation Modes', description: 'Expanded, compact, minimal, and responsive rail behavior.', icon: <Menu size={16} />, component: NavigationModesPage },
   { key: 'app-card', group: 'Content', label: 'AppCard', description: 'Fluent content surfaces, composition, interaction states, and continuous groups.', icon: <CreditCard size={16} />, component: AppCardPage },
   { key: 'app-scroll-area', group: 'Content', label: 'AppScrollArea', description: 'Native scrolling with Fluent overflow, scrollbar, and gutter styling.', icon: <ScrollText size={16} />, component: AppScrollAreaPage },

@@ -237,6 +237,12 @@ navigation, and explicit `unmount` or `hidden` panel lifecycles.
 />
 ```
 
+## Breadcrumb paths
+
+`AppBreadcrumbBar` shows the current resource path and collapses earlier
+ancestors into an accessible flyout when `maxVisibleItems` is exceeded. The
+current location is non-interactive; applications own navigation state.
+
 ## Fluent Cards
 
 ## Button primitives
@@ -497,6 +503,14 @@ Set `allowCustomValue={false}` when the committed value must match an option.
 
 ## List view
 
+`AppListView` and `AppListViewItem` form a desktop information list with mutually exclusive static, selection, and invoke modes. Static mode uses list/listitem semantics. Selection mode keeps each row as a listitem and uses a native radio or checkbox in the main label, so trailing actions remain separate controls; a disabled item disables its selection control and marks its trailing region inert. Invoke mode keeps each `role="button"` main action and its trailing controls as siblings inside a listitem, with Arrow/Home/End navigation and Enter/Space activation.
+
+```tsx
+<AppListView ariaLabel="Students" selectionMode="multiple" value={selected} onValueChange={setSelected}>
+  <AppListViewItem value="ada" title="Ada" description="Grade 5 · Python" />
+</AppListView>
+```
+
 ## Tree view
 
 `AppTreeView` presents platform-neutral hierarchical resources with single or
@@ -520,14 +534,6 @@ the tree data and perform file-system or backend operations themselves.
 connection state, selection counts, cursor position, encoding, zoom, and other
 workspace context. Items are static by default and become buttons only when
 `interactive` is set.
-
-`AppListView` and `AppListViewItem` form a desktop information list with mutually exclusive static, selection, and invoke modes. Static mode uses list/listitem semantics. Selection mode keeps each row as a listitem and uses a native radio or checkbox in the main label, so trailing actions remain separate controls; a disabled item disables its selection control and marks its trailing region inert. Invoke mode keeps each `role="button"` main action and its trailing controls as siblings inside a listitem, with Arrow/Home/End navigation and Enter/Space activation.
-
-```tsx
-<AppListView ariaLabel="Students" selectionMode="multiple" value={selected} onValueChange={setSelected}>
-  <AppListViewItem value="ada" title="Ada" description="Grade 5 · Python" />
-</AppListView>
-```
 
 ## Expander
 
