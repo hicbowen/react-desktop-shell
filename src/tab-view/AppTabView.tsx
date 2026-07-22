@@ -1,5 +1,6 @@
 import {
   useId,
+  useEffect,
   useRef,
   useState,
   type DragEvent,
@@ -46,7 +47,27 @@ export function AppTabView({
   )
   const selectedKey = getAvailableItem(items, controlled ? value : internalValue)?.key
   const selectedRef = useRef<HTMLButtonElement>(null)
+  const tabsRef = useRef<HTMLDivElement>(null)
   const dragIndex = useRef<number | null>(null)
+
+  useEffect(() => {
+    const tabs = tabsRef.current
+    if (!tabs) return
+    const scrollTabs = (event: WheelEvent) => {
+      if (Math.abs(event.deltaY) <= Math.abs(event.deltaX)) return
+      const maxScrollLeft = tabs.scrollWidth - tabs.clientWidth
+      if (maxScrollLeft <= 0) return
+      const nextScrollLeft = Math.min(
+        maxScrollLeft,
+        Math.max(0, tabs.scrollLeft + event.deltaY),
+      )
+      if (nextScrollLeft === tabs.scrollLeft) return
+      event.preventDefault()
+      tabs.scrollLeft = nextScrollLeft
+    }
+    tabs.addEventListener('wheel', scrollTabs, { passive: false })
+    return () => tabs.removeEventListener('wheel', scrollTabs)
+  }, [])
 
   const select = (key: string, focus = false) => {
     const item = items.find((candidate) => candidate.key === key)
@@ -93,7 +114,7 @@ export function AppTabView({
 
   return <div className={classes} style={style}>
     <div aria-label={ariaLabel ?? text.label} className="app-tab-view__strip" role="tablist">
-      <div className="app-tab-view__tabs">
+      <div className="app-tab-view__tabs" ref={tabsRef}>
         {items.map((item, index) => {
           const selected = item.key === selectedKey
           const tabId = `${generatedId}-tab-${index}`

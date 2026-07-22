@@ -80,6 +80,22 @@ describe('AppTabView', () => {
     expect(add?.parentElement).toBe(tabs)
   })
 
+  it('maps a vertical mouse wheel to horizontal tab scrolling', () => {
+    render()
+    const tabs = container.querySelector<HTMLElement>('.app-tab-view__tabs')!
+    Object.defineProperties(tabs, {
+      clientWidth: { configurable: true, value: 300 },
+      scrollWidth: { configurable: true, value: 600 },
+    })
+    tabs.scrollLeft = 0
+    act(() => tabs.dispatchEvent(new WheelEvent('wheel', {
+      bubbles: true,
+      cancelable: true,
+      deltaY: 80,
+    })))
+    expect(tabs.scrollLeft).toBe(80)
+  })
+
   it('keeps inactive panels mounted when requested', () => {
     render({ mountStrategy: 'hidden' })
     const panels = container.querySelectorAll<HTMLElement>('[role="tabpanel"]')
