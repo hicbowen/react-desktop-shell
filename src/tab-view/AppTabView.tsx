@@ -7,6 +7,7 @@ import {
   type DragEvent,
   type KeyboardEvent,
 } from 'react'
+import { AppMenuFlyout } from '../menu-flyout'
 import { useAppLocale } from '../localization/useAppLocale'
 import type { AppTabViewItem, AppTabViewProps } from './types'
 import './AppTabView.css'
@@ -39,6 +40,8 @@ export function AppTabView({
   onValueChange,
   style,
   value,
+  tabListVisibility = 'auto',
+  tabListLabel,
 }: AppTabViewProps) {
   const { messages } = useAppLocale()
   const text = messages.tabView
@@ -50,8 +53,10 @@ export function AppTabView({
   const selectedKey = getAvailableItem(items, controlled ? value : internalValue)?.key
   const selectedRef = useRef<HTMLButtonElement>(null)
   const tabsRef = useRef<HTMLDivElement>(null)
+  const tabShellRefs = useRef(new Map<string, HTMLDivElement>())
   const dragIndex = useRef<number | null>(null)
   const previousItemCount = useRef(items.length)
+  const [tabsOverflow, setTabsOverflow] = useState(false)
 
   useEffect(() => {
     const tabs = tabsRef.current
@@ -79,6 +84,16 @@ export function AppTabView({
       tabsRef.current.scrollLeft = tabsRef.current.scrollWidth
     }
   }, [items.length])
+
+  useLayoutEffect(() => {
+    const tabs = tabsRef.current
+    if (!tabs || tabListVisibility !== 'auto') return
+    const update = () => setTabsOverflow(tabs.scrollWidth > tabs.clientWidth + 1)
+    const observer = typeof ResizeObserver === 'undefined' ? null : new ResizeObserver(update)
+    observer?.observe(tabs)
+    const frame = requestAnimationFrame(update)
+    return () => { observer?.disconnect(); cancelAnimationFrame(frame) }
+  }, [items.length, tabListVisibility])
 
   const select = (key: string, focus = false) => {
     const item = items.find((candidate) => candidate.key === key)
@@ -135,6 +150,7 @@ export function AppTabView({
             className={`app-tab-view__tab-shell${selected ? ' app-tab-view__tab-shell--selected' : ''}${item.pinned ? ' app-tab-view__tab-shell--pinned' : ''}`}
             draggable={Boolean(onTabReorder) && !item.pinned}
             key={item.key}
+            ref={(node) => { if (node) tabShellRefs.current.set(item.key, node); else tabShellRefs.current.delete(item.key) }}
             onContextMenu={(event) => onTabContextMenu?.(item, event)}
             onDragEnd={() => { dragIndex.current = null }}
             onDragOver={(event) => { if (onTabReorder && !item.pinned) event.preventDefault() }}
@@ -169,6 +185,15 @@ export function AppTabView({
         })}
         {onAddTab ? <button aria-label={addTabLabel ?? text.newTab} className="app-tab-view__add" onClick={onAddTab} type="button"><AddIcon /></button> : null}
       </div>
+      {tabListVisibility === 'always' || (tabListVisibility === 'auto' && tabsOverflow) ? <AppMenuFlyout
+        ariaLabel={tabListLabel ?? text.allTabs}
+        items={items.map((item) => ({ key: item.key, label: item.label, icon: item.icon, checked: item.key === selectedKey, disabled: item.disabled }))}
+        onSelect={(key) => {
+          select(key)
+          requestAnimationFrame(() => tabShellRefs.current.get(key)?.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' }))
+        }}
+        placement="bottom-end"
+      ><button aria-label={tabListLabel ?? text.allTabs} className="app-tab-view__list" type="button"><span aria-hidden="true">⌄</span></button></AppMenuFlyout> : null}
     </div>
     <div className="app-tab-view__panels">
       {items.map((item, index) => {

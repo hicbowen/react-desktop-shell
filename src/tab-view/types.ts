@@ -31,6 +31,8 @@ export interface AppTabViewProps {
   ariaLabel?: string
   addTabLabel?: string
   closeTabLabel?: (item: AppTabViewItem) => string
+  tabListVisibility?: 'auto' | 'always' | 'hidden'
+  tabListLabel?: string
   mountStrategy?: 'hidden' | 'unmount'
   className?: string
   style?: CSSProperties

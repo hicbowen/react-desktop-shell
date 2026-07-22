@@ -76,6 +76,7 @@ export const enUSMessages = {
     label: 'Documents',
     newTab: 'New tab',
     unsaved: 'Unsaved',
+    allTabs: 'All tabs',
   },
   contextMenu: {
     undo: 'Undo',

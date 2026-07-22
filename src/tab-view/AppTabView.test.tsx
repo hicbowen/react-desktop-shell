@@ -86,6 +86,11 @@ describe('AppTabView', () => {
     expect(onTabContextMenu.mock.calls[0]?.[1].nativeEvent).toBeInstanceOf(MouseEvent)
   })
 
+  it('can expose a menu containing every tab', () => {
+    render({ tabListVisibility: 'always' })
+    expect(container.querySelector('[aria-label="All tabs"]')).not.toBeNull()
+  })
+
   it('keeps the add action in the scrollable tab row', () => {
     render({ onAddTab: vi.fn() })
     const tabs = container.querySelector('.app-tab-view__tabs')

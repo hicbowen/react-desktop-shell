@@ -33,6 +33,8 @@ export function AppTabViewPage() {
     setTabs((current) => current.filter((item) => !keys.includes(item.key)))
   }
 
+  const setPinned = (key: string, pinned: boolean) => setTabs((current) => current.map((item) => item.key === key ? { ...item, pinned } : item))
+
   const add = () => {
     const key = `untitled-${tabs.length + 1}`
     setTabs((current) => [...current, { key, label: 'Untitled', content: <p>New document</p> }])
@@ -51,6 +53,7 @@ export function AppTabViewPage() {
       contextMenu.open({
         items: [
           { key: 'close', label: 'Close', disabled: tab.pinned, onClick: () => close(tab.key) },
+          { key: 'pin', label: tab.pinned ? 'Unpin' : 'Pin', onClick: () => setPinned(tab.key, !tab.pinned) },
           { key: 'close-others', label: 'Close others', disabled: closeOthers.length === 0, onClick: () => closeMany(closeOthers.map((item) => item.key), tab.key) },
           { key: 'close-right', label: 'Close tabs to the right', disabled: closeRight.length === 0, onClick: () => closeMany(closeRight.map((item) => item.key), tab.key) },
         ],

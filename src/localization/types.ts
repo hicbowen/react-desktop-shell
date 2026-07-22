@@ -66,6 +66,7 @@ export interface AppLocaleMessages {
     label: string
     newTab: string
     unsaved: string
+    allTabs: string
   }
   contextMenu: {
     undo: string

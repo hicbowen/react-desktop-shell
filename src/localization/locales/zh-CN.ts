@@ -71,6 +71,7 @@ export const zhCNMessages = {
     label: '文档',
     newTab: '新建标签页',
     unsaved: '未保存',
+    allTabs: '所有标签页',
   },
   contextMenu: {
     undo: '撤销',
