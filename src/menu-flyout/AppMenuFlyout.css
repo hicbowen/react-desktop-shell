@@ -98,6 +98,13 @@
   white-space: nowrap;
 }
 
+.app-menu-flyout__shortcut {
+  margin-left: 20px;
+  color: var(--app-shell-muted-text-color, #707070);
+  font-size: 12px;
+  white-space: nowrap;
+}
+
 .app-menu-flyout__separator {
   height: 1px;
   margin: 4px 6px;

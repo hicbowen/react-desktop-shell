@@ -1,0 +1,4 @@
+.app-menu-bar { min-width: 0; height: 32px; padding: 0 4px; display: flex; align-items: center; gap: 1px; color: var(--app-shell-text-color, #1f1f1f); font: inherit; background: var(--app-shell-chrome-bg, #f3f3f3); }
+.app-menu-bar__trigger { height: 28px; padding: 0 9px; color: inherit; font: inherit; font-size: 13px; background: transparent; border: 0; border-radius: 4px; cursor: default; }
+.app-menu-bar__trigger:hover, .app-menu-bar__trigger[aria-expanded='true'] { background: var(--app-shell-hover-bg, rgb(0 0 0 / 5%)); }
+.app-menu-bar__trigger:focus-visible { outline: 2px solid var(--app-shell-accent-color, #115ea3); outline-offset: -2px; }

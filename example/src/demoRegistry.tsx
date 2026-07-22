@@ -9,6 +9,7 @@ import { AppTabViewPage } from './pages/navigation/TabViewPage'
 import { AppBreadcrumbBarPage } from './pages/navigation/BreadcrumbBarPage'
 import { AppDialogPage, AppInfoBarPage, AppToastPage, MessageBoxPage } from './pages/feedback/FeedbackPages'
 import { AppCommandPage, AppToolbarPage, ContextMenuPage } from './pages/actions/ActionPages'
+import { AppMenuBarPage } from './pages/actions/MenuBarPage'
 import { AppDataTablePage, AppSelectionBarPage } from './pages/data/DataPages'
 import { SettingsPage } from './pages/settings/SettingsPages'
 import { AppCardPage } from './pages/content/CardPages'
@@ -71,6 +72,7 @@ export const demoPages: DemoPageDefinition[] = [
   { key: 'message-box', group: 'Feedback', label: 'Message Box', description: 'Promise-based confirmation and decision dialogs.', icon: <MessageSquare size={16} />, component: MessageBoxPage },
   { key: 'app-toolbar', group: 'Actions', label: 'AppToolbar', description: 'Start, status, and end regions for page-level actions.', icon: <Wrench size={16} />, component: AppToolbarPage },
   { key: 'app-command', group: 'Actions', label: 'AppCommand', description: 'Shared command definitions, execution state, and keyboard accelerators.', icon: <Wrench size={16} />, component: AppCommandPage },
+  { key: 'menu-bar', group: 'Actions', label: 'AppMenuBar', description: 'Traditional application menus backed by platform-neutral commands.', icon: <Menu size={16} />, component: AppMenuBarPage },
   { key: 'buttons', group: 'Actions', label: 'Buttons', description: 'Desktop command buttons, icon buttons, states, and composition.', icon: <SquareMousePointer size={16} />, component: ButtonsPage },
   { key: 'app-menu-flyout', group: 'Actions', label: 'AppMenuFlyout', description: 'Anchored one-level command menus with keyboard navigation.', icon: <ListChecks size={16} />, component: AppMenuFlyoutPage },
   { key: 'app-split-button', group: 'Actions', label: 'AppSplitButton', description: 'A default command paired with alternate menu actions.', icon: <Columns3 size={16} />, component: AppSplitButtonPage },

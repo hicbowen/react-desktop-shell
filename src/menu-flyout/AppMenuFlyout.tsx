@@ -379,8 +379,9 @@ function AppMenuFlyoutInner(
                 tabIndex={activeIndex === index ? 0 : -1}
                 type="button"
               >
-                <span className="app-menu-flyout__icon">{entry.icon}</span>
+                <span className="app-menu-flyout__icon">{entry.checked ? '✓' : entry.icon}</span>
                 <span className="app-menu-flyout__label">{entry.label}</span>
+                {entry.shortcut ? <span className="app-menu-flyout__shortcut">{entry.shortcut}</span> : null}
               </button>
             )
           })}

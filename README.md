@@ -279,6 +279,13 @@ ignored while users edit text by default; set `allowInEditable` only for a
 command that intentionally overrides native editing behavior. Nested providers
 inherit parent commands and may override them by id.
 
+## Menu bar
+
+`AppMenuBar` provides a traditional File/Edit/View command surface. Entries may
+carry their own presentation or reference an `AppCommand`; selection remains in
+React and does not register a host-native menu. Top-level menus support access
+keys and horizontal keyboard focus, while flyouts support standard menu keys.
+
 `AppButton` provides standard, primary, subtle, and danger desktop commands in compact or standard sizes. It supports leading or trailing icons, stable loading states, native button attributes, and ref forwarding. Use `AppIconButton` for icon-only commands and always supply `ariaLabel` or `aria-label`; compose tooltips with `AppTooltip`.
 
 ```tsx

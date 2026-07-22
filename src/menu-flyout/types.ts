@@ -8,6 +8,8 @@ export interface AppMenuFlyoutItem {
   icon?: ReactNode
   disabled?: boolean
   danger?: boolean
+  checked?: boolean
+  shortcut?: string
 }
 
 export interface AppMenuFlyoutSeparator {
