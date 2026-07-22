@@ -35,6 +35,11 @@ export const zhCNInteractiveText: Record<string, string> = {
   'Recent records': '最近记录', Timeline: '时间线', 'Data matrix': '数据矩阵',
   'Theme-aware activity': '主题感知活动',
   'scrollbar example': '滚动条示例', 'gutter example': '边槽示例',
+  Home: '主页', Documents: '文档', Projects: '项目', components: '组件',
+  'Project documentation': '项目文档', 'Application source': '应用源码', 'Build configuration': '构建配置',
+  Untitled: '未命名', 'New document': '新文档', Pin: '固定', Unpin: '取消固定',
+  'Close others': '关闭其他标签页', 'Close tabs to the right': '关闭右侧标签页',
+  'Restore tabs': '恢复标签页',
 }
 
 export function useDemoCopy() {
