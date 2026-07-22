@@ -15,9 +15,10 @@ export function AppColorPickerPanel({ value, defaultValue = '#0078D4', onValueCh
   const controlled = value !== undefined
   const [internalValue, setInternalValue] = useState<string | null>(() => defaultValue ? normalizeHexColor(defaultValue) : null)
   const resolved = value === null ? null : normalizeHexColor(value ?? internalValue ?? '')
-  const hsv = hexToHsv(resolved ?? '#000000')
-  const [grayHue, setGrayHue] = useState(hsv.h)
-  const hue = hsv.s > 0 ? hsv.h : grayHue
+  const parsedHsv = hexToHsv(resolved ?? '#000000')
+  const [interaction, setInteraction] = useState({ source: resolved, hsv: parsedHsv })
+  const hsv = interaction.source === resolved ? interaction.hsv : parsedHsv
+  const hue = hsv.h
   const [draftState, setDraftState] = useState({ source: resolved, text: resolved ?? '' })
   const draft = draftState.source === resolved ? draftState.text : resolved ?? ''
 
@@ -25,7 +26,12 @@ export function AppColorPickerPanel({ value, defaultValue = '#0078D4', onValueCh
     if (!controlled) setInternalValue(next)
     onValueChange?.(next)
   }
-  const updateHsv = (s: number, v: number, nextHue = hue) => update(hsvToHex({ h: nextHue, s, v }))
+  const updateHsv = (s: number, v: number, nextHue = hue) => {
+    const nextHsv = { h: nextHue, s, v }
+    const next = hsvToHex(nextHsv)
+    setInteraction({ source: next, hsv: nextHsv })
+    update(next)
+  }
   const pickFromPointer = (event: PointerEvent<HTMLDivElement>) => {
     if (disabled) return
     const rect = event.currentTarget.getBoundingClientRect()
@@ -47,7 +53,7 @@ export function AppColorPickerPanel({ value, defaultValue = '#0078D4', onValueCh
 
   return <div className={['app-color-picker-panel', className].filter(Boolean).join(' ')} style={style}>
     <div aria-label={text.saturationValue} aria-valuetext={resolved ?? text.noColor} className="app-color-picker-panel__sv" onKeyDown={handlePadKeyDown} onPointerDown={(event) => { event.currentTarget.setPointerCapture(event.pointerId); pickFromPointer(event) }} onPointerMove={(event) => { if (event.currentTarget.hasPointerCapture(event.pointerId)) pickFromPointer(event) }} role="slider" style={{ '--app-color-picker-hue': `hsl(${hue} 100% 50%)` } as CSSProperties} tabIndex={disabled ? -1 : 0}><span className="app-color-picker-panel__thumb" style={{ left: `${hsv.s * 100}%`, top: `${(1 - hsv.v) * 100}%` }} /></div>
-    <label className="app-color-picker-panel__hue"><span>{text.hue}</span><input aria-label={text.hue} disabled={disabled} max="359" min="0" onChange={(event) => { const nextHue = Number(event.currentTarget.value); setGrayHue(nextHue); updateHsv(hsv.s, hsv.v, nextHue) }} type="range" value={Math.round(hue)} /></label>
+    <label className="app-color-picker-panel__hue"><span>{text.hue}</span><input aria-label={text.hue} disabled={disabled} max="359" min="0" onChange={(event) => updateHsv(hsv.s, hsv.v, Number(event.currentTarget.value))} type="range" value={Math.round(hue)} /></label>
     <div className="app-color-picker-panel__value"><span aria-hidden="true" className="app-color-picker-panel__preview" style={{ background: resolved ?? 'transparent' }} /><AppTextBox aria-label={text.hex} disabled={disabled} onBlur={commitDraft} onChange={(event) => setDraftState({ source: resolved, text: event.currentTarget.value })} onKeyDown={(event) => { if (event.key === 'Enter') commitDraft() }} size="compact" value={draft} /></div>
     <div aria-label={text.presets} className="app-color-picker-panel__presets" role="group">{presets.map((preset) => { const normalized = normalizeHexColor(preset); return normalized ? <button aria-label={normalized} aria-pressed={normalized === resolved} disabled={disabled} key={normalized} onClick={() => update(normalized)} style={{ background: normalized }} type="button" /> : null })}</div>
     {allowClear ? <AppButton disabled={disabled || resolved === null} onClick={() => update(null)} size="compact">{text.clear}</AppButton> : null}

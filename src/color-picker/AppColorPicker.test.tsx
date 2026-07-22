@@ -30,4 +30,16 @@ describe('AppColorPickerPanel', () => {
     act(() => container.querySelector<HTMLElement>('[role="slider"]')!.dispatchEvent(new KeyboardEvent('keydown', { bubbles: true, key: 'ArrowRight' })))
     expect(onValueChange).toHaveBeenCalled()
   })
+
+  it('keeps hue stable while saturation and brightness change', () => {
+    act(() => root.render(<AppColorPickerPanel defaultValue="#1A1C75" />))
+    const surface = container.querySelector<HTMLElement>('[role="slider"]')!
+    const initialHue = surface.style.getPropertyValue('--app-color-picker-hue')
+    act(() => {
+      for (let index = 0; index < 12; index += 1) {
+        surface.dispatchEvent(new KeyboardEvent('keydown', { bubbles: true, key: 'ArrowLeft' }))
+      }
+    })
+    expect(surface.style.getPropertyValue('--app-color-picker-hue')).toBe(initialHue)
+  })
 })
