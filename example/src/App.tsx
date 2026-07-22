@@ -1,12 +1,15 @@
-import { useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { AppPage, AppRail, AppShell, AppTitleBar, useResolvedAppLocale, type AppLocale, type AppTheme, type PaneDisplayMode } from '../../src'
 import { DemoShellContext } from './components/DemoShellContext'
 import { DemoComponentPage } from './components/DemoComponentPage'
-import { getDemoPages, getRailFooterItems, getRailItems } from './demoRegistry'
+import { demoPages, getDemoPages, getRailFooterItems, getRailItems } from './demoRegistry'
 import { DemoI18nContext, demoMessages } from './i18n/DemoI18nContext'
+import { getDemoHash, getDemoKeyFromHash } from './demoNavigation'
+
+const demoPageKeys = new Set(demoPages.map((page) => page.key))
 
 export function ExampleApp() {
-  const [activeKey, setActiveKey] = useState('overview')
+  const [activeKey, setActiveKey] = useState(() => getDemoKeyFromHash(window.location.hash, demoPageKeys))
   const [maximized, setMaximized] = useState(false)
   const [theme, setTheme] = useState<AppTheme>('system')
   const [locale, setLocale] = useState<AppLocale>('system')
@@ -15,6 +18,17 @@ export function ExampleApp() {
   const localizedPages = useMemo(() => getDemoPages(resolvedLocale), [resolvedLocale])
   const railItems = useMemo(() => getRailItems(localizedPages), [localizedPages])
   const railFooterItems = useMemo(() => getRailFooterItems(localizedPages), [localizedPages])
+  const navigateTo = useCallback((key: string) => {
+    const nextKey = demoPageKeys.has(key) ? key : 'overview'
+    setActiveKey(nextKey)
+    const nextHash = getDemoHash(nextKey)
+    if (window.location.hash !== nextHash) window.location.hash = nextHash
+  }, [])
+  useEffect(() => {
+    const handleHashChange = () => setActiveKey(getDemoKeyFromHash(window.location.hash, demoPageKeys))
+    window.addEventListener('hashchange', handleHashChange)
+    return () => window.removeEventListener('hashchange', handleHashChange)
+  }, [])
   const currentPage = localizedPages.find((page) => page.key === activeKey) ?? localizedPages[0]!
   const Page = currentPage.component
   const isComponentPage = currentPage.category !== 'getting-started' && currentPage.category !== 'settings'
@@ -27,9 +41,9 @@ export function ExampleApp() {
       railDisplayMode,
       setRailDisplayMode,
       pages: localizedPages,
-      navigateTo: setActiveKey,
+      navigateTo,
     }),
-    [locale, theme, railDisplayMode, localizedPages],
+    [locale, theme, railDisplayMode, localizedPages, navigateTo],
   )
 
   return (
@@ -49,7 +63,7 @@ export function ExampleApp() {
             onToggleMaximize={() => setMaximized((value) => !value)}
           />
         }
-        rail={<AppRail value={activeKey} items={railItems} footerItems={railFooterItems} onChange={setActiveKey} />}
+        rail={<AppRail value={activeKey} items={railItems} footerItems={railFooterItems} onChange={navigateTo} />}
         contentClassName="example-content"
       >
         <AppPage
@@ -66,7 +80,7 @@ export function ExampleApp() {
           description={currentPage.description}
         >
           {isComponentPage ? (
-            <DemoComponentPage definition={currentPage} pages={localizedPages} onNavigate={setActiveKey}>
+            <DemoComponentPage definition={currentPage} pages={localizedPages} onNavigate={navigateTo}>
               <Page />
             </DemoComponentPage>
           ) : <Page />}
