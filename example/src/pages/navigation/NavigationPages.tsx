@@ -26,8 +26,10 @@ import {
   DemoSection,
 } from '../../components/DemoPage'
 import { useDemoShell } from '../../components/DemoShellContext'
+import { useDemoCopy } from '../../i18n/interactiveTranslations'
 
 export function AppRailPage() {
+  const t = useDemoCopy()
   const [selected, setSelected] = useState('first')
 
   return (
@@ -44,29 +46,29 @@ export function AppRailPage() {
               items={[
                 {
                   key: 'first',
-                  label: 'First item',
+                  label: t('First item'),
                   icon: <Inbox />,
                   badge: 3,
                 },
-                { type: 'group', label: 'Group' },
+                { type: 'group', label: t('Group') },
                 {
                   type: 'submenu',
                   key: 'submenu',
-                  label: 'Submenu',
+                  label: t('Submenu'),
                   icon: <FolderTree />,
                   children: [
                     {
                       key: 'child-one',
-                      label: 'Child one',
+                      label: t('Child one'),
                       icon: <FileText />,
                     },
                     {
                       key: 'child-two',
-                      label: 'Child two',
+                      label: t('Child two'),
                     },
                     {
                       key: 'child-three',
-                      label: 'Child three',
+                      label: t('Child three'),
                       icon: <LockKeyhole />,
                       disabled: true,
                     },
@@ -253,6 +255,7 @@ function SelectorPanelStateDemo({ label }: { label: string }) {
 }
 
 export function NavigationModesPage() {
+  const t = useDemoCopy()
   const { railDisplayMode, setRailDisplayMode } = useDemoShell()
   return (
     <DemoPage>
@@ -272,11 +275,11 @@ export function NavigationModesPage() {
               type="button"
               onClick={() => setRailDisplayMode(mode)}
             >
-              <strong>{mode}</strong>
+              <strong>{t(mode)}</strong>
               <small>
                 {mode === 'auto'
-                  ? 'Responsive breakpoints'
-                  : `${mode} rail presentation`}
+                  ? t('Responsive breakpoints')
+                  : `${t(mode)}${t('rail presentation')}`}
               </small>
             </button>
           ))}

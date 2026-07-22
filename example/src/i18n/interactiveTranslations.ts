@@ -40,6 +40,10 @@ export const zhCNInteractiveText: Record<string, string> = {
   Untitled: '未命名', 'New document': '新文档', Pin: '固定', Unpin: '取消固定',
   'Close others': '关闭其他标签页', 'Close tabs to the right': '关闭右侧标签页',
   'Restore tabs': '恢复标签页',
+  'First item': '第一项', Group: '分组', Submenu: '子菜单',
+  'Child one': '子项一', 'Child two': '子项二', 'Child three': '子项三',
+  expanded: '展开', compact: '紧凑', minimal: '极简',
+  'Responsive breakpoints': '响应式断点', 'rail presentation': '导航栏显示方式',
 }
 
 export function useDemoCopy() {
