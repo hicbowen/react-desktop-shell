@@ -16,11 +16,13 @@
 }
 
 .app-tab-view__tabs {
+  width: max-content;
   min-width: 0;
   display: flex;
   flex: 0 1 auto;
   align-self: stretch;
   overflow-x: auto;
+  overflow-y: hidden;
   scrollbar-width: none;
 }
 
@@ -31,7 +33,7 @@
   min-width: 96px;
   max-width: 220px;
   height: 32px;
-  margin-top: 4px;
+  margin-top: 3px;
   display: flex;
   flex: 0 1 180px;
   align-items: stretch;
@@ -39,7 +41,6 @@
 }
 
 .app-tab-view__tab-shell--selected {
-  height: 33px;
   background: var(--app-shell-content-bg, #f7f8fa);
   border-radius: 6px 6px 0 0;
 }
