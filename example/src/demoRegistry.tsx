@@ -17,7 +17,7 @@ import { AppDataTablePage, AppSelectionBarPage } from './pages/data/DataPages'
 import { AppPaginationPage } from './pages/data/PaginationPage'
 import { SettingsPage } from './pages/settings/SettingsPages'
 import { AppCardPage } from './pages/content/CardPages'
-import { FieldEmptyStatePage } from './pages/content/FieldEmptyStatePage'
+import { AppEmptyStatePage, AppFieldPage } from './pages/content/FieldEmptyStatePage'
 import { ListViewPage } from './pages/content/ListViewPage'
 import { ExpanderPage } from './pages/content/ExpanderPage'
 import { TagPage } from './pages/content/TagPage'
@@ -32,11 +32,11 @@ import { AppSplitButtonPage } from './pages/actions/SplitButtonPage'
 import { ButtonsPage } from './pages/actions/ButtonsPage'
 import { AppTeachingTipPage } from './pages/feedback/TeachingTipPage'
 import { AppFileDropOverlayPage } from './pages/feedback/FileDropOverlayPage'
-import { ProgressStatusPage } from './pages/feedback/ProgressStatusPage'
+import { AppProgressPage, AppStatusBadgePage } from './pages/feedback/ProgressStatusPage'
 import { AppLoadingOverlayPage } from './pages/feedback/LoadingOverlayPage'
 import { AppTaskCenterPage } from './pages/feedback/TaskCenterPage'
 import { PopoverPage } from './pages/feedback/PopoverPage'
-import { TextInputsPage } from './pages/forms/TextInputsPage'
+import { AppTextAreaPage, AppTextBoxPage } from './pages/forms/TextInputsPage'
 import { AppSearchBoxPage } from './pages/forms/SearchBoxPage'
 import { AppColorPickerPage } from './pages/forms/ColorPickerPage'
 import { AppFilePickerPage } from './pages/forms/FilePickerPage'
@@ -44,8 +44,8 @@ import { AppMultiSelectPage } from './pages/forms/MultiSelectPage'
 import { AppPasswordBoxPage } from './pages/forms/PasswordBoxPage'
 import { AppRangeSliderPage } from './pages/forms/RangeSliderPage'
 import { AppFormLayoutPage } from './pages/forms/FormLayoutPage'
-import { SelectionControlsPage } from './pages/forms/SelectionControlsPage'
-import { NumberSelectPage } from './pages/forms/NumberSelectPage'
+import { AppCheckBoxPage, AppRadioGroupPage, AppSegmentedControlPage, AppToggleSwitchPage } from './pages/forms/SelectionControlsPage'
+import { AppNumberBoxPage, AppSelectPage } from './pages/forms/NumberSelectPage'
 import { AutoCompletePage } from './pages/forms/AutoCompletePage'
 import { CascaderPage } from './pages/forms/CascaderPage'
 import { SliderPage } from './pages/forms/SliderPage'
@@ -76,7 +76,8 @@ const demoPageSources = [
   { key: 'navigation-modes', group: 'Navigation', label: 'Navigation Modes', description: 'Expanded, compact, minimal, and responsive rail behavior.', icon: <Menu size={16} />, component: NavigationModesPage },
   { key: 'app-card', group: 'Content', label: 'AppCard', description: 'Fluent content surfaces, composition, interaction states, and continuous groups.', icon: <CreditCard size={16} />, component: AppCardPage },
   { key: 'app-scroll-area', group: 'Content', label: 'AppScrollArea', description: 'Native scrolling with Fluent overflow, scrollbar, and gutter styling.', icon: <ScrollText size={16} />, component: AppScrollAreaPage },
-  { key: 'field-empty-state', group: 'Content', label: 'Field & Empty State', description: 'Accessible field structure and compact or regular empty content.', icon: <Rows3 size={16} />, component: FieldEmptyStatePage },
+  { key: 'app-field', group: 'Content', label: 'AppField', description: 'Accessible labels, descriptions, requirements, errors, and field layouts.', icon: <Rows3 size={16} />, component: AppFieldPage },
+  { key: 'app-empty-state', group: 'Content', label: 'AppEmptyState', description: 'Compact and regular empty content with optional guidance and actions.', icon: <Rows3 size={16} />, component: AppEmptyStatePage },
   { key: 'list-view', group: 'Content', label: 'List View', description: 'Desktop information lists with selection, invocation, and keyboard navigation.', icon: <ListChecks size={16} />, component: ListViewPage },
   { key: 'tree-view', group: 'Content', label: 'AppTreeView', description: 'Hierarchical resources with selection, lazy expansion, keyboard navigation, and drag requests.', icon: <ListChecks size={16} />, component: AppTreeViewPage },
   { key: 'status-bar', group: 'Content', label: 'AppStatusBar', description: 'Compact persistent workspace status and contextual actions.', icon: <Rows3 size={16} />, component: AppStatusBarPage },
@@ -85,7 +86,8 @@ const demoPageSources = [
   { key: 'app-tag', group: 'Content', label: 'AppTag', description: 'Colored labels for categories, attributes, and removable values.', icon: <Tags size={16} />, component: TagPage },
   { key: 'app-skeleton', group: 'Content', label: 'AppSkeleton', description: 'Accessible animated placeholders for loading content structures.', icon: <Rows3 size={16} />, component: AppSkeletonPage },
   { key: 'app-info-bar', group: 'Feedback', label: 'AppInfoBar', description: 'Inline informational, success, warning, and error states.', icon: <Info size={16} />, component: AppInfoBarPage },
-  { key: 'progress-status', group: 'Feedback', label: 'Progress & Status', description: 'Indeterminate and determinate progress with semantic status badges.', icon: <Clock3 size={16} />, component: ProgressStatusPage },
+  { key: 'app-progress', group: 'Content', label: 'Progress', description: 'Indeterminate and determinate progress rings and bars.', icon: <Clock3 size={16} />, component: AppProgressPage },
+  { key: 'app-status-badge', group: 'Content', label: 'AppStatusBadge', description: 'Compact semantic status labels with several appearances and markers.', icon: <Clock3 size={16} />, component: AppStatusBadgePage },
   { key: 'loading-overlay', group: 'Feedback', label: 'AppLoadingOverlay', description: 'Delayed local loading feedback that preserves content layout.', icon: <Clock3 size={16} />, component: AppLoadingOverlayPage },
   { key: 'task-center', group: 'Feedback', label: 'AppTaskCenter', description: 'Host-neutral background task status, progress, and action requests.', icon: <Clock3 size={16} />, component: AppTaskCenterPage },
   { key: 'popover', group: 'Feedback', label: 'Popover', description: 'Portal-based non-modal supporting content with anchored placement.', icon: <MessageSquare size={16} />, component: PopoverPage },
@@ -105,7 +107,8 @@ const demoPageSources = [
   { key: 'app-menu-flyout', group: 'Actions', label: 'AppMenuFlyout', description: 'Anchored one-level command menus with keyboard navigation.', icon: <ListChecks size={16} />, component: AppMenuFlyoutPage },
   { key: 'app-split-button', group: 'Actions', label: 'AppSplitButton', description: 'A default command paired with alternate menu actions.', icon: <Columns3 size={16} />, component: AppSplitButtonPage },
   { key: 'context-menu', group: 'Actions', label: 'Context Menu', description: 'Nested contextual commands and native text actions.', icon: <MousePointerClick size={16} />, component: ContextMenuPage },
-  { key: 'text-inputs', group: 'Forms', label: 'Text Inputs', description: 'Text boxes and text areas with icons, clear, validation, and counting.', icon: <Rows3 size={16} />, component: TextInputsPage },
+  { key: 'app-text-box', group: 'Forms', label: 'AppTextBox', description: 'Single-line text input with icons, clearing, loading, and validation states.', icon: <Rows3 size={16} />, component: AppTextBoxPage },
+  { key: 'app-text-area', group: 'Forms', label: 'AppTextArea', description: 'Multi-line text input with resizing, automatic growth, and character counting.', icon: <Rows3 size={16} />, component: AppTextAreaPage },
   { key: 'search-box', group: 'Forms', label: 'AppSearchBox', description: 'Search input with explicit submission, clearing, and optional debouncing.', icon: <Rows3 size={16} />, component: AppSearchBoxPage },
   { key: 'color-picker', group: 'Forms', label: 'AppColorPicker', description: 'Popup and inline color selection with HSV, hex, and preset controls.', icon: <SlidersHorizontal size={16} />, component: AppColorPickerPage },
   { key: 'file-picker', group: 'Forms', label: 'AppFilePicker', description: 'File browsing and local drop selection with validation and host adapters.', icon: <UploadCloud size={16} />, component: AppFilePickerPage },
@@ -113,8 +116,12 @@ const demoPageSources = [
   { key: 'password-box', group: 'Forms', label: 'AppPasswordBox', description: 'Password entry with reveal, Caps Lock, and strength feedback.', icon: <Rows3 size={16} />, component: AppPasswordBoxPage },
   { key: 'range-slider', group: 'Forms', label: 'AppRangeSlider', description: 'Two-thumb range selection with distance constraints.', icon: <SlidersHorizontal size={16} />, component: AppRangeSliderPage },
   { key: 'form-layout', group: 'Forms', label: 'AppFormLayout', description: 'Responsive field alignment and linked validation summaries.', icon: <Rows3 size={16} />, component: AppFormLayoutPage },
-  { key: 'selection-controls', group: 'Forms', label: 'Selection Controls', description: 'Check boxes, radio groups, segmented choices, and toggle switches.', icon: <ListChecks size={16} />, component: SelectionControlsPage },
-  { key: 'number-select', group: 'Forms', label: 'Number & Select', description: 'Stepped numeric input and reliable native option selection.', icon: <SlidersHorizontal size={16} />, component: NumberSelectPage },
+  { key: 'app-check-box', group: 'Forms', label: 'AppCheckBox', description: 'Binary and indeterminate choices with labels, descriptions, and controlled state.', icon: <ListChecks size={16} />, component: AppCheckBoxPage },
+  { key: 'app-radio-group', group: 'Forms', label: 'AppRadioGroup', description: 'Choose one value from a described set of mutually exclusive options.', icon: <ListChecks size={16} />, component: AppRadioGroupPage },
+  { key: 'app-segmented-control', group: 'Forms', label: 'AppSegmentedControl', description: 'Switch quickly between a small set of adjacent views or modes.', icon: <ListChecks size={16} />, component: AppSegmentedControlPage },
+  { key: 'app-toggle-switch', group: 'Forms', label: 'AppToggleSwitch', description: 'Turn persistent settings on or off with optional supporting descriptions.', icon: <ListChecks size={16} />, component: AppToggleSwitchPage },
+  { key: 'app-number-box', group: 'Forms', label: 'AppNumberBox', description: 'Stepped numeric entry with bounds, precision, and controlled validation.', icon: <SlidersHorizontal size={16} />, component: AppNumberBoxPage },
+  { key: 'app-select', group: 'Forms', label: 'AppSelect', description: 'Reliable native single-option selection with validation and disabled states.', icon: <SlidersHorizontal size={16} />, component: AppSelectPage },
   { key: 'auto-complete', group: 'Forms', label: 'AppAutoComplete', description: 'Free text input with filtered suggestions and keyboard navigation.', icon: <SlidersHorizontal size={16} />, component: AutoCompletePage },
   { key: 'cascader', group: 'Forms', label: 'AppCascader', description: 'Choose a leaf value from a hierarchy shown in successive columns.', icon: <Columns3 size={16} />, component: CascaderPage },
   { key: 'slider', group: 'Forms', label: 'AppSlider', description: 'Adjust a relative numeric value along a styled range track.', icon: <SlidersHorizontal size={16} />, component: SliderPage },
@@ -157,14 +164,19 @@ const taxonomy: Record<DemoPageKey, DemoTaxonomy> = {
   'menu-bar': { category: 'actions', subgroup: 'menus', apiNames: ['AppMenuBar'], status: 'stable' },
   'app-menu-flyout': { category: 'actions', subgroup: 'menus', apiNames: ['AppMenuFlyout'], status: 'stable' },
   'context-menu': { category: 'actions', subgroup: 'menus', apiNames: ['AppContextMenu'], status: 'stable' },
-  'text-inputs': { category: 'input', subgroup: 'text', apiNames: ['AppTextBox', 'AppTextArea'], status: 'stable' },
+  'app-text-box': { category: 'input', subgroup: 'text', apiNames: ['AppTextBox'], status: 'stable', related: ['app-text-area', 'search-box', 'password-box'] },
+  'app-text-area': { category: 'input', subgroup: 'text', apiNames: ['AppTextArea'], status: 'stable', related: ['app-text-box'] },
   'search-box': { category: 'input', subgroup: 'text', apiNames: ['AppSearchBox'], status: 'stable' },
   'password-box': { category: 'input', subgroup: 'text', apiNames: ['AppPasswordBox'], status: 'stable' },
   'auto-complete': { category: 'input', subgroup: 'text', apiNames: ['AppAutoComplete'], status: 'stable' },
   slider: { category: 'input', subgroup: 'numeric', apiNames: ['AppSlider'], status: 'stable' },
   'range-slider': { category: 'input', subgroup: 'numeric', apiNames: ['AppRangeSlider'], status: 'stable' },
-  'number-select': { category: 'input', subgroup: 'selection', apiNames: ['AppNumberBox', 'AppSelect'], status: 'stable' },
-  'selection-controls': { category: 'input', subgroup: 'selection', apiNames: ['AppCheckBox', 'AppRadioGroup', 'AppSegmentedControl', 'AppToggleSwitch'], status: 'stable' },
+  'app-number-box': { category: 'input', subgroup: 'numeric', apiNames: ['AppNumberBox'], status: 'stable', related: ['slider', 'range-slider'] },
+  'app-select': { category: 'input', subgroup: 'selection', apiNames: ['AppSelect'], status: 'stable', related: ['multi-select', 'cascader'] },
+  'app-check-box': { category: 'input', subgroup: 'selection', apiNames: ['AppCheckBox'], status: 'stable', related: ['app-radio-group', 'app-toggle-switch'] },
+  'app-radio-group': { category: 'input', subgroup: 'selection', apiNames: ['AppRadioGroup'], status: 'stable', related: ['app-check-box', 'app-segmented-control'] },
+  'app-segmented-control': { category: 'input', subgroup: 'selection', apiNames: ['AppSegmentedControl'], status: 'stable', related: ['app-radio-group', 'app-selector-bar'] },
+  'app-toggle-switch': { category: 'input', subgroup: 'selection', apiNames: ['AppToggleSwitch'], status: 'stable', related: ['app-check-box'] },
   'multi-select': { category: 'input', subgroup: 'selection', apiNames: ['AppMultiSelect', 'AppTagPicker'], status: 'stable' },
   cascader: { category: 'input', subgroup: 'selection', apiNames: ['AppCascader'], status: 'stable' },
   calendar: { category: 'input', subgroup: 'date-time', apiNames: ['AppCalendar'], status: 'stable' },
@@ -183,8 +195,10 @@ const taxonomy: Record<DemoPageKey, DemoTaxonomy> = {
   expander: { category: 'content', subgroup: 'containers', apiNames: ['AppExpander'], status: 'stable' },
   'app-tag': { category: 'content', subgroup: 'markers', apiNames: ['AppTag'], status: 'stable' },
   'app-skeleton': { category: 'content', subgroup: 'states', apiNames: ['AppSkeleton', 'AppSkeletonGroup'], status: 'stable' },
-  'progress-status': { category: 'content', subgroup: 'states', apiNames: ['AppProgressBar', 'AppProgressRing', 'AppStatusBadge'], status: 'stable' },
-  'field-empty-state': { category: 'content', subgroup: 'structure', apiNames: ['AppField', 'AppEmptyState'], status: 'stable' },
+  'app-progress': { category: 'content', subgroup: 'states', apiNames: ['AppProgressBar', 'AppProgressRing'], status: 'stable', related: ['app-skeleton', 'loading-overlay'] },
+  'app-status-badge': { category: 'content', subgroup: 'markers', apiNames: ['AppStatusBadge'], status: 'stable', related: ['app-tag', 'app-info-bar'] },
+  'app-field': { category: 'content', subgroup: 'structure', apiNames: ['AppField'], status: 'stable', related: ['form-layout'] },
+  'app-empty-state': { category: 'content', subgroup: 'states', apiNames: ['AppEmptyState'], status: 'stable', related: ['app-skeleton'] },
   'form-layout': { category: 'content', subgroup: 'structure', apiNames: ['AppFormLayout', 'AppValidationSummary'], status: 'stable' },
   'app-info-bar': { category: 'feedback', subgroup: 'status', apiNames: ['AppInfoBar'], status: 'stable' },
   'app-toast': { category: 'feedback', subgroup: 'status', apiNames: ['AppToast'], status: 'stable' },

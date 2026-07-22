@@ -2,7 +2,7 @@ import { Check, Clock3, XCircle } from 'lucide-react'
 import { AppCard, AppProgressBar, AppProgressRing, AppStatusBadge } from '../../../../src'
 import { DemoPage, DemoPreview, DemoSection } from '../../components/DemoPage'
 
-export function ProgressStatusPage() {
+export function AppProgressPage() {
   return <DemoPage>
     <DemoSection title="Progress rings">
       <DemoPreview className="demo-component-row">
@@ -20,7 +20,11 @@ export function ProgressStatusPage() {
         <AppProgressBar description="Connection interrupted" label="Upload failed" status="error" value={42} />
       </DemoPreview>
     </DemoSection>
-    <DemoSection title="Status badges">
+  </DemoPage>
+}
+
+export function AppStatusBadgePage() {
+  return <DemoPage><DemoSection title="Status badges">
       <DemoPreview className="demo-component-row">
         {(['neutral', 'info', 'success', 'warning', 'danger'] as const).map((status) => <AppStatusBadge key={status} status={status}>{status}</AppStatusBadge>)}
         <AppStatusBadge appearance="filled" icon={<Check />} status="success">Done</AppStatusBadge>
@@ -34,6 +38,5 @@ export function ProgressStatusPage() {
         <AppCard><strong>Course category</strong> <AppStatusBadge status="info">Python</AppStatusBadge></AppCard>
         <div className="demo-list-placeholder"><span><Clock3 size={16} /> Update channel</span><AppStatusBadge status="warning">Preview</AppStatusBadge></div>
       </DemoPreview>
-    </DemoSection>
-  </DemoPage>
+    </DemoSection></DemoPage>
 }
