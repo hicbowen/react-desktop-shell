@@ -127,6 +127,15 @@ export const zhCNMessages = {
     label: '搜索',
     placeholder: '搜索',
   },
+  colorPicker: {
+    label: '选择颜色',
+    saturationValue: '饱和度和亮度',
+    hue: '色相',
+    hex: '十六进制颜色',
+    presets: '预设颜色',
+    clear: '清除颜色',
+    noColor: '无颜色',
+  },
   textBox: {
     clear: '清除输入',
     loading: '正在加载',

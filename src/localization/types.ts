@@ -120,6 +120,15 @@ export interface AppLocaleMessages {
     label: string
     placeholder: string
   }
+  colorPicker: {
+    label: string
+    saturationValue: string
+    hue: string
+    hex: string
+    presets: string
+    clear: string
+    noColor: string
+  }
   textBox: {
     clear: string
     loading: string

@@ -1,0 +1,17 @@
+.app-color-picker__trigger { min-width: 132px; min-height: 32px; padding: 4px 9px; display: inline-flex; align-items: center; gap: 8px; color: var(--app-shell-text-color, #1f1f1f); background: var(--app-shell-card-bg, #fff); border: 1px solid var(--app-shell-border-color, rgb(0 0 0 / 18%)); border-radius: 5px; font: inherit; font-size: 13px; }
+.app-color-picker__trigger:focus-visible { outline: 2px solid var(--app-shell-accent-color, #005fb8); outline-offset: 1px; }
+.app-color-picker__swatch, .app-color-picker-panel__preview { box-sizing: border-box; background-image: linear-gradient(45deg, #ddd 25%, transparent 25%), linear-gradient(-45deg, #ddd 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #ddd 75%), linear-gradient(-45deg, transparent 75%, #ddd 75%); background-position: 0 0, 0 6px, 6px -6px, -6px 0; background-size: 12px 12px; border: 1px solid rgb(0 0 0 / 18%); border-radius: 4px; }
+.app-color-picker__swatch { width: 20px; height: 20px; }
+.app-color-picker-panel { width: 248px; display: grid; gap: 12px; }
+.app-color-picker-panel__sv { position: relative; height: 152px; overflow: hidden; touch-action: none; background: linear-gradient(to top, #000, transparent), linear-gradient(to right, #fff, transparent), var(--app-color-picker-hue); border-radius: 6px; cursor: crosshair; }
+.app-color-picker-panel__sv:focus-visible { outline: 2px solid var(--app-shell-accent-color, #005fb8); outline-offset: 2px; }
+.app-color-picker-panel__thumb { position: absolute; width: 12px; height: 12px; box-sizing: border-box; background: transparent; border: 2px solid #fff; border-radius: 50%; box-shadow: 0 0 0 1px #000; transform: translate(-50%, -50%); pointer-events: none; }
+.app-color-picker-panel__hue { display: grid; grid-template-columns: auto 1fr; align-items: center; gap: 8px; font-size: 12px; }
+.app-color-picker-panel__hue input { width: 100%; accent-color: var(--app-shell-accent-color, #005fb8); }
+.app-color-picker-panel__value { display: grid; grid-template-columns: 32px 1fr; align-items: center; gap: 8px; }
+.app-color-picker-panel__preview { width: 32px; height: 28px; }
+.app-color-picker-panel__value .app-text-box { width: 100%; }
+.app-color-picker-panel__presets { display: grid; grid-template-columns: repeat(8, 1fr); gap: 5px; }
+.app-color-picker-panel__presets button { aspect-ratio: 1; padding: 0; border: 1px solid rgb(0 0 0 / 18%); border-radius: 4px; }
+.app-color-picker-panel__presets button[aria-pressed='true'] { outline: 2px solid var(--app-shell-accent-color, #005fb8); outline-offset: 1px; }
+.app-color-picker-panel__presets button:focus-visible { outline: 2px solid var(--app-shell-accent-color, #005fb8); outline-offset: 1px; }

@@ -132,6 +132,15 @@ export const enUSMessages = {
     label: 'Search',
     placeholder: 'Search',
   },
+  colorPicker: {
+    label: 'Choose color',
+    saturationValue: 'Saturation and brightness',
+    hue: 'Hue',
+    hex: 'Hex color',
+    presets: 'Preset colors',
+    clear: 'Clear color',
+    noColor: 'No color',
+  },
   textBox: {
     clear: 'Clear input',
     loading: 'Loading',
