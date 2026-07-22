@@ -11,6 +11,7 @@ import {
 } from 'react'
 import { useAppFieldContext } from '../field/AppFieldContext'
 import { useAppLocale } from '../localization/useAppLocale'
+import { AppAnchoredPopup } from '../overlay/AppAnchoredPopup'
 import type { AppAutoCompleteOption, AppAutoCompleteProps } from './types'
 import './AppAutoComplete.css'
 
@@ -107,15 +108,6 @@ export const AppAutoComplete = forwardRef<HTMLInputElement, AppAutoCompleteProps
       if (!visible) setActiveIndex(-1)
     }, [visible])
 
-    useEffect(() => {
-      if (!visible) return
-      const close = (event: PointerEvent) => {
-        if (!rootRef.current?.contains(event.target as Node)) requestOpen(false)
-      }
-      document.addEventListener('pointerdown', close, true)
-      return () => document.removeEventListener('pointerdown', close, true)
-    })
-
     const setRef = (node: HTMLInputElement | null) => {
       inputRef.current = node
       if (typeof forwardedRef === 'function') forwardedRef(node)
@@ -175,7 +167,7 @@ export const AppAutoComplete = forwardRef<HTMLInputElement, AppAutoCompleteProps
       />
       {loading ? <span aria-label={text.loading} className="app-auto-complete__loading" role="status" /> : null}
       {clearable && currentValue && !resolvedDisabled && !readOnly && !loading ? <button aria-label={messages.textBox.clear} className="app-auto-complete__clear" onClick={() => { updateValue(''); requestOpen(false); inputRef.current?.focus() }} type="button"><span aria-hidden="true">×</span></button> : null}
-      {showPanel ? <span className="app-auto-complete__listbox" id={listboxId} role="listbox">
+      <AppAnchoredPopup className="app-auto-complete__listbox" dependencies={[loading, suggestions.length]} id={listboxId} onDismiss={() => requestOpen(false)} open={showPanel} role="listbox" triggerRef={rootRef}>
         {loading ? <span className="app-auto-complete__status">{text.loading}</span> : suggestions.length ? suggestions.map((option, index) => <button
           aria-selected={index === activeIndex}
           className={`app-auto-complete__option${index === activeIndex ? ' app-auto-complete__option--active' : ''}`}
@@ -186,7 +178,7 @@ export const AppAutoComplete = forwardRef<HTMLInputElement, AppAutoCompleteProps
           role="option"
           type="button"
         >{option.label ?? option.value}</button>) : <span className="app-auto-complete__status">{emptyContent ?? text.empty}</span>}
-      </span> : null}
+      </AppAnchoredPopup>
     </span>
   },
 )

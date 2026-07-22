@@ -9,6 +9,7 @@ import {
 import type { KeyboardEvent, PointerEvent as ReactPointerEvent } from 'react'
 import { useAppFieldContext } from '../field/AppFieldContext'
 import { useAppLocale } from '../localization/useAppLocale'
+import { AppAnchoredPopup } from '../overlay/AppAnchoredPopup'
 import type { AppComboBoxProps } from './types'
 import './AppComboBox.css'
 
@@ -77,15 +78,6 @@ export const AppComboBox = forwardRef<HTMLInputElement, AppComboBoxProps>(
     useEffect(() => {
       if (!resolvedOpen) setActiveIndex(-1)
     }, [resolvedOpen])
-
-    useEffect(() => {
-      if (!resolvedOpen) return
-      const close = (event: PointerEvent) => {
-        if (!rootRef.current?.contains(event.target as Node)) requestOpen(false)
-      }
-      document.addEventListener('pointerdown', close)
-      return () => document.removeEventListener('pointerdown', close)
-    })
 
     const setInputRef = (node: HTMLInputElement | null) => {
       localRef.current = node
@@ -211,8 +203,7 @@ export const AppComboBox = forwardRef<HTMLInputElement, AppComboBoxProps>(
         <span aria-hidden="true" className="app-combo-box__chevron">
           <svg focusable="false" viewBox="0 0 16 16"><path d="M4 6L8 10L12 6" /></svg>
         </span>
-        {resolvedOpen && !resolvedDisabled && !readOnly ? (
-          <span className="app-combo-box__listbox" id={listboxId} role="listbox">
+        <AppAnchoredPopup className="app-combo-box__listbox" dependencies={[filteredOptions.length]} id={listboxId} onDismiss={() => requestOpen(false)} open={resolvedOpen && !resolvedDisabled && !readOnly} role="listbox" triggerRef={rootRef}>
             {filteredOptions.map((option, index) => (
               <button
                 aria-selected={option.value === committedValue}
@@ -227,8 +218,7 @@ export const AppComboBox = forwardRef<HTMLInputElement, AppComboBoxProps>(
                 {option.label}
               </button>
             ))}
-          </span>
-        ) : null}
+        </AppAnchoredPopup>
       </span>
     )
   },

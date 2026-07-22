@@ -1,6 +1,7 @@
 import { useRef, useState, type KeyboardEvent } from 'react'
 import { AppTag } from '../tag'
 import { useAppLocale } from '../localization/useAppLocale'
+import { AppAnchoredPopup } from '../overlay/AppAnchoredPopup'
 import type { AppMultiSelectProps } from './types'
 import './AppMultiSelect.css'
 
@@ -33,7 +34,7 @@ export function AppMultiSelect({ options, value, defaultValue = [], onValueChang
       {searchable ? <input aria-label={text.label} disabled={disabled} onChange={(event) => { setQuery(event.currentTarget.value); setOpen(true); setActive(0) }} onFocus={() => setOpen(true)} onKeyDown={keyDown} placeholder={selected.length ? undefined : placeholder ?? text.placeholder} readOnly={readOnly} role="combobox" value={query} /> : selected.length === 0 ? <span className="app-multi-select__placeholder">{placeholder ?? text.placeholder}</span> : null}
       <span aria-hidden="true" className="app-multi-select__chevron">⌄</span>
     </div>
-    {open && !disabled && !readOnly ? <div className="app-multi-select__list" role="listbox" aria-multiselectable="true">{available.length ? available.map((option, index) => <button aria-selected="false" className={index === active ? 'app-multi-select__option--active' : ''} disabled={option.disabled || (maxSelected !== undefined && selected.length >= maxSelected)} key={option.value} onMouseDown={(event) => event.preventDefault()} onClick={() => choose(option)} role="option" type="button">{option.label}</button>) : <span className="app-multi-select__empty">{text.empty}</span>}</div> : null}
+    <AppAnchoredPopup ariaMultiselectable className="app-multi-select__list" dependencies={[available.length]} onDismiss={() => setOpen(false)} open={open && !disabled && !readOnly} role="listbox" triggerRef={rootRef}>{available.length ? available.map((option, index) => <button aria-selected="false" className={index === active ? 'app-multi-select__option--active' : ''} disabled={option.disabled || (maxSelected !== undefined && selected.length >= maxSelected)} key={option.value} onMouseDown={(event) => event.preventDefault()} onClick={() => choose(option)} role="option" type="button">{option.label}</button>) : <span className="app-multi-select__empty">{text.empty}</span>}</AppAnchoredPopup>
   </div>
 }
 

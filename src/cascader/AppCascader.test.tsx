@@ -27,9 +27,9 @@ describe('AppCascader', () => {
     act(() => root.render(<AppCascader defaultValue={['a', 'a1']} onValueChange={changed} options={options} />))
     expect(trigger().textContent).toBe('Alpha / Alpha one')
     act(() => trigger().click())
-    const beta = Array.from(host.querySelectorAll<HTMLButtonElement>('.app-cascader__option')).find((item) => item.textContent === 'Beta')!
+    const beta = Array.from(document.body.querySelectorAll<HTMLButtonElement>('.app-cascader__option')).find((item) => item.textContent === 'Beta')!
     act(() => beta.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true, cancelable: true })))
-    const betaOne = Array.from(host.querySelectorAll<HTMLButtonElement>('.app-cascader__option')).find((item) => item.textContent === 'Beta one')!
+    const betaOne = Array.from(document.body.querySelectorAll<HTMLButtonElement>('.app-cascader__option')).find((item) => item.textContent === 'Beta one')!
     act(() => betaOne.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true, cancelable: true })))
     expect(changed).toHaveBeenCalledWith(['b', 'b1'], [options[1], options[1]!.children![0]])
     expect(trigger().textContent).toBe('Beta / Beta one')
@@ -64,6 +64,6 @@ describe('AppCascader', () => {
     act(() => root.render(<AppCascader disabled options={[]} />))
     expect(trigger().disabled).toBe(true)
     act(() => root.render(<AppCascader defaultOpen key="empty" options={[]} />))
-    expect(host.textContent).toContain('No options')
+    expect(document.body.querySelector('.app-cascader__popup')?.textContent).toContain('No options')
   })
 })

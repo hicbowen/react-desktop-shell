@@ -33,7 +33,7 @@ describe('AppAutoComplete', () => {
     act(() => root.render(<AppAutoComplete onValueChange={changed} options={options} />))
     type('script')
     expect(changed).toHaveBeenLastCalledWith('script')
-    expect(host.querySelectorAll('[role="option"]')).toHaveLength(2)
+    expect(document.body.querySelectorAll('.app-auto-complete__listbox [role="option"]')).toHaveLength(2)
   })
 
   it('selects an active suggestion with the keyboard', () => {
@@ -50,9 +50,9 @@ describe('AppAutoComplete', () => {
   it('supports controlled values, empty and loading states', () => {
     act(() => root.render(<AppAutoComplete emptyContent="Nothing found" options={options} value="Swift" />))
     act(() => input().focus())
-    expect(host.textContent).toContain('Nothing found')
+    expect(document.body.querySelector('.app-auto-complete__listbox')?.textContent).toContain('Nothing found')
     act(() => root.render(<AppAutoComplete loading options={[]} value="" />))
-    expect(host.textContent).toContain('Loading suggestions')
+    expect(document.body.querySelector('.app-auto-complete__listbox')?.textContent).toContain('Loading suggestions')
     expect(input().getAttribute('aria-expanded')).toBe('true')
   })
 

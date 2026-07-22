@@ -41,7 +41,7 @@ describe('AppComboBox', () => {
       setter?.call(input(), 'py')
       input().dispatchEvent(new Event('input', { bubbles: true }))
     })
-    expect(container.querySelectorAll('[role="option"]')).toHaveLength(1)
+    expect(document.body.querySelectorAll('.app-combo-box__listbox [role="option"]')).toHaveLength(1)
     expect(change).toHaveBeenLastCalledWith('py')
   })
 

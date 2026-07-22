@@ -1,6 +1,7 @@
-import { forwardRef, useEffect, useId, useMemo, useRef, useState, type KeyboardEvent, type PointerEvent as ReactPointerEvent } from 'react'
+import { forwardRef, useId, useMemo, useRef, useState, type KeyboardEvent, type PointerEvent as ReactPointerEvent } from 'react'
 import { useAppFieldContext } from '../field/AppFieldContext'
 import { useAppLocale } from '../localization/useAppLocale'
+import { AppAnchoredPopup } from '../overlay/AppAnchoredPopup'
 import type { AppCascaderOption, AppCascaderProps } from './types'
 import './AppCascader.css'
 
@@ -142,15 +143,6 @@ export const AppCascader = forwardRef<HTMLButtonElement, AppCascaderProps>(funct
     }
   }
 
-  useEffect(() => {
-    if (!visible) return
-    const dismiss = (event: PointerEvent) => {
-      if (!rootRef.current?.contains(event.target as Node)) requestOpen(false)
-    }
-    document.addEventListener('pointerdown', dismiss, true)
-    return () => document.removeEventListener('pointerdown', dismiss, true)
-  })
-
   const display = selectedOptions.length
     ? displayRender?.(selectedOptions.map((option) => option.label), selectedOptions)
       ?? selectedOptions.map((option, index) => <span key={`${option.value}-${index}`}>{index ? separator : null}{option.label}</span>)
@@ -180,7 +172,7 @@ export const AppCascader = forwardRef<HTMLButtonElement, AppCascaderProps>(funct
     {name ? <input name={name} required={resolvedRequired} type="hidden" value={selectedValues.join('/')} /> : null}
     {clearable && selectedValues.length && !resolvedDisabled ? <button aria-label={messages.cascader.clear} className="app-cascader__clear" onClick={(event) => { event.stopPropagation(); commit([]) }} type="button"><span aria-hidden="true">×</span></button> : null}
     <span aria-hidden="true" className="app-cascader__chevron"><svg focusable="false" viewBox="0 0 16 16"><path d="M4 6L8 10L12 6" /></svg></span>
-    {visible && !resolvedDisabled ? <span className="app-cascader__popup" id={treeId} role="tree">
+    <AppAnchoredPopup className="app-cascader__popup" dependencies={[columns.length]} id={treeId} matchTriggerWidth={false} maxHeight={300} onDismiss={() => requestOpen(false)} open={visible && !resolvedDisabled} role="tree" triggerRef={rootRef}>
       {options.length ? columns.map((column, level) => <span className="app-cascader__column" key={level} role="group">
         {column.map((option) => {
           const active = activePath[level] === option.value
@@ -199,6 +191,6 @@ export const AppCascader = forwardRef<HTMLButtonElement, AppCascaderProps>(funct
           ><span>{option.label}</span>{option.children?.length ? <svg aria-hidden="true" focusable="false" viewBox="0 0 16 16"><path d="M6 4L10 8L6 12" /></svg> : null}</button>
         })}
       </span>) : <span className="app-cascader__empty">{resolvedEmptyContent}</span>}
-    </span> : null}
+    </AppAnchoredPopup>
   </span>
 })
