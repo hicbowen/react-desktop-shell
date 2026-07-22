@@ -134,8 +134,8 @@ export function AppTabView({
             ><CloseIcon /></button> : null}
           </div>
         })}
+        {onAddTab ? <button aria-label={addTabLabel ?? text.newTab} className="app-tab-view__add" onClick={onAddTab} type="button"><AddIcon /></button> : null}
       </div>
-      {onAddTab ? <button aria-label={addTabLabel ?? text.newTab} className="app-tab-view__add" onClick={onAddTab} type="button"><AddIcon /></button> : null}
     </div>
     <div className="app-tab-view__panels">
       {items.map((item, index) => {

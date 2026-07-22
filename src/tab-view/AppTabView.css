@@ -16,10 +16,9 @@
 }
 
 .app-tab-view__tabs {
-  width: max-content;
   min-width: 0;
   display: flex;
-  flex: 0 1 auto;
+  flex: 1;
   align-self: stretch;
   overflow-x: auto;
   overflow-y: hidden;

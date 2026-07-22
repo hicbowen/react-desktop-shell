@@ -73,6 +73,13 @@ describe('AppTabView', () => {
     expect(tab('One')).toBeTruthy()
   })
 
+  it('keeps the add action in the scrollable tab row', () => {
+    render({ onAddTab: vi.fn() })
+    const tabs = container.querySelector('.app-tab-view__tabs')
+    const add = container.querySelector('[aria-label="New tab"]')
+    expect(add?.parentElement).toBe(tabs)
+  })
+
   it('keeps inactive panels mounted when requested', () => {
     render({ mountStrategy: 'hidden' })
     const panels = container.querySelectorAll<HTMLElement>('[role="tabpanel"]')
