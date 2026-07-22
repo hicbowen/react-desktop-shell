@@ -13,6 +13,24 @@ export interface AppDateRangeValue {
 
 export type AppWeekDay = 0 | 1 | 2 | 3 | 4 | 5 | 6
 
+export interface AppCalendarProps {
+  value?: AppDateValue | null
+  defaultValue?: AppDateValue | null
+  onValueChange?: (value: AppDateValue) => void
+  displayedMonth?: AppDateValue
+  defaultDisplayedMonth?: AppDateValue
+  onDisplayedMonthChange?: (value: AppDateValue) => void
+  minValue?: AppDateValue
+  maxValue?: AppDateValue
+  isDateUnavailable?: (value: AppDateValue) => boolean
+  showOutsideDays?: boolean
+  visibleMonths?: 1 | 2
+  disabled?: boolean
+  ariaLabel?: string
+  className?: string
+  style?: CSSProperties
+}
+
 export interface AppDatePickerProps {
   value?: AppDateValue | null
   defaultValue?: AppDateValue | null

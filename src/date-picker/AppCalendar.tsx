@@ -35,6 +35,7 @@ export interface AppCalendarProps {
   visibleMonths: 1 | 2
   dialogLabel: string
   selectionDisabled?: boolean
+  role?: 'dialog' | 'group'
 }
 
 function monthCompare(first: AppDateValue, second: AppDateValue) {
@@ -74,6 +75,7 @@ export function AppCalendar({
   visibleMonths,
   dialogLabel,
   selectionDisabled = false,
+  role = 'dialog',
 }: AppCalendarProps) {
   const { locale, messages, firstDayOfWeek } = useAppLocale()
   const rootRef = useRef<HTMLDivElement | null>(null)
@@ -189,7 +191,7 @@ export function AppCalendar({
   return (
     <div
       aria-labelledby={titleId}
-      aria-modal="false"
+      aria-modal={role === 'dialog' ? 'false' : undefined}
       aria-readonly={selectionDisabled || undefined}
       className={[
         'app-calendar',
@@ -199,7 +201,7 @@ export function AppCalendar({
         .join(' ')}
       onMouseLeave={() => onDateHover?.(null)}
       ref={rootRef}
-      role="dialog"
+      role={role}
     >
       <header className="app-calendar__header">
         <button

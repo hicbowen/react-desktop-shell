@@ -62,6 +62,7 @@ export { AppListView, AppListViewItem } from './list-view'
 export { AppExpander } from './expander'
 export { AppPopover } from './popover'
 export {
+  AppCalendar,
   AppDatePicker,
   AppDateRangePicker,
   compareAppDates,
@@ -135,6 +136,7 @@ export type {
   AppExpanderProps,
   AppPopoverProps,
   AppDatePickerProps,
+  AppCalendarProps,
   AppDateRangePickerProps,
   AppDateRangeValue,
   AppDateValue,

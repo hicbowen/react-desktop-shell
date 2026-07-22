@@ -43,6 +43,7 @@ import { AutoCompletePage } from './pages/forms/AutoCompletePage'
 import { CascaderPage } from './pages/forms/CascaderPage'
 import { SliderPage } from './pages/forms/SliderPage'
 import { DatePickerPage } from './pages/forms/DatePickerPage'
+import { AppCalendarPage } from './pages/forms/CalendarPage'
 import { DateRangePickerPage } from './pages/forms/DateRangePickerPage'
 import { TimePickerPage } from './pages/forms/TimePickerPage'
 import { TimeRangePickerPage } from './pages/forms/TimeRangePickerPage'
@@ -99,6 +100,7 @@ export const demoPages: DemoPageDefinition[] = [
   { key: 'cascader', group: 'Forms', label: 'AppCascader', description: 'Choose a leaf value from a hierarchy shown in successive columns.', icon: <Columns3 size={16} />, component: CascaderPage },
   { key: 'slider', group: 'Forms', label: 'AppSlider', description: 'Adjust a relative numeric value along a styled range track.', icon: <SlidersHorizontal size={16} />, component: SliderPage },
   { key: 'date-picker', group: 'Forms', label: 'Date Picker', description: 'Timezone-free calendar dates with constraints, forms, and dialog overlays.', icon: <CalendarDays size={16} />, component: DatePickerPage },
+  { key: 'calendar', group: 'Forms', label: 'AppCalendar', description: 'Standalone accessible calendar selection with controlled or internal state.', icon: <CalendarDays size={16} />, component: AppCalendarPage },
   { key: 'date-range-picker', group: 'Forms', label: 'Date Range Picker', description: 'Pending range selection with Apply, duration limits, and two-month views.', icon: <CalendarRange size={16} />, component: DateRangePickerPage },
   { key: 'time-picker', group: 'Forms', label: 'Time Picker', description: 'Same-day times with steps, limits, 12-hour display, and confirmed Apply.', icon: <Clock size={16} />, component: TimePickerPage },
   { key: 'time-range-picker', group: 'Forms', label: 'Time Range Picker', description: 'Start and end time editing with duration validation and no overnight ranges.', icon: <Timer size={16} />, component: TimeRangePickerPage },
