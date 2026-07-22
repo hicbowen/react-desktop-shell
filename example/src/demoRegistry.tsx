@@ -15,6 +15,7 @@ import { ListViewPage } from './pages/content/ListViewPage'
 import { ExpanderPage } from './pages/content/ExpanderPage'
 import { TagPage } from './pages/content/TagPage'
 import { AppScrollAreaPage } from './pages/content/ScrollAreaPage'
+import { AppTreeViewPage } from './pages/content/TreeViewPage'
 import { AppTooltipPage } from './pages/feedback/TooltipPage'
 import { AppMenuFlyoutPage } from './pages/actions/MenuFlyoutPage'
 import { AppSplitButtonPage } from './pages/actions/SplitButtonPage'
@@ -50,6 +51,7 @@ export const demoPages: DemoPageDefinition[] = [
   { key: 'app-scroll-area', group: 'Content', label: 'AppScrollArea', description: 'Native scrolling with Fluent overflow, scrollbar, and gutter styling.', icon: <ScrollText size={16} />, component: AppScrollAreaPage },
   { key: 'field-empty-state', group: 'Content', label: 'Field & Empty State', description: 'Accessible field structure and compact or regular empty content.', icon: <Rows3 size={16} />, component: FieldEmptyStatePage },
   { key: 'list-view', group: 'Content', label: 'List View', description: 'Desktop information lists with selection, invocation, and keyboard navigation.', icon: <ListChecks size={16} />, component: ListViewPage },
+  { key: 'tree-view', group: 'Content', label: 'AppTreeView', description: 'Hierarchical resources with selection, lazy expansion, keyboard navigation, and drag requests.', icon: <ListChecks size={16} />, component: AppTreeViewPage },
   { key: 'expander', group: 'Content', label: 'Expander', description: 'Collapsible settings, release notes, and low-frequency details.', icon: <Columns3 size={16} />, component: ExpanderPage },
   { key: 'app-tag', group: 'Content', label: 'AppTag', description: 'Colored labels for categories, attributes, and removable values.', icon: <Tags size={16} />, component: TagPage },
   { key: 'app-info-bar', group: 'Feedback', label: 'AppInfoBar', description: 'Inline informational, success, warning, and error states.', icon: <Info size={16} />, component: AppInfoBarPage },

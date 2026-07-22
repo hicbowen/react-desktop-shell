@@ -497,6 +497,23 @@ Set `allowCustomValue={false}` when the committed value must match an option.
 
 ## List view
 
+## Tree view
+
+`AppTreeView` presents platform-neutral hierarchical resources with single or
+multiple selection, controlled expansion, keyboard navigation, lazy child-load
+requests, invocation, and drag/drop requests. Applications retain ownership of
+the tree data and perform file-system or backend operations themselves.
+
+```tsx
+<AppTreeView
+  items={projectNodes}
+  expandedKeys={expanded}
+  onExpandedKeysChange={setExpanded}
+  onLoadChildren={loadDirectory}
+  onItemDrop={moveResource}
+/>
+```
+
 `AppListView` and `AppListViewItem` form a desktop information list with mutually exclusive static, selection, and invoke modes. Static mode uses list/listitem semantics. Selection mode keeps each row as a listitem and uses a native radio or checkbox in the main label, so trailing actions remain separate controls; a disabled item disables its selection control and marks its trailing region inert. Invoke mode keeps each `role="button"` main action and its trailing controls as siblings inside a listitem, with Arrow/Home/End navigation and Enter/Space activation.
 
 ```tsx
