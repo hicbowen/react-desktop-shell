@@ -29,6 +29,7 @@ import { ButtonsPage } from './pages/actions/ButtonsPage'
 import { AppTeachingTipPage } from './pages/feedback/TeachingTipPage'
 import { AppFileDropOverlayPage } from './pages/feedback/FileDropOverlayPage'
 import { ProgressStatusPage } from './pages/feedback/ProgressStatusPage'
+import { AppTaskCenterPage } from './pages/feedback/TaskCenterPage'
 import { PopoverPage } from './pages/feedback/PopoverPage'
 import { TextInputsPage } from './pages/forms/TextInputsPage'
 import { SelectionControlsPage } from './pages/forms/SelectionControlsPage'
@@ -66,6 +67,7 @@ export const demoPages: DemoPageDefinition[] = [
   { key: 'app-tag', group: 'Content', label: 'AppTag', description: 'Colored labels for categories, attributes, and removable values.', icon: <Tags size={16} />, component: TagPage },
   { key: 'app-info-bar', group: 'Feedback', label: 'AppInfoBar', description: 'Inline informational, success, warning, and error states.', icon: <Info size={16} />, component: AppInfoBarPage },
   { key: 'progress-status', group: 'Feedback', label: 'Progress & Status', description: 'Indeterminate and determinate progress with semantic status badges.', icon: <Clock3 size={16} />, component: ProgressStatusPage },
+  { key: 'task-center', group: 'Feedback', label: 'AppTaskCenter', description: 'Host-neutral background task status, progress, and action requests.', icon: <Clock3 size={16} />, component: AppTaskCenterPage },
   { key: 'popover', group: 'Feedback', label: 'Popover', description: 'Portal-based non-modal supporting content with anchored placement.', icon: <MessageSquare size={16} />, component: PopoverPage },
   { key: 'app-tooltip', group: 'Feedback', label: 'AppTooltip', description: 'Non-interactive descriptions for hover and keyboard focus.', icon: <CircleHelp size={16} />, component: AppTooltipPage },
   { key: 'app-teaching-tip', group: 'Feedback', label: 'AppTeachingTip', description: 'Controlled anchored guidance with title, content, and actions.', icon: <Lightbulb size={16} />, component: AppTeachingTipPage },

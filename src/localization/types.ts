@@ -141,6 +141,19 @@ export interface AppLocaleMessages {
     durationTooShort: (minutes: number) => string
     durationTooLong: (minutes: number) => string
   }
+  taskCenter: {
+    label: string
+    cancel: string
+    retry: string
+    dismiss: string
+    empty: string
+    queued: string
+    running: string
+    paused: string
+    success: string
+    error: string
+    canceled: string
+  }
 }
 
 export interface AppLocaleContextValue {

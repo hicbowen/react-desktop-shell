@@ -154,4 +154,9 @@ export const zhCNMessages = {
     durationTooLong: (minutes: number) =>
       `时间范围不能超过 ${minutes} 分钟`,
   },
+  taskCenter: {
+    label: '后台任务', cancel: '取消任务', retry: '重试任务', dismiss: '清除任务',
+    empty: '没有后台任务', queued: '等待中', running: '进行中', paused: '已暂停',
+    success: '已完成', error: '失败', canceled: '已取消',
+  },
 } satisfies AppLocaleMessages

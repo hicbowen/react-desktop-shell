@@ -159,4 +159,10 @@ export const enUSMessages = {
     durationTooLong: (minutes: number) =>
       `Time range must not exceed ${formatEnglishDuration(minutes)}`,
   },
+  taskCenter: {
+    label: 'Background tasks', cancel: 'Cancel task', retry: 'Retry task',
+    dismiss: 'Dismiss task', empty: 'No background tasks', queued: 'Queued',
+    running: 'Running', paused: 'Paused', success: 'Completed', error: 'Failed',
+    canceled: 'Canceled',
+  },
 } satisfies AppLocaleMessages

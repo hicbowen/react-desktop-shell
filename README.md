@@ -327,6 +327,14 @@ Use `AppProgressRing` for indeterminate work, `AppProgressBar` for determinate o
 <AppStatusBadge status="success">Complete</AppStatusBadge>
 ```
 
+## Background task center
+
+`AppTaskCenter` renders application-owned task snapshots and emits cancel,
+retry, and dismiss requests. `AppTaskIndicator` provides a compact active-task
+count for a status bar or toolbar. Neither component subscribes to a backend,
+so Wails events, Electron IPC, Tauri events, or another transport stay outside
+the component library.
+
 ## Localization
 
 `AppShell` is the single public localization entry point. The component library
