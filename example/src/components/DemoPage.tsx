@@ -1,4 +1,6 @@
 import type { HTMLAttributes, ReactNode } from 'react'
+import { useDemoI18n } from '../i18n/DemoI18nContext'
+import { localizeSectionText } from '../i18n/sectionTranslations'
 
 export function DemoPage({
   children,
@@ -9,7 +11,10 @@ export function DemoPage({
 }
 
 export function DemoSection({ title, description, children }: { title: string; description?: string; children: ReactNode }) {
-  return <section className="demo-section"><header><h2>{title}</h2>{description ? <p>{description}</p> : null}</header>{children}</section>
+  const { locale } = useDemoI18n()
+  const localizedTitle = localizeSectionText(locale, title)
+  const localizedDescription = localizeSectionText(locale, description)
+  return <section className="demo-section"><header><h2>{localizedTitle}</h2>{localizedDescription ? <p>{localizedDescription}</p> : null}</header>{children}</section>
 }
 
 export function DemoPreview({

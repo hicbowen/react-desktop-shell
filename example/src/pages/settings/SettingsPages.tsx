@@ -3,45 +3,33 @@ import { BadgeInfo, Languages, ListFilter, Palette, Sparkles } from 'lucide-reac
 import { AppSelect, AppSettingsGroup, AppSettingsRow, AppToggleSwitch } from '../../../../src'
 import { DemoPage, DemoSection } from '../../components/DemoPage'
 import { useDemoShell } from '../../components/DemoShellContext'
-
-const themeOptions = [
-  { value: 'system', label: 'Follow system' },
-  { value: 'light', label: 'Light' },
-  { value: 'dark', label: 'Dark' },
-]
-
-const localeOptions = [
-  { value: 'system', label: 'Follow system' },
-  { value: 'zh-CN', label: '简体中文' },
-  { value: 'en-US', label: 'English' },
-]
-
-const detailOptions = [
-  { value: 'compact', label: 'Compact' },
-  { value: 'standard', label: 'Standard' },
-  { value: 'detailed', label: 'Detailed' },
-]
+import { useDemoI18n } from '../../i18n/DemoI18nContext'
 
 export function SettingsPage() {
   const { locale, setLocale, theme, setTheme } = useDemoShell()
+  const { messages } = useDemoI18n()
+  const text = messages.settings
+  const themeOptions = Object.entries(text.themeOptions).map(([value, label]) => ({ value, label }))
+  const localeOptions = Object.entries(text.localeOptions).map(([value, label]) => ({ value, label }))
+  const detailOptions = Object.entries(text.detailOptions).map(([value, label]) => ({ value, label }))
   const [enabled, setEnabled] = useState(true)
   const [detail, setDetail] = useState('standard')
 
   return (
     <DemoPage>
       <DemoSection
-        title="Application settings"
-        description="Settings groups and rows organize appearance, language, preferences, and read-only application information."
+        title={text.sectionTitle}
+        description={text.sectionDescription}
       >
         <div className="demo-settings">
           <AppSettingsGroup
-            title="Appearance"
-            description="Changes apply to the real outer AppShell immediately."
+            title={text.appearance}
+            description={text.appearanceDescription}
           >
             <AppSettingsRow
               control={
                 <AppSelect
-                  aria-label="Theme"
+                  aria-label={text.themeAria}
                   onValueChange={(value) => {
                     if (value === 'system' || value === 'light' || value === 'dark') {
                       setTheme(value)
@@ -51,14 +39,14 @@ export function SettingsPage() {
                   value={theme}
                 />
               }
-              description="Choose a fixed color theme or follow the operating system."
+              description={text.themeDescription}
               icon={<Palette />}
-              title="Theme"
+              title={text.theme}
             />
             <AppSettingsRow
               control={
                 <AppSelect
-                  aria-label="Language"
+                  aria-label={text.languageAria}
                   onValueChange={(value) => {
                     if (value === 'system' || value === 'zh-CN' || value === 'en-US') {
                       setLocale(value)
@@ -68,51 +56,51 @@ export function SettingsPage() {
                   value={locale}
                 />
               }
-              description="Controls built-in component labels, dates, and time display."
+              description={text.languageDescription}
               icon={<Languages />}
-              title="Language"
+              title={text.language}
             />
           </AppSettingsGroup>
 
           <AppSettingsGroup
-            title="Preferences"
-            description="Dependent settings demonstrate interactive and disabled row states."
+            title={text.preferences}
+            description={text.preferencesDescription}
           >
             <AppSettingsRow
               control={
                 <AppToggleSwitch
-                  aria-label="Enable feature"
+                  aria-label={text.enableFeature}
                   checked={enabled}
                   onCheckedChange={setEnabled}
                 />
               }
-              description="Controls whether the dependent detail setting is available."
+              description={text.enableFeatureDescription}
               icon={<Sparkles />}
-              title="Enable feature"
+              title={text.enableFeature}
             />
             <AppSettingsRow
               control={
                 <AppSelect
-                  aria-label="Detail level"
+                  aria-label={text.detailLevel}
                   disabled={!enabled}
                   onValueChange={setDetail}
                   options={detailOptions}
                   value={detail}
                 />
               }
-              description="Select how much supporting information the feature displays."
+              description={text.detailLevelDescription}
               disabled={!enabled}
               icon={<ListFilter />}
-              title="Detail level"
+              title={text.detailLevel}
             />
           </AppSettingsGroup>
 
-          <AppSettingsGroup title="About">
+          <AppSettingsGroup title={text.about}>
             <AppSettingsRow
               control={<strong>v{__APP_VERSION__}</strong>}
-              description="Current react-desktop-shell Example version."
+              description={text.versionDescription}
               icon={<BadgeInfo />}
-              title="Version"
+              title={text.version}
             />
           </AppSettingsGroup>
         </div>

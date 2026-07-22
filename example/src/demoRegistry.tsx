@@ -54,10 +54,15 @@ import { AppCalendarPage } from './pages/forms/CalendarPage'
 import { DateRangePickerPage } from './pages/forms/DateRangePickerPage'
 import { TimePickerPage } from './pages/forms/TimePickerPage'
 import { TimeRangePickerPage } from './pages/forms/TimeRangePickerPage'
+import type { ResolvedAppLocale } from '../../src/localization/types'
+import { zhCNGroupLabels, zhCNRegistry } from './i18n/registry.zh-CN'
 
-export type DemoPageDefinition = { key: string; group: string; label: string; description: string; icon: ReactNode; component: ComponentType; layout?: 'default' | 'fill' }
+export type DemoCategoryKey = 'getting-started' | 'shell' | 'navigation' | 'actions' | 'input' | 'data' | 'content' | 'feedback' | 'settings'
+export type DemoStatus = 'stable' | 'preview'
+export type DemoPageDefinition = { key: string; category: DemoCategoryKey; subgroup: string; apiNames: string[]; status: DemoStatus; group: string; subgroupLabel: string; label: string; description: string; icon: ReactNode; component: ComponentType; layout?: 'default' | 'fill'; related?: string[] }
+type DemoPageSource = Omit<DemoPageDefinition, 'category' | 'subgroup' | 'apiNames' | 'status' | 'subgroupLabel'>
 
-export const demoPages: DemoPageDefinition[] = [
+const demoPageSources = [
   { key: 'overview', group: 'Overview', label: 'Overview', description: 'Browse the library by component category and exported name.', icon: <LayoutDashboard size={16} />, component: OverviewPage },
   { key: 'app-shell', group: 'Shell & Layout', label: 'AppShell', description: 'The root frame for desktop-style application chrome and overlays.', icon: <Boxes size={16} />, component: AppShellPage },
   { key: 'app-title-bar', group: 'Shell & Layout', label: 'AppTitleBar', description: 'Window title, actions, and native window controls.', icon: <LayoutPanelTop size={16} />, component: AppTitleBarPage },
@@ -122,16 +127,161 @@ export const demoPages: DemoPageDefinition[] = [
   { key: 'app-selection-bar', group: 'Data', label: 'AppSelectionBar', description: 'Actions and clear behavior for selected data rows.', icon: <Rows3 size={16} />, component: AppSelectionBarPage },
   { key: 'app-pagination', group: 'Data', label: 'AppPagination', description: 'Standalone paging controls for tables, lists, and result collections.', icon: <Rows3 size={16} />, component: AppPaginationPage },
   { key: 'settings', group: 'Settings', label: 'Settings', description: 'Application appearance, language, preferences, and information.', icon: <Settings size={16} />, component: SettingsPage },
-]
+] satisfies DemoPageSource[]
 
-const mainDemoPages = demoPages.filter((page) => page.key !== 'settings')
+type DemoPageKey = (typeof demoPageSources)[number]['key']
+type DemoTaxonomy = Pick<DemoPageDefinition, 'category' | 'subgroup' | 'apiNames' | 'status' | 'related'>
 
-export const railItems: RailEntry[] = mainDemoPages.flatMap((page, index) => {
-  const previous = mainDemoPages[index - 1]
-  const group = page.group !== previous?.group && page.group !== 'Overview' ? [{ type: 'group' as const, label: page.group }] : []
-  return [...group, { key: page.key, label: page.label, icon: page.icon }]
+const taxonomy: Record<DemoPageKey, DemoTaxonomy> = {
+  overview: { category: 'getting-started', subgroup: 'overview', apiNames: [], status: 'stable' },
+  'app-shell': { category: 'shell', subgroup: 'window', apiNames: ['AppShell'], status: 'stable', related: ['app-title-bar', 'app-page'] },
+  'app-title-bar': { category: 'shell', subgroup: 'window', apiNames: ['AppTitleBar'], status: 'stable', related: ['app-shell'] },
+  'app-page': { category: 'shell', subgroup: 'page', apiNames: ['AppPage'], status: 'stable', related: ['app-side-pane'] },
+  'app-side-pane': { category: 'shell', subgroup: 'page', apiNames: ['AppSidePane'], status: 'stable', related: ['app-page', 'resizable-panes'] },
+  'resizable-panes': { category: 'shell', subgroup: 'layout', apiNames: ['AppResizablePaneGroup'], status: 'stable', related: ['app-side-pane'] },
+  'app-scroll-area': { category: 'shell', subgroup: 'layout', apiNames: ['AppScrollArea'], status: 'stable' },
+  'status-bar': { category: 'shell', subgroup: 'window', apiNames: ['AppStatusBar', 'AppStatusBarItem'], status: 'stable' },
+  'app-rail': { category: 'navigation', subgroup: 'application', apiNames: ['AppRail'], status: 'stable', related: ['navigation-modes'] },
+  'navigation-modes': { category: 'navigation', subgroup: 'application', apiNames: ['AppRail'], status: 'stable', related: ['app-rail'] },
+  'app-selector-bar': { category: 'navigation', subgroup: 'page', apiNames: ['AppSelectorBar', 'AppSelectorPanel', 'AppSelectorPanels'], status: 'stable' },
+  'app-tab-view': { category: 'navigation', subgroup: 'page', apiNames: ['AppTabView'], status: 'stable' },
+  'breadcrumb-bar': { category: 'navigation', subgroup: 'page', apiNames: ['AppBreadcrumbBar'], status: 'stable' },
+  'app-pagination': { category: 'navigation', subgroup: 'collection', apiNames: ['AppPagination'], status: 'stable', related: ['app-data-table'] },
+  buttons: { category: 'actions', subgroup: 'basic', apiNames: ['AppButton', 'AppIconButton'], status: 'stable' },
+  'toggle-button': { category: 'actions', subgroup: 'basic', apiNames: ['AppToggleButton', 'AppToggleButtonGroup'], status: 'stable' },
+  'app-split-button': { category: 'actions', subgroup: 'basic', apiNames: ['AppSplitButton'], status: 'stable' },
+  'app-toolbar': { category: 'actions', subgroup: 'commands', apiNames: ['AppToolbar'], status: 'stable' },
+  'app-command': { category: 'actions', subgroup: 'commands', apiNames: ['AppCommandProvider'], status: 'stable' },
+  'command-palette': { category: 'actions', subgroup: 'commands', apiNames: ['AppCommandPalette'], status: 'stable' },
+  'shortcut-recorder': { category: 'actions', subgroup: 'commands', apiNames: ['AppShortcutRecorder'], status: 'stable' },
+  'menu-bar': { category: 'actions', subgroup: 'menus', apiNames: ['AppMenuBar'], status: 'stable' },
+  'app-menu-flyout': { category: 'actions', subgroup: 'menus', apiNames: ['AppMenuFlyout'], status: 'stable' },
+  'context-menu': { category: 'actions', subgroup: 'menus', apiNames: ['AppContextMenu'], status: 'stable' },
+  'text-inputs': { category: 'input', subgroup: 'text', apiNames: ['AppTextBox', 'AppTextArea'], status: 'stable' },
+  'search-box': { category: 'input', subgroup: 'text', apiNames: ['AppSearchBox'], status: 'stable' },
+  'password-box': { category: 'input', subgroup: 'text', apiNames: ['AppPasswordBox'], status: 'stable' },
+  'auto-complete': { category: 'input', subgroup: 'text', apiNames: ['AppAutoComplete'], status: 'stable' },
+  slider: { category: 'input', subgroup: 'numeric', apiNames: ['AppSlider'], status: 'stable' },
+  'range-slider': { category: 'input', subgroup: 'numeric', apiNames: ['AppRangeSlider'], status: 'stable' },
+  'number-select': { category: 'input', subgroup: 'selection', apiNames: ['AppNumberBox', 'AppSelect'], status: 'stable' },
+  'selection-controls': { category: 'input', subgroup: 'selection', apiNames: ['AppCheckBox', 'AppRadioGroup', 'AppSegmentedControl', 'AppToggleSwitch'], status: 'stable' },
+  'multi-select': { category: 'input', subgroup: 'selection', apiNames: ['AppMultiSelect', 'AppTagPicker'], status: 'stable' },
+  cascader: { category: 'input', subgroup: 'selection', apiNames: ['AppCascader'], status: 'stable' },
+  calendar: { category: 'input', subgroup: 'date-time', apiNames: ['AppCalendar'], status: 'stable' },
+  'date-picker': { category: 'input', subgroup: 'date-time', apiNames: ['AppDatePicker'], status: 'stable' },
+  'date-range-picker': { category: 'input', subgroup: 'date-time', apiNames: ['AppDateRangePicker'], status: 'stable' },
+  'time-picker': { category: 'input', subgroup: 'date-time', apiNames: ['AppTimePicker'], status: 'stable' },
+  'time-range-picker': { category: 'input', subgroup: 'date-time', apiNames: ['AppTimeRangePicker'], status: 'stable' },
+  'color-picker': { category: 'input', subgroup: 'specialized', apiNames: ['AppColorPicker', 'AppColorPickerPanel'], status: 'stable' },
+  'file-picker': { category: 'input', subgroup: 'specialized', apiNames: ['AppFilePicker'], status: 'stable' },
+  'list-view': { category: 'data', subgroup: 'collections', apiNames: ['AppListView', 'AppListViewItem'], status: 'stable' },
+  'tree-view': { category: 'data', subgroup: 'collections', apiNames: ['AppTreeView'], status: 'stable' },
+  'app-data-table': { category: 'data', subgroup: 'collections', apiNames: ['AppDataTable'], status: 'stable' },
+  'app-selection-bar': { category: 'data', subgroup: 'operations', apiNames: ['AppSelectionBar'], status: 'stable' },
+  'property-grid': { category: 'data', subgroup: 'properties', apiNames: ['AppPropertyGrid'], status: 'stable' },
+  'app-card': { category: 'content', subgroup: 'containers', apiNames: ['AppCard', 'AppCardHeader', 'AppCardFooter', 'AppCardGroup'], status: 'stable' },
+  expander: { category: 'content', subgroup: 'containers', apiNames: ['AppExpander'], status: 'stable' },
+  'app-tag': { category: 'content', subgroup: 'markers', apiNames: ['AppTag'], status: 'stable' },
+  'app-skeleton': { category: 'content', subgroup: 'states', apiNames: ['AppSkeleton', 'AppSkeletonGroup'], status: 'stable' },
+  'progress-status': { category: 'content', subgroup: 'states', apiNames: ['AppProgressBar', 'AppProgressRing', 'AppStatusBadge'], status: 'stable' },
+  'field-empty-state': { category: 'content', subgroup: 'structure', apiNames: ['AppField', 'AppEmptyState'], status: 'stable' },
+  'form-layout': { category: 'content', subgroup: 'structure', apiNames: ['AppFormLayout', 'AppValidationSummary'], status: 'stable' },
+  'app-info-bar': { category: 'feedback', subgroup: 'status', apiNames: ['AppInfoBar'], status: 'stable' },
+  'app-toast': { category: 'feedback', subgroup: 'status', apiNames: ['AppToast'], status: 'stable' },
+  'loading-overlay': { category: 'feedback', subgroup: 'status', apiNames: ['AppLoadingOverlay'], status: 'stable' },
+  'task-center': { category: 'feedback', subgroup: 'status', apiNames: ['AppTaskCenter', 'AppTaskIndicator'], status: 'stable' },
+  'app-tooltip': { category: 'feedback', subgroup: 'overlays', apiNames: ['AppTooltip'], status: 'stable' },
+  popover: { category: 'feedback', subgroup: 'overlays', apiNames: ['AppPopover'], status: 'stable' },
+  'app-teaching-tip': { category: 'feedback', subgroup: 'overlays', apiNames: ['AppTeachingTip'], status: 'stable' },
+  'app-dialog': { category: 'feedback', subgroup: 'modal', apiNames: ['AppDialog'], status: 'stable' },
+  'message-box': { category: 'feedback', subgroup: 'modal', apiNames: ['useAppMessageBox'], status: 'stable' },
+  'app-file-drop-overlay': { category: 'feedback', subgroup: 'drag-drop', apiNames: ['AppFileDropOverlay'], status: 'stable' },
+  settings: { category: 'settings', subgroup: 'settings', apiNames: ['AppSettingsGroup', 'AppSettingsRow'], status: 'stable' },
+}
+
+const categoryOrder: DemoCategoryKey[] = ['shell', 'navigation', 'actions', 'input', 'data', 'content', 'feedback']
+const subgroupOrder: Partial<Record<DemoCategoryKey, string[]>> = {
+  shell: ['window', 'page', 'layout'],
+  navigation: ['application', 'page', 'collection'],
+  actions: ['basic', 'commands', 'menus'],
+  input: ['text', 'numeric', 'selection', 'date-time', 'specialized'],
+  data: ['collections', 'operations', 'properties'],
+  content: ['containers', 'markers', 'states', 'structure'],
+  feedback: ['status', 'overlays', 'modal', 'drag-drop'],
+}
+
+const categoryLabels: Record<Exclude<DemoCategoryKey, 'getting-started' | 'settings'>, { en: string; zh: string }> = {
+  shell: { en: 'Application frame', zh: '应用框架' },
+  navigation: { en: 'Navigation', zh: '导航' },
+  actions: { en: 'Commands & actions', zh: '命令与操作' },
+  input: { en: 'Input & selection', zh: '输入与选择' },
+  data: { en: 'Data & collections', zh: '数据与集合' },
+  content: { en: 'Content display', zh: '内容展示' },
+  feedback: { en: 'Feedback & overlays', zh: '反馈与浮层' },
+}
+
+const subgroupLabels: Record<string, { en: string; zh: string }> = {
+  window: { en: 'Window structure', zh: '窗口结构' }, page: { en: 'Page structure', zh: '页面结构' }, layout: { en: 'Layout containers', zh: '布局容器' },
+  application: { en: 'Application navigation', zh: '应用导航' }, collection: { en: 'Collection navigation', zh: '集合导航' },
+  basic: { en: 'Basic actions', zh: '基础操作' }, commands: { en: 'Command system', zh: '命令系统' }, menus: { en: 'Menus', zh: '菜单' },
+  text: { en: 'Text input', zh: '文本输入' }, numeric: { en: 'Numeric input', zh: '数值输入' }, selection: { en: 'Selection controls', zh: '选择控件' }, 'date-time': { en: 'Date & time', zh: '日期与时间' }, specialized: { en: 'Specialized input', zh: '专用输入' },
+  collections: { en: 'Collection views', zh: '集合视图' }, operations: { en: 'Data operations', zh: '数据操作' }, properties: { en: 'Property editing', zh: '属性编辑' },
+  containers: { en: 'Content containers', zh: '内容容器' }, markers: { en: 'Markers', zh: '标记' }, states: { en: 'Content states', zh: '内容状态' }, structure: { en: 'Content structure', zh: '内容结构' },
+  status: { en: 'Status feedback', zh: '状态反馈' }, overlays: { en: 'Supporting overlays', zh: '辅助浮层' }, modal: { en: 'Modal interactions', zh: '模态交互' }, 'drag-drop': { en: 'Drag & drop', zh: '拖放反馈' },
+  overview: { en: 'Overview', zh: '概览' }, settings: { en: 'Settings', zh: '设置' },
+}
+
+export const demoPages: DemoPageDefinition[] = demoPageSources.map((page) => {
+  const metadata = taxonomy[page.key]
+  return {
+    ...page,
+    ...metadata,
+    group: metadata.category === 'getting-started' || metadata.category === 'settings'
+      ? page.group
+      : categoryLabels[metadata.category].en,
+    subgroupLabel: subgroupLabels[metadata.subgroup]?.en ?? metadata.subgroup,
+  }
 })
 
-export const railFooterItems: RailItem[] = [
-  { key: 'settings', label: 'Settings', icon: <Settings size={16} /> },
-]
+export function getDemoPages(locale: ResolvedAppLocale): DemoPageDefinition[] {
+  if (locale === 'en-US') return demoPages
+  return demoPages.map((page) => ({
+    ...page,
+    group: page.category === 'getting-started' || page.category === 'settings'
+      ? (zhCNGroupLabels[page.group] ?? page.group)
+      : categoryLabels[page.category].zh,
+    subgroupLabel: subgroupLabels[page.subgroup]?.zh ?? page.subgroupLabel,
+    label: zhCNRegistry[page.key]?.label ?? page.label,
+    description: zhCNRegistry[page.key]?.description ?? page.description,
+  }))
+}
+
+export function getRailItems(pages: DemoPageDefinition[]): RailEntry[] {
+  const overview = pages.find((page) => page.key === 'overview')
+  const entries: RailEntry[] = overview ? [{ key: overview.key, label: overview.label, icon: overview.icon }] : []
+
+  for (const category of categoryOrder) {
+    const categoryPages = pages.filter((page) => page.category === category)
+    if (!categoryPages.length) continue
+    entries.push({ type: 'group', label: categoryPages[0]!.group })
+    for (const subgroup of subgroupOrder[category] ?? []) {
+      const subgroupPages = categoryPages.filter((page) => page.subgroup === subgroup)
+      entries.push({
+        type: 'submenu',
+        key: `group-${category}-${subgroup}`,
+        label: subgroupPages[0]!.subgroupLabel,
+        icon: subgroupPages[0]!.icon,
+        children: subgroupPages.map((page) => ({ key: page.key, label: page.label, icon: page.icon })),
+      })
+    }
+  }
+  return entries
+}
+
+export function getRailFooterItems(pages: DemoPageDefinition[]): RailItem[] {
+  const settings = pages.find((page) => page.key === 'settings')
+  return [{ key: 'settings', label: settings?.label ?? 'Settings', icon: <Settings size={16} /> }]
+}
+
+export const railItems = getRailItems(demoPages)
+export const railFooterItems = getRailFooterItems(demoPages)

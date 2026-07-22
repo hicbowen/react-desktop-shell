@@ -17,6 +17,7 @@ export type {
   AppCommandProviderProps,
   AppShortcut,
 } from './command'
+export { resolveAppLocale, useResolvedAppLocale } from './localization'
 export type { AppLocale } from './localization'
 export { AppButton, AppIconButton } from './button'
 export { AppEmptyState } from './empty-state'

@@ -711,3 +711,16 @@
 .demo-expander-form { display: grid; gap: 10px; }
 .demo-expander-text { margin: 0; line-height: 1.5; }
 .demo-expander-control { display: flex; align-items: center; }
+.example-page-title {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 8px 12px;
+}
+
+.example-page-title code {
+  color: var(--app-shell-muted-text-color, #707070);
+  font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+  font-size: 13px;
+  font-weight: 500;
+}
