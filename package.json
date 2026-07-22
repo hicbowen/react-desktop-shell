@@ -48,6 +48,7 @@
   "scripts": {
     "clean": "node -e \"import('node:fs').then(fs => fs.rmSync('dist', { recursive: true, force: true }))\"",
     "dev": "vite --config vite.example.config.ts",
+    "build:example": "vite build --config vite.example.config.ts",
     "build": "npm run clean && vite build && tsc -p tsconfig.build.json",
     "lint": "eslint .",
     "test": "vitest run",

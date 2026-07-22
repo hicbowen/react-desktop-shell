@@ -1,0 +1,68 @@
+name: Deploy example to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-example-pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Check deployment credential
+        env:
+          PAGES_DEPLOY_TOKEN: ${{ secrets.PAGES_DEPLOY_TOKEN }}
+        run: |
+          if [ -z "$PAGES_DEPLOY_TOKEN" ]; then
+            echo "::error::Add the PAGES_DEPLOY_TOKEN repository secret before deploying."
+            exit 1
+          fi
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build example
+        run: npm run build:example
+
+      - name: Check out Pages repository
+        uses: actions/checkout@v4
+        with:
+          repository: react-desktop-shell/react-desktop-shell.github.io
+          ref: main
+          token: ${{ secrets.PAGES_DEPLOY_TOKEN }}
+          path: pages-repository
+
+      - name: Update Pages content
+        run: |
+          rsync --archive --delete --exclude='.git/' example/dist/ pages-repository/
+          touch pages-repository/.nojekyll
+
+      - name: Commit and push deployment
+        working-directory: pages-repository
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add --all
+          if git diff --cached --quiet; then
+            echo "Pages content is already up to date."
+            exit 0
+          fi
+          git commit -m "Deploy example from ${GITHUB_REPOSITORY}@${GITHUB_SHA}"
+          git push origin main
