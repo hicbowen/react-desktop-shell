@@ -73,8 +73,3 @@ export const zhCNRegistry: Record<string, DemoPageTranslation> = {
   'app-pagination': { label: 'AppPagination', description: '用于表格、列表和结果集合的独立分页控件。' },
   settings: { label: '设置', description: '管理应用外观、语言、偏好和相关信息。' },
 }
-
-export const zhCNGroupLabels: Record<string, string> = {
-  Overview: '概览', 'Shell & Layout': '外壳与布局', Navigation: '导航', Content: '内容',
-  Feedback: '反馈', Actions: '操作', Forms: '表单', Data: '数据', Settings: '设置',
-}

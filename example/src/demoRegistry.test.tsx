@@ -5,7 +5,7 @@ describe('settings demo registration', () => {
   it('keeps the unified settings page only in the rail footer', () => {
     expect(
       demoPages
-        .filter((page) => page.group === 'Settings')
+        .filter((page) => page.category === 'settings')
         .map((page) => page.key),
     ).toEqual(['settings'])
 
@@ -28,7 +28,7 @@ describe('settings demo registration', () => {
     expect(chinesePages).toHaveLength(demoPages.length)
     expect(chinesePages.every((page) => page.label && page.description)).toBe(true)
     expect(chinesePages.find((page) => page.key === 'overview')).toMatchObject({
-      group: '概览',
+      categoryLabel: '概览',
       label: '概览',
     })
     expect(

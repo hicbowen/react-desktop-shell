@@ -17,7 +17,8 @@ import { AppDataTablePage, AppSelectionBarPage } from './pages/data/DataPages'
 import { AppPaginationPage } from './pages/data/PaginationPage'
 import { SettingsPage } from './pages/settings/SettingsPages'
 import { AppCardPage } from './pages/content/CardPages'
-import { AppEmptyStatePage, AppFieldPage } from './pages/content/FieldEmptyStatePage'
+import { AppEmptyStatePage } from './pages/content/AppEmptyStatePage'
+import { AppFieldPage } from './pages/content/AppFieldPage'
 import { ListViewPage } from './pages/content/ListViewPage'
 import { ExpanderPage } from './pages/content/ExpanderPage'
 import { TagPage } from './pages/content/TagPage'
@@ -32,11 +33,13 @@ import { AppSplitButtonPage } from './pages/actions/SplitButtonPage'
 import { ButtonsPage } from './pages/actions/ButtonsPage'
 import { AppTeachingTipPage } from './pages/feedback/TeachingTipPage'
 import { AppFileDropOverlayPage } from './pages/feedback/FileDropOverlayPage'
-import { AppProgressPage, AppStatusBadgePage } from './pages/feedback/ProgressStatusPage'
+import { AppProgressPage } from './pages/content/AppProgressPage'
+import { AppStatusBadgePage } from './pages/content/AppStatusBadgePage'
 import { AppLoadingOverlayPage } from './pages/feedback/LoadingOverlayPage'
 import { AppTaskCenterPage } from './pages/feedback/TaskCenterPage'
 import { PopoverPage } from './pages/feedback/PopoverPage'
-import { AppTextAreaPage, AppTextBoxPage } from './pages/forms/TextInputsPage'
+import { AppTextAreaPage } from './pages/forms/AppTextAreaPage'
+import { AppTextBoxPage } from './pages/forms/AppTextBoxPage'
 import { AppSearchBoxPage } from './pages/forms/SearchBoxPage'
 import { AppColorPickerPage } from './pages/forms/ColorPickerPage'
 import { AppFilePickerPage } from './pages/forms/FilePickerPage'
@@ -44,8 +47,12 @@ import { AppMultiSelectPage } from './pages/forms/MultiSelectPage'
 import { AppPasswordBoxPage } from './pages/forms/PasswordBoxPage'
 import { AppRangeSliderPage } from './pages/forms/RangeSliderPage'
 import { AppFormLayoutPage } from './pages/forms/FormLayoutPage'
-import { AppCheckBoxPage, AppRadioGroupPage, AppSegmentedControlPage, AppToggleSwitchPage } from './pages/forms/SelectionControlsPage'
-import { AppNumberBoxPage, AppSelectPage } from './pages/forms/NumberSelectPage'
+import { AppCheckBoxPage } from './pages/forms/AppCheckBoxPage'
+import { AppRadioGroupPage } from './pages/forms/AppRadioGroupPage'
+import { AppSegmentedControlPage } from './pages/forms/AppSegmentedControlPage'
+import { AppToggleSwitchPage } from './pages/forms/AppToggleSwitchPage'
+import { AppNumberBoxPage } from './pages/forms/AppNumberBoxPage'
+import { AppSelectPage } from './pages/forms/AppSelectPage'
 import { AutoCompletePage } from './pages/forms/AutoCompletePage'
 import { CascaderPage } from './pages/forms/CascaderPage'
 import { SliderPage } from './pages/forms/SliderPage'
@@ -55,85 +62,85 @@ import { DateRangePickerPage } from './pages/forms/DateRangePickerPage'
 import { TimePickerPage } from './pages/forms/TimePickerPage'
 import { TimeRangePickerPage } from './pages/forms/TimeRangePickerPage'
 import type { ResolvedAppLocale } from '../../src/localization/types'
-import { zhCNGroupLabels, zhCNRegistry } from './i18n/registry.zh-CN'
+import { zhCNRegistry } from './i18n/registry.zh-CN'
 
 export type DemoCategoryKey = 'getting-started' | 'shell' | 'navigation' | 'actions' | 'input' | 'data' | 'content' | 'feedback' | 'settings'
 export type DemoStatus = 'stable' | 'preview'
-export type DemoPageDefinition = { key: string; category: DemoCategoryKey; subgroup: string; apiNames: string[]; status: DemoStatus; group: string; subgroupLabel: string; label: string; description: string; icon: ReactNode; component: ComponentType; layout?: 'default' | 'fill'; related?: string[] }
-type DemoPageSource = Omit<DemoPageDefinition, 'category' | 'subgroup' | 'apiNames' | 'status' | 'subgroupLabel'>
+export type DemoPageDefinition = { key: string; category: DemoCategoryKey; categoryLabel: string; subgroup: string; apiNames: string[]; status: DemoStatus; subgroupLabel: string; label: string; description: string; icon: ReactNode; component: ComponentType; layout?: 'default' | 'fill'; related?: string[] }
+type DemoPageSource = Omit<DemoPageDefinition, 'category' | 'categoryLabel' | 'subgroup' | 'apiNames' | 'status' | 'subgroupLabel'>
 
 const demoPageSources = [
-  { key: 'overview', group: 'Overview', label: 'Overview', description: 'Browse the library by component category and exported name.', icon: <LayoutDashboard size={16} />, component: OverviewPage },
-  { key: 'app-shell', group: 'Shell & Layout', label: 'AppShell', description: 'The root frame for desktop-style application chrome and overlays.', icon: <Boxes size={16} />, component: AppShellPage },
-  { key: 'app-title-bar', group: 'Shell & Layout', label: 'AppTitleBar', description: 'Window title, actions, and native window controls.', icon: <LayoutPanelTop size={16} />, component: AppTitleBarPage },
-  { key: 'app-page', group: 'Shell & Layout', label: 'AppPage', description: 'Consistent page headers, content, actions, and side panes.', icon: <Columns3 size={16} />, component: AppPagePage },
-  { key: 'app-side-pane', group: 'Shell & Layout', label: 'AppSidePane', description: 'Dismissible and optionally resizable secondary content.', icon: <PanelRight size={16} />, component: AppSidePanePage },
-  { key: 'resizable-panes', group: 'Shell & Layout', label: 'AppResizablePaneGroup', description: 'Pointer and keyboard resizable two-pane workspaces.', icon: <PanelRight size={16} />, component: AppResizablePanePage },
-  { key: 'app-rail', group: 'Navigation', label: 'AppRail', description: 'Grouped navigation items, submenus, badges, and footer links.', icon: <Navigation size={16} />, component: AppRailPage },
-  { key: 'app-selector-bar', group: 'Navigation', label: 'AppSelectorBar', description: 'Switch between a few mutually exclusive views within the current page.', icon: <Rows3 size={16} />, component: AppSelectorBarPage },
-  { key: 'app-tab-view', group: 'Navigation', label: 'AppTabView', description: 'Closable, reorderable document tabs with explicit panel lifecycle.', icon: <Columns3 size={16} />, component: AppTabViewPage },
-  { key: 'breadcrumb-bar', group: 'Navigation', label: 'AppBreadcrumbBar', description: 'Compact resource paths with collapsed ancestor navigation.', icon: <Navigation size={16} />, component: AppBreadcrumbBarPage },
-  { key: 'navigation-modes', group: 'Navigation', label: 'Navigation Modes', description: 'Expanded, compact, minimal, and responsive rail behavior.', icon: <Menu size={16} />, component: NavigationModesPage },
-  { key: 'app-card', group: 'Content', label: 'AppCard', description: 'Fluent content surfaces, composition, interaction states, and continuous groups.', icon: <CreditCard size={16} />, component: AppCardPage },
-  { key: 'app-scroll-area', group: 'Content', label: 'AppScrollArea', description: 'Native scrolling with Fluent overflow, scrollbar, and gutter styling.', icon: <ScrollText size={16} />, component: AppScrollAreaPage },
-  { key: 'app-field', group: 'Content', label: 'AppField', description: 'Accessible labels, descriptions, requirements, errors, and field layouts.', icon: <Rows3 size={16} />, component: AppFieldPage },
-  { key: 'app-empty-state', group: 'Content', label: 'AppEmptyState', description: 'Compact and regular empty content with optional guidance and actions.', icon: <Rows3 size={16} />, component: AppEmptyStatePage },
-  { key: 'list-view', group: 'Content', label: 'List View', description: 'Desktop information lists with selection, invocation, and keyboard navigation.', icon: <ListChecks size={16} />, component: ListViewPage },
-  { key: 'tree-view', group: 'Content', label: 'AppTreeView', description: 'Hierarchical resources with selection, lazy expansion, keyboard navigation, and drag requests.', icon: <ListChecks size={16} />, component: AppTreeViewPage },
-  { key: 'status-bar', group: 'Content', label: 'AppStatusBar', description: 'Compact persistent workspace status and contextual actions.', icon: <Rows3 size={16} />, component: AppStatusBarPage },
-  { key: 'property-grid', group: 'Content', label: 'AppPropertyGrid', description: 'Grouped dense property editing with reset and adjustable label width.', icon: <SlidersHorizontal size={16} />, component: AppPropertyGridPage },
-  { key: 'expander', group: 'Content', label: 'Expander', description: 'Collapsible settings, release notes, and low-frequency details.', icon: <Columns3 size={16} />, component: ExpanderPage },
-  { key: 'app-tag', group: 'Content', label: 'AppTag', description: 'Colored labels for categories, attributes, and removable values.', icon: <Tags size={16} />, component: TagPage },
-  { key: 'app-skeleton', group: 'Content', label: 'AppSkeleton', description: 'Accessible animated placeholders for loading content structures.', icon: <Rows3 size={16} />, component: AppSkeletonPage },
-  { key: 'app-info-bar', group: 'Feedback', label: 'AppInfoBar', description: 'Inline informational, success, warning, and error states.', icon: <Info size={16} />, component: AppInfoBarPage },
-  { key: 'app-progress', group: 'Content', label: 'Progress', description: 'Indeterminate and determinate progress rings and bars.', icon: <Clock3 size={16} />, component: AppProgressPage },
-  { key: 'app-status-badge', group: 'Content', label: 'AppStatusBadge', description: 'Compact semantic status labels with several appearances and markers.', icon: <Clock3 size={16} />, component: AppStatusBadgePage },
-  { key: 'loading-overlay', group: 'Feedback', label: 'AppLoadingOverlay', description: 'Delayed local loading feedback that preserves content layout.', icon: <Clock3 size={16} />, component: AppLoadingOverlayPage },
-  { key: 'task-center', group: 'Feedback', label: 'AppTaskCenter', description: 'Host-neutral background task status, progress, and action requests.', icon: <Clock3 size={16} />, component: AppTaskCenterPage },
-  { key: 'popover', group: 'Feedback', label: 'Popover', description: 'Portal-based non-modal supporting content with anchored placement.', icon: <MessageSquare size={16} />, component: PopoverPage },
-  { key: 'app-tooltip', group: 'Feedback', label: 'AppTooltip', description: 'Non-interactive descriptions for hover and keyboard focus.', icon: <CircleHelp size={16} />, component: AppTooltipPage },
-  { key: 'app-teaching-tip', group: 'Feedback', label: 'AppTeachingTip', description: 'Controlled anchored guidance with title, content, and actions.', icon: <Lightbulb size={16} />, component: AppTeachingTipPage },
-  { key: 'app-file-drop-overlay', group: 'Feedback', label: 'AppFileDropOverlay', description: 'Accepting and rejecting overlays for local file drags.', icon: <UploadCloud size={16} />, component: AppFileDropOverlayPage },
-  { key: 'app-toast', group: 'Feedback', label: 'AppToast', description: 'Transient notifications, actions, duration, and dismissal.', icon: <Bell size={16} />, component: AppToastPage },
-  { key: 'app-dialog', group: 'Feedback', label: 'AppDialog', description: 'Modal content with controlled state and custom actions.', icon: <MessageSquare size={16} />, component: AppDialogPage },
-  { key: 'message-box', group: 'Feedback', label: 'Message Box', description: 'Promise-based confirmation and decision dialogs.', icon: <MessageSquare size={16} />, component: MessageBoxPage },
-  { key: 'app-toolbar', group: 'Actions', label: 'AppToolbar', description: 'Start, status, and end regions for page-level actions.', icon: <Wrench size={16} />, component: AppToolbarPage },
-  { key: 'app-command', group: 'Actions', label: 'AppCommand', description: 'Shared command definitions, execution state, and keyboard accelerators.', icon: <Wrench size={16} />, component: AppCommandPage },
-  { key: 'menu-bar', group: 'Actions', label: 'AppMenuBar', description: 'Traditional application menus backed by platform-neutral commands.', icon: <Menu size={16} />, component: AppMenuBarPage },
-  { key: 'command-palette', group: 'Actions', label: 'AppCommandPalette', description: 'Keyboard-first fuzzy command discovery and execution.', icon: <Wrench size={16} />, component: AppCommandPalettePage },
-  { key: 'shortcut-recorder', group: 'Actions', label: 'AppShortcutRecorder', description: 'Capture and validate shortcuts compatible with application commands.', icon: <Wrench size={16} />, component: AppShortcutRecorderPage },
-  { key: 'toggle-button', group: 'Actions', label: 'AppToggleButton', description: 'Persistent command states and single or multiple toggle groups.', icon: <SquareMousePointer size={16} />, component: AppToggleButtonPage },
-  { key: 'buttons', group: 'Actions', label: 'Buttons', description: 'Desktop command buttons, icon buttons, states, and composition.', icon: <SquareMousePointer size={16} />, component: ButtonsPage },
-  { key: 'app-menu-flyout', group: 'Actions', label: 'AppMenuFlyout', description: 'Anchored one-level command menus with keyboard navigation.', icon: <ListChecks size={16} />, component: AppMenuFlyoutPage },
-  { key: 'app-split-button', group: 'Actions', label: 'AppSplitButton', description: 'A default command paired with alternate menu actions.', icon: <Columns3 size={16} />, component: AppSplitButtonPage },
-  { key: 'context-menu', group: 'Actions', label: 'Context Menu', description: 'Nested contextual commands and native text actions.', icon: <MousePointerClick size={16} />, component: ContextMenuPage },
-  { key: 'app-text-box', group: 'Forms', label: 'AppTextBox', description: 'Single-line text input with icons, clearing, loading, and validation states.', icon: <Rows3 size={16} />, component: AppTextBoxPage },
-  { key: 'app-text-area', group: 'Forms', label: 'AppTextArea', description: 'Multi-line text input with resizing, automatic growth, and character counting.', icon: <Rows3 size={16} />, component: AppTextAreaPage },
-  { key: 'search-box', group: 'Forms', label: 'AppSearchBox', description: 'Search input with explicit submission, clearing, and optional debouncing.', icon: <Rows3 size={16} />, component: AppSearchBoxPage },
-  { key: 'color-picker', group: 'Forms', label: 'AppColorPicker', description: 'Popup and inline color selection with HSV, hex, and preset controls.', icon: <SlidersHorizontal size={16} />, component: AppColorPickerPage },
-  { key: 'file-picker', group: 'Forms', label: 'AppFilePicker', description: 'File browsing and local drop selection with validation and host adapters.', icon: <UploadCloud size={16} />, component: AppFilePickerPage },
-  { key: 'multi-select', group: 'Forms', label: 'AppMultiSelect', description: 'Searchable multiple selection represented with removable tags.', icon: <Tags size={16} />, component: AppMultiSelectPage },
-  { key: 'password-box', group: 'Forms', label: 'AppPasswordBox', description: 'Password entry with reveal, Caps Lock, and strength feedback.', icon: <Rows3 size={16} />, component: AppPasswordBoxPage },
-  { key: 'range-slider', group: 'Forms', label: 'AppRangeSlider', description: 'Two-thumb range selection with distance constraints.', icon: <SlidersHorizontal size={16} />, component: AppRangeSliderPage },
-  { key: 'form-layout', group: 'Forms', label: 'AppFormLayout', description: 'Responsive field alignment and linked validation summaries.', icon: <Rows3 size={16} />, component: AppFormLayoutPage },
-  { key: 'app-check-box', group: 'Forms', label: 'AppCheckBox', description: 'Binary and indeterminate choices with labels, descriptions, and controlled state.', icon: <ListChecks size={16} />, component: AppCheckBoxPage },
-  { key: 'app-radio-group', group: 'Forms', label: 'AppRadioGroup', description: 'Choose one value from a described set of mutually exclusive options.', icon: <ListChecks size={16} />, component: AppRadioGroupPage },
-  { key: 'app-segmented-control', group: 'Forms', label: 'AppSegmentedControl', description: 'Switch quickly between a small set of adjacent views or modes.', icon: <ListChecks size={16} />, component: AppSegmentedControlPage },
-  { key: 'app-toggle-switch', group: 'Forms', label: 'AppToggleSwitch', description: 'Turn persistent settings on or off with optional supporting descriptions.', icon: <ListChecks size={16} />, component: AppToggleSwitchPage },
-  { key: 'app-number-box', group: 'Forms', label: 'AppNumberBox', description: 'Stepped numeric entry with bounds, precision, and controlled validation.', icon: <SlidersHorizontal size={16} />, component: AppNumberBoxPage },
-  { key: 'app-select', group: 'Forms', label: 'AppSelect', description: 'Reliable native single-option selection with validation and disabled states.', icon: <SlidersHorizontal size={16} />, component: AppSelectPage },
-  { key: 'auto-complete', group: 'Forms', label: 'AppAutoComplete', description: 'Free text input with filtered suggestions and keyboard navigation.', icon: <SlidersHorizontal size={16} />, component: AutoCompletePage },
-  { key: 'cascader', group: 'Forms', label: 'AppCascader', description: 'Choose a leaf value from a hierarchy shown in successive columns.', icon: <Columns3 size={16} />, component: CascaderPage },
-  { key: 'slider', group: 'Forms', label: 'AppSlider', description: 'Adjust a relative numeric value along a styled range track.', icon: <SlidersHorizontal size={16} />, component: SliderPage },
-  { key: 'date-picker', group: 'Forms', label: 'Date Picker', description: 'Timezone-free calendar dates with constraints, forms, and dialog overlays.', icon: <CalendarDays size={16} />, component: DatePickerPage },
-  { key: 'calendar', group: 'Forms', label: 'AppCalendar', description: 'Standalone accessible calendar selection with controlled or internal state.', icon: <CalendarDays size={16} />, component: AppCalendarPage },
-  { key: 'date-range-picker', group: 'Forms', label: 'Date Range Picker', description: 'Pending range selection with Apply, duration limits, and two-month views.', icon: <CalendarRange size={16} />, component: DateRangePickerPage },
-  { key: 'time-picker', group: 'Forms', label: 'Time Picker', description: 'Same-day times with steps, limits, 12-hour display, and confirmed Apply.', icon: <Clock size={16} />, component: TimePickerPage },
-  { key: 'time-range-picker', group: 'Forms', label: 'Time Range Picker', description: 'Start and end time editing with duration validation and no overnight ranges.', icon: <Timer size={16} />, component: TimeRangePickerPage },
-  { key: 'app-data-table', group: 'Data', label: 'AppDataTable', description: 'A complete data surface with page actions, selection actions, built-in controls, sorting, sizing, and fill layouts.', icon: <Table2 size={16} />, component: AppDataTablePage, layout: 'fill' },
-  { key: 'app-selection-bar', group: 'Data', label: 'AppSelectionBar', description: 'Actions and clear behavior for selected data rows.', icon: <Rows3 size={16} />, component: AppSelectionBarPage },
-  { key: 'app-pagination', group: 'Data', label: 'AppPagination', description: 'Standalone paging controls for tables, lists, and result collections.', icon: <Rows3 size={16} />, component: AppPaginationPage },
-  { key: 'settings', group: 'Settings', label: 'Settings', description: 'Application appearance, language, preferences, and information.', icon: <Settings size={16} />, component: SettingsPage },
+  { key: 'overview', label: 'Overview', description: 'Browse the library by component category and exported name.', icon: <LayoutDashboard size={16} />, component: OverviewPage },
+  { key: 'app-shell', label: 'AppShell', description: 'The root frame for desktop-style application chrome and overlays.', icon: <Boxes size={16} />, component: AppShellPage },
+  { key: 'app-title-bar', label: 'AppTitleBar', description: 'Window title, actions, and native window controls.', icon: <LayoutPanelTop size={16} />, component: AppTitleBarPage },
+  { key: 'app-page', label: 'AppPage', description: 'Consistent page headers, content, actions, and side panes.', icon: <Columns3 size={16} />, component: AppPagePage },
+  { key: 'app-side-pane', label: 'AppSidePane', description: 'Dismissible and optionally resizable secondary content.', icon: <PanelRight size={16} />, component: AppSidePanePage },
+  { key: 'resizable-panes', label: 'AppResizablePaneGroup', description: 'Pointer and keyboard resizable two-pane workspaces.', icon: <PanelRight size={16} />, component: AppResizablePanePage },
+  { key: 'app-rail', label: 'AppRail', description: 'Grouped navigation items, submenus, badges, and footer links.', icon: <Navigation size={16} />, component: AppRailPage },
+  { key: 'app-selector-bar', label: 'AppSelectorBar', description: 'Switch between a few mutually exclusive views within the current page.', icon: <Rows3 size={16} />, component: AppSelectorBarPage },
+  { key: 'app-tab-view', label: 'AppTabView', description: 'Closable, reorderable document tabs with explicit panel lifecycle.', icon: <Columns3 size={16} />, component: AppTabViewPage },
+  { key: 'breadcrumb-bar', label: 'AppBreadcrumbBar', description: 'Compact resource paths with collapsed ancestor navigation.', icon: <Navigation size={16} />, component: AppBreadcrumbBarPage },
+  { key: 'navigation-modes', label: 'Navigation Modes', description: 'Expanded, compact, minimal, and responsive rail behavior.', icon: <Menu size={16} />, component: NavigationModesPage },
+  { key: 'app-card', label: 'AppCard', description: 'Fluent content surfaces, composition, interaction states, and continuous groups.', icon: <CreditCard size={16} />, component: AppCardPage },
+  { key: 'app-scroll-area', label: 'AppScrollArea', description: 'Native scrolling with Fluent overflow, scrollbar, and gutter styling.', icon: <ScrollText size={16} />, component: AppScrollAreaPage },
+  { key: 'app-field', label: 'AppField', description: 'Accessible labels, descriptions, requirements, errors, and field layouts.', icon: <Rows3 size={16} />, component: AppFieldPage },
+  { key: 'app-empty-state', label: 'AppEmptyState', description: 'Compact and regular empty content with optional guidance and actions.', icon: <Rows3 size={16} />, component: AppEmptyStatePage },
+  { key: 'list-view', label: 'List View', description: 'Desktop information lists with selection, invocation, and keyboard navigation.', icon: <ListChecks size={16} />, component: ListViewPage },
+  { key: 'tree-view', label: 'AppTreeView', description: 'Hierarchical resources with selection, lazy expansion, keyboard navigation, and drag requests.', icon: <ListChecks size={16} />, component: AppTreeViewPage },
+  { key: 'status-bar', label: 'AppStatusBar', description: 'Compact persistent workspace status and contextual actions.', icon: <Rows3 size={16} />, component: AppStatusBarPage },
+  { key: 'property-grid', label: 'AppPropertyGrid', description: 'Grouped dense property editing with reset and adjustable label width.', icon: <SlidersHorizontal size={16} />, component: AppPropertyGridPage },
+  { key: 'expander', label: 'Expander', description: 'Collapsible settings, release notes, and low-frequency details.', icon: <Columns3 size={16} />, component: ExpanderPage },
+  { key: 'app-tag', label: 'AppTag', description: 'Colored labels for categories, attributes, and removable values.', icon: <Tags size={16} />, component: TagPage },
+  { key: 'app-skeleton', label: 'AppSkeleton', description: 'Accessible animated placeholders for loading content structures.', icon: <Rows3 size={16} />, component: AppSkeletonPage },
+  { key: 'app-info-bar', label: 'AppInfoBar', description: 'Inline informational, success, warning, and error states.', icon: <Info size={16} />, component: AppInfoBarPage },
+  { key: 'app-progress', label: 'Progress', description: 'Indeterminate and determinate progress rings and bars.', icon: <Clock3 size={16} />, component: AppProgressPage },
+  { key: 'app-status-badge', label: 'AppStatusBadge', description: 'Compact semantic status labels with several appearances and markers.', icon: <Clock3 size={16} />, component: AppStatusBadgePage },
+  { key: 'loading-overlay', label: 'AppLoadingOverlay', description: 'Delayed local loading feedback that preserves content layout.', icon: <Clock3 size={16} />, component: AppLoadingOverlayPage },
+  { key: 'task-center', label: 'AppTaskCenter', description: 'Host-neutral background task status, progress, and action requests.', icon: <Clock3 size={16} />, component: AppTaskCenterPage },
+  { key: 'popover', label: 'Popover', description: 'Portal-based non-modal supporting content with anchored placement.', icon: <MessageSquare size={16} />, component: PopoverPage },
+  { key: 'app-tooltip', label: 'AppTooltip', description: 'Non-interactive descriptions for hover and keyboard focus.', icon: <CircleHelp size={16} />, component: AppTooltipPage },
+  { key: 'app-teaching-tip', label: 'AppTeachingTip', description: 'Controlled anchored guidance with title, content, and actions.', icon: <Lightbulb size={16} />, component: AppTeachingTipPage },
+  { key: 'app-file-drop-overlay', label: 'AppFileDropOverlay', description: 'Accepting and rejecting overlays for local file drags.', icon: <UploadCloud size={16} />, component: AppFileDropOverlayPage },
+  { key: 'app-toast', label: 'AppToast', description: 'Transient notifications, actions, duration, and dismissal.', icon: <Bell size={16} />, component: AppToastPage },
+  { key: 'app-dialog', label: 'AppDialog', description: 'Modal content with controlled state and custom actions.', icon: <MessageSquare size={16} />, component: AppDialogPage },
+  { key: 'message-box', label: 'Message Box', description: 'Promise-based confirmation and decision dialogs.', icon: <MessageSquare size={16} />, component: MessageBoxPage },
+  { key: 'app-toolbar', label: 'AppToolbar', description: 'Start, status, and end regions for page-level actions.', icon: <Wrench size={16} />, component: AppToolbarPage },
+  { key: 'app-command', label: 'AppCommand', description: 'Shared command definitions, execution state, and keyboard accelerators.', icon: <Wrench size={16} />, component: AppCommandPage },
+  { key: 'menu-bar', label: 'AppMenuBar', description: 'Traditional application menus backed by platform-neutral commands.', icon: <Menu size={16} />, component: AppMenuBarPage },
+  { key: 'command-palette', label: 'AppCommandPalette', description: 'Keyboard-first fuzzy command discovery and execution.', icon: <Wrench size={16} />, component: AppCommandPalettePage },
+  { key: 'shortcut-recorder', label: 'AppShortcutRecorder', description: 'Capture and validate shortcuts compatible with application commands.', icon: <Wrench size={16} />, component: AppShortcutRecorderPage },
+  { key: 'toggle-button', label: 'AppToggleButton', description: 'Persistent command states and single or multiple toggle groups.', icon: <SquareMousePointer size={16} />, component: AppToggleButtonPage },
+  { key: 'buttons', label: 'Buttons', description: 'Desktop command buttons, icon buttons, states, and composition.', icon: <SquareMousePointer size={16} />, component: ButtonsPage },
+  { key: 'app-menu-flyout', label: 'AppMenuFlyout', description: 'Anchored one-level command menus with keyboard navigation.', icon: <ListChecks size={16} />, component: AppMenuFlyoutPage },
+  { key: 'app-split-button', label: 'AppSplitButton', description: 'A default command paired with alternate menu actions.', icon: <Columns3 size={16} />, component: AppSplitButtonPage },
+  { key: 'context-menu', label: 'Context Menu', description: 'Nested contextual commands and native text actions.', icon: <MousePointerClick size={16} />, component: ContextMenuPage },
+  { key: 'app-text-box', label: 'AppTextBox', description: 'Single-line text input with icons, clearing, loading, and validation states.', icon: <Rows3 size={16} />, component: AppTextBoxPage },
+  { key: 'app-text-area', label: 'AppTextArea', description: 'Multi-line text input with resizing, automatic growth, and character counting.', icon: <Rows3 size={16} />, component: AppTextAreaPage },
+  { key: 'search-box', label: 'AppSearchBox', description: 'Search input with explicit submission, clearing, and optional debouncing.', icon: <Rows3 size={16} />, component: AppSearchBoxPage },
+  { key: 'color-picker', label: 'AppColorPicker', description: 'Popup and inline color selection with HSV, hex, and preset controls.', icon: <SlidersHorizontal size={16} />, component: AppColorPickerPage },
+  { key: 'file-picker', label: 'AppFilePicker', description: 'File browsing and local drop selection with validation and host adapters.', icon: <UploadCloud size={16} />, component: AppFilePickerPage },
+  { key: 'multi-select', label: 'AppMultiSelect', description: 'Searchable multiple selection represented with removable tags.', icon: <Tags size={16} />, component: AppMultiSelectPage },
+  { key: 'password-box', label: 'AppPasswordBox', description: 'Password entry with reveal, Caps Lock, and strength feedback.', icon: <Rows3 size={16} />, component: AppPasswordBoxPage },
+  { key: 'range-slider', label: 'AppRangeSlider', description: 'Two-thumb range selection with distance constraints.', icon: <SlidersHorizontal size={16} />, component: AppRangeSliderPage },
+  { key: 'form-layout', label: 'AppFormLayout', description: 'Responsive field alignment and linked validation summaries.', icon: <Rows3 size={16} />, component: AppFormLayoutPage },
+  { key: 'app-check-box', label: 'AppCheckBox', description: 'Binary and indeterminate choices with labels, descriptions, and controlled state.', icon: <ListChecks size={16} />, component: AppCheckBoxPage },
+  { key: 'app-radio-group', label: 'AppRadioGroup', description: 'Choose one value from a described set of mutually exclusive options.', icon: <ListChecks size={16} />, component: AppRadioGroupPage },
+  { key: 'app-segmented-control', label: 'AppSegmentedControl', description: 'Switch quickly between a small set of adjacent views or modes.', icon: <ListChecks size={16} />, component: AppSegmentedControlPage },
+  { key: 'app-toggle-switch', label: 'AppToggleSwitch', description: 'Turn persistent settings on or off with optional supporting descriptions.', icon: <ListChecks size={16} />, component: AppToggleSwitchPage },
+  { key: 'app-number-box', label: 'AppNumberBox', description: 'Stepped numeric entry with bounds, precision, and controlled validation.', icon: <SlidersHorizontal size={16} />, component: AppNumberBoxPage },
+  { key: 'app-select', label: 'AppSelect', description: 'Reliable native single-option selection with validation and disabled states.', icon: <SlidersHorizontal size={16} />, component: AppSelectPage },
+  { key: 'auto-complete', label: 'AppAutoComplete', description: 'Free text input with filtered suggestions and keyboard navigation.', icon: <SlidersHorizontal size={16} />, component: AutoCompletePage },
+  { key: 'cascader', label: 'AppCascader', description: 'Choose a leaf value from a hierarchy shown in successive columns.', icon: <Columns3 size={16} />, component: CascaderPage },
+  { key: 'slider', label: 'AppSlider', description: 'Adjust a relative numeric value along a styled range track.', icon: <SlidersHorizontal size={16} />, component: SliderPage },
+  { key: 'date-picker', label: 'Date Picker', description: 'Timezone-free calendar dates with constraints, forms, and dialog overlays.', icon: <CalendarDays size={16} />, component: DatePickerPage },
+  { key: 'calendar', label: 'AppCalendar', description: 'Standalone accessible calendar selection with controlled or internal state.', icon: <CalendarDays size={16} />, component: AppCalendarPage },
+  { key: 'date-range-picker', label: 'Date Range Picker', description: 'Pending range selection with Apply, duration limits, and two-month views.', icon: <CalendarRange size={16} />, component: DateRangePickerPage },
+  { key: 'time-picker', label: 'Time Picker', description: 'Same-day times with steps, limits, 12-hour display, and confirmed Apply.', icon: <Clock size={16} />, component: TimePickerPage },
+  { key: 'time-range-picker', label: 'Time Range Picker', description: 'Start and end time editing with duration validation and no overnight ranges.', icon: <Timer size={16} />, component: TimeRangePickerPage },
+  { key: 'app-data-table', label: 'AppDataTable', description: 'A complete data surface with page actions, selection actions, built-in controls, sorting, sizing, and fill layouts.', icon: <Table2 size={16} />, component: AppDataTablePage, layout: 'fill' },
+  { key: 'app-selection-bar', label: 'AppSelectionBar', description: 'Actions and clear behavior for selected data rows.', icon: <Rows3 size={16} />, component: AppSelectionBarPage },
+  { key: 'app-pagination', label: 'AppPagination', description: 'Standalone paging controls for tables, lists, and result collections.', icon: <Rows3 size={16} />, component: AppPaginationPage },
+  { key: 'settings', label: 'Settings', description: 'Application appearance, language, preferences, and information.', icon: <Settings size={16} />, component: SettingsPage },
 ] satisfies DemoPageSource[]
 
 type DemoPageKey = (typeof demoPageSources)[number]['key']
@@ -250,9 +257,9 @@ export const demoPages: DemoPageDefinition[] = demoPageSources.map((page) => {
   return {
     ...page,
     ...metadata,
-    group: metadata.category === 'getting-started' || metadata.category === 'settings'
-      ? page.group
-      : categoryLabels[metadata.category].en,
+    categoryLabel: metadata.category === 'getting-started'
+      ? 'Overview'
+      : metadata.category === 'settings' ? 'Settings' : categoryLabels[metadata.category].en,
     subgroupLabel: subgroupLabels[metadata.subgroup]?.en ?? metadata.subgroup,
   }
 })
@@ -261,9 +268,9 @@ export function getDemoPages(locale: ResolvedAppLocale): DemoPageDefinition[] {
   if (locale === 'en-US') return demoPages
   return demoPages.map((page) => ({
     ...page,
-    group: page.category === 'getting-started' || page.category === 'settings'
-      ? (zhCNGroupLabels[page.group] ?? page.group)
-      : categoryLabels[page.category].zh,
+    categoryLabel: page.category === 'getting-started'
+      ? '概览'
+      : page.category === 'settings' ? '设置' : categoryLabels[page.category].zh,
     subgroupLabel: subgroupLabels[page.subgroup]?.zh ?? page.subgroupLabel,
     label: zhCNRegistry[page.key]?.label ?? page.label,
     description: zhCNRegistry[page.key]?.description ?? page.description,
@@ -277,7 +284,7 @@ export function getRailItems(pages: DemoPageDefinition[]): RailEntry[] {
   for (const category of categoryOrder) {
     const categoryPages = pages.filter((page) => page.category === category)
     if (!categoryPages.length) continue
-    entries.push({ type: 'group', label: categoryPages[0]!.group })
+    entries.push({ type: 'group', label: categoryPages[0]!.categoryLabel })
     for (const subgroup of subgroupOrder[category] ?? []) {
       const subgroupPages = categoryPages.filter((page) => page.subgroup === subgroup)
       entries.push({
