@@ -144,6 +144,9 @@ export const zhCNMessages = {
     selectedFiles: '已选择的文件',
     remove: (name: string) => `移除 ${name}`,
   },
+  toolbar: {
+    moreActions: '更多操作',
+  },
   textBox: {
     clear: '清除输入',
     loading: '正在加载',

@@ -137,6 +137,9 @@ export interface AppLocaleMessages {
     selectedFiles: string
     remove: (name: string) => string
   }
+  toolbar: {
+    moreActions: string
+  }
   textBox: {
     clear: string
     loading: string

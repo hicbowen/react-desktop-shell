@@ -24,6 +24,7 @@ export type { AppExpanderProps } from './expander/types'
 export type { AppPopoverProps } from './popover/types'
 export type {
   AppDatePickerProps,
+  AppCalendarProps,
   AppDateRangePickerProps,
   AppDateRangeValue,
   AppDateValue,
@@ -117,7 +118,7 @@ export type {
   AppToastStatus,
   AppToastUpdateOptions,
 } from './toast/types'
-export type { AppToolbarAppearance, AppToolbarProps } from './toolbar/types'
+export type { AppToolbarAction, AppToolbarAppearance, AppToolbarProps } from './toolbar/types'
 export type { AppTooltipPlacement, AppTooltipProps } from './tooltip/types'
 
 export type AppPageLayout = 'flow' | 'fill'

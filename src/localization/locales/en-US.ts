@@ -149,6 +149,9 @@ export const enUSMessages = {
     selectedFiles: 'Selected files',
     remove: (name: string) => `Remove ${name}`,
   },
+  toolbar: {
+    moreActions: 'More actions',
+  },
   textBox: {
     clear: 'Clear input',
     loading: 'Loading',

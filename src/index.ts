@@ -204,6 +204,7 @@ export type {
   AppToastStatus,
   AppToastUpdateOptions,
   AppToolbarAppearance,
+  AppToolbarAction,
   AppToolbarProps,
   AppTooltipPlacement,
   AppTooltipProps,

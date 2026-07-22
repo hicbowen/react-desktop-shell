@@ -23,6 +23,14 @@
   border: 0;
 }
 
+.app-toolbar--overflow { position: relative; flex-wrap: nowrap; }
+.app-toolbar--overflow .app-toolbar__trailing { min-width: 0; flex-wrap: nowrap; }
+.app-toolbar__actions { min-width: 0; display: flex; align-items: center; flex: 0 1 auto; gap: 8px; }
+.app-toolbar__overflow { width: 32px; height: 32px; padding: 0; display: inline-grid; place-items: center; flex: 0 0 32px; color: inherit; background: transparent; border: 1px solid transparent; border-radius: 6px; font-weight: 700; letter-spacing: 1px; }
+.app-toolbar__overflow:hover { background: var(--app-shell-hover-bg, rgb(0 0 0 / 5%)); border-color: var(--app-shell-border-color, rgb(0 0 0 / 12%)); }
+.app-toolbar__overflow:focus-visible { outline: 2px solid var(--app-shell-accent-color, #005fb8); outline-offset: 1px; }
+.app-toolbar__measure { position: fixed; left: -10000px; top: -10000px; display: flex; gap: 8px; visibility: hidden; pointer-events: none; }
+
 .app-toolbar__start,
 .app-toolbar__trailing,
 .app-toolbar__status,

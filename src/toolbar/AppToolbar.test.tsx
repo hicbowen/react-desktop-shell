@@ -2,7 +2,7 @@
 
 import { act, type ReactNode } from 'react'
 import { createRoot, type Root } from 'react-dom/client'
-import { afterEach, beforeEach, describe, expect, it } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { AppToolbar } from './AppToolbar'
 
 describe('AppToolbar', () => {
@@ -20,6 +20,7 @@ describe('AppToolbar', () => {
   afterEach(() => {
     act(() => root.unmount())
     container.remove()
+    vi.unstubAllGlobals()
   })
 
   const render = (node: ReactNode) => act(() => root.render(node))
@@ -74,5 +75,15 @@ describe('AppToolbar', () => {
     expect(toolbar().textContent).toBe('Custom content')
     expect(container.querySelector('.app-toolbar__start')).toBeNull()
     expect(container.querySelector('.app-toolbar__trailing')).toBeNull()
+  })
+
+  it('moves actions into a menu when available width is exhausted', () => {
+    vi.stubGlobal('requestAnimationFrame', (callback: FrameRequestCallback) => { callback(0); return 1 })
+    vi.stubGlobal('cancelAnimationFrame', vi.fn())
+    vi.stubGlobal('ResizeObserver', class { observe() {} disconnect() {} })
+    Object.defineProperty(HTMLElement.prototype, 'clientWidth', { configurable: true, value: 180 })
+    Object.defineProperty(HTMLElement.prototype, 'offsetWidth', { configurable: true, value: 100 })
+    render(<AppToolbar actions={[{ key: 'one', label: 'One' }, { key: 'two', label: 'Two' }]} />)
+    expect(container.querySelector('[aria-label="More actions"]')).not.toBeNull()
   })
 })
