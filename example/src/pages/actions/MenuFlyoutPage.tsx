@@ -18,17 +18,11 @@ import {
   DemoPreview,
   DemoSection,
 } from '../../components/DemoPage'
-
-const commandItems: AppMenuFlyoutEntry[] = [
-  { key: 'refresh', label: 'Refresh', icon: <RefreshCw /> },
-  { key: 'rename', label: 'Rename', icon: <Pencil /> },
-  { key: 'copy', label: 'Make a copy', icon: <Copy /> },
-  { key: 'share', label: 'Sharing is unavailable', disabled: true, icon: <Share2 /> },
-  { type: 'separator' },
-  { key: 'delete', label: 'Delete', danger: true, icon: <Trash2 /> },
-]
+import { useDemoCopy } from '../../i18n/interactiveTranslations'
 
 export function AppMenuFlyoutPage() {
+  const t = useDemoCopy()
+  const commandItems: AppMenuFlyoutEntry[] = [{ key: 'refresh', label: t('Refresh'), icon: <RefreshCw /> }, { key: 'rename', label: t('Rename'), icon: <Pencil /> }, { key: 'copy', label: t('Make a copy'), icon: <Copy /> }, { key: 'share', label: t('Sharing is unavailable'), disabled: true, icon: <Share2 /> }, { type: 'separator' }, { key: 'delete', label: t('Delete'), danger: true, icon: <Trash2 /> }]
   const [lastCommand, setLastCommand] = useState('None')
   const selectCommand = (key: string) => setLastCommand(key)
 
@@ -40,15 +34,15 @@ export function AppMenuFlyoutPage() {
       >
         <DemoPreview className="demo-menu-flyout-row">
           <AppMenuFlyout
-            ariaLabel="File actions"
+            ariaLabel={t('File actions')}
             items={commandItems}
             onSelect={selectCommand}
           >
             <button className="demo-menu-flyout-button" type="button">
-              More actions
+              {t('More actions')}
             </button>
           </AppMenuFlyout>
-          <span className="demo-note">Last command: {lastCommand}</span>
+          <span className="demo-note">{t('Last command:')} {t(lastCommand)}</span>
         </DemoPreview>
       </DemoSection>
 
@@ -59,12 +53,12 @@ export function AppMenuFlyoutPage() {
         <DemoPreview>
           <AppToolbar
             appearance="flat"
-            start={<span>Document commands</span>}
+            start={<span>{t('Document commands')}</span>}
             end={
               <AppMenuFlyout items={commandItems} onSelect={selectCommand}>
-                <AppTooltip content="More actions">
+                <AppTooltip content={t('More actions')}>
                   <button
-                    aria-label="More actions"
+                    aria-label={t('More actions')}
                     className="demo-menu-flyout-icon-button"
                     type="button"
                   >
@@ -94,7 +88,7 @@ export function AppMenuFlyoutPage() {
               placement={placement}
             >
               <button className="demo-menu-flyout-button" type="button">
-                {placement}
+                {t(placement)}
               </button>
             </AppMenuFlyout>
           ))}
@@ -105,7 +99,7 @@ export function AppMenuFlyoutPage() {
               placement="right-start"
             >
               <button className="demo-menu-flyout-button" type="button">
-                Near viewport edge
+                {t('Near viewport edge')}
               </button>
             </AppMenuFlyout>
           </span>

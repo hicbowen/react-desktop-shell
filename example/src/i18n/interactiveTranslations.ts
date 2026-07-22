@@ -69,6 +69,15 @@ export const zhCNInteractiveText: Record<string, string> = {
   'Save active file': '保存当前文件', 'Open command palette': '打开命令面板',
   'Already assigned to Print': '已分配给“打印”命令',
   'The compact toggle is page-local:': '紧凑开关只影响当前页面：',
+  File: '文件', Edit: '编辑', Copy: '复制', Exit: '退出', 'Word wrap': '自动换行',
+  'Make a copy': '创建副本', 'Sharing is unavailable': '共享不可用', 'File actions': '文件操作',
+  'Last command:': '上次命令：', 'Document commands': '文档命令', 'Near viewport edge': '靠近视口边缘',
+  'bottom-start': '底部起始', 'bottom-end': '底部末尾', 'top-start': '顶部起始', 'right-start': '右侧起始',
+  'New item': '新建项目', Duplicate: '创建副本', 'Declarative context menu': '声明式上下文菜单',
+  'Right-click this stable target.': '右键单击这个固定目标。', 'Inspect dynamic target': '检查动态目标',
+  'Imperative context menu': '命令式上下文菜单', 'Right-click this dynamic area.': '右键单击这个动态区域。',
+  'Editable text': '可编辑文本', 'Right-click to use native text actions': '右键单击以使用原生文本操作',
+  refresh: '刷新', rename: '重命名', copy: '复制', share: '共享', delete: '删除',
   'primary still available': '主操作仍可用', 'Last action:': '上次操作：', 'toolbar export': '工具栏导出',
 }
 
