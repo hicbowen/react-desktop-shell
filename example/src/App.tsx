@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react'
 import { AppPage, AppRail, AppShell, AppTitleBar, useResolvedAppLocale, type AppLocale, type AppTheme, type PaneDisplayMode } from '../../src'
 import { DemoShellContext } from './components/DemoShellContext'
+import { DemoComponentPage } from './components/DemoComponentPage'
 import { getDemoPages, getRailFooterItems, getRailItems } from './demoRegistry'
 import { DemoI18nContext, demoMessages } from './i18n/DemoI18nContext'
 
@@ -16,6 +17,7 @@ export function ExampleApp() {
   const railFooterItems = useMemo(() => getRailFooterItems(localizedPages), [localizedPages])
   const currentPage = localizedPages.find((page) => page.key === activeKey) ?? localizedPages[0]!
   const Page = currentPage.component
+  const isComponentPage = currentPage.category !== 'getting-started' && currentPage.category !== 'settings'
   const shellContext = useMemo(
     () => ({
       theme,
@@ -63,7 +65,11 @@ export function ExampleApp() {
           }
           description={currentPage.description}
         >
-          <Page />
+          {isComponentPage ? (
+            <DemoComponentPage definition={currentPage} pages={localizedPages} onNavigate={setActiveKey}>
+              <Page />
+            </DemoComponentPage>
+          ) : <Page />}
         </AppPage>
         </AppShell>
       </DemoI18nContext.Provider>

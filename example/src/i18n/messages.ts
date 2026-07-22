@@ -4,6 +4,11 @@ export const enUSDemoMessages = {
     title: 'Desktop React components, one focused example at a time',
     description: 'Choose a component by its exported name. Each page keeps its own state so examples remain easy to inspect, test, and copy.',
   },
+  componentPage: {
+    detailsLabel: 'Component details',
+    related: 'Related',
+    status: { stable: 'Stable', preview: 'Preview' },
+  },
   settings: {
     sectionTitle: 'Application settings',
     sectionDescription: 'Settings groups and rows organize appearance, language, preferences, and read-only application information.',
@@ -36,6 +41,11 @@ export const zhCNDemoMessages: DemoMessages = {
     eyebrow: '组件展廊',
     title: '专为桌面应用打造的 React 组件，一次看懂一个示例',
     description: '按组件的导出名称选择页面。每个页面独立维护状态，便于查看、测试和复制示例。',
+  },
+  componentPage: {
+    detailsLabel: '组件详情',
+    related: '相关组件',
+    status: { stable: '稳定', preview: '预览' },
   },
   settings: {
     sectionTitle: '应用设置',

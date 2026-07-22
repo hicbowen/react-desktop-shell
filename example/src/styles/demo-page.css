@@ -758,3 +758,59 @@
   font-size: 13px;
   font-weight: 500;
 }
+.demo-component-page {
+  display: grid;
+  gap: 20px;
+}
+
+.demo-component-meta {
+  padding: 10px 12px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 16px;
+  color: var(--app-shell-muted-text-color);
+  font-size: 12px;
+  background: color-mix(in srgb, var(--app-shell-text-color) 3%, transparent);
+  border: 1px solid var(--app-shell-border-color);
+  border-radius: 8px;
+}
+
+.demo-component-meta__context,
+.demo-component-related {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 7px;
+}
+
+.demo-component-status {
+  padding: 2px 7px;
+  border-radius: 999px;
+  font-weight: 600;
+}
+
+.demo-component-status--stable {
+  color: var(--app-success-foreground, #0e700e);
+  background: color-mix(in srgb, var(--app-success-foreground, #0e700e) 10%, transparent);
+}
+
+.demo-component-status--preview {
+  color: var(--app-warning-foreground, #8a5500);
+  background: color-mix(in srgb, var(--app-warning-foreground, #8a5500) 12%, transparent);
+}
+
+.demo-component-related button {
+  padding: 2px 7px;
+  color: var(--app-shell-accent-color);
+  font: inherit;
+  background: transparent;
+  border: 1px solid color-mix(in srgb, var(--app-shell-accent-color) 25%, transparent);
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.demo-component-related button:hover {
+  background: var(--app-shell-hover-bg);
+}

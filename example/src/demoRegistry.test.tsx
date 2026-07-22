@@ -69,4 +69,10 @@ describe('settings demo registration', () => {
         .every((key) => demoPages.some((page) => page.key === key)),
     ).toBe(true)
   })
+
+  it('only links to registered related component pages', () => {
+    const keys = new Set(demoPages.map((page) => page.key))
+    const missing = demoPages.flatMap((page) => (page.related ?? []).filter((key) => !keys.has(key)))
+    expect(missing).toEqual([])
+  })
 })
