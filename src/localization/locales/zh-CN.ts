@@ -156,6 +156,7 @@ export const zhCNMessages = {
   },
   passwordBox: { show: '显示密码', hide: '隐藏密码', capsLock: '大写锁定已开启' },
   rangeSlider: { start: '最小值', end: '最大值' },
+  validationSummary: { label: '验证错误', title: '请修正以下错误' },
   textBox: {
     clear: '清除输入',
     loading: '正在加载',

@@ -161,6 +161,7 @@ export const enUSMessages = {
   },
   passwordBox: { show: 'Show password', hide: 'Hide password', capsLock: 'Caps Lock is on' },
   rangeSlider: { start: 'Minimum value', end: 'Maximum value' },
+  validationSummary: { label: 'Validation errors', title: 'Correct the following errors' },
   textBox: {
     clear: 'Clear input',
     loading: 'Loading',

@@ -40,6 +40,7 @@ import { AppFilePickerPage } from './pages/forms/FilePickerPage'
 import { AppMultiSelectPage } from './pages/forms/MultiSelectPage'
 import { AppPasswordBoxPage } from './pages/forms/PasswordBoxPage'
 import { AppRangeSliderPage } from './pages/forms/RangeSliderPage'
+import { AppFormLayoutPage } from './pages/forms/FormLayoutPage'
 import { SelectionControlsPage } from './pages/forms/SelectionControlsPage'
 import { NumberSelectPage } from './pages/forms/NumberSelectPage'
 import { AutoCompletePage } from './pages/forms/AutoCompletePage'
@@ -100,6 +101,7 @@ export const demoPages: DemoPageDefinition[] = [
   { key: 'multi-select', group: 'Forms', label: 'AppMultiSelect', description: 'Searchable multiple selection represented with removable tags.', icon: <Tags size={16} />, component: AppMultiSelectPage },
   { key: 'password-box', group: 'Forms', label: 'AppPasswordBox', description: 'Password entry with reveal, Caps Lock, and strength feedback.', icon: <Rows3 size={16} />, component: AppPasswordBoxPage },
   { key: 'range-slider', group: 'Forms', label: 'AppRangeSlider', description: 'Two-thumb range selection with distance constraints.', icon: <SlidersHorizontal size={16} />, component: AppRangeSliderPage },
+  { key: 'form-layout', group: 'Forms', label: 'AppFormLayout', description: 'Responsive field alignment and linked validation summaries.', icon: <Rows3 size={16} />, component: AppFormLayoutPage },
   { key: 'selection-controls', group: 'Forms', label: 'Selection Controls', description: 'Check boxes, radio groups, segmented choices, and toggle switches.', icon: <ListChecks size={16} />, component: SelectionControlsPage },
   { key: 'number-select', group: 'Forms', label: 'Number & Select', description: 'Stepped numeric input and reliable native option selection.', icon: <SlidersHorizontal size={16} />, component: NumberSelectPage },
   { key: 'auto-complete', group: 'Forms', label: 'AppAutoComplete', description: 'Free text input with filtered suggestions and keyboard navigation.', icon: <SlidersHorizontal size={16} />, component: AutoCompletePage },
