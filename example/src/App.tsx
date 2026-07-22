@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { AppPage, AppRail, AppShell, AppTitleBar, useResolvedAppLocale, type AppLocale, type AppTheme, type PaneDisplayMode } from '../../src'
 import { DemoShellContext } from './components/DemoShellContext'
 import { DemoComponentPage } from './components/DemoComponentPage'
+import { DemoSearch } from './components/DemoSearch'
 import { demoPages, getDemoPages, getRailFooterItems, getRailItems } from './demoRegistry'
 import { DemoI18nContext, demoMessages } from './i18n/DemoI18nContext'
 import { getDemoHash, getDemoKeyFromHash } from './demoNavigation'
@@ -78,6 +79,7 @@ export function ExampleApp() {
             </span>
           }
           description={currentPage.description}
+          actions={<DemoSearch pages={localizedPages} fallbackPages={demoPages} onNavigate={navigateTo} />}
         >
           {isComponentPage ? (
             <DemoComponentPage definition={currentPage} pages={localizedPages} onNavigate={navigateTo}>

@@ -9,6 +9,12 @@ export const enUSDemoMessages = {
     related: 'Related',
     status: { stable: 'Stable', preview: 'Preview' },
   },
+  search: {
+    label: 'Search components',
+    placeholder: 'Search components',
+    results: 'Component search results',
+    empty: 'No matching components',
+  },
   settings: {
     sectionTitle: 'Application settings',
     sectionDescription: 'Settings groups and rows organize appearance, language, preferences, and read-only application information.',
@@ -46,6 +52,12 @@ export const zhCNDemoMessages: DemoMessages = {
     detailsLabel: '组件详情',
     related: '相关组件',
     status: { stable: '稳定', preview: '预览' },
+  },
+  search: {
+    label: '搜索组件',
+    placeholder: '搜索组件',
+    results: '组件搜索结果',
+    empty: '没有匹配的组件',
   },
   settings: {
     sectionTitle: '应用设置',
