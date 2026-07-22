@@ -119,5 +119,6 @@ describe('AppCommandProvider', () => {
 
   it('formats shortcut labels consistently', () => {
     expect(formatAppShortcut({ ctrl: true, shift: true, key: 'p' })).toBe('Ctrl+Shift+P')
+    expect(formatAppShortcut({ meta: true, shift: true, key: 'p' }, 'MacIntel')).toBe('⇧⌘P')
   })
 })

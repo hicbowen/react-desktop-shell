@@ -17,18 +17,22 @@ export function matchesAppShortcut(
   )
 }
 
-export function formatAppShortcut(shortcut: AppShortcut) {
+export function formatAppShortcut(
+  shortcut: AppShortcut,
+  platform = typeof navigator === 'undefined' ? '' : navigator.platform,
+) {
+  const isMac = platform.toLocaleLowerCase().includes('mac')
   const parts: string[] = []
-  if (shortcut.ctrl) parts.push('Ctrl')
-  if (shortcut.alt) parts.push('Alt')
-  if (shortcut.shift) parts.push('Shift')
-  if (shortcut.meta) parts.push('Meta')
+  if (shortcut.ctrl) parts.push(isMac ? '⌃' : 'Ctrl')
+  if (shortcut.alt) parts.push(isMac ? '⌥' : 'Alt')
+  if (shortcut.shift) parts.push(isMac ? '⇧' : 'Shift')
+  if (shortcut.meta) parts.push(isMac ? '⌘' : 'Meta')
 
   const key = shortcut.key.length === 1
     ? shortcut.key.toLocaleUpperCase()
     : shortcut.key
   parts.push(key)
-  return parts.join('+')
+  return parts.join(isMac ? '' : '+')
 }
 
 export function isAppEditableTarget(target: EventTarget | null) {
