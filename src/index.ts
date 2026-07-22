@@ -46,7 +46,7 @@ export { AppSlider } from './slider'
 export { AppTextArea, AppTextBox } from './text-input'
 export { AppComboBox } from './combo-box'
 export { AppAutoComplete } from './auto-complete'
-export { AppCheckBox, AppToggleSwitch } from './selection-controls'
+export { AppCheckBox, AppRadioGroup, AppSegmentedControl, AppToggleSwitch } from './selection-controls'
 export { AppNumberBox, AppSelect } from './number-select'
 export { AppListView, AppListViewItem } from './list-view'
 export { AppExpander } from './expander'
@@ -112,6 +112,10 @@ export type {
   AppAutoCompleteOption,
   AppAutoCompleteProps,
   AppCheckBoxProps,
+  AppRadioGroupOption,
+  AppRadioGroupProps,
+  AppSegmentedControlOption,
+  AppSegmentedControlProps,
   AppToggleSwitchProps,
   AppNumberBoxProps,
   AppSelectOption,

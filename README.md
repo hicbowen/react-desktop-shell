@@ -380,10 +380,12 @@ DataTable control or pagination locale overrides.
 
 ## Selection controls
 
-`AppCheckBox` uses a native checkbox and supports controlled, uncontrolled, and indeterminate states. While `indeterminate` remains true, the native property and `aria-checked="mixed"` are restored after every interaction; `onCheckedChange` reports the browser's resulting boolean checked value, and the parent decides when to clear `indeterminate`. `AppToggleSwitch` exposes switch semantics, immediate state changes, label placement, and compact sizing.
+`AppCheckBox` uses a native checkbox and supports controlled, uncontrolled, and indeterminate states. While `indeterminate` remains true, the native property and `aria-checked="mixed"` are restored after every interaction; `onCheckedChange` reports the browser's resulting boolean checked value, and the parent decides when to clear `indeterminate`. `AppRadioGroup` provides labelled horizontal or vertical single-choice fields, while `AppSegmentedControl` presents a few short choices in a compact filled surface. `AppToggleSwitch` exposes switch semantics, immediate state changes, label placement, and compact sizing.
 
 ```tsx
 <AppCheckBox checked={selected} onCheckedChange={setSelected} label="Include suggestions" />
+<AppRadioGroup defaultValue="comfortable" label="Density" options={densityOptions} />
+<AppSegmentedControl ariaLabel="Layout" defaultValue="list" options={layoutOptions} />
 <AppToggleSwitch defaultChecked label="Automatic updates" />
 ```
 

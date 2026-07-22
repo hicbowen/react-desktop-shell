@@ -19,3 +19,56 @@
 .app-check-box--disabled, .app-toggle-switch--disabled { color: var(--app-shell-disabled-text-color, rgb(0 0 0 / 36%)); }
 .app-check-box--disabled .app-check-box__box, .app-toggle-switch--disabled .app-toggle-switch__track { opacity: .55; }
 @media (prefers-reduced-motion: reduce) { .app-toggle-switch__track, .app-toggle-switch__thumb { transition: none; } }
+
+.app-radio-group {
+  display: grid;
+  gap: 8px;
+  color: var(--app-shell-text-color, #1f1f1f);
+  font: inherit;
+  font-size: 13px;
+}
+.app-radio-group__heading { display: grid; gap: 2px; }
+.app-radio-group__label { font-weight: 600; }
+.app-radio-group__options { display: flex; gap: 10px 18px; }
+.app-radio-group--vertical .app-radio-group__options { flex-direction: column; }
+.app-radio-group--horizontal .app-radio-group__options { flex-flow: row wrap; }
+.app-radio-group__option { position: relative; display: inline-flex; align-items: flex-start; gap: 9px; cursor: default; }
+.app-radio-group__option input { position: absolute; width: 1px; height: 1px; opacity: 0; }
+.app-radio-group__indicator { width: 18px; height: 18px; box-sizing: border-box; display: grid; flex: 0 0 18px; place-items: center; background: var(--app-shell-card-bg, #fff); border: 1px solid var(--app-shell-secondary-text-color, rgb(0 0 0 / 58%)); border-radius: 50%; }
+.app-radio-group__indicator::after { width: 8px; height: 8px; content: ''; background: var(--app-shell-accent-text-color, #fff); border-radius: 50%; transform: scale(0); transition: transform var(--rds-motion-fast, 120ms) ease; }
+.app-radio-group__option input:checked + .app-radio-group__indicator { background: var(--app-shell-accent-color, #005fb8); border-color: var(--app-shell-accent-color, #005fb8); }
+.app-radio-group__option input:checked + .app-radio-group__indicator::after { transform: scale(1); }
+.app-radio-group__option input:focus-visible + .app-radio-group__indicator { outline: 2px solid var(--app-shell-accent-color, #005fb8); outline-offset: 2px; }
+.app-radio-group--disabled, .app-radio-group__option--disabled { color: var(--app-shell-disabled-text-color, rgb(0 0 0 / 36%)); }
+.app-radio-group__option--disabled .app-radio-group__indicator { opacity: .55; }
+
+.app-segmented-control {
+  max-width: 100%;
+  box-sizing: border-box;
+  padding: 3px;
+  display: inline-flex;
+  align-items: stretch;
+  gap: 2px;
+  overflow-x: auto;
+  color: var(--app-shell-text-color, #1f1f1f);
+  font: inherit;
+  background: var(--app-shell-hover-bg, rgb(0 0 0 / 5%));
+  border: 1px solid var(--app-shell-border-color, rgb(0 0 0 / 8%));
+  border-radius: 7px;
+}
+.app-segmented-control--full-width { display: flex; width: 100%; }
+.app-segmented-control__option { position: relative; min-width: 0; display: flex; flex: 0 0 auto; cursor: default; }
+.app-segmented-control--full-width .app-segmented-control__option { flex: 1 1 0; }
+.app-segmented-control__option input { position: absolute; width: 1px; height: 1px; opacity: 0; }
+.app-segmented-control__content { min-width: 0; box-sizing: border-box; display: inline-flex; flex: 1; align-items: center; justify-content: center; gap: 6px; padding: 0 12px; white-space: nowrap; border-radius: 4px; }
+.app-segmented-control--standard .app-segmented-control__content { height: 30px; font-size: 13px; }
+.app-segmented-control--compact .app-segmented-control__content { height: 24px; padding-right: 9px; padding-left: 9px; font-size: 12px; }
+.app-segmented-control__option:hover:not(.app-segmented-control__option--disabled) .app-segmented-control__content { background: var(--app-shell-hover-bg, rgb(0 0 0 / 5%)); }
+.app-segmented-control__option input:checked + .app-segmented-control__content { background: var(--app-shell-card-bg, #fff); box-shadow: 0 1px 2px rgb(0 0 0 / 12%); }
+.app-segmented-control__option input:focus-visible + .app-segmented-control__content { outline: 2px solid var(--app-shell-accent-color, #005fb8); outline-offset: -2px; }
+.app-segmented-control__icon { width: 16px; height: 16px; display: inline-flex; flex: 0 0 16px; align-items: center; justify-content: center; }
+.app-segmented-control__icon > svg { width: 16px; height: 16px; display: block; }
+.app-segmented-control__label { overflow: hidden; text-overflow: ellipsis; }
+.app-segmented-control--disabled, .app-segmented-control__option--disabled { color: var(--app-shell-disabled-text-color, rgb(0 0 0 / 36%)); }
+
+@media (prefers-reduced-motion: reduce) { .app-radio-group__indicator::after { transition: none; } }

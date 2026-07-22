@@ -10,7 +10,14 @@ export type { AppSliderMark, AppSliderProps } from './slider/types'
 export type { AppTextAreaProps, AppTextBoxProps } from './text-input/types'
 export type { AppComboBoxOption, AppComboBoxProps } from './combo-box/types'
 export type { AppAutoCompleteOption, AppAutoCompleteProps } from './auto-complete/types'
-export type { AppCheckBoxProps, AppToggleSwitchProps } from './selection-controls/types'
+export type {
+  AppCheckBoxProps,
+  AppRadioGroupOption,
+  AppRadioGroupProps,
+  AppSegmentedControlOption,
+  AppSegmentedControlProps,
+  AppToggleSwitchProps,
+} from './selection-controls/types'
 export type { AppNumberBoxProps, AppSelectOption, AppSelectProps } from './number-select/types'
 export type { AppListViewItemProps, AppListViewProps } from './list-view/types'
 export type { AppExpanderProps } from './expander/types'
