@@ -1,0 +1,2 @@
+import { AppPasswordBox } from '../../../../src'; import { DemoPage, DemoPreview, DemoSection } from '../../components/DemoPage'
+export function AppPasswordBoxPage(){return <DemoPage><DemoSection title="Password input" description="Reveal controls, Caps Lock feedback, and an application-owned strength slot."><DemoPreview><AppPasswordBox autoComplete="current-password" defaultValue="correct horse" strength={<span>Password strength: good</span>}/></DemoPreview></DemoSection></DemoPage>}

@@ -159,6 +159,7 @@ export const enUSMessages = {
     empty: 'No options',
     remove: (label: string) => `Remove ${label}`,
   },
+  passwordBox: { show: 'Show password', hide: 'Hide password', capsLock: 'Caps Lock is on' },
   textBox: {
     clear: 'Clear input',
     loading: 'Loading',

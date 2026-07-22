@@ -38,6 +38,7 @@ import { AppSearchBoxPage } from './pages/forms/SearchBoxPage'
 import { AppColorPickerPage } from './pages/forms/ColorPickerPage'
 import { AppFilePickerPage } from './pages/forms/FilePickerPage'
 import { AppMultiSelectPage } from './pages/forms/MultiSelectPage'
+import { AppPasswordBoxPage } from './pages/forms/PasswordBoxPage'
 import { SelectionControlsPage } from './pages/forms/SelectionControlsPage'
 import { NumberSelectPage } from './pages/forms/NumberSelectPage'
 import { AutoCompletePage } from './pages/forms/AutoCompletePage'
@@ -96,6 +97,7 @@ export const demoPages: DemoPageDefinition[] = [
   { key: 'color-picker', group: 'Forms', label: 'AppColorPicker', description: 'Popup and inline color selection with HSV, hex, and preset controls.', icon: <SlidersHorizontal size={16} />, component: AppColorPickerPage },
   { key: 'file-picker', group: 'Forms', label: 'AppFilePicker', description: 'File browsing and local drop selection with validation and host adapters.', icon: <UploadCloud size={16} />, component: AppFilePickerPage },
   { key: 'multi-select', group: 'Forms', label: 'AppMultiSelect', description: 'Searchable multiple selection represented with removable tags.', icon: <Tags size={16} />, component: AppMultiSelectPage },
+  { key: 'password-box', group: 'Forms', label: 'AppPasswordBox', description: 'Password entry with reveal, Caps Lock, and strength feedback.', icon: <Rows3 size={16} />, component: AppPasswordBoxPage },
   { key: 'selection-controls', group: 'Forms', label: 'Selection Controls', description: 'Check boxes, radio groups, segmented choices, and toggle switches.', icon: <ListChecks size={16} />, component: SelectionControlsPage },
   { key: 'number-select', group: 'Forms', label: 'Number & Select', description: 'Stepped numeric input and reliable native option selection.', icon: <SlidersHorizontal size={16} />, component: NumberSelectPage },
   { key: 'auto-complete', group: 'Forms', label: 'AppAutoComplete', description: 'Free text input with filtered suggestions and keyboard navigation.', icon: <SlidersHorizontal size={16} />, component: AutoCompletePage },
