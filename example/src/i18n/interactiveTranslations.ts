@@ -52,6 +52,16 @@ export const zhCNInteractiveText: Record<string, string> = {
   '12 tasks across all dates': '所有日期共 12 项任务', '3 tasks due today': '今天有 3 项任务到期',
   '7 tasks still to complete': '还有 7 项任务待完成', '5 completed tasks': '已完成 5 项任务',
   panel: '面板', note: '备注', 'Type a note': '输入备注', Count: '计数',
+  Standard: '标准', Save: '保存', Subtle: '微妙', Delete: '删除', Compact: '紧凑',
+  Before: '图标在前', After: '图标在后', 'Saving changes': '正在保存更改', Disabled: '已禁用',
+  'More actions': '更多操作', 'More actions with tooltip': '带工具提示的更多操作', Rename: '重命名',
+  'Open menu': '打开菜单', 'Open dialog': '打开对话框', Done: '完成',
+  'Button composition': '按钮组合', 'Buttons can be used as dialog actions.': '按钮可以用作对话框操作。',
+  Bold: '粗体', Italic: '斜体', Underline: '下划线', Export: '导出', Download: '下载',
+  'Export PDF': '导出 PDF', 'Export image': '导出图片', 'Remove export preset': '移除导出预设',
+  'Menu disabled': '菜单已禁用', None: '无', 'default export': '默认导出', download: '下载',
+  pdf: 'PDF', image: '图片', remove: '移除',
+  'primary still available': '主操作仍可用', 'Last action:': '上次操作：', 'toolbar export': '工具栏导出',
 }
 
 export function useDemoCopy() {
