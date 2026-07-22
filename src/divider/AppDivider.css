@@ -1,0 +1,57 @@
+.app-divider {
+  --app-divider-color: var(--app-shell-border-color, rgb(0 0 0 / 12%));
+  flex: 0 0 auto;
+  box-sizing: border-box;
+  color: var(--app-shell-muted-text-color, #616161);
+}
+
+.app-divider--strong {
+  --app-divider-color: var(--app-shell-strong-border-color, rgb(0 0 0 / 24%));
+}
+
+.app-divider--horizontal {
+  width: 100%;
+  min-height: 1px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.app-divider--horizontal::before,
+.app-divider--horizontal::after {
+  height: 1px;
+  content: '';
+  flex: 1;
+  background: var(--app-divider-color);
+}
+
+.app-divider--horizontal:not(.app-divider--with-content)::after,
+.app-divider--align-start::before,
+.app-divider--align-end::after {
+  display: none;
+}
+
+.app-divider--align-start::after,
+.app-divider--align-end::before {
+  flex-grow: 1;
+}
+
+.app-divider--inset.app-divider--horizontal {
+  padding-inline: 16px;
+}
+
+.app-divider--vertical {
+  width: 1px;
+  min-height: 20px;
+  align-self: stretch;
+  background: var(--app-divider-color);
+}
+
+.app-divider__content {
+  min-width: 0;
+  overflow: hidden;
+  font-size: 12px;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
