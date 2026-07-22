@@ -61,6 +61,14 @@ export const zhCNInteractiveText: Record<string, string> = {
   'Export PDF': '导出 PDF', 'Export image': '导出图片', 'Remove export preset': '移除导出预设',
   'Menu disabled': '菜单已禁用', None: '无', 'default export': '默认导出', download: '下载',
   pdf: 'PDF', image: '图片', remove: '移除',
+  'Compact controls': '紧凑控件', 'Filter items': '筛选项目', Status: '状态', 'All states': '所有状态',
+  '24 items': '24 个项目', Secondary: '次要操作', 'Primary action': '主要操作', on: '开', off: '关',
+  New: '新建', Refresh: '刷新', 'Document actions': '文档操作', 'Save document': '保存文档',
+  'Save the active document': '保存当前文档', 'Command enabled': '启用命令', Executed: '已执行', times: '次',
+  'New file': '新建文件', 'Create an empty document': '创建空白文档', 'Open file': '打开文件',
+  'Save active file': '保存当前文件', 'Open command palette': '打开命令面板',
+  'Already assigned to Print': '已分配给“打印”命令',
+  'The compact toggle is page-local:': '紧凑开关只影响当前页面：',
   'primary still available': '主操作仍可用', 'Last action:': '上次操作：', 'toolbar export': '工具栏导出',
 }
 

@@ -2,11 +2,13 @@ import { useMemo, useState } from 'react'
 import { Copy, Pencil, Plus, RefreshCw, Save, Trash2 } from 'lucide-react'
 import { AppButton, AppCheckBox, AppCommandProvider, AppContextMenu, AppSelect, AppTextBox, AppToolbar, formatAppShortcut, useAppCommand, useAppCommands, useAppContextMenu, type AppCommand } from '../../../../src'
 import { DemoControls, DemoPage, DemoPreview, DemoSection } from '../../components/DemoPage'
+import { useDemoCopy } from '../../i18n/interactiveTranslations'
 
 export function AppToolbarPage() {
+  const t = useDemoCopy()
   const [compact, setCompact] = useState(false)
   const size = compact ? 'compact' : 'standard'
-  return <DemoPage><DemoControls><AppCheckBox checked={compact} label="Compact controls" onCheckedChange={setCompact} /></DemoControls><DemoSection title="Three aligned regions"><DemoPreview><AppToolbar start={<><AppTextBox aria-label="Filter items" placeholder="Filter items" size={size} /><AppSelect aria-label="Status" defaultValue="all" options={[{ value: 'all', label: 'All states' }, { value: 'ready', label: 'Ready' }]} size={size} /></>} status={<span>24 items</span>} end={<><AppButton size={size}>Secondary</AppButton><AppButton appearance="primary" size={size}>Primary action</AppButton></>} /></DemoPreview><p className="demo-note">The compact toggle is page-local: {compact ? 'on' : 'off'}.</p></DemoSection><DemoSection title="Automatic action overflow" description="Resize the window to move trailing commands into the overflow menu."><DemoPreview><AppToolbar actions={[{ key: 'new', label: 'New', icon: <Plus /> }, { key: 'save', label: 'Save', icon: <Save /> }, { key: 'refresh', label: 'Refresh', icon: <RefreshCw /> }, { key: 'delete', label: 'Delete', icon: <Trash2 />, danger: true }]} start={<strong>Document actions</strong>} /></DemoPreview></DemoSection></DemoPage>
+  return <DemoPage><DemoControls><AppCheckBox checked={compact} label={t('Compact controls')} onCheckedChange={setCompact} /></DemoControls><DemoSection title="Three aligned regions"><DemoPreview><AppToolbar start={<><AppTextBox aria-label={t('Filter items')} placeholder={t('Filter items')} size={size} /><AppSelect aria-label={t('Status')} defaultValue="all" options={[{ value: 'all', label: t('All states') }, { value: 'ready', label: t('Ready') }]} size={size} /></>} status={<span>{t('24 items')}</span>} end={<><AppButton size={size}>{t('Secondary')}</AppButton><AppButton appearance="primary" size={size}>{t('Primary action')}</AppButton></>} /></DemoPreview><p className="demo-note">{t('The compact toggle is page-local:')} {t(compact ? 'on' : 'off')}.</p></DemoSection><DemoSection title="Automatic action overflow" description="Resize the window to move trailing commands into the overflow menu."><DemoPreview><AppToolbar actions={[{ key: 'new', label: t('New'), icon: <Plus /> }, { key: 'save', label: t('Save'), icon: <Save /> }, { key: 'refresh', label: t('Refresh'), icon: <RefreshCw /> }, { key: 'delete', label: t('Delete'), icon: <Trash2 />, danger: true }]} start={<strong>{t('Document actions')}</strong>} /></DemoPreview></DemoSection></DemoPage>
 }
 
 function CommandButtons() {
@@ -20,19 +22,20 @@ function CommandButtons() {
 }
 
 export function AppCommandPage() {
+  const t = useDemoCopy()
   const [saved, setSaved] = useState(0)
   const [enabled, setEnabled] = useState(true)
   const commands = useMemo<AppCommand[]>(() => [{
     id: 'file.save',
-    label: 'Save document',
-    description: 'Save the active document',
+    label: t('Save document'),
+    description: t('Save the active document'),
     icon: <Save />,
     shortcut: { ctrl: true, key: 's' },
     disabled: !enabled,
     execute: () => setSaved((value) => value + 1),
-  }], [enabled])
+  }], [enabled, t])
 
-  return <AppCommandProvider commands={commands}><DemoPage><DemoControls><AppCheckBox checked={enabled} label="Command enabled" onCheckedChange={setEnabled} /></DemoControls><DemoSection title="Shared command state" description="The button and Ctrl+S shortcut execute the same platform-neutral command."><DemoPreview><CommandButtons /></DemoPreview><p className="demo-note">Executed {saved} times.</p></DemoSection></DemoPage></AppCommandProvider>
+  return <AppCommandProvider commands={commands}><DemoPage><DemoControls><AppCheckBox checked={enabled} label={t('Command enabled')} onCheckedChange={setEnabled} /></DemoControls><DemoSection title="Shared command state" description="The button and Ctrl+S shortcut execute the same platform-neutral command."><DemoPreview><CommandButtons /></DemoPreview><p className="demo-note">{t('Executed')} {saved} {t('times')}.</p></DemoSection></DemoPage></AppCommandProvider>
 }
 
 export function ContextMenuPage() {
