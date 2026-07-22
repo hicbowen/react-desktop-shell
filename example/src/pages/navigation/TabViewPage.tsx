@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { FileCode2, FileText } from 'lucide-react'
 import { AppButton, AppTabView, type AppTabViewItem } from '../../../../src'
-import { DemoPage, DemoSection } from '../../components/DemoPage'
+import { DemoControls, DemoPage, DemoPreview, DemoSection } from '../../components/DemoPage'
 
 const initialTabs: AppTabViewItem[] = [
   { key: 'readme', label: 'README.md', icon: <FileText />, content: <p>Project documentation</p>, pinned: true },
@@ -33,5 +33,5 @@ export function AppTabViewPage() {
     setValue(key)
   }
 
-  return <DemoPage><DemoSection title="Document workspace" description="Tabs can be selected, closed, added, and reordered without owning document state."><div style={{ height: 280 }}><AppTabView items={tabs} onAddTab={add} onTabClose={close} onTabReorder={reorder} onValueChange={setValue} value={value} /></div><AppButton onClick={() => setTabs(initialTabs)}>Restore tabs</AppButton></DemoSection></DemoPage>
+  return <DemoPage><DemoSection title="Document workspace" description="Tabs can be selected, closed, added, and reordered without owning document state."><DemoPreview className="demo-tab-view-preview"><AppTabView items={tabs} onAddTab={add} onTabClose={close} onTabReorder={reorder} onValueChange={setValue} value={value} /></DemoPreview><DemoControls><AppButton onClick={() => setTabs(initialTabs)}>Restore tabs</AppButton></DemoControls></DemoSection></DemoPage>
 }

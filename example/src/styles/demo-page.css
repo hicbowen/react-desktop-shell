@@ -64,6 +64,23 @@
     gap: 10px;
 }
 
+.demo-tab-view-preview {
+    height: 280px;
+    padding: 0;
+}
+
+.demo-tab-view-preview .app-tab-view {
+    height: 100%;
+}
+
+.demo-tab-view-preview .app-tab-view__panel {
+    padding: 16px;
+}
+
+.demo-tab-view-preview .app-tab-view__panel>p {
+    margin: 0;
+}
+
 .demo-hero {
     padding: 28px;
     border-radius: 12px;
