@@ -34,6 +34,7 @@ export function AppTabView({
   mountStrategy = 'unmount',
   onAddTab,
   onTabClose,
+  onTabContextMenu,
   onTabReorder,
   onValueChange,
   style,
@@ -134,6 +135,7 @@ export function AppTabView({
             className={`app-tab-view__tab-shell${selected ? ' app-tab-view__tab-shell--selected' : ''}${item.pinned ? ' app-tab-view__tab-shell--pinned' : ''}`}
             draggable={Boolean(onTabReorder) && !item.pinned}
             key={item.key}
+            onContextMenu={(event) => onTabContextMenu?.(item, event)}
             onDragEnd={() => { dragIndex.current = null }}
             onDragOver={(event) => { if (onTabReorder && !item.pinned) event.preventDefault() }}
             onDragStart={(event) => onDragStart(event, index, item)}

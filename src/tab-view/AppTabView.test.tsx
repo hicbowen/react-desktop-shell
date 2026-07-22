@@ -73,6 +73,19 @@ describe('AppTabView', () => {
     expect(tab('One')).toBeTruthy()
   })
 
+  it('reports the tab that requests a context menu', () => {
+    const onTabContextMenu = vi.fn()
+    render({ onTabContextMenu })
+    const shell = tab('Two').closest('.app-tab-view__tab-shell')!
+    act(() => shell.dispatchEvent(new MouseEvent('contextmenu', {
+      bubbles: true,
+      cancelable: true,
+    })))
+    expect(onTabContextMenu).toHaveBeenCalledOnce()
+    expect(onTabContextMenu.mock.calls[0]?.[0]).toBe(items[1])
+    expect(onTabContextMenu.mock.calls[0]?.[1].nativeEvent).toBeInstanceOf(MouseEvent)
+  })
+
   it('keeps the add action in the scrollable tab row', () => {
     render({ onAddTab: vi.fn() })
     const tabs = container.querySelector('.app-tab-view__tabs')

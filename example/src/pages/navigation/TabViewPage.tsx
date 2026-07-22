@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { FileCode2, FileText } from 'lucide-react'
-import { AppButton, AppTabView, type AppTabViewItem } from '../../../../src'
+import { AppButton, AppTabView, useAppContextMenu, type AppTabViewItem } from '../../../../src'
 import { DemoControls, DemoPage, DemoPreview, DemoSection } from '../../components/DemoPage'
 
 const initialTabs: AppTabViewItem[] = [
@@ -12,6 +12,7 @@ const initialTabs: AppTabViewItem[] = [
 export function AppTabViewPage() {
   const [tabs, setTabs] = useState(initialTabs)
   const [value, setValue] = useState('app')
+  const contextMenu = useAppContextMenu()
 
   const close = (key: string) => {
     const index = tabs.findIndex((tab) => tab.key === key)
@@ -27,11 +28,39 @@ export function AppTabViewPage() {
     return copy
   })
 
+  const closeMany = (keys: string[], fallbackKey: string) => {
+    if (keys.includes(value)) setValue(fallbackKey)
+    setTabs((current) => current.filter((item) => !keys.includes(item.key)))
+  }
+
   const add = () => {
     const key = `untitled-${tabs.length + 1}`
     setTabs((current) => [...current, { key, label: 'Untitled', content: <p>New document</p> }])
     setValue(key)
   }
 
-  return <DemoPage><DemoSection title="Document workspace" description="Tabs can be selected, closed, added, and reordered without owning document state."><DemoPreview className="demo-tab-view-preview"><AppTabView items={tabs} onAddTab={add} onTabClose={close} onTabReorder={reorder} onValueChange={setValue} value={value} /></DemoPreview><DemoControls><AppButton onClick={() => setTabs(initialTabs)}>Restore tabs</AppButton></DemoControls></DemoSection></DemoPage>
+  return <DemoPage><DemoSection title="Document workspace" description="Tabs can be selected, closed, added, reordered, and paired with contextual commands without owning document state."><DemoPreview className="demo-tab-view-preview"><AppTabView
+    items={tabs}
+    onAddTab={add}
+    onTabClose={close}
+    onTabContextMenu={(tab, event) => {
+      event.preventDefault()
+      const index = tabs.findIndex((item) => item.key === tab.key)
+      const closeOthers = tabs.filter((item) => item.key !== tab.key && !item.pinned)
+      const closeRight = tabs.slice(index + 1).filter((item) => !item.pinned)
+      contextMenu.open({
+        items: [
+          { key: 'close', label: 'Close', disabled: tab.pinned, onClick: () => close(tab.key) },
+          { key: 'close-others', label: 'Close others', disabled: closeOthers.length === 0, onClick: () => closeMany(closeOthers.map((item) => item.key), tab.key) },
+          { key: 'close-right', label: 'Close tabs to the right', disabled: closeRight.length === 0, onClick: () => closeMany(closeRight.map((item) => item.key), tab.key) },
+        ],
+        trigger: event.currentTarget,
+        x: event.clientX,
+        y: event.clientY,
+      })
+    }}
+    onTabReorder={reorder}
+    onValueChange={setValue}
+    value={value}
+  /></DemoPreview><DemoControls><AppButton onClick={() => setTabs(initialTabs)}>Restore tabs</AppButton></DemoControls></DemoSection></DemoPage>
 }
