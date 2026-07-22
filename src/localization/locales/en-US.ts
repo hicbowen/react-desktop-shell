@@ -248,4 +248,5 @@ export const enUSMessages = {
     running: 'Running', paused: 'Paused', success: 'Completed', error: 'Failed',
     canceled: 'Canceled',
   },
+  copyableText: { copy: 'Copy', copied: 'Copied' },
 } satisfies AppLocaleMessages

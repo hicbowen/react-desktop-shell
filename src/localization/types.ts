@@ -242,6 +242,10 @@ export interface AppLocaleMessages {
     error: string
     canceled: string
   }
+  copyableText: {
+    copy: string
+    copied: string
+  }
 }
 
 export interface AppLocaleContextValue {

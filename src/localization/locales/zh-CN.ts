@@ -242,4 +242,5 @@ export const zhCNMessages = {
     empty: '没有后台任务', queued: '等待中', running: '进行中', paused: '已暂停',
     success: '已完成', error: '失败', canceled: '已取消',
   },
+  copyableText: { copy: '复制', copied: '已复制' },
 } satisfies AppLocaleMessages
