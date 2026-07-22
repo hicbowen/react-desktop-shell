@@ -43,6 +43,7 @@
 .app-radio-group__option--disabled .app-radio-group__indicator { opacity: .55; }
 
 .app-segmented-control {
+  width: fit-content;
   max-width: 100%;
   box-sizing: border-box;
   padding: 3px;
@@ -63,7 +64,7 @@
 .app-segmented-control__content { min-width: 0; box-sizing: border-box; display: inline-flex; flex: 1; align-items: center; justify-content: center; gap: 6px; padding: 0 12px; white-space: nowrap; border-radius: 4px; }
 .app-segmented-control--standard .app-segmented-control__content { height: 30px; font-size: 13px; }
 .app-segmented-control--compact .app-segmented-control__content { height: 24px; padding-right: 9px; padding-left: 9px; font-size: 12px; }
-.app-segmented-control__option:hover:not(.app-segmented-control__option--disabled) .app-segmented-control__content { background: var(--app-shell-hover-bg, rgb(0 0 0 / 5%)); }
+.app-segmented-control__option:hover:not(.app-segmented-control__option--disabled) input:not(:checked) + .app-segmented-control__content { background: var(--app-shell-hover-bg, rgb(0 0 0 / 5%)); }
 .app-segmented-control__option input:checked + .app-segmented-control__content { background: var(--app-shell-card-bg, #fff); box-shadow: 0 1px 2px rgb(0 0 0 / 12%); }
 .app-segmented-control__option input:focus-visible + .app-segmented-control__content { outline: 2px solid var(--app-shell-accent-color, #005fb8); outline-offset: -2px; }
 .app-segmented-control__icon { width: 16px; height: 16px; display: inline-flex; flex: 0 0 16px; align-items: center; justify-content: center; }
