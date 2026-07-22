@@ -34,6 +34,7 @@ import { ProgressStatusPage } from './pages/feedback/ProgressStatusPage'
 import { AppTaskCenterPage } from './pages/feedback/TaskCenterPage'
 import { PopoverPage } from './pages/feedback/PopoverPage'
 import { TextInputsPage } from './pages/forms/TextInputsPage'
+import { AppSearchBoxPage } from './pages/forms/SearchBoxPage'
 import { SelectionControlsPage } from './pages/forms/SelectionControlsPage'
 import { NumberSelectPage } from './pages/forms/NumberSelectPage'
 import { AutoCompletePage } from './pages/forms/AutoCompletePage'
@@ -87,6 +88,7 @@ export const demoPages: DemoPageDefinition[] = [
   { key: 'app-split-button', group: 'Actions', label: 'AppSplitButton', description: 'A default command paired with alternate menu actions.', icon: <Columns3 size={16} />, component: AppSplitButtonPage },
   { key: 'context-menu', group: 'Actions', label: 'Context Menu', description: 'Nested contextual commands and native text actions.', icon: <MousePointerClick size={16} />, component: ContextMenuPage },
   { key: 'text-inputs', group: 'Forms', label: 'Text Inputs', description: 'Text boxes and text areas with icons, clear, validation, and counting.', icon: <Rows3 size={16} />, component: TextInputsPage },
+  { key: 'search-box', group: 'Forms', label: 'AppSearchBox', description: 'Search input with explicit submission, clearing, and optional debouncing.', icon: <Rows3 size={16} />, component: AppSearchBoxPage },
   { key: 'selection-controls', group: 'Forms', label: 'Selection Controls', description: 'Check boxes, radio groups, segmented choices, and toggle switches.', icon: <ListChecks size={16} />, component: SelectionControlsPage },
   { key: 'number-select', group: 'Forms', label: 'Number & Select', description: 'Stepped numeric input and reliable native option selection.', icon: <SlidersHorizontal size={16} />, component: NumberSelectPage },
   { key: 'auto-complete', group: 'Forms', label: 'AppAutoComplete', description: 'Free text input with filtered suggestions and keyboard navigation.', icon: <SlidersHorizontal size={16} />, component: AutoCompletePage },

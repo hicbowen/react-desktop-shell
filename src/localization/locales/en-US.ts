@@ -128,6 +128,10 @@ export const enUSMessages = {
   skeleton: {
     loading: 'Loading content',
   },
+  searchBox: {
+    label: 'Search',
+    placeholder: 'Search',
+  },
   textBox: {
     clear: 'Clear input',
     loading: 'Loading',

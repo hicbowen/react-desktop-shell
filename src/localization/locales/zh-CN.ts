@@ -123,6 +123,10 @@ export const zhCNMessages = {
   skeleton: {
     loading: '正在加载内容',
   },
+  searchBox: {
+    label: '搜索',
+    placeholder: '搜索',
+  },
   textBox: {
     clear: '清除输入',
     loading: '正在加载',

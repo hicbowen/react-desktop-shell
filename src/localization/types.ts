@@ -116,6 +116,10 @@ export interface AppLocaleMessages {
   skeleton: {
     loading: string
   }
+  searchBox: {
+    label: string
+    placeholder: string
+  }
   textBox: {
     clear: string
     loading: string
