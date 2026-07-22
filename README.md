@@ -208,12 +208,34 @@ Choose the component according to the scope of the interaction:
 
 - `AppRail`: application-level primary navigation.
 - `AppSelectorBar`: a few view choices within the current page.
-- Tabs: multiple documents or distinct content panels, especially when tab
+- `AppTabView`: multiple documents or distinct content panels, especially when tab
   lifecycle matters.
 - Segmented Control: a compact, filled option switch.
 
 `AppSelectorBar` itself is not intended for main navigation, closable or
 reorderable tabs, large filter sets, overflow menus, or routing.
+
+## Document tabs
+
+`AppTabView` provides WinUI-style document tabs without owning application
+documents or host windows. It supports controlled and uncontrolled selection,
+close and add requests, drag reordering, pinned and dirty states, keyboard
+navigation, and explicit `unmount` or `hidden` panel lifecycles.
+
+```tsx
+<AppTabView
+  items={documents.map((document) => ({
+    key: document.id,
+    label: document.name,
+    dirty: document.modified,
+    content: <Editor document={document} />,
+  }))}
+  value={activeDocument}
+  onValueChange={setActiveDocument}
+  onTabClose={requestCloseDocument}
+  onTabReorder={reorderDocuments}
+/>
+```
 
 ## Fluent Cards
 
