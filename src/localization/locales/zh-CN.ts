@@ -243,4 +243,5 @@ export const zhCNMessages = {
     success: '已完成', error: '失败', canceled: '已取消',
   },
   copyableText: { copy: '复制', copied: '已复制' },
+  inlineEdit: { edit: '编辑值', save: '保存', cancel: '取消', required: '请输入内容', saveFailed: '无法保存更改' },
 } satisfies AppLocaleMessages

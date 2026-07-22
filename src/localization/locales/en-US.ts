@@ -249,4 +249,5 @@ export const enUSMessages = {
     canceled: 'Canceled',
   },
   copyableText: { copy: 'Copy', copied: 'Copied' },
+  inlineEdit: { edit: 'Edit value', save: 'Save', cancel: 'Cancel', required: 'Enter a value', saveFailed: 'Could not save changes' },
 } satisfies AppLocaleMessages

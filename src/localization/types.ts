@@ -246,6 +246,13 @@ export interface AppLocaleMessages {
     copy: string
     copied: string
   }
+  inlineEdit: {
+    edit: string
+    save: string
+    cancel: string
+    required: string
+    saveFailed: string
+  }
 }
 
 export interface AppLocaleContextValue {
