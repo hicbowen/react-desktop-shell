@@ -163,6 +163,20 @@ const zhCNSectionText: Record<string, string> = {
   'The default strategy releases inactive panels, so their local input and counter state reset when selected again.': '默认策略会释放非活动面板，因此重新选中时其本地输入和计数状态会重置。',
   'The hidden strategy keeps every panel mounted, preserving local state while removing inactive panels from layout and accessibility navigation.': '隐藏策略会保持所有面板挂载，在保留本地状态的同时从布局和无障碍导航中移除非活动面板。',
   'Items, groups, submenus, badges, disabled states, and footer actions share a single entry model.': '项目、分组、子菜单、徽标、禁用状态和页脚操作共享同一种条目模型。',
+  'Content separation': '内容分隔',
+  'Separate adjacent content without introducing another container.': '无需增加容器即可分隔相邻内容。',
+  'Application links': '应用链接',
+  'Use links for navigation and external resources while preserving native anchor behavior.': '使用链接进行导航或访问外部资源，同时保留原生锚点行为。',
+  'Identity and presence': '身份与在线状态',
+  'Represent people, accounts, and collaborators from compact avatars through descriptive personas.': '通过紧凑头像或详细人员信息展示用户、账户和协作者。',
+  'Copyable values': '可复制值',
+  'Pair identifiers, paths, and generated values with accessible clipboard feedback.': '为标识符、路径和生成值提供无障碍剪贴板反馈。',
+  'Menu-only command': '纯菜单命令',
+  'Open a command menu when no single default action should be implied.': '在不应暗示单一默认操作时打开命令菜单。',
+  'Desktop inline editing': '桌面行内编辑',
+  'Rename resources with double-click or F2, then commit with Enter or cancel with Escape.': '双击或按 F2 重命名资源，按 Enter 提交，按 Escape 取消。',
+  'Notification history': '通知历史',
+  'Present persistent application events with unread state, actions, and host-controlled lifecycle.': '展示带未读状态、操作和宿主受控生命周期的持久应用事件。',
 }
 
 export function localizeSectionText(locale: 'zh-CN' | 'en-US', text?: string) {

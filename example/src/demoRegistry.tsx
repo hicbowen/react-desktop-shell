@@ -61,6 +61,13 @@ import { AppCalendarPage } from './pages/forms/CalendarPage'
 import { DateRangePickerPage } from './pages/forms/DateRangePickerPage'
 import { TimePickerPage } from './pages/forms/TimePickerPage'
 import { TimeRangePickerPage } from './pages/forms/TimeRangePickerPage'
+import { AppDividerPage } from './pages/content/DividerPage'
+import { AppLinkPage } from './pages/content/LinkPage'
+import { AppAvatarPersonaPage } from './pages/content/AvatarPersonaPage'
+import { AppCopyableTextPage } from './pages/content/CopyableTextPage'
+import { AppDropDownButtonPage } from './pages/actions/DropDownButtonPage'
+import { AppInlineEditPage } from './pages/forms/InlineEditPage'
+import { AppNotificationCenterPage } from './pages/feedback/NotificationCenterPage'
 import type { ResolvedAppLocale } from '../../src/localization/types'
 import { zhCNRegistry } from './i18n/registry.zh-CN'
 
@@ -82,6 +89,10 @@ const demoPageSources = [
   { key: 'breadcrumb-bar', label: 'AppBreadcrumbBar', description: 'Compact resource paths with collapsed ancestor navigation.', icon: <Navigation size={16} />, component: AppBreadcrumbBarPage },
   { key: 'navigation-modes', label: 'Navigation Modes', description: 'Expanded, compact, minimal, and responsive rail behavior.', icon: <Menu size={16} />, component: NavigationModesPage },
   { key: 'app-card', label: 'AppCard', description: 'Fluent content surfaces, composition, interaction states, and continuous groups.', icon: <CreditCard size={16} />, component: AppCardPage },
+  { key: 'app-divider', label: 'AppDivider', description: 'Horizontal and vertical separators with optional labels and inset alignment.', icon: <Rows3 size={16} />, component: AppDividerPage },
+  { key: 'app-link', label: 'AppLink', description: 'Native application links with disabled, subtle, and external appearances.', icon: <Navigation size={16} />, component: AppLinkPage },
+  { key: 'app-avatar-persona', label: 'AppAvatar / AppPersona', description: 'Identity, initials, imagery, presence, and descriptive person information.', icon: <CircleHelp size={16} />, component: AppAvatarPersonaPage },
+  { key: 'app-copyable-text', label: 'AppCopyableText', description: 'Copy identifiers and paths with localized success feedback.', icon: <Rows3 size={16} />, component: AppCopyableTextPage },
   { key: 'app-scroll-area', label: 'AppScrollArea', description: 'Native scrolling with Fluent overflow, scrollbar, and gutter styling.', icon: <ScrollText size={16} />, component: AppScrollAreaPage },
   { key: 'app-field', label: 'AppField', description: 'Accessible labels, descriptions, requirements, errors, and field layouts.', icon: <Rows3 size={16} />, component: AppFieldPage },
   { key: 'app-empty-state', label: 'AppEmptyState', description: 'Compact and regular empty content with optional guidance and actions.', icon: <Rows3 size={16} />, component: AppEmptyStatePage },
@@ -102,6 +113,7 @@ const demoPageSources = [
   { key: 'app-teaching-tip', label: 'AppTeachingTip', description: 'Controlled anchored guidance with title, content, and actions.', icon: <Lightbulb size={16} />, component: AppTeachingTipPage },
   { key: 'app-file-drop-overlay', label: 'AppFileDropOverlay', description: 'Accepting and rejecting overlays for local file drags.', icon: <UploadCloud size={16} />, component: AppFileDropOverlayPage },
   { key: 'app-toast', label: 'AppToast', description: 'Transient notifications, actions, duration, and dismissal.', icon: <Bell size={16} />, component: AppToastPage },
+  { key: 'notification-center', label: 'AppNotificationCenter', description: 'Persistent notification history with unread state, commands, and dismissal.', icon: <Bell size={16} />, component: AppNotificationCenterPage },
   { key: 'app-dialog', label: 'AppDialog', description: 'Modal content with controlled state and custom actions.', icon: <MessageSquare size={16} />, component: AppDialogPage },
   { key: 'message-box', label: 'Message Box', description: 'Promise-based confirmation and decision dialogs.', icon: <MessageSquare size={16} />, component: MessageBoxPage },
   { key: 'app-toolbar', label: 'AppToolbar', description: 'Start, status, and end regions for page-level actions.', icon: <Wrench size={16} />, component: AppToolbarPage },
@@ -113,8 +125,10 @@ const demoPageSources = [
   { key: 'buttons', label: 'Buttons', description: 'Desktop command buttons, icon buttons, states, and composition.', icon: <SquareMousePointer size={16} />, component: ButtonsPage },
   { key: 'app-menu-flyout', label: 'AppMenuFlyout', description: 'Anchored one-level command menus with keyboard navigation.', icon: <ListChecks size={16} />, component: AppMenuFlyoutPage },
   { key: 'app-split-button', label: 'AppSplitButton', description: 'A default command paired with alternate menu actions.', icon: <Columns3 size={16} />, component: AppSplitButtonPage },
+  { key: 'app-dropdown-button', label: 'AppDropDownButton', description: 'A menu-only command button without an implied default action.', icon: <Columns3 size={16} />, component: AppDropDownButtonPage },
   { key: 'context-menu', label: 'Context Menu', description: 'Nested contextual commands and native text actions.', icon: <MousePointerClick size={16} />, component: ContextMenuPage },
   { key: 'app-text-box', label: 'AppTextBox', description: 'Single-line text input with icons, clearing, loading, and validation states.', icon: <Rows3 size={16} />, component: AppTextBoxPage },
+  { key: 'app-inline-edit', label: 'AppInlineEdit', description: 'Desktop-style inline renaming with keyboard commands, selection, and validation.', icon: <Rows3 size={16} />, component: AppInlineEditPage },
   { key: 'app-text-area', label: 'AppTextArea', description: 'Multi-line text input with resizing, automatic growth, and character counting.', icon: <Rows3 size={16} />, component: AppTextAreaPage },
   { key: 'search-box', label: 'AppSearchBox', description: 'Search input with explicit submission, clearing, and optional debouncing.', icon: <Rows3 size={16} />, component: AppSearchBoxPage },
   { key: 'color-picker', label: 'AppColorPicker', description: 'Popup and inline color selection with HSV, hex, and preset controls.', icon: <SlidersHorizontal size={16} />, component: AppColorPickerPage },
@@ -164,6 +178,7 @@ const taxonomy: Record<DemoPageKey, DemoTaxonomy> = {
   buttons: { category: 'actions', subgroup: 'basic', apiNames: ['AppButton', 'AppIconButton'], status: 'stable' },
   'toggle-button': { category: 'actions', subgroup: 'basic', apiNames: ['AppToggleButton', 'AppToggleButtonGroup'], status: 'stable' },
   'app-split-button': { category: 'actions', subgroup: 'basic', apiNames: ['AppSplitButton'], status: 'stable' },
+  'app-dropdown-button': { category: 'actions', subgroup: 'basic', apiNames: ['AppDropDownButton'], status: 'stable' },
   'app-toolbar': { category: 'actions', subgroup: 'commands', apiNames: ['AppToolbar'], status: 'stable' },
   'app-command': { category: 'actions', subgroup: 'commands', apiNames: ['AppCommandProvider'], status: 'stable' },
   'command-palette': { category: 'actions', subgroup: 'commands', apiNames: ['AppCommandPalette'], status: 'stable' },
@@ -172,6 +187,7 @@ const taxonomy: Record<DemoPageKey, DemoTaxonomy> = {
   'app-menu-flyout': { category: 'actions', subgroup: 'menus', apiNames: ['AppMenuFlyout'], status: 'stable' },
   'context-menu': { category: 'actions', subgroup: 'menus', apiNames: ['AppContextMenu'], status: 'stable' },
   'app-text-box': { category: 'input', subgroup: 'text', apiNames: ['AppTextBox'], status: 'stable', related: ['app-text-area', 'search-box', 'password-box'] },
+  'app-inline-edit': { category: 'input', subgroup: 'text', apiNames: ['AppInlineEdit'], status: 'stable', related: ['app-text-box'] },
   'app-text-area': { category: 'input', subgroup: 'text', apiNames: ['AppTextArea'], status: 'stable', related: ['app-text-box'] },
   'search-box': { category: 'input', subgroup: 'text', apiNames: ['AppSearchBox'], status: 'stable' },
   'password-box': { category: 'input', subgroup: 'text', apiNames: ['AppPasswordBox'], status: 'stable' },
@@ -199,6 +215,10 @@ const taxonomy: Record<DemoPageKey, DemoTaxonomy> = {
   'app-selection-bar': { category: 'data', subgroup: 'operations', apiNames: ['AppSelectionBar'], status: 'stable' },
   'property-grid': { category: 'data', subgroup: 'properties', apiNames: ['AppPropertyGrid'], status: 'stable' },
   'app-card': { category: 'content', subgroup: 'containers', apiNames: ['AppCard', 'AppCardHeader', 'AppCardFooter', 'AppCardGroup'], status: 'stable' },
+  'app-divider': { category: 'content', subgroup: 'structure', apiNames: ['AppDivider', 'AppSeparator'], status: 'stable' },
+  'app-link': { category: 'content', subgroup: 'markers', apiNames: ['AppLink'], status: 'stable' },
+  'app-avatar-persona': { category: 'content', subgroup: 'markers', apiNames: ['AppAvatar', 'AppPersona'], status: 'stable' },
+  'app-copyable-text': { category: 'content', subgroup: 'structure', apiNames: ['AppCopyableText'], status: 'stable' },
   expander: { category: 'content', subgroup: 'containers', apiNames: ['AppExpander'], status: 'stable' },
   'app-tag': { category: 'content', subgroup: 'markers', apiNames: ['AppTag'], status: 'stable' },
   'app-skeleton': { category: 'content', subgroup: 'states', apiNames: ['AppSkeleton', 'AppSkeletonGroup'], status: 'stable' },
@@ -209,6 +229,7 @@ const taxonomy: Record<DemoPageKey, DemoTaxonomy> = {
   'form-layout': { category: 'content', subgroup: 'structure', apiNames: ['AppFormLayout', 'AppValidationSummary'], status: 'stable' },
   'app-info-bar': { category: 'feedback', subgroup: 'status', apiNames: ['AppInfoBar'], status: 'stable' },
   'app-toast': { category: 'feedback', subgroup: 'status', apiNames: ['AppToast'], status: 'stable' },
+  'notification-center': { category: 'feedback', subgroup: 'status', apiNames: ['AppNotificationCenter', 'AppNotificationIndicator'], status: 'stable' },
   'loading-overlay': { category: 'feedback', subgroup: 'status', apiNames: ['AppLoadingOverlay'], status: 'stable' },
   'task-center': { category: 'feedback', subgroup: 'status', apiNames: ['AppTaskCenter', 'AppTaskIndicator'], status: 'stable' },
   'app-tooltip': { category: 'feedback', subgroup: 'overlays', apiNames: ['AppTooltip'], status: 'stable' },

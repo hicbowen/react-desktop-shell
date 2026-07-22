@@ -101,6 +101,14 @@ export const zhCNInteractiveText: Record<string, string> = {
   'Alpha item': 'Alpha 项目', 'Beta item': 'Beta 项目', 'Gamma item': 'Gamma 项目', 'Delta item': 'Delta 项目',
   'Avery Chen': '陈艾弗里', 'Jordan Lee': '李乔丹', 'Morgan Wu': '吴摩根', 'Riley Zhang': '张莱利',
   'Open row': '打开', 'Opened row': '已打开', 'Archived row': '已归档', 'Delete row': '删除',
+  'General settings': '常规设置', 'Advanced settings': '高级设置', Account: '账户', Left: '左侧', Right: '右侧',
+  'Internal link': '内部链接', 'External documentation': '外部文档', 'Subtle link': '弱化链接', 'Disabled link': '禁用链接',
+  'Ada Lovelace': '艾达·洛夫莱斯', 'Grace Hopper': '格蕾丝·霍珀', 'Workspace owner': '工作区所有者', Available: '在线', 'Reviewing changes': '正在审阅更改',
+  'License key': '许可证密钥', 'Export formats': '导出格式', 'Selected format': '已选择格式', Unavailable: '不可用',
+  'Document name': '文档名称', 'Names cannot contain slashes': '名称不能包含斜杠', 'Double-click the name or press F2 to edit.': '双击名称或按 F2 进行编辑。',
+  'Build completed': '构建已完成', 'The release package is ready to open.': '发布包已经可以打开。', 'Just now': '刚刚',
+  'Review requested': '收到审阅请求', 'Ada mentioned you in Quarterly report.': '艾达在“季度报告”中提到了你。', '12 minutes ago': '12 分钟前',
+  'Sync paused': '同步已暂停', 'Sign in again to continue synchronization.': '请重新登录以继续同步。', Yesterday: '昨天', Inbox: '收件箱', Restore: '恢复',
   'primary still available': '主操作仍可用', 'Last action:': '上次操作：', 'toolbar export': '工具栏导出',
 }
 
