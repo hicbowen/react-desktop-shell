@@ -41,28 +41,11 @@ jobs:
       - name: Build example
         run: npm run build:example
 
-      - name: Check out Pages repository
-        uses: actions/checkout@v4
+      - name: Deploy example
+        uses: peaceiris/actions-gh-pages@84c30a85c19949d7eee79c4ff27748b70285e453 # v4
         with:
-          repository: react-desktop-shell/react-desktop-shell.github.io
-          ref: main
-          token: ${{ secrets.PAGES_DEPLOY_TOKEN }}
-          path: pages-repository
-
-      - name: Update Pages content
-        run: |
-          rsync --archive --delete --exclude='.git/' example/dist/ pages-repository/
-          touch pages-repository/.nojekyll
-
-      - name: Commit and push deployment
-        working-directory: pages-repository
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add --all
-          if git diff --cached --quiet; then
-            echo "Pages content is already up to date."
-            exit 0
-          fi
-          git commit -m "Deploy example from ${GITHUB_REPOSITORY}@${GITHUB_SHA}"
-          git push origin main
+          personal_token: ${{ secrets.PAGES_DEPLOY_TOKEN }}
+          external_repository: react-desktop-shell/react-desktop-shell.github.io
+          publish_branch: main
+          publish_dir: ./example/dist
+          full_commit_message: Deploy example from ${{ github.repository }}@${{ github.sha }}
