@@ -148,6 +148,12 @@ export const zhCNMessages = {
   toolbar: {
     moreActions: '更多操作',
   },
+  multiSelect: {
+    label: '选择选项',
+    placeholder: '请选择',
+    empty: '没有可用选项',
+    remove: (label: string) => `移除 ${label}`,
+  },
   textBox: {
     clear: '清除输入',
     loading: '正在加载',

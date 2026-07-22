@@ -1,0 +1,3 @@
+import { useState } from 'react'; import { AppMultiSelect } from '../../../../src'; import { DemoPage, DemoPreview, DemoSection } from '../../components/DemoPage'
+const options = [{ value: 'design', label: 'Design' }, { value: 'engineering', label: 'Engineering' }, { value: 'research', label: 'Research' }, { value: 'operations', label: 'Operations' }]
+export function AppMultiSelectPage() { const [value, setValue] = useState(['design']); return <DemoPage><DemoSection title="Multiple selection" description="Search, select, and remove several values represented as compact tags."><DemoPreview><AppMultiSelect onValueChange={setValue} options={options} value={value} /></DemoPreview></DemoSection></DemoPage> }

@@ -1,0 +1,9 @@
+// @vitest-environment jsdom
+import { act } from 'react'; import { createRoot, type Root } from 'react-dom/client'; import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'; import { AppMultiSelect } from './AppMultiSelect'
+const options = [{ value: 'design', label: 'Design' }, { value: 'engineering', label: 'Engineering' }, { value: 'research', label: 'Research' }]
+describe('AppMultiSelect', () => { let container: HTMLDivElement; let root: Root
+  beforeEach(() => { container = document.createElement('div'); document.body.append(container); root = createRoot(container) })
+  afterEach(() => { act(() => root.unmount()); container.remove() })
+  it('adds and removes selected values', () => { const onValueChange = vi.fn(); act(() => root.render(<AppMultiSelect onValueChange={onValueChange} options={options} />)); act(() => container.querySelector('input')!.focus()); act(() => Array.from(container.querySelectorAll('button')).find((button) => button.textContent === 'Engineering')!.click()); expect(onValueChange).toHaveBeenLastCalledWith(['engineering']); act(() => container.querySelector<HTMLButtonElement>('[aria-label="Remove Engineering"]')!.click()); expect(onValueChange).toHaveBeenLastCalledWith([]) })
+  it('filters options and enforces a maximum', () => { act(() => root.render(<AppMultiSelect defaultValue={['design']} maxSelected={1} options={options} />)); const input = container.querySelector('input')!; act(() => { input.focus(); const setter = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value')!.set!; setter.call(input, 'res'); input.dispatchEvent(new Event('input', { bubbles: true })) }); expect(container.textContent).toContain('Research'); expect(container.querySelector<HTMLButtonElement>('[role="option"]')!.disabled).toBe(true) })
+})

@@ -153,6 +153,12 @@ export const enUSMessages = {
   toolbar: {
     moreActions: 'More actions',
   },
+  multiSelect: {
+    label: 'Select options',
+    placeholder: 'Select options',
+    empty: 'No options',
+    remove: (label: string) => `Remove ${label}`,
+  },
   textBox: {
     clear: 'Clear input',
     loading: 'Loading',

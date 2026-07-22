@@ -141,6 +141,12 @@ export interface AppLocaleMessages {
   toolbar: {
     moreActions: string
   }
+  multiSelect: {
+    label: string
+    placeholder: string
+    empty: string
+    remove: (label: string) => string
+  }
   textBox: {
     clear: string
     loading: string
