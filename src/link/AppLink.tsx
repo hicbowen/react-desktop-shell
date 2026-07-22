@@ -11,12 +11,16 @@ export const AppLink = forwardRef<HTMLAnchorElement, AppLinkProps>(function AppL
   children,
   className,
   disabled = false,
+  external: externalProp,
   externalIcon,
   onClick,
+  rel,
   target,
   ...rest
 }, ref) {
-  const external = target === '_blank'
+  const external = externalProp ?? target === '_blank'
+  const resolvedTarget = external && target === undefined ? '_blank' : target
+  const resolvedRel = resolvedTarget === '_blank' ? rel ?? 'noreferrer noopener' : rel
   return (
     <a
       {...rest}
@@ -30,8 +34,9 @@ export const AppLink = forwardRef<HTMLAnchorElement, AppLinkProps>(function AppL
         onClick?.(event)
       }}
       ref={ref}
+      rel={resolvedRel}
       tabIndex={disabled ? -1 : rest.tabIndex}
-      target={target}
+      target={resolvedTarget}
     >
       <span className="app-link__content">{children}</span>
       {external ? <span className="app-link__external">{externalIcon ?? <ExternalIcon />}</span> : null}

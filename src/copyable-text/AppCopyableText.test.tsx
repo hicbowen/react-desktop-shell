@@ -31,6 +31,7 @@ describe('AppCopyableText', () => {
     await act(async () => host.querySelector<HTMLButtonElement>('button')?.click())
     expect(onCopyError).toHaveBeenCalledWith(error)
     expect(host.querySelector('button')?.getAttribute('aria-label')).toBe('Copy')
+    expect(host.querySelector('[aria-live="polite"]')?.textContent).toBe('Could not copy')
     act(() => root.unmount())
   })
 })

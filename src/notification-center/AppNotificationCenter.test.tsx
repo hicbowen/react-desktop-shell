@@ -46,4 +46,12 @@ describe('AppNotificationCenter', () => {
     expect(host.querySelector('.app-notification-indicator')?.getAttribute('aria-label')).toBe('2 unread notifications')
     act(() => root.unmount())
   })
+
+  it('does not expose notification content as a button without an invoke handler', () => {
+    const host = document.createElement('div')
+    const root = createRoot(host)
+    act(() => root.render(<AppNotificationCenter notifications={[notifications[0]]} />))
+    expect(host.querySelector('.app-notification-center__main')?.tagName).toBe('DIV')
+    act(() => root.unmount())
+  })
 })

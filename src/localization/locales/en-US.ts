@@ -248,7 +248,8 @@ export const enUSMessages = {
     running: 'Running', paused: 'Paused', success: 'Completed', error: 'Failed',
     canceled: 'Canceled',
   },
-  copyableText: { copy: 'Copy', copied: 'Copied' },
+  copyableText: { copy: 'Copy', copied: 'Copied', failed: 'Could not copy' },
   inlineEdit: { edit: 'Edit value', save: 'Save', cancel: 'Cancel', required: 'Enter a value', saveFailed: 'Could not save changes' },
   notificationCenter: { label: 'Notifications', unread: (count: number) => `${count} unread notifications`, markRead: 'Mark as read', markUnread: 'Mark as unread', markAllRead: 'Mark all as read', dismiss: 'Dismiss notification', clearAll: 'Clear all', empty: 'No notifications' },
+  avatar: { available: 'Available', away: 'Away', busy: 'Busy', offline: 'Offline', unknown: 'Unknown presence' },
 } satisfies AppLocaleMessages

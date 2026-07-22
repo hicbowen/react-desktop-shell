@@ -14,6 +14,7 @@ describe('AppDivider', () => {
     expect(separators[0].getAttribute('aria-orientation')).toBe('horizontal')
     expect(separators[0].textContent).toBe('Details')
     expect(separators[1].getAttribute('aria-orientation')).toBe('vertical')
+    expect(separators[1].textContent).toBe('')
     act(() => root.unmount())
   })
 })

@@ -23,6 +23,16 @@ describe('AppLink', () => {
     const root = createRoot(host)
     act(() => root.render(<AppLink href="https://example.com" target="_blank">Docs</AppLink>))
     expect(host.querySelector('.app-link__external')).not.toBeNull()
+    expect(host.querySelector('a')?.rel).toBe('noreferrer noopener')
+    act(() => root.unmount())
+  })
+
+  it('can opt into safe external behavior', () => {
+    const host = document.createElement('div')
+    const root = createRoot(host)
+    act(() => root.render(<AppLink external href="https://example.com">Docs</AppLink>))
+    expect(host.querySelector('a')?.target).toBe('_blank')
+    expect(host.querySelector('.app-link__external')).not.toBeNull()
     act(() => root.unmount())
   })
 })

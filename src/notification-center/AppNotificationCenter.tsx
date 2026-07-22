@@ -12,7 +12,8 @@ function StatusIcon({ status }: { status: AppNotificationStatus }) {
 export function AppNotificationIndicator({ ariaLabel, className, max = 99, notifications }: AppNotificationIndicatorProps) {
   const { messages } = useAppLocale()
   const unread = notifications.filter((notification) => !notification.read).length
-  const display = unread > max ? `${max}+` : String(unread)
+  const resolvedMax = Math.max(1, Math.floor(max))
+  const display = unread > resolvedMax ? `${resolvedMax}+` : String(unread)
   return <span aria-label={ariaLabel ?? messages.notificationCenter.unread(unread)} className={['app-notification-indicator', unread ? 'app-notification-indicator--active' : '', className].filter(Boolean).join(' ')}>{unread ? display : null}</span>
 }
 
@@ -44,18 +45,12 @@ export function AppNotificationCenter({
       <div className="app-notification-center__list">
         {notifications.length ? notifications.map((notification) => {
           const status = notification.status ?? 'neutral'
+          const mainContent = <><span className={`app-notification-center__icon app-notification-center__icon--${status}`}>{notification.icon ?? <svg aria-hidden="true" viewBox="0 0 16 16"><StatusIcon status={status} /></svg>}</span><span className="app-notification-center__content"><span className="app-notification-center__title">{notification.title}</span>{notification.body ? <span className="app-notification-center__body">{notification.body}</span> : null}{notification.timestamp ? <time className="app-notification-center__time">{notification.timestamp}</time> : null}</span></>
           return (
             <article className={['app-notification-center__item', notification.read ? '' : 'app-notification-center__item--unread'].filter(Boolean).join(' ')} key={notification.id}>
-              <button aria-label={typeof notification.title === 'string' ? notification.title : undefined} className="app-notification-center__main" onClick={() => onInvoke?.(notification.id)} type="button">
-                <span className={`app-notification-center__icon app-notification-center__icon--${status}`}>{notification.icon ?? <svg aria-hidden="true" viewBox="0 0 16 16"><StatusIcon status={status} /></svg>}</span>
-                <span className="app-notification-center__content">
-                  <span className="app-notification-center__title">{notification.title}</span>
-                  {notification.body ? <span className="app-notification-center__body">{notification.body}</span> : null}
-                  {notification.timestamp ? <time className="app-notification-center__time">{notification.timestamp}</time> : null}
-                </span>
-              </button>
+              {onInvoke ? <button aria-label={typeof notification.title === 'string' ? notification.title : undefined} className="app-notification-center__main" onClick={() => onInvoke(notification.id)} type="button">{mainContent}</button> : <div className="app-notification-center__main">{mainContent}</div>}
               <div className="app-notification-center__controls">
-                {notification.actions?.map((action) => <button className={action.primary ? 'app-notification-center__action--primary' : undefined} disabled={action.disabled} key={action.key} onClick={() => onAction?.(notification.id, action.key)} type="button">{action.label}</button>)}
+                {notification.actions?.map((action) => <button className={action.primary ? 'app-notification-center__action--primary' : undefined} disabled={action.disabled || !onAction} key={action.key} onClick={() => onAction?.(notification.id, action.key)} type="button">{action.label}</button>)}
                 {onMarkRead ? <button aria-label={notification.read ? text.markUnread : text.markRead} onClick={() => onMarkRead(notification.id, !notification.read)} type="button">{notification.read ? '○' : '●'}</button> : null}
                 {notification.dismissible !== false && onDismiss ? <button aria-label={text.dismiss} onClick={() => onDismiss(notification.id)} type="button">×</button> : null}
               </div>

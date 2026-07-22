@@ -9,3 +9,5 @@ export interface AppDividerProps {
   className?: string
   style?: CSSProperties
 }
+
+export type AppSeparatorProps = AppDividerProps

@@ -245,6 +245,7 @@ export interface AppLocaleMessages {
   copyableText: {
     copy: string
     copied: string
+    failed: string
   }
   inlineEdit: {
     edit: string
@@ -262,6 +263,13 @@ export interface AppLocaleMessages {
     dismiss: string
     clearAll: string
     empty: string
+  }
+  avatar: {
+    available: string
+    away: string
+    busy: string
+    offline: string
+    unknown: string
   }
 }
 

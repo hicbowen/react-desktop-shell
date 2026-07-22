@@ -1,6 +1,13 @@
 import type { CSSProperties, ReactNode } from 'react'
 
 export type { AppButtonAppearance, AppButtonProps, AppButtonSize, AppIconButtonProps } from './button/types'
+export type { AppAvatarProps, AppAvatarSize, AppPersonaProps, AppPresenceStatus } from './avatar/types'
+export type { AppDividerProps, AppSeparatorProps } from './divider/types'
+export type { AppLinkProps } from './link/types'
+export type { AppCopyableTextProps } from './copyable-text/types'
+export type { AppDropDownButtonProps } from './dropdown-button/types'
+export type { AppInlineEditHandle, AppInlineEditProps, AppInlineEditSelection } from './inline-edit/types'
+export type { AppNotification, AppNotificationAction, AppNotificationCenterProps, AppNotificationIndicatorProps, AppNotificationStatus } from './notification-center/types'
 export type { AppEmptyStateProps } from './empty-state/types'
 export type { AppFieldProps } from './field/types'
 export type { AppProgressBarProps, AppProgressRingProps, AppStatusBadgeProps } from './progress/types'

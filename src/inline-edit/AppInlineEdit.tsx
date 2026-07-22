@@ -1,5 +1,6 @@
 import {
   forwardRef,
+  useId,
   useImperativeHandle,
   useLayoutEffect,
   useRef,
@@ -49,6 +50,7 @@ export const AppInlineEdit = forwardRef<AppInlineEditHandle, AppInlineEditProps>
   value,
 }: AppInlineEditProps, ref) {
   const { messages } = useAppLocale()
+  const errorId = useId()
   const valueControlled = value !== undefined
   const editingControlled = editing !== undefined
   const [internalValue, setInternalValue] = useState(defaultValue)
@@ -60,6 +62,7 @@ export const AppInlineEdit = forwardRef<AppInlineEditHandle, AppInlineEditProps>
   const viewRef = useRef<HTMLButtonElement>(null)
   const rootRef = useRef<HTMLSpanElement>(null)
   const composingRef = useRef(false)
+  const wasEditingRef = useRef(defaultEditing)
   const resolvedValue = valueControlled ? value : internalValue
   const resolvedEditing = editingControlled ? editing : internalEditing
 
@@ -112,12 +115,17 @@ export const AppInlineEdit = forwardRef<AppInlineEditHandle, AppInlineEditProps>
   }
 
   useLayoutEffect(() => {
+    if (resolvedEditing && !wasEditingRef.current) {
+      setDraft(resolvedValue)
+      setError(null)
+    }
+    wasEditingRef.current = resolvedEditing
     if (!resolvedEditing) return
     const input = inputRef.current
     if (!input) return
     input.focus({ preventScroll: true })
     selectInput(input, selection)
-  }, [resolvedEditing, selection])
+  }, [resolvedEditing, resolvedValue, selection])
 
   useImperativeHandle(ref, () => ({
     get input() { return inputRef.current },
@@ -149,6 +157,7 @@ export const AppInlineEdit = forwardRef<AppInlineEditHandle, AppInlineEditProps>
           <span className="app-inline-edit__editor">
             <input
               aria-busy={saving || undefined}
+              aria-describedby={error ? errorId : undefined}
               aria-invalid={Boolean(error) || undefined}
               aria-label={ariaLabel ?? messages.inlineEdit.edit}
               disabled={disabled || saving}
@@ -164,7 +173,7 @@ export const AppInlineEdit = forwardRef<AppInlineEditHandle, AppInlineEditProps>
             />
             {showActions ? <span className="app-inline-edit__actions"><button aria-label={messages.inlineEdit.save} disabled={saving} onClick={() => void commit()} type="button">✓</button><button aria-label={messages.inlineEdit.cancel} disabled={saving} onClick={cancel} type="button">×</button></span> : null}
           </span>
-          {error ? <span className="app-inline-edit__error" role="alert">{error}</span> : null}
+          {error ? <span className="app-inline-edit__error" id={errorId} role="alert">{error}</span> : null}
         </>
       ) : (
         <button

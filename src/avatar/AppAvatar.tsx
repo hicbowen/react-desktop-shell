@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useAppLocale } from '../localization/useAppLocale'
 import type { AppAvatarProps, AppPersonaProps } from './types'
 import './AppAvatar.css'
 
@@ -18,7 +19,9 @@ export function AppAvatar({
   status,
   style,
 }: AppAvatarProps) {
-  const [imageFailed, setImageFailed] = useState(false)
+  const { messages } = useAppLocale()
+  const [failedSrc, setFailedSrc] = useState<string>()
+  const imageFailed = src !== undefined && failedSrc === src
   const fallback = initials ?? initialsFromName(name)
   return (
     <span
@@ -27,8 +30,8 @@ export function AppAvatar({
       role={alt || name ? 'img' : undefined}
       style={style}
     >
-      {src && !imageFailed ? <img alt="" onError={() => setImageFailed(true)} src={src} /> : icon ? <span className="app-avatar__icon">{icon}</span> : <span className="app-avatar__initials">{fallback || '?'}</span>}
-      {status ? <span aria-label={status} className={`app-avatar__presence app-avatar__presence--${status}`} role="img" /> : null}
+      {src && !imageFailed ? <img alt="" onError={() => setFailedSrc(src)} src={src} /> : icon ? <span className="app-avatar__icon">{icon}</span> : <span className="app-avatar__initials">{fallback || '?'}</span>}
+      {status ? <span aria-label={messages.avatar[status]} className={`app-avatar__presence app-avatar__presence--${status}`} role="img" /> : null}
     </span>
   )
 }

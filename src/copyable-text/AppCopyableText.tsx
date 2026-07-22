@@ -27,7 +27,7 @@ export function AppCopyableText({
   truncate = false,
 }: AppCopyableTextProps) {
   const { messages } = useAppLocale()
-  const [copied, setCopied] = useState(false)
+  const [status, setStatus] = useState<'idle' | 'copied' | 'error'>('idle')
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   useEffect(() => () => {
@@ -37,20 +37,26 @@ export function AppCopyableText({
   const handleCopy = async () => {
     try {
       await copy(text)
-      setCopied(true)
+      setStatus('copied')
       onCopy?.(text)
       if (timeoutRef.current) clearTimeout(timeoutRef.current)
-      timeoutRef.current = setTimeout(() => setCopied(false), Math.max(0, copiedDuration))
+      timeoutRef.current = setTimeout(() => setStatus('idle'), Math.max(0, copiedDuration))
     } catch (error) {
+      setStatus('error')
       onCopyError?.(error)
+      if (timeoutRef.current) clearTimeout(timeoutRef.current)
+      timeoutRef.current = setTimeout(() => setStatus('idle'), Math.max(0, copiedDuration))
     }
   }
+
+  const copied = status === 'copied'
+  const statusText = copied ? messages.copyableText.copied : status === 'error' ? messages.copyableText.failed : ''
 
   return (
     <span className={['app-copyable-text', truncate ? 'app-copyable-text--truncate' : '', disabled ? 'app-copyable-text--disabled' : '', className].filter(Boolean).join(' ')} style={style}>
       <span className="app-copyable-text__content" title={truncate ? text : undefined}>{children ?? text}</span>
       <button aria-label={copied ? messages.copyableText.copied : messages.copyableText.copy} className="app-copyable-text__button" disabled={disabled} onClick={handleCopy} type="button"><CopyIcon copied={copied} /></button>
-      <span aria-live="polite" className="app-copyable-text__status">{copied ? messages.copyableText.copied : ''}</span>
+      <span aria-live="polite" className="app-copyable-text__status">{statusText}</span>
     </span>
   )
 }

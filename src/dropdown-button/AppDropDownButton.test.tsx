@@ -33,4 +33,13 @@ describe('AppDropDownButton', () => {
     act(() => root.unmount())
     host.remove()
   })
+
+  it('keeps a leading icon alongside the menu chevron', () => {
+    const host = document.createElement('div')
+    const root = createRoot(host)
+    act(() => root.render(<AppDropDownButton icon={<svg data-leading="true" />} items={[]}>Export</AppDropDownButton>))
+    expect(host.querySelector('[data-leading="true"]')).not.toBeNull()
+    expect(host.querySelector('.app-dropdown-button__chevron')).not.toBeNull()
+    act(() => root.unmount())
+  })
 })

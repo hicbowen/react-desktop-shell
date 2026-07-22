@@ -242,7 +242,8 @@ export const zhCNMessages = {
     empty: '没有后台任务', queued: '等待中', running: '进行中', paused: '已暂停',
     success: '已完成', error: '失败', canceled: '已取消',
   },
-  copyableText: { copy: '复制', copied: '已复制' },
+  copyableText: { copy: '复制', copied: '已复制', failed: '无法复制' },
   inlineEdit: { edit: '编辑值', save: '保存', cancel: '取消', required: '请输入内容', saveFailed: '无法保存更改' },
   notificationCenter: { label: '通知', unread: (count: number) => `${count} 条未读通知`, markRead: '标记为已读', markUnread: '标记为未读', markAllRead: '全部标记为已读', dismiss: '清除通知', clearAll: '全部清除', empty: '暂无通知' },
+  avatar: { available: '在线', away: '离开', busy: '忙碌', offline: '离线', unknown: '未知在线状态' },
 } satisfies AppLocaleMessages

@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 
-import { act, createRef } from 'react'
+import { act, createRef, useState } from 'react'
 import { createRoot, type Root } from 'react-dom/client'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { AppInlineEdit } from './AppInlineEdit'
@@ -63,6 +63,18 @@ describe('AppInlineEdit', () => {
     setInput('x')
     await act(async () => host.querySelector('input')?.dispatchEvent(new KeyboardEvent('keydown', { bubbles: true, key: 'Enter' })))
     expect(host.querySelector('[role="alert"]')?.textContent).toBe('Too short')
+    expect(host.querySelector('input')?.getAttribute('aria-describedby')).toBe(host.querySelector('[role="alert"]')?.id)
     expect(host.querySelector('input')).not.toBeNull()
+  })
+
+  it('starts controlled editing from the latest controlled value', () => {
+    function Harness() {
+      const [value, setValue] = useState('old.txt')
+      const [editing, setEditing] = useState(false)
+      return <><button onClick={() => { setValue('latest.txt'); setEditing(true) }} type="button">Start</button><AppInlineEdit editing={editing} onEditingChange={setEditing} value={value} /></>
+    }
+    act(() => root.render(<Harness />))
+    act(() => host.querySelector<HTMLButtonElement>('button')?.click())
+    expect(host.querySelector<HTMLInputElement>('input')?.value).toBe('latest.txt')
   })
 })

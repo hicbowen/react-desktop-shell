@@ -26,7 +26,7 @@ export function AppDivider({
       role="separator"
       style={style}
     >
-      {children ? <span className="app-divider__content">{children}</span> : null}
+      {children && orientation === 'horizontal' ? <span className="app-divider__content">{children}</span> : null}
     </div>
   )
 }
