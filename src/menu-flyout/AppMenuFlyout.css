@@ -32,7 +32,7 @@
   width: 100%;
   min-height: 32px;
   display: grid;
-  grid-template-columns: 20px minmax(0, 1fr);
+  grid-template-columns: 20px minmax(0, 1fr) auto;
   align-items: center;
   gap: 8px;
   padding: 0 10px 0 8px;
@@ -99,7 +99,7 @@
 }
 
 .app-menu-flyout__shortcut {
-  margin-left: 20px;
+  justify-self: end;
   color: var(--app-shell-muted-text-color, #707070);
   font-size: 12px;
   white-space: nowrap;
