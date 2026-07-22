@@ -730,7 +730,7 @@ describe('AppDataTable controls', () => {
   it('disables all pagination operations while loading', () => {
     renderTable({ data: pagedData, loading: true, pagination: true })
     expect(
-      Array.from(container.querySelectorAll<HTMLButtonElement>('.app-data-table__pagination-button'))
+      Array.from(container.querySelectorAll<HTMLButtonElement>('.app-pagination__button'))
         .every((button) => button.disabled),
     ).toBe(true)
     expect(container.querySelector<HTMLSelectElement>('[aria-label="Rows per page"]')?.disabled).toBe(true)

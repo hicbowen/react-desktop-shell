@@ -115,6 +115,16 @@ export const enUSMessages = {
     selectedCount: (count: number) => `${count} selected`,
     clearSelection: 'Clear selection',
   },
+  pagination: {
+    label: 'Pagination',
+    itemsPerPage: 'Items per page',
+    range: (start: number, end: number, total: number) => `${start}–${end} of ${total}`,
+    page: (page: number, pageCount: number) => `Page ${page} of ${pageCount}`,
+    firstPage: 'First page',
+    previousPage: 'Previous page',
+    nextPage: 'Next page',
+    lastPage: 'Last page',
+  },
   textBox: {
     clear: 'Clear input',
     loading: 'Loading',

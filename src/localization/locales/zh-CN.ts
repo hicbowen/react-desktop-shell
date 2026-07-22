@@ -110,6 +110,16 @@ export const zhCNMessages = {
     selectedCount: (count: number) => `已选择 ${count} 项`,
     clearSelection: '清除选择',
   },
+  pagination: {
+    label: '分页导航',
+    itemsPerPage: '每页数量',
+    range: (start: number, end: number, total: number) => `${start}–${end}，共 ${total} 项`,
+    page: (page: number, pageCount: number) => `第 ${page} 页，共 ${pageCount} 页`,
+    firstPage: '第一页',
+    previousPage: '上一页',
+    nextPage: '下一页',
+    lastPage: '最后一页',
+  },
   textBox: {
     clear: '清除输入',
     loading: '正在加载',

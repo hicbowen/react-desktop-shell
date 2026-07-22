@@ -1,0 +1,26 @@
+.app-pagination {
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  min-height: 49px;
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px 16px;
+  color: var(--app-shell-muted-text-color, #616161);
+  font-size: 12px;
+}
+.app-pagination__summary { min-width: 0; flex: 1 1 auto; white-space: nowrap; }
+.app-pagination__controls, .app-pagination__size { display: flex; align-items: center; }
+.app-pagination__controls { min-width: 0; flex: 0 0 auto; gap: 4px; }
+.app-pagination__size { margin-right: 8px; gap: 7px; white-space: nowrap; }
+.app-pagination__size select { height: 32px; box-sizing: border-box; padding: 0 24px 0 8px; color: var(--app-shell-text-color, #1f1f1f); font: inherit; font-size: 13px; background: var(--app-shell-control-bg, #fff); border: 1px solid var(--app-shell-border-color, rgb(0 0 0 / 14%)); border-radius: 6px; }
+.app-pagination__page { min-width: 76px; padding-inline: 4px; color: var(--app-shell-text-color, #1f1f1f); text-align: center; white-space: nowrap; }
+.app-pagination__button { width: 32px; height: 32px; padding: 0; display: inline-flex; align-items: center; justify-content: center; flex: 0 0 32px; color: var(--app-shell-text-color, #1f1f1f); background: transparent; border: 1px solid transparent; border-radius: 6px; }
+.app-pagination__button:hover:not(:disabled) { background: var(--app-shell-hover-bg, rgb(0 0 0 / 5%)); border-color: var(--app-shell-border-color, rgb(0 0 0 / 14%)); }
+.app-pagination__button:active:not(:disabled) { background: var(--app-shell-pressed-bg, rgb(0 0 0 / 9%)); }
+.app-pagination__button:disabled, .app-pagination__size select:disabled { opacity: .55; }
+.app-pagination__button svg { width: 17px; height: 17px; fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 1.5; }
+.app-pagination__button:focus-visible, .app-pagination__size select:focus-visible { outline: 2px solid var(--app-shell-accent-color, #115ea3); outline-offset: 1px; }
+.app-pagination--compact { min-height: 40px; padding-block: 4px; }
+@media (max-width: 560px) { .app-pagination { flex-wrap: wrap; } .app-pagination__summary { display: none; } .app-pagination__controls { width: 100%; justify-content: flex-end; } }

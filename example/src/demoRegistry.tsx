@@ -12,6 +12,7 @@ import { AppCommandPage, AppToolbarPage, ContextMenuPage } from './pages/actions
 import { AppMenuBarPage } from './pages/actions/MenuBarPage'
 import { AppCommandPalettePage } from './pages/actions/CommandPalettePage'
 import { AppDataTablePage, AppSelectionBarPage } from './pages/data/DataPages'
+import { AppPaginationPage } from './pages/data/PaginationPage'
 import { SettingsPage } from './pages/settings/SettingsPages'
 import { AppCardPage } from './pages/content/CardPages'
 import { FieldEmptyStatePage } from './pages/content/FieldEmptyStatePage'
@@ -95,6 +96,7 @@ export const demoPages: DemoPageDefinition[] = [
   { key: 'time-range-picker', group: 'Forms', label: 'Time Range Picker', description: 'Start and end time editing with duration validation and no overnight ranges.', icon: <Timer size={16} />, component: TimeRangePickerPage },
   { key: 'app-data-table', group: 'Data', label: 'AppDataTable', description: 'A complete data surface with page actions, selection actions, built-in controls, sorting, sizing, and fill layouts.', icon: <Table2 size={16} />, component: AppDataTablePage, layout: 'fill' },
   { key: 'app-selection-bar', group: 'Data', label: 'AppSelectionBar', description: 'Actions and clear behavior for selected data rows.', icon: <Rows3 size={16} />, component: AppSelectionBarPage },
+  { key: 'app-pagination', group: 'Data', label: 'AppPagination', description: 'Standalone paging controls for tables, lists, and result collections.', icon: <Rows3 size={16} />, component: AppPaginationPage },
   { key: 'settings', group: 'Settings', label: 'Settings', description: 'Application appearance, language, preferences, and information.', icon: <Settings size={16} />, component: SettingsPage },
 ]
 

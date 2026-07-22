@@ -511,20 +511,11 @@
 }
 
 .app-data-table__pagination {
-  box-sizing: border-box;
-  width: 100%;
-  min-width: 0;
-  min-height: 49px;
-  padding: 8px 12px;
-  display: flex;
-  align-items: center;
   flex: 0 0 auto;
-  gap: 8px 16px;
   color: var(--app-data-muted-color);
   background: var(--app-data-surface-bg);
   border-top: 1px solid var(--app-data-border-color);
   border-radius: 0 0 8px 8px;
-  font-size: 12px;
 }
 
 .app-data-table__pagination-summary {

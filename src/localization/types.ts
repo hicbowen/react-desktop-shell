@@ -103,6 +103,16 @@ export interface AppLocaleMessages {
     selectedCount: (count: number) => string
     clearSelection: string
   }
+  pagination: {
+    label: string
+    itemsPerPage: string
+    range: (start: number, end: number, total: number) => string
+    page: (page: number, pageCount: number) => string
+    firstPage: string
+    previousPage: string
+    nextPage: string
+    lastPage: string
+  }
   textBox: {
     clear: string
     loading: string
