@@ -250,4 +250,5 @@ export const enUSMessages = {
   },
   copyableText: { copy: 'Copy', copied: 'Copied' },
   inlineEdit: { edit: 'Edit value', save: 'Save', cancel: 'Cancel', required: 'Enter a value', saveFailed: 'Could not save changes' },
+  notificationCenter: { label: 'Notifications', unread: (count: number) => `${count} unread notifications`, markRead: 'Mark as read', markUnread: 'Mark as unread', markAllRead: 'Mark all as read', dismiss: 'Dismiss notification', clearAll: 'Clear all', empty: 'No notifications' },
 } satisfies AppLocaleMessages

@@ -253,6 +253,16 @@ export interface AppLocaleMessages {
     required: string
     saveFailed: string
   }
+  notificationCenter: {
+    label: string
+    unread: (count: number) => string
+    markRead: string
+    markUnread: string
+    markAllRead: string
+    dismiss: string
+    clearAll: string
+    empty: string
+  }
 }
 
 export interface AppLocaleContextValue {

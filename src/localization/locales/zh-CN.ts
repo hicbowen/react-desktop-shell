@@ -244,4 +244,5 @@ export const zhCNMessages = {
   },
   copyableText: { copy: '复制', copied: '已复制' },
   inlineEdit: { edit: '编辑值', save: '保存', cancel: '取消', required: '请输入内容', saveFailed: '无法保存更改' },
+  notificationCenter: { label: '通知', unread: (count: number) => `${count} 条未读通知`, markRead: '标记为已读', markUnread: '标记为未读', markAllRead: '全部标记为已读', dismiss: '清除通知', clearAll: '全部清除', empty: '暂无通知' },
 } satisfies AppLocaleMessages
