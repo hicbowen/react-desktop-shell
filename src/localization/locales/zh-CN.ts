@@ -155,6 +155,7 @@ export const zhCNMessages = {
     remove: (label: string) => `移除 ${label}`,
   },
   passwordBox: { show: '显示密码', hide: '隐藏密码', capsLock: '大写锁定已开启' },
+  rangeSlider: { start: '最小值', end: '最大值' },
   textBox: {
     clear: '清除输入',
     loading: '正在加载',

@@ -148,6 +148,7 @@ export interface AppLocaleMessages {
     remove: (label: string) => string
   }
   passwordBox: { show: string; hide: string; capsLock: string }
+  rangeSlider: { start: string; end: string }
   textBox: {
     clear: string
     loading: string

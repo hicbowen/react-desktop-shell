@@ -160,6 +160,7 @@ export const enUSMessages = {
     remove: (label: string) => `Remove ${label}`,
   },
   passwordBox: { show: 'Show password', hide: 'Hide password', capsLock: 'Caps Lock is on' },
+  rangeSlider: { start: 'Minimum value', end: 'Maximum value' },
   textBox: {
     clear: 'Clear input',
     loading: 'Loading',
