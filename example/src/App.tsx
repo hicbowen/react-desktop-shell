@@ -24,8 +24,10 @@ export function ExampleApp() {
       setLocale,
       railDisplayMode,
       setRailDisplayMode,
+      pages: localizedPages,
+      navigateTo: setActiveKey,
     }),
-    [locale, theme, railDisplayMode],
+    [locale, theme, railDisplayMode, localizedPages],
   )
 
   return (

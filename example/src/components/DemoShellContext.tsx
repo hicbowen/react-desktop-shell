@@ -8,6 +8,8 @@ type DemoShellValue = {
   setLocale: (locale: AppLocale) => void
   railDisplayMode: PaneDisplayMode
   setRailDisplayMode: (mode: PaneDisplayMode) => void
+  pages?: readonly { key: string; category: string }[]
+  navigateTo?: (key: string) => void
 }
 
 export const DemoShellContext = createContext<DemoShellValue | null>(null)

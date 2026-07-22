@@ -272,6 +272,40 @@
     font-size: 15px;
 }
 
+.demo-card--button {
+    position: relative;
+    color: inherit;
+    font: inherit;
+    text-align: left;
+    background: transparent;
+    cursor: pointer;
+    transition: background 120ms ease, border-color 120ms ease, transform 120ms ease;
+}
+
+.demo-card--button:hover {
+    background: var(--app-shell-hover-bg);
+    border-color: color-mix(in srgb, var(--app-shell-accent-color) 35%, transparent);
+    transform: translateY(-1px);
+}
+
+.demo-card--button:focus-visible {
+    outline: 2px solid var(--app-shell-accent-color);
+    outline-offset: 2px;
+}
+
+.demo-card__count {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    min-width: 24px;
+    padding: 2px 7px;
+    color: var(--app-shell-muted-text-color);
+    font-size: 12px;
+    text-align: center;
+    background: var(--app-shell-active-bg);
+    border-radius: 999px;
+}
+
 .demo-shell-diagram {
     display: grid;
     grid-template: 38px 120px 38px / 100px 1fr;

@@ -19,11 +19,13 @@ export const enUSDemoMessages = {
     detailOptions: { compact: 'Compact', standard: 'Standard', detailed: 'Detailed' },
   },
   categories: {
-    shell: ['Shell & Layout', 'Application frame, pages, title bar, and side pane.'],
-    feedback: ['Feedback', 'Inline, transient, and modal feedback patterns.'],
-    actions: ['Actions', 'Toolbars and contextual commands.'],
-    data: ['Data', 'Tables, composed data views, and selection actions.'],
-    settings: ['Settings', 'Settings groups, rows, appearance, language, and application preferences.'],
+    shell: ['Application frame', 'Windows, pages, panes, and layout containers.'],
+    navigation: ['Navigation', 'Application, page, and collection navigation patterns.'],
+    actions: ['Commands & actions', 'Buttons, shared commands, shortcuts, and menus.'],
+    input: ['Input & selection', 'Text, numeric, selection, date-time, and specialized inputs.'],
+    data: ['Data & collections', 'Lists, trees, tables, selection actions, and properties.'],
+    content: ['Content display', 'Containers, markers, content states, and structure.'],
+    feedback: ['Feedback & overlays', 'Status feedback, supporting overlays, dialogs, and drag feedback.'],
   },
 }
 
@@ -50,10 +52,12 @@ export const zhCNDemoMessages: DemoMessages = {
     detailOptions: { compact: '精简', standard: '标准', detailed: '详细' },
   },
   categories: {
-    shell: ['外壳与布局', '应用框架、页面、标题栏和侧边窗格。'],
-    feedback: ['反馈', '行内、临时和模态反馈模式。'],
-    actions: ['操作', '工具栏和上下文命令。'],
-    data: ['数据', '表格、组合数据视图和选择操作。'],
-    settings: ['设置', '设置分组、设置项、外观、语言和应用偏好。'],
+    shell: ['应用框架', '窗口、页面、窗格和布局容器。'],
+    navigation: ['导航', '应用、页面和集合导航模式。'],
+    actions: ['命令与操作', '按钮、共享命令、快捷键和菜单。'],
+    input: ['输入与选择', '文本、数值、选择、日期时间和专用输入。'],
+    data: ['数据与集合', '列表、树、表格、选择操作和属性。'],
+    content: ['内容展示', '内容容器、标记、状态和结构。'],
+    feedback: ['反馈与浮层', '状态反馈、辅助浮层、对话框和拖放反馈。'],
   },
 }
