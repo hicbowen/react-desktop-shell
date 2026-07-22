@@ -44,6 +44,14 @@ export const zhCNInteractiveText: Record<string, string> = {
   'Child one': '子项一', 'Child two': '子项二', 'Child three': '子项三',
   expanded: '展开', compact: '紧凑', minimal: '极简',
   'Responsive breakpoints': '响应式断点', 'rail presentation': '导航栏显示方式',
+  All: '全部', Open: '进行中', Completed: '已完成', Recent: '最近', Favorites: '收藏', History: '历史',
+  Preview: '预览', Today: '今天', 'All tasks': '全部任务',
+  'Task status': '任务状态', 'Collection view': '集合视图', 'Release channel': '发布通道',
+  'Quick task view': '快捷任务视图', 'Task data view': '任务数据视图',
+  'Unmounted panel example': '卸载面板示例', 'State-preserving panel example': '保留状态面板示例',
+  '12 tasks across all dates': '所有日期共 12 项任务', '3 tasks due today': '今天有 3 项任务到期',
+  '7 tasks still to complete': '还有 7 项任务待完成', '5 completed tasks': '已完成 5 项任务',
+  panel: '面板', note: '备注', 'Type a note': '输入备注', Count: '计数',
 }
 
 export function useDemoCopy() {

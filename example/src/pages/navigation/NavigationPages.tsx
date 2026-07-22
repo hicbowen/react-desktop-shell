@@ -84,15 +84,16 @@ export function AppRailPage() {
 }
 
 export function AppSelectorBarPage() {
+  const t = useDemoCopy()
   const [basicView, setBasicView] = useState('all')
   const [taskView, setTaskView] = useState('all-tasks')
   const [unmountView, setUnmountView] = useState('recent')
   const [hiddenView, setHiddenView] = useState('recent')
   const taskSummary: Record<string, string> = {
-    'all-tasks': '12 tasks across all dates',
-    today: '3 tasks due today',
-    open: '7 tasks still to complete',
-    completed: '5 completed tasks',
+    'all-tasks': t('12 tasks across all dates'),
+    today: t('3 tasks due today'),
+    open: t('7 tasks still to complete'),
+    completed: t('5 completed tasks'),
   }
 
   return (
@@ -100,11 +101,11 @@ export function AppSelectorBarPage() {
       <DemoSection title="Text">
         <DemoPreview>
           <AppSelectorBar
-            ariaLabel="Task status"
+            ariaLabel={t('Task status')}
             items={[
-              { key: 'all', label: 'All' },
-              { key: 'open', label: 'Open' },
-              { key: 'done', label: 'Completed' },
+              { key: 'all', label: t('All') },
+              { key: 'open', label: t('Open') },
+              { key: 'done', label: t('Completed') },
             ]}
             value={basicView}
             onChange={setBasicView}
@@ -115,12 +116,12 @@ export function AppSelectorBarPage() {
       <DemoSection title="Icon and text">
         <DemoPreview>
           <AppSelectorBar
-            ariaLabel="Collection view"
+            ariaLabel={t('Collection view')}
             defaultValue="recent"
             items={[
-              { key: 'recent', label: 'Recent', icon: <Clock3 /> },
-              { key: 'favorites', label: 'Favorites', icon: <Heart /> },
-              { key: 'history', label: 'History', icon: <History /> },
+              { key: 'recent', label: t('Recent'), icon: <Clock3 /> },
+              { key: 'favorites', label: t('Favorites'), icon: <Heart /> },
+              { key: 'history', label: t('History'), icon: <History /> },
             ]}
           />
         </DemoPreview>
@@ -129,10 +130,10 @@ export function AppSelectorBarPage() {
       <DemoSection title="Disabled item">
         <DemoPreview>
           <AppSelectorBar
-            ariaLabel="Release channel"
+            ariaLabel={t('Release channel')}
             items={[
-              { key: 'stable', label: 'Stable' },
-              { key: 'preview', label: 'Preview', disabled: true },
+              { key: 'stable', label: t('stable') },
+              { key: 'preview', label: t('Preview'), disabled: true },
             ]}
           />
         </DemoPreview>
@@ -141,13 +142,13 @@ export function AppSelectorBarPage() {
       <DemoSection title="Icons">
         <DemoPreview>
           <AppSelectorBar
-            ariaLabel="Quick task view"
+            ariaLabel={t('Quick task view')}
             size="small"
             items={[
-              { key: 'inbox', icon: <Inbox />, ariaLabel: 'All tasks' },
-              { key: 'today', icon: <CalendarDays />, ariaLabel: 'Today' },
-              { key: 'open', icon: <ListTodo />, ariaLabel: 'Open' },
-              { key: 'done', icon: <CheckCircle2 />, ariaLabel: 'Completed' },
+              { key: 'inbox', icon: <Inbox />, ariaLabel: t('All tasks') },
+              { key: 'today', icon: <CalendarDays />, ariaLabel: t('Today') },
+              { key: 'open', icon: <ListTodo />, ariaLabel: t('Open') },
+              { key: 'done', icon: <CheckCircle2 />, ariaLabel: t('Completed') },
             ]}
           />
         </DemoPreview>
@@ -157,12 +158,12 @@ export function AppSelectorBarPage() {
         <DemoPreview>
           <div className="demo-selector-task-view">
             <AppSelectorBar
-              ariaLabel="Task data view"
+              ariaLabel={t('Task data view')}
               items={[
-                { key: 'all-tasks', label: 'All tasks' },
-                { key: 'today', label: 'Today' },
-                { key: 'open', label: 'Open' },
-                { key: 'completed', label: 'Completed' },
+                { key: 'all-tasks', label: t('All tasks') },
+                { key: 'today', label: t('Today') },
+                { key: 'open', label: t('Open') },
+                { key: 'completed', label: t('Completed') },
               ]}
               value={taskView}
               onChange={setTaskView}
@@ -182,12 +183,12 @@ export function AppSelectorBarPage() {
         <DemoPreview>
           <div className="demo-selector-panel-view">
             <AppSelectorBar
-              ariaLabel="Unmounted panel example"
+              ariaLabel={t('Unmounted panel example')}
               items={[
-                { key: 'recent', label: 'Recent', panelId: 'unmount-recent' },
+                { key: 'recent', label: t('Recent'), panelId: 'unmount-recent' },
                 {
                   key: 'favorites',
-                  label: 'Favorites',
+                  label: t('Favorites'),
                   panelId: 'unmount-favorites',
                 },
               ]}
@@ -196,10 +197,10 @@ export function AppSelectorBarPage() {
             />
             <AppSelectorPanels value={unmountView}>
               <AppSelectorPanel id="unmount-recent" value="recent">
-                <SelectorPanelStateDemo label="Recent" />
+                <SelectorPanelStateDemo label={t('Recent')} />
               </AppSelectorPanel>
               <AppSelectorPanel id="unmount-favorites" value="favorites">
-                <SelectorPanelStateDemo label="Favorites" />
+                <SelectorPanelStateDemo label={t('Favorites')} />
               </AppSelectorPanel>
             </AppSelectorPanels>
           </div>
@@ -213,12 +214,12 @@ export function AppSelectorBarPage() {
         <DemoPreview>
           <div className="demo-selector-panel-view">
             <AppSelectorBar
-              ariaLabel="State-preserving panel example"
+              ariaLabel={t('State-preserving panel example')}
               items={[
-                { key: 'recent', label: 'Recent', panelId: 'hidden-recent' },
+                { key: 'recent', label: t('Recent'), panelId: 'hidden-recent' },
                 {
                   key: 'favorites',
-                  label: 'Favorites',
+                  label: t('Favorites'),
                   panelId: 'hidden-favorites',
                 },
               ]}
@@ -227,10 +228,10 @@ export function AppSelectorBarPage() {
             />
             <AppSelectorPanels mountStrategy="hidden" value={hiddenView}>
               <AppSelectorPanel id="hidden-recent" value="recent">
-                <SelectorPanelStateDemo label="Recent" />
+                <SelectorPanelStateDemo label={t('Recent')} />
               </AppSelectorPanel>
               <AppSelectorPanel id="hidden-favorites" value="favorites">
-                <SelectorPanelStateDemo label="Favorites" />
+                <SelectorPanelStateDemo label={t('Favorites')} />
               </AppSelectorPanel>
             </AppSelectorPanels>
           </div>
@@ -241,14 +242,15 @@ export function AppSelectorBarPage() {
 }
 
 function SelectorPanelStateDemo({ label }: { label: string }) {
+  const t = useDemoCopy()
   const [count, setCount] = useState(0)
 
   return (
     <div className="demo-selector-panel-state">
-      <strong>{label} panel</strong>
-      <AppTextBox aria-label={`${label} note`} placeholder="Type a note" />
+      <strong>{label} {t('panel')}</strong>
+      <AppTextBox aria-label={`${label} ${t('note')}`} placeholder={t('Type a note')} />
       <AppButton onClick={() => setCount((value) => value + 1)}>
-        Count: {count}
+        {t('Count')}: {count}
       </AppButton>
     </div>
   )
