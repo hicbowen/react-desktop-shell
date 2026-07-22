@@ -483,6 +483,7 @@
   width: 16px;
   height: 16px;
   display: inline-flex;
+  flex: 0 0 16px;
   align-items: center;
   justify-content: center;
 }

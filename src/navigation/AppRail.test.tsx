@@ -268,6 +268,34 @@ describe('AppRail scroll fade', () => {
     expect(container.contains(flyout())).toBe(false)
   })
 
+  it('reserves the icon column for iconless flyout items', () => {
+    render(
+      <AppRail
+        collapsed
+        items={[
+          {
+            type: 'submenu',
+            key: 'parent',
+            label: 'Parent',
+            children: [
+              { key: 'with-icon', label: 'With icon', icon: <svg /> },
+              { key: 'without-icon', label: 'Without icon' },
+            ],
+          },
+        ]}
+      />,
+    )
+    openFlyout()
+
+    const flyoutButtons = flyout()?.querySelectorAll<HTMLButtonElement>(
+      '.app-rail-flyout__item',
+    )
+    expect(flyoutButtons).toHaveLength(2)
+    expect(flyoutButtons?.[0].querySelector('.app-rail-flyout__icon svg')).not.toBeNull()
+    expect(flyoutButtons?.[1].querySelector('.app-rail-flyout__icon')).not.toBeNull()
+    expect(flyoutButtons?.[1].querySelector('.app-rail-flyout__icon')?.childElementCount).toBe(0)
+  })
+
   it('measures before showing and flips right-start to left-start', () => {
     let measure: FrameRequestCallback | undefined
     vi.stubGlobal(

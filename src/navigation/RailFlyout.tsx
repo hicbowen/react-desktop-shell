@@ -96,9 +96,9 @@ export function RailFlyout({
             onClick={() => onChange(child.key)}
             type="button"
           >
-            {child.icon ? (
-              <span className="app-rail-flyout__icon">{child.icon}</span>
-            ) : null}
+            <span aria-hidden="true" className="app-rail-flyout__icon">
+              {child.icon}
+            </span>
             <span className="app-rail-flyout__label">{child.label}</span>
             <RailBadge
               content={child.badge}
