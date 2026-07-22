@@ -33,6 +33,7 @@ import { ButtonsPage } from './pages/actions/ButtonsPage'
 import { AppTeachingTipPage } from './pages/feedback/TeachingTipPage'
 import { AppFileDropOverlayPage } from './pages/feedback/FileDropOverlayPage'
 import { ProgressStatusPage } from './pages/feedback/ProgressStatusPage'
+import { AppLoadingOverlayPage } from './pages/feedback/LoadingOverlayPage'
 import { AppTaskCenterPage } from './pages/feedback/TaskCenterPage'
 import { PopoverPage } from './pages/feedback/PopoverPage'
 import { TextInputsPage } from './pages/forms/TextInputsPage'
@@ -80,6 +81,7 @@ export const demoPages: DemoPageDefinition[] = [
   { key: 'app-skeleton', group: 'Content', label: 'AppSkeleton', description: 'Accessible animated placeholders for loading content structures.', icon: <Rows3 size={16} />, component: AppSkeletonPage },
   { key: 'app-info-bar', group: 'Feedback', label: 'AppInfoBar', description: 'Inline informational, success, warning, and error states.', icon: <Info size={16} />, component: AppInfoBarPage },
   { key: 'progress-status', group: 'Feedback', label: 'Progress & Status', description: 'Indeterminate and determinate progress with semantic status badges.', icon: <Clock3 size={16} />, component: ProgressStatusPage },
+  { key: 'loading-overlay', group: 'Feedback', label: 'AppLoadingOverlay', description: 'Delayed local loading feedback that preserves content layout.', icon: <Clock3 size={16} />, component: AppLoadingOverlayPage },
   { key: 'task-center', group: 'Feedback', label: 'AppTaskCenter', description: 'Host-neutral background task status, progress, and action requests.', icon: <Clock3 size={16} />, component: AppTaskCenterPage },
   { key: 'popover', group: 'Feedback', label: 'Popover', description: 'Portal-based non-modal supporting content with anchored placement.', icon: <MessageSquare size={16} />, component: PopoverPage },
   { key: 'app-tooltip', group: 'Feedback', label: 'AppTooltip', description: 'Non-interactive descriptions for hover and keyboard focus.', icon: <CircleHelp size={16} />, component: AppTooltipPage },

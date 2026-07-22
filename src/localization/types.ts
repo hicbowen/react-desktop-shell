@@ -151,6 +151,7 @@ export interface AppLocaleMessages {
   rangeSlider: { start: string; end: string }
   validationSummary: { label: string; title: string }
   shortcutRecorder: { label: string; placeholder: string; recording: string; clear: string }
+  loadingOverlay: { label: string; cancel: string }
   textBox: {
     clear: string
     loading: string

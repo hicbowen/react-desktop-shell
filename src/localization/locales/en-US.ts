@@ -163,6 +163,7 @@ export const enUSMessages = {
   rangeSlider: { start: 'Minimum value', end: 'Maximum value' },
   validationSummary: { label: 'Validation errors', title: 'Correct the following errors' },
   shortcutRecorder: { label: 'Keyboard shortcut', placeholder: 'Record shortcut', recording: 'Press shortcut', clear: 'Clear shortcut' },
+  loadingOverlay: { label: 'Loading', cancel: 'Cancel' },
   textBox: {
     clear: 'Clear input',
     loading: 'Loading',

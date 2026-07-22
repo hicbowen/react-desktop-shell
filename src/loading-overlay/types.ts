@@ -1,0 +1,1 @@
+import type{CSSProperties,ReactNode}from'react';export interface AppLoadingOverlayProps{loading:boolean;children:ReactNode;label?:ReactNode;description?:ReactNode;delay?:number;onCancel?:()=>void;cancelLabel?:ReactNode;className?:string;style?:CSSProperties;overlayClassName?:string}
