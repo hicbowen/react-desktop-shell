@@ -78,6 +78,13 @@ export const zhCNInteractiveText: Record<string, string> = {
   'Imperative context menu': '命令式上下文菜单', 'Right-click this dynamic area.': '右键单击这个动态区域。',
   'Editable text': '可编辑文本', 'Right-click to use native text actions': '右键单击以使用原生文本操作',
   refresh: '刷新', rename: '重命名', copy: '复制', share: '共享', delete: '删除',
+  'Plain input': '普通输入', Email: '邮箱', 'Invalid value': '无效值', 'Read only': '只读',
+  'Search while loading': '加载时搜索', Student: '学生', 'Enter a student name': '请输入学生姓名',
+  'Fixed height text': '固定高度文本', 'Line one\nLine two\nLine three': '第一行\n第二行\n第三行', 'Counted text': '计数字符文本',
+  'Search documents': '搜索文档', 'Submitted query:': '已提交查询：', 'Search as you type': '输入时搜索',
+  'Password strength: good': '密码强度：良好', 'Search languages': '搜索语言',
+  'No matching language': '没有匹配的语言', 'Loading suggestions': '正在加载建议',
+  'Preferred language': '首选语言', 'Start typing': '开始输入',
   'primary still available': '主操作仍可用', 'Last action:': '上次操作：', 'toolbar export': '工具栏导出',
 }
 
