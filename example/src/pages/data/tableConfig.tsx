@@ -3,74 +3,107 @@ import type { AppDataTableControlsOptions } from '../../../../src/data'
 import type { DemoRow } from '../../fixtures/tableRows'
 import { tableRows } from '../../fixtures/tableRows'
 
-export const columns: ColumnDef<DemoRow>[] = [
-  { accessorKey: 'name', header: 'Name', size: 420 },
-  { accessorKey: 'category', header: 'Category', size: 280 },
-  {
-    accessorKey: 'status',
-    header: 'Status',
-    size: 220,
-    cell: ({ getValue }) => (
-      <span
-        className={`demo-status demo-status--${String(getValue()).toLowerCase()}`}
-      >
-        {String(getValue())}
-      </span>
-    ),
-  },
-  { accessorKey: 'owner', header: 'Owner', size: 240 },
-  {
-    accessorKey: 'priority',
-    header: 'Priority',
-    size: 180,
-    cell: ({ getValue }) => (
-      <span
-        className={`demo-priority demo-priority--${String(getValue()).toLowerCase()}`}
-      >
-        {String(getValue())}
-      </span>
-    ),
-  },
-  { accessorKey: 'region', header: 'Region', size: 240 },
-  { accessorKey: 'updated', header: 'Updated', size: 220 },
-]
+type Translate = (text: string) => string
 
-function uniqueOptions(values: string[]) {
-  return Array.from(new Set(values)).map((value) => ({ value, label: value }))
+const rowNamePrefixes = ['Alpha item', 'Beta item', 'Gamma item', 'Delta item']
+
+export function localizeTableValue(t: Translate, value: string) {
+  const prefix = rowNamePrefixes.find((candidate) => value.startsWith(candidate))
+  return prefix ? `${t(prefix)}${value.slice(prefix.length)}` : t(value)
 }
 
-export const tableControls: AppDataTableControlsOptions<DemoRow> = {
-  search: true,
-  filters: [
+export function createColumns(t: Translate): ColumnDef<DemoRow>[] {
+  return [
     {
-      columnId: 'category',
-      label: 'Category',
-      mode: 'single',
-      options: uniqueOptions(tableRows.map((row) => row.category)),
+      accessorKey: 'name',
+      header: t('Name'),
+      size: 420,
+      cell: ({ getValue }) => localizeTableValue(t, String(getValue())),
     },
     {
-      columnId: 'status',
-      label: 'Status',
-      mode: 'multiple',
-      options: uniqueOptions(tableRows.map((row) => row.status)),
+      accessorKey: 'category',
+      header: t('Category'),
+      size: 280,
+      cell: ({ getValue }) => t(String(getValue())),
     },
     {
-      columnId: 'owner',
-      label: 'Owner',
-      mode: 'multiple',
-      options: uniqueOptions(tableRows.map((row) => row.owner)),
+      accessorKey: 'status',
+      header: t('Status'),
+      size: 220,
+      cell: ({ getValue }) => (
+        <span
+          className={`demo-status demo-status--${String(getValue()).toLowerCase()}`}
+        >
+          {t(String(getValue()))}
+        </span>
+      ),
     },
     {
-      columnId: 'priority',
-      label: 'Priority',
-      mode: 'multiple',
-      options: uniqueOptions(tableRows.map((row) => row.priority)),
+      accessorKey: 'owner',
+      header: t('Owner'),
+      size: 240,
+      cell: ({ getValue }) => t(String(getValue())),
     },
     {
-      columnId: 'region',
-      label: 'Region',
-      mode: 'single',
-      options: uniqueOptions(tableRows.map((row) => row.region)),
+      accessorKey: 'priority',
+      header: t('Priority'),
+      size: 180,
+      cell: ({ getValue }) => (
+        <span
+          className={`demo-priority demo-priority--${String(getValue()).toLowerCase()}`}
+        >
+          {t(String(getValue()))}
+        </span>
+      ),
     },
-  ],
+    {
+      accessorKey: 'region',
+      header: t('Region'),
+      size: 240,
+      cell: ({ getValue }) => t(String(getValue())),
+    },
+    { accessorKey: 'updated', header: t('Updated'), size: 220 },
+  ]
+}
+
+function uniqueOptions(t: Translate, values: string[]) {
+  return Array.from(new Set(values)).map((value) => ({ value, label: t(value) }))
+}
+
+export function createTableControls(t: Translate): AppDataTableControlsOptions<DemoRow> {
+  return {
+    search: true,
+    filters: [
+      {
+        columnId: 'category',
+        label: t('Category'),
+        mode: 'single',
+        options: uniqueOptions(t, tableRows.map((row) => row.category)),
+      },
+      {
+        columnId: 'status',
+        label: t('Status'),
+        mode: 'multiple',
+        options: uniqueOptions(t, tableRows.map((row) => row.status)),
+      },
+      {
+        columnId: 'owner',
+        label: t('Owner'),
+        mode: 'multiple',
+        options: uniqueOptions(t, tableRows.map((row) => row.owner)),
+      },
+      {
+        columnId: 'priority',
+        label: t('Priority'),
+        mode: 'multiple',
+        options: uniqueOptions(t, tableRows.map((row) => row.priority)),
+      },
+      {
+        columnId: 'region',
+        label: t('Region'),
+        mode: 'single',
+        options: uniqueOptions(t, tableRows.map((row) => row.region)),
+      },
+    ],
+  }
 }

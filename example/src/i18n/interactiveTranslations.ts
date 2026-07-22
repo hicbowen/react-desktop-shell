@@ -90,6 +90,17 @@ export const zhCNInteractiveText: Record<string, string> = {
   Volume: '音量', Zoom: '缩放', 'Compact slider': '紧凑滑块', 'Disabled slider': '禁用滑块',
   'Invalid slider': '无效滑块', 'Brush size': '画笔大小', Quality: '质量', Low: '低', Medium: '中', High: '高',
   'Vertical level': '垂直级别',
+  'Sticky header': '固定表头', 'Column resizing': '调整列宽', 'Sticky Category column': '固定“类别”列',
+  'Fixed height': '固定高度', 'Fill remaining height': '填满剩余高度', Pagination: '分页',
+  'Vertical virtualization': '垂直虚拟化',
+  'Right-click a data row for row-specific actions': '右键单击数据行以打开行操作',
+  'Workspace items': '工作区项目', rows: '行', selected: '已选择', Archive: '归档', 'Add item': '添加项目',
+  Name: '名称', Category: '类别', Owner: '负责人', Priority: '优先级', Region: '区域', Updated: '更新时间',
+  Processing: '处理中', Paused: '已暂停', Document: '文档', Media: '媒体',
+  'Asia Pacific': '亚太地区', Europe: '欧洲', 'North America': '北美',
+  'Alpha item': 'Alpha 项目', 'Beta item': 'Beta 项目', 'Gamma item': 'Gamma 项目', 'Delta item': 'Delta 项目',
+  'Avery Chen': '陈艾弗里', 'Jordan Lee': '李乔丹', 'Morgan Wu': '吴摩根', 'Riley Zhang': '张莱利',
+  'Open row': '打开', 'Opened row': '已打开', 'Archived row': '已归档', 'Delete row': '删除',
   'primary still available': '主操作仍可用', 'Last action:': '上次操作：', 'toolbar export': '工具栏导出',
 }
 

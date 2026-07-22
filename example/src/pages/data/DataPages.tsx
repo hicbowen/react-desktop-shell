@@ -4,11 +4,13 @@ import { AppButton, AppToggleSwitch, AppToolbar, useAppContextMenu, useAppToast 
 import { AppDataTable, AppDataView, AppSelectionBar } from '../../../../src/data'
 import { DemoControls, DemoPage, DemoPreview, DemoSection } from '../../components/DemoPage'
 import { tableRows } from '../../fixtures/tableRows'
-import { columns, tableControls } from './tableConfig'
+import { useDemoCopy } from '../../i18n/interactiveTranslations'
+import { createColumns, createTableControls, localizeTableValue } from './tableConfig'
 
 export function AppDataTablePage() {
   const contextMenu = useAppContextMenu()
   const toast = useAppToast()
+  const t = useDemoCopy()
   const [sorting, setSorting] = useState<SortingState>([{ id: 'name', desc: false }])
   const [selection, setSelection] = useState<RowSelectionState>({})
   const [sticky, setSticky] = useState(true)
@@ -19,6 +21,8 @@ export function AppDataTablePage() {
   const [virtualized, setVirtualized] = useState(false)
   const [stickyCategory, setStickyCategory] = useState(true)
   const count = Object.values(selection).filter(Boolean).length
+  const columns = createColumns(t)
+  const tableControls = createTableControls(t)
 
   const handleFixedHeightChange = (next: boolean) => {
     setFixedHeight(next)
@@ -41,14 +45,14 @@ export function AppDataTablePage() {
   return (
     <DemoPage className={fill ? 'demo-page--fill' : ''}>
       <DemoControls>
-        <AppToggleSwitch checked={sticky} label="Sticky header" onCheckedChange={setSticky} size="compact" />
-        <AppToggleSwitch checked={resizing} label="Column resizing" onCheckedChange={setResizing} size="compact" />
-        <AppToggleSwitch checked={stickyCategory} label="Sticky Category column" onCheckedChange={setStickyCategory} size="compact" />
-        <AppToggleSwitch checked={fixedHeight} label="Fixed height" onCheckedChange={handleFixedHeightChange} size="compact" />
-        <AppToggleSwitch checked={fill} label="Fill remaining height" onCheckedChange={handleFillChange} size="compact" />
-        <AppToggleSwitch checked={pagination} label="Pagination" onCheckedChange={setPagination} size="compact" />
-        <AppToggleSwitch checked={virtualized} disabled={!fill && !fixedHeight} label="Vertical virtualization" onCheckedChange={setVirtualized} size="compact" />
-        <span>Right-click a data row for row-specific actions</span>
+        <AppToggleSwitch checked={sticky} label={t('Sticky header')} onCheckedChange={setSticky} size="compact" />
+        <AppToggleSwitch checked={resizing} label={t('Column resizing')} onCheckedChange={setResizing} size="compact" />
+        <AppToggleSwitch checked={stickyCategory} label={t('Sticky Category column')} onCheckedChange={setStickyCategory} size="compact" />
+        <AppToggleSwitch checked={fixedHeight} label={t('Fixed height')} onCheckedChange={handleFixedHeightChange} size="compact" />
+        <AppToggleSwitch checked={fill} label={t('Fill remaining height')} onCheckedChange={handleFillChange} size="compact" />
+        <AppToggleSwitch checked={pagination} label={t('Pagination')} onCheckedChange={setPagination} size="compact" />
+        <AppToggleSwitch checked={virtualized} disabled={!fill && !fixedHeight} label={t('Vertical virtualization')} onCheckedChange={setVirtualized} size="compact" />
+        <span>{t('Right-click a data row for row-specific actions')}</span>
       </DemoControls>
       <DemoSection
         title="Complete data table"
@@ -60,12 +64,12 @@ export function AppDataTablePage() {
           toolbar={
             <AppToolbar
               appearance="flat"
-              start={<strong>Workspace items</strong>}
-              status={<span>{tableRows.length} rows</span>}
+              start={<strong>{t('Workspace items')}</strong>}
+              status={<span>{tableRows.length} {t('rows')}</span>}
               end={
                 <>
-                  <AppButton>Refresh</AppButton>
-                  <AppButton appearance="primary">Add item</AppButton>
+                  <AppButton>{t('Refresh')}</AppButton>
+                  <AppButton appearance="primary">{t('Add item')}</AppButton>
                 </>
               }
             />
@@ -74,12 +78,12 @@ export function AppDataTablePage() {
             count > 0 ? (
               <AppSelectionBar
                 count={count}
-                label={`${count} selected`}
+                label={`${count} ${t('selected')}`}
                 onClear={() => setSelection({})}
                 actions={
                   <>
-                    <AppButton>Archive</AppButton>
-                    <AppButton appearance="danger">Delete</AppButton>
+                    <AppButton>{t('Archive')}</AppButton>
+                    <AppButton appearance="danger">{t('Delete')}</AppButton>
                   </>
                 }
               />
@@ -103,25 +107,26 @@ export function AppDataTablePage() {
             onSortingChange={setSorting}
             onRowContextMenu={(row, event) => {
               event.preventDefault()
+              const rowName = localizeTableValue(t, row.original.name)
               contextMenu.open({
                 items: [
                   {
                     key: 'open',
-                    label: `Open ${row.original.name}`,
-                    onClick: () => toast.info(`Opened ${row.original.name}`),
+                    label: `${t('Open row')} ${rowName}`,
+                    onClick: () => toast.info(`${t('Opened row')} ${rowName}`),
                   },
                   {
                     key: 'archive',
-                    label: 'Archive',
+                    label: t('Archive'),
                     disabled: row.original.status === 'Processing',
-                    onClick: () => toast.info(`Archived ${row.original.name}`),
+                    onClick: () => toast.info(`${t('Archived row')} ${rowName}`),
                   },
                   { type: 'separator' },
                   {
                     key: 'delete',
-                    label: 'Delete',
+                    label: t('Delete'),
                     danger: true,
-                    onClick: () => toast.info(`Delete ${row.original.name}`),
+                    onClick: () => toast.info(`${t('Delete row')} ${rowName}`),
                   },
                 ],
                 x: event.clientX,
