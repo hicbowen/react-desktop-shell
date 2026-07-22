@@ -554,6 +554,12 @@ connection state, selection counts, cursor position, encoding, zoom, and other
 workspace context. Items are static by default and become buttons only when
 `interactive` is set.
 
+## Property grid
+
+`AppPropertyGrid` arranges application-owned editors in dense, collapsible
+property groups. It supports modified indicators, reset requests, read-only
+metadata, descriptions, and keyboard adjustment of the property-name column.
+
 ## Expander
 
 `AppExpander` reveals low-frequency settings or details with controlled or uncontrolled state. Its header uses a linked `aria-expanded` button, while optional header actions remain independent. Collapsed content becomes inert during closing and is hidden after the transition, preventing controls from leaking into the Tab order; reduced-motion users switch immediately.

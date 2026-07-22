@@ -21,6 +21,7 @@ import { TagPage } from './pages/content/TagPage'
 import { AppScrollAreaPage } from './pages/content/ScrollAreaPage'
 import { AppTreeViewPage } from './pages/content/TreeViewPage'
 import { AppStatusBarPage } from './pages/content/StatusBarPage'
+import { AppPropertyGridPage } from './pages/content/PropertyGridPage'
 import { AppTooltipPage } from './pages/feedback/TooltipPage'
 import { AppMenuFlyoutPage } from './pages/actions/MenuFlyoutPage'
 import { AppSplitButtonPage } from './pages/actions/SplitButtonPage'
@@ -60,6 +61,7 @@ export const demoPages: DemoPageDefinition[] = [
   { key: 'list-view', group: 'Content', label: 'List View', description: 'Desktop information lists with selection, invocation, and keyboard navigation.', icon: <ListChecks size={16} />, component: ListViewPage },
   { key: 'tree-view', group: 'Content', label: 'AppTreeView', description: 'Hierarchical resources with selection, lazy expansion, keyboard navigation, and drag requests.', icon: <ListChecks size={16} />, component: AppTreeViewPage },
   { key: 'status-bar', group: 'Content', label: 'AppStatusBar', description: 'Compact persistent workspace status and contextual actions.', icon: <Rows3 size={16} />, component: AppStatusBarPage },
+  { key: 'property-grid', group: 'Content', label: 'AppPropertyGrid', description: 'Grouped dense property editing with reset and adjustable label width.', icon: <SlidersHorizontal size={16} />, component: AppPropertyGridPage },
   { key: 'expander', group: 'Content', label: 'Expander', description: 'Collapsible settings, release notes, and low-frequency details.', icon: <Columns3 size={16} />, component: ExpanderPage },
   { key: 'app-tag', group: 'Content', label: 'AppTag', description: 'Colored labels for categories, attributes, and removable values.', icon: <Tags size={16} />, component: TagPage },
   { key: 'app-info-bar', group: 'Feedback', label: 'AppInfoBar', description: 'Inline informational, success, warning, and error states.', icon: <Info size={16} />, component: AppInfoBarPage },
