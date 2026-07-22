@@ -286,6 +286,12 @@ carry their own presentation or reference an `AppCommand`; selection remains in
 React and does not register a host-native menu. Top-level menus support access
 keys and horizontal keyboard focus, while flyouts support standard menu keys.
 
+## Command palette
+
+`AppCommandPalette` filters a supplied platform-neutral command collection,
+supports arrow-key selection and Enter execution, and reports its open state to
+the application. It does not discover or invoke host APIs itself.
+
 `AppButton` provides standard, primary, subtle, and danger desktop commands in compact or standard sizes. It supports leading or trailing icons, stable loading states, native button attributes, and ref forwarding. Use `AppIconButton` for icon-only commands and always supply `ariaLabel` or `aria-label`; compose tooltips with `AppTooltip`.
 
 ```tsx
