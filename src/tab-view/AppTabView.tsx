@@ -23,8 +23,8 @@ function getAvailableItem(items: readonly AppTabViewItem[], key?: string) {
 }
 
 export function AppTabView({
-  addTabLabel = 'New tab',
-  ariaLabel = 'Documents',
+  addTabLabel,
+  ariaLabel,
   className,
   closeTabLabel,
   defaultValue,
@@ -38,6 +38,7 @@ export function AppTabView({
   value,
 }: AppTabViewProps) {
   const { messages } = useAppLocale()
+  const text = messages.tabView
   const generatedId = useId().replace(/:/g, '')
   const controlled = value !== undefined
   const [internalValue, setInternalValue] = useState(
@@ -91,7 +92,7 @@ export function AppTabView({
   const classes = ['app-tab-view', className].filter(Boolean).join(' ')
 
   return <div className={classes} style={style}>
-    <div aria-label={ariaLabel} className="app-tab-view__strip" role="tablist">
+    <div aria-label={ariaLabel ?? text.label} className="app-tab-view__strip" role="tablist">
       <div className="app-tab-view__tabs">
         {items.map((item, index) => {
           const selected = item.key === selectedKey
@@ -122,7 +123,7 @@ export function AppTabView({
             >
               {item.icon ? <span className="app-tab-view__icon">{item.icon}</span> : null}
               <span className="app-tab-view__label">{item.label}</span>
-              {item.dirty ? <span aria-label="Unsaved" className="app-tab-view__dirty" /> : null}
+              {item.dirty ? <span aria-label={text.unsaved} className="app-tab-view__dirty" /> : null}
             </button>
             {closeable ? <button
               aria-label={closeTabLabel?.(item) ?? `${messages.common.close} ${typeof item.label === 'string' ? item.label : ''}`.trim()}
@@ -134,7 +135,7 @@ export function AppTabView({
           </div>
         })}
       </div>
-      {onAddTab ? <button aria-label={addTabLabel} className="app-tab-view__add" onClick={onAddTab} type="button"><AddIcon /></button> : null}
+      {onAddTab ? <button aria-label={addTabLabel ?? text.newTab} className="app-tab-view__add" onClick={onAddTab} type="button"><AddIcon /></button> : null}
     </div>
     <div className="app-tab-view__panels">
       {items.map((item, index) => {

@@ -24,7 +24,7 @@ export const AppAutoComplete = forwardRef<HTMLInputElement, AppAutoCompleteProps
       defaultOpen = false,
       defaultValue = '',
       disabled,
-      emptyContent = 'No suggestions',
+      emptyContent,
       filterOption,
       id,
       invalid,
@@ -47,6 +47,7 @@ export const AppAutoComplete = forwardRef<HTMLInputElement, AppAutoCompleteProps
   ) {
     const field = useAppFieldContext()
     const { messages } = useAppLocale()
+    const text = messages.autoComplete
     const generatedId = useId()
     const inputId = id ?? field?.controlId ?? `app-auto-complete-${generatedId}`
     const listboxId = `${inputId}-listbox`
@@ -172,10 +173,10 @@ export const AppAutoComplete = forwardRef<HTMLInputElement, AppAutoCompleteProps
         role="combobox"
         value={currentValue}
       />
-      {loading ? <span aria-label="Loading suggestions" className="app-auto-complete__loading" role="status" /> : null}
+      {loading ? <span aria-label={text.loading} className="app-auto-complete__loading" role="status" /> : null}
       {clearable && currentValue && !resolvedDisabled && !readOnly && !loading ? <button aria-label={messages.textBox.clear} className="app-auto-complete__clear" onClick={() => { updateValue(''); requestOpen(false); inputRef.current?.focus() }} type="button"><span aria-hidden="true">×</span></button> : null}
       {showPanel ? <span className="app-auto-complete__listbox" id={listboxId} role="listbox">
-        {loading ? <span className="app-auto-complete__status">Loading suggestions…</span> : suggestions.length ? suggestions.map((option, index) => <button
+        {loading ? <span className="app-auto-complete__status">{text.loading}</span> : suggestions.length ? suggestions.map((option, index) => <button
           aria-selected={index === activeIndex}
           className={`app-auto-complete__option${index === activeIndex ? ' app-auto-complete__option--active' : ''}`}
           disabled={option.disabled}
@@ -184,7 +185,7 @@ export const AppAutoComplete = forwardRef<HTMLInputElement, AppAutoCompleteProps
           onPointerDown={(event) => handleOptionPointerDown(event, index)}
           role="option"
           type="button"
-        >{option.label ?? option.value}</button>) : <span className="app-auto-complete__status">{emptyContent}</span>}
+        >{option.label ?? option.value}</button>) : <span className="app-auto-complete__status">{emptyContent ?? text.empty}</span>}
       </span> : null}
     </span>
   },

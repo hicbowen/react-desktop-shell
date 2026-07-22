@@ -20,4 +20,17 @@ describe('built-in locale messages', () => {
       '1 小时 30 分钟',
     )
   })
+
+  it('formats localized dynamic component labels', () => {
+    expect(enUSMessages.propertyGrid.resizeNameColumn('Name')).toBe(
+      'Resize property name column Name',
+    )
+    expect(zhCNMessages.propertyGrid.resizeNameColumn('名称')).toBe(
+      '调整属性名称列大小：名称',
+    )
+    expect(zhCNMessages.propertyGrid.resetProperty('名称')).toBe(
+      '重置为默认值：名称',
+    )
+    expect(zhCNMessages.taskCenter.activeTasks(2)).toBe('2 个活动任务')
+  })
 })

@@ -29,6 +29,44 @@ export interface AppLocaleMessages {
     resize: string
     close: string
   }
+  breadcrumbBar: {
+    label: string
+    showEarlierLocations: string
+  }
+  menuBar: {
+    label: string
+  }
+  statusBar: {
+    label: string
+  }
+  commandPalette: {
+    label: string
+    empty: string
+    placeholder: string
+  }
+  autoComplete: {
+    empty: string
+    loading: string
+  }
+  propertyGrid: {
+    label: string
+    modified: string
+    resetProperty: (label?: string) => string
+    resizeNameColumn: (label?: string) => string
+  }
+  resizablePane: {
+    resize: string
+  }
+  treeView: {
+    label: string
+    expand: string
+    collapse: string
+  }
+  tabView: {
+    label: string
+    newTab: string
+    unsaved: string
+  }
   contextMenu: {
     undo: string
     cut: string
@@ -143,6 +181,7 @@ export interface AppLocaleMessages {
   }
   taskCenter: {
     label: string
+    activeTasks: (count: number) => string
     cancel: string
     retry: string
     dismiss: string

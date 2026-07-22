@@ -1,8 +1,10 @@
 import type { AppStatusBarItemProps, AppStatusBarProps } from './types'
+import { useAppLocale } from '../localization/useAppLocale'
 import './AppStatusBar.css'
 
-export function AppStatusBar({ ariaLabel = 'Status', center, className, end, start, style }: AppStatusBarProps) {
-  return <div aria-label={ariaLabel} className={['app-status-bar', className].filter(Boolean).join(' ')} role="status" style={style}>
+export function AppStatusBar({ ariaLabel, center, className, end, start, style }: AppStatusBarProps) {
+  const { messages } = useAppLocale()
+  return <div aria-label={ariaLabel ?? messages.statusBar.label} className={['app-status-bar', className].filter(Boolean).join(' ')} role="status" style={style}>
     <div className="app-status-bar__region app-status-bar__region--start">{start}</div>
     <div className="app-status-bar__region app-status-bar__region--center">{center}</div>
     <div className="app-status-bar__region app-status-bar__region--end">{end}</div>

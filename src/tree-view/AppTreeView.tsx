@@ -1,4 +1,5 @@
 import { useMemo, useRef, useState, type CSSProperties, type DragEvent, type KeyboardEvent } from 'react'
+import { useAppLocale } from '../localization/useAppLocale'
 import type { AppTreeItem, AppTreeViewProps } from './types'
 import './AppTreeView.css'
 
@@ -16,10 +17,12 @@ function Chevron({ expanded, loading }: { expanded: boolean; loading?: boolean }
 }
 
 export function AppTreeView({
-  ariaLabel = 'Tree', className, defaultExpandedKeys = [], defaultSelectedKeys = [],
+  ariaLabel, className, defaultExpandedKeys = [], defaultSelectedKeys = [],
   expandedKeys, items, onExpandedKeysChange, onItemDrop, onItemInvoke, onLoadChildren,
   onSelectedKeysChange, selectedKeys, selectionMode = 'single', style,
 }: AppTreeViewProps) {
+  const { messages } = useAppLocale()
+  const text = messages.treeView
   const [internalExpanded, setInternalExpanded] = useState(defaultExpandedKeys)
   const [internalSelected, setInternalSelected] = useState(defaultSelectedKeys)
   const [focusedKey, setFocusedKey] = useState<string | undefined>(undefined)
@@ -77,7 +80,7 @@ export function AppTreeView({
     draggedKey.current = undefined
   }
 
-  return <div aria-label={ariaLabel} aria-multiselectable={selectionMode === 'multiple' || undefined} className={['app-tree-view', className].filter(Boolean).join(' ')} role="tree" style={style}>
+  return <div aria-label={ariaLabel ?? text.label} aria-multiselectable={selectionMode === 'multiple' || undefined} className={['app-tree-view', className].filter(Boolean).join(' ')} role="tree" style={style}>
     {flat.map((entry, index) => {
       const { item, level } = entry
       const expandable = Boolean(item.hasChildren || item.children?.length)
@@ -96,7 +99,7 @@ export function AppTreeView({
         role="treeitem" style={{ '--app-tree-level': level } as CSSProperties}
         tabIndex={(focusedKey ? focusedKey === item.key : index === 0) ? 0 : -1}
       >
-        <button aria-label={isExpanded ? 'Collapse' : 'Expand'} className="app-tree-view__expand" disabled={!expandable || item.disabled} onClick={(event) => { event.stopPropagation(); toggleExpanded(item) }} tabIndex={-1} type="button">{expandable ? <Chevron expanded={isExpanded} loading={item.loading} /> : null}</button>
+        <button aria-label={isExpanded ? text.collapse : text.expand} className="app-tree-view__expand" disabled={!expandable || item.disabled} onClick={(event) => { event.stopPropagation(); toggleExpanded(item) }} tabIndex={-1} type="button">{expandable ? <Chevron expanded={isExpanded} loading={item.loading} /> : null}</button>
         {item.icon ? <span className="app-tree-view__icon">{item.icon}</span> : null}
         <span className="app-tree-view__label">{item.label}</span>
       </div>

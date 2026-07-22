@@ -38,6 +38,40 @@ export const zhCNMessages = {
     resize: '调整侧边窗格大小',
     close: '关闭侧边窗格',
   },
+  breadcrumbBar: {
+    label: '面包屑导航',
+    showEarlierLocations: '显示更早的位置',
+  },
+  menuBar: { label: '应用程序菜单' },
+  statusBar: { label: '状态' },
+  commandPalette: {
+    label: '命令面板',
+    empty: '没有匹配的命令',
+    placeholder: '输入命令',
+  },
+  autoComplete: {
+    empty: '没有建议',
+    loading: '正在加载建议…',
+  },
+  propertyGrid: {
+    label: '属性',
+    modified: '已修改',
+    resetProperty: (label?: string) =>
+      `重置为默认值${label ? `：${label}` : ''}`,
+    resizeNameColumn: (label?: string) =>
+      `调整属性名称列大小${label ? `：${label}` : ''}`,
+  },
+  resizablePane: { resize: '调整窗格大小' },
+  treeView: {
+    label: '树视图',
+    expand: '展开',
+    collapse: '折叠',
+  },
+  tabView: {
+    label: '文档',
+    newTab: '新建标签页',
+    unsaved: '未保存',
+  },
   contextMenu: {
     undo: '撤销',
     cut: '剪切',
@@ -155,7 +189,7 @@ export const zhCNMessages = {
       `时间范围不能超过 ${minutes} 分钟`,
   },
   taskCenter: {
-    label: '后台任务', cancel: '取消任务', retry: '重试任务', dismiss: '清除任务',
+    label: '后台任务', activeTasks: (count: number) => `${count} 个活动任务`, cancel: '取消任务', retry: '重试任务', dismiss: '清除任务',
     empty: '没有后台任务', queued: '等待中', running: '进行中', paused: '已暂停',
     success: '已完成', error: '失败', canceled: '已取消',
   },

@@ -1,10 +1,12 @@
 import { useRef, type KeyboardEvent } from 'react'
 import { AppMenuFlyout } from '../menu-flyout'
 import { executeAppCommand, formatAppShortcut } from '../command'
+import { useAppLocale } from '../localization/useAppLocale'
 import type { AppMenuBarProps } from './types'
 import './AppMenuBar.css'
 
-export function AppMenuBar({ ariaLabel = 'Application menu', className, menus, onSelect, style }: AppMenuBarProps) {
+export function AppMenuBar({ ariaLabel, className, menus, onSelect, style }: AppMenuBarProps) {
+  const { messages } = useAppLocale()
   const refs = useRef<Array<HTMLButtonElement | null>>([])
   const move = (event: KeyboardEvent, index: number) => {
     if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight' && event.key !== 'Home' && event.key !== 'End') return
@@ -12,7 +14,7 @@ export function AppMenuBar({ ariaLabel = 'Application menu', className, menus, o
     const next = event.key === 'Home' ? 0 : event.key === 'End' ? menus.length - 1 : (index + (event.key === 'ArrowRight' ? 1 : -1) + menus.length) % menus.length
     refs.current[next]?.focus()
   }
-  return <nav aria-label={ariaLabel} className={['app-menu-bar', className].filter(Boolean).join(' ')} style={style}>
+  return <nav aria-label={ariaLabel ?? messages.menuBar.label} className={['app-menu-bar', className].filter(Boolean).join(' ')} style={style}>
     {menus.map((menu, index) => <AppMenuFlyout
       ariaLabel={typeof menu.label === 'string' ? menu.label : undefined}
       items={menu.items.map((item) => item.type === 'separator' ? item : {

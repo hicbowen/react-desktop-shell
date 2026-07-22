@@ -43,6 +43,40 @@ export const enUSMessages = {
     resize: 'Resize side pane',
     close: 'Close side pane',
   },
+  breadcrumbBar: {
+    label: 'Breadcrumb',
+    showEarlierLocations: 'Show earlier locations',
+  },
+  menuBar: { label: 'Application menu' },
+  statusBar: { label: 'Status' },
+  commandPalette: {
+    label: 'Command palette',
+    empty: 'No matching commands',
+    placeholder: 'Type a command',
+  },
+  autoComplete: {
+    empty: 'No suggestions',
+    loading: 'Loading suggestions…',
+  },
+  propertyGrid: {
+    label: 'Properties',
+    modified: 'Modified',
+    resetProperty: (label?: string) =>
+      `Reset to default${label ? ` ${label}` : ''}`,
+    resizeNameColumn: (label?: string) =>
+      `Resize property name column${label ? ` ${label}` : ''}`,
+  },
+  resizablePane: { resize: 'Resize panes' },
+  treeView: {
+    label: 'Tree',
+    expand: 'Expand',
+    collapse: 'Collapse',
+  },
+  tabView: {
+    label: 'Documents',
+    newTab: 'New tab',
+    unsaved: 'Unsaved',
+  },
   contextMenu: {
     undo: 'Undo',
     cut: 'Cut',
@@ -160,7 +194,7 @@ export const enUSMessages = {
       `Time range must not exceed ${formatEnglishDuration(minutes)}`,
   },
   taskCenter: {
-    label: 'Background tasks', cancel: 'Cancel task', retry: 'Retry task',
+    label: 'Background tasks', activeTasks: (count: number) => `${count} active tasks`, cancel: 'Cancel task', retry: 'Retry task',
     dismiss: 'Dismiss task', empty: 'No background tasks', queued: 'Queued',
     running: 'Running', paused: 'Paused', success: 'Completed', error: 'Failed',
     canceled: 'Canceled',
