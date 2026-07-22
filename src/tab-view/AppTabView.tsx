@@ -2,6 +2,7 @@ import {
   useId,
   useEffect,
   useRef,
+  useLayoutEffect,
   useState,
   type DragEvent,
   type KeyboardEvent,
@@ -49,6 +50,7 @@ export function AppTabView({
   const selectedRef = useRef<HTMLButtonElement>(null)
   const tabsRef = useRef<HTMLDivElement>(null)
   const dragIndex = useRef<number | null>(null)
+  const previousItemCount = useRef(items.length)
 
   useEffect(() => {
     const tabs = tabsRef.current
@@ -68,6 +70,14 @@ export function AppTabView({
     tabs.addEventListener('wheel', scrollTabs, { passive: false })
     return () => tabs.removeEventListener('wheel', scrollTabs)
   }, [])
+
+  useLayoutEffect(() => {
+    const itemWasAdded = items.length > previousItemCount.current
+    previousItemCount.current = items.length
+    if (itemWasAdded && tabsRef.current) {
+      tabsRef.current.scrollLeft = tabsRef.current.scrollWidth
+    }
+  }, [items.length])
 
   const select = (key: string, focus = false) => {
     const item = items.find((candidate) => candidate.key === key)

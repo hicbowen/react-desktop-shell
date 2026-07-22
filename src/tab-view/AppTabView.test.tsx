@@ -96,6 +96,19 @@ describe('AppTabView', () => {
     expect(tabs.scrollLeft).toBe(80)
   })
 
+  it('scrolls to the end when a tab is added', () => {
+    render()
+    const tabs = container.querySelector<HTMLElement>('.app-tab-view__tabs')!
+    Object.defineProperty(tabs, 'scrollWidth', {
+      configurable: true,
+      value: 720,
+    })
+    act(() => root.render(<AppTabView
+      items={[...items, { key: 'four', label: 'Four', content: 'Fourth panel' }]}
+    />))
+    expect(tabs.scrollLeft).toBe(720)
+  })
+
   it('keeps inactive panels mounted when requested', () => {
     render({ mountStrategy: 'hidden' })
     const panels = container.querySelectorAll<HTMLElement>('[role="tabpanel"]')
