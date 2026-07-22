@@ -12,6 +12,7 @@ import { AppCommandPage, AppToolbarPage, ContextMenuPage } from './pages/actions
 import { AppMenuBarPage } from './pages/actions/MenuBarPage'
 import { AppCommandPalettePage } from './pages/actions/CommandPalettePage'
 import { AppShortcutRecorderPage } from './pages/actions/ShortcutRecorderPage'
+import { AppToggleButtonPage } from './pages/actions/ToggleButtonPage'
 import { AppDataTablePage, AppSelectionBarPage } from './pages/data/DataPages'
 import { AppPaginationPage } from './pages/data/PaginationPage'
 import { SettingsPage } from './pages/settings/SettingsPages'
@@ -92,6 +93,7 @@ export const demoPages: DemoPageDefinition[] = [
   { key: 'menu-bar', group: 'Actions', label: 'AppMenuBar', description: 'Traditional application menus backed by platform-neutral commands.', icon: <Menu size={16} />, component: AppMenuBarPage },
   { key: 'command-palette', group: 'Actions', label: 'AppCommandPalette', description: 'Keyboard-first fuzzy command discovery and execution.', icon: <Wrench size={16} />, component: AppCommandPalettePage },
   { key: 'shortcut-recorder', group: 'Actions', label: 'AppShortcutRecorder', description: 'Capture and validate shortcuts compatible with application commands.', icon: <Wrench size={16} />, component: AppShortcutRecorderPage },
+  { key: 'toggle-button', group: 'Actions', label: 'AppToggleButton', description: 'Persistent command states and single or multiple toggle groups.', icon: <SquareMousePointer size={16} />, component: AppToggleButtonPage },
   { key: 'buttons', group: 'Actions', label: 'Buttons', description: 'Desktop command buttons, icon buttons, states, and composition.', icon: <SquareMousePointer size={16} />, component: ButtonsPage },
   { key: 'app-menu-flyout', group: 'Actions', label: 'AppMenuFlyout', description: 'Anchored one-level command menus with keyboard navigation.', icon: <ListChecks size={16} />, component: AppMenuFlyoutPage },
   { key: 'app-split-button', group: 'Actions', label: 'AppSplitButton', description: 'A default command paired with alternate menu actions.', icon: <Columns3 size={16} />, component: AppSplitButtonPage },
