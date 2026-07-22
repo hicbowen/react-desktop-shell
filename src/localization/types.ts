@@ -150,6 +150,7 @@ export interface AppLocaleMessages {
   passwordBox: { show: string; hide: string; capsLock: string }
   rangeSlider: { start: string; end: string }
   validationSummary: { label: string; title: string }
+  shortcutRecorder: { label: string; placeholder: string; recording: string; clear: string }
   textBox: {
     clear: string
     loading: string

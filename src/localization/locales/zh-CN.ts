@@ -157,6 +157,7 @@ export const zhCNMessages = {
   passwordBox: { show: '显示密码', hide: '隐藏密码', capsLock: '大写锁定已开启' },
   rangeSlider: { start: '最小值', end: '最大值' },
   validationSummary: { label: '验证错误', title: '请修正以下错误' },
+  shortcutRecorder: { label: '键盘快捷键', placeholder: '录制快捷键', recording: '请按快捷键', clear: '清除快捷键' },
   textBox: {
     clear: '清除输入',
     loading: '正在加载',

@@ -1,0 +1,1 @@
+import type{CSSProperties,ReactNode}from'react';import type{AppShortcut}from'../command';export interface AppShortcutRecorderProps{value?:AppShortcut|null;defaultValue?:AppShortcut|null;onValueChange?:(value:AppShortcut|null)=>void;getConflict?:(value:AppShortcut)=>ReactNode;allowSingleKey?:boolean;disabled?:boolean;className?:string;style?:CSSProperties}

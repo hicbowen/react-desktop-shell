@@ -162,6 +162,7 @@ export const enUSMessages = {
   passwordBox: { show: 'Show password', hide: 'Hide password', capsLock: 'Caps Lock is on' },
   rangeSlider: { start: 'Minimum value', end: 'Maximum value' },
   validationSummary: { label: 'Validation errors', title: 'Correct the following errors' },
+  shortcutRecorder: { label: 'Keyboard shortcut', placeholder: 'Record shortcut', recording: 'Press shortcut', clear: 'Clear shortcut' },
   textBox: {
     clear: 'Clear input',
     loading: 'Loading',
