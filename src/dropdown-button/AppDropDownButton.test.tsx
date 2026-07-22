@@ -40,6 +40,7 @@ describe('AppDropDownButton', () => {
     act(() => root.render(<AppDropDownButton icon={<svg data-leading="true" />} items={[]}>Export</AppDropDownButton>))
     expect(host.querySelector('[data-leading="true"]')).not.toBeNull()
     expect(host.querySelector('.app-dropdown-button__chevron')).not.toBeNull()
+    expect(host.querySelector('.app-button')?.classList).toContain('app-dropdown-button')
     act(() => root.unmount())
   })
 })

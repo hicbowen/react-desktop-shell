@@ -10,6 +10,7 @@ function ChevronDown() {
 
 export const AppDropDownButton = forwardRef<HTMLButtonElement, AppDropDownButtonProps>(function AppDropDownButton({
   children,
+  className,
   disabled = false,
   icon,
   items,
@@ -27,7 +28,7 @@ export const AppDropDownButton = forwardRef<HTMLButtonElement, AppDropDownButton
       placement={placement}
       ref={ref as Ref<HTMLElement>}
     >
-      <AppButton {...buttonProps} disabled={disabled}>
+      <AppButton {...buttonProps} className={['app-dropdown-button', className].filter(Boolean).join(' ')} disabled={disabled}>
         {icon ? <span className="app-dropdown-button__leading-icon">{icon}</span> : null}
         <span className="app-dropdown-button__label">{children}</span>
         <ChevronDown />
