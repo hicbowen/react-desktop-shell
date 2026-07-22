@@ -1,6 +1,7 @@
 import { Check, X } from 'lucide-react'
 import { useAppLocale } from '../localization/useAppLocale'
 import type { AppSelectionBarProps } from './types'
+import './AppDataView.css'
 
 export function AppSelectionBar({
   count,

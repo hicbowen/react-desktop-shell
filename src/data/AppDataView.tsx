@@ -1,4 +1,5 @@
 import type { AppDataViewProps } from './types'
+import './AppDataView.css'
 
 export function AppDataView({
   height = 'auto',

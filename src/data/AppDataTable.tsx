@@ -9,6 +9,7 @@ import {
 import { AppDataTableControls } from './AppDataTableControls'
 import { AppDataTablePagination } from './AppDataTablePagination'
 import type { AppDataTableProps } from './types'
+import './AppDataView.css'
 
 const AppDataTableVirtualRows = lazy(
   () => import('./internal/AppDataTableVirtualRows'),
