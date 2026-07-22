@@ -120,6 +120,9 @@ export const zhCNMessages = {
     nextPage: '下一页',
     lastPage: '最后一页',
   },
+  skeleton: {
+    loading: '正在加载内容',
+  },
   textBox: {
     clear: '清除输入',
     loading: '正在加载',

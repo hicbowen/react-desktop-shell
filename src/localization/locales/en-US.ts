@@ -125,6 +125,9 @@ export const enUSMessages = {
     nextPage: 'Next page',
     lastPage: 'Last page',
   },
+  skeleton: {
+    loading: 'Loading content',
+  },
   textBox: {
     clear: 'Clear input',
     loading: 'Loading',

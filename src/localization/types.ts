@@ -113,6 +113,9 @@ export interface AppLocaleMessages {
     nextPage: string
     lastPage: string
   }
+  skeleton: {
+    loading: string
+  }
   textBox: {
     clear: string
     loading: string
