@@ -26,6 +26,15 @@ export const zhCNInteractiveText: Record<string, string> = {
   Ready: '就绪',
   Connected: '已连接',
   'Ln 24, Col 8': '第 24 行，第 8 列',
+  Record: '记录', Phase: '阶段',
+  auto: '自动', always: '始终显示', hidden: '隐藏', stable: '稳定',
+  'Reduce content': '减少内容', 'Add content': '增加内容', gutter: '边槽',
+  'Release notes': '发行说明', 'Recently installed versions': '最近安装的版本',
+  'Check for updates': '检查更新', 'Tool settings': '工具设置', Option: '选项',
+  'Example configuration for a desktop tool': '桌面工具的示例配置', Configure: '配置',
+  'Recent records': '最近记录', Timeline: '时间线', 'Data matrix': '数据矩阵',
+  'Theme-aware activity': '主题感知活动',
+  'scrollbar example': '滚动条示例', 'gutter example': '边槽示例',
 }
 
 export function useDemoCopy() {

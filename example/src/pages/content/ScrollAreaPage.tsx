@@ -10,20 +10,23 @@ import {
   AppSettingsRow,
 } from '../../../../src'
 import { DemoPage, DemoPreview, DemoSection } from '../../components/DemoPage'
+import { useDemoCopy } from '../../i18n/interactiveTranslations'
 
-const entries = Array.from({ length: 18 }, (_, index) => `Record ${index + 1}`)
+const entries = Array.from({ length: 18 }, (_, index) => index + 1)
 
 function ScrollRows({ count = entries.length }: { count?: number }) {
+  const t = useDemoCopy()
   return (
     <div className="demo-scroll-list">
       {entries.slice(0, count).map((entry) => (
-        <div className="demo-scroll-row" key={entry}>{entry}</div>
+        <div className="demo-scroll-row" key={entry}>{t('Record')} {entry}</div>
       ))}
     </div>
   )
 }
 
 export function AppScrollAreaPage() {
+  const t = useDemoCopy()
   const [showOverflow, setShowOverflow] = useState(false)
   const gutterCount = showOverflow ? 18 : 4
 
@@ -32,7 +35,7 @@ export function AppScrollAreaPage() {
       <DemoSection title="Vertical">
         <DemoPreview>
           <AppScrollArea
-            aria-label="Recent records"
+            aria-label={t('Recent records')}
             className="demo-scroll-frame"
             style={{ height: 240 }}
           >
@@ -44,13 +47,13 @@ export function AppScrollAreaPage() {
       <DemoSection title="Horizontal">
         <DemoPreview>
           <AppScrollArea
-            aria-label="Timeline"
+            aria-label={t('Timeline')}
             className="demo-scroll-frame"
             orientation="horizontal"
           >
             <div className="demo-scroll-horizontal-content">
               {Array.from({ length: 12 }, (_, index) => (
-                <div className="demo-scroll-tile" key={index}>Phase {index + 1}</div>
+                <div className="demo-scroll-tile" key={index}>{t('Phase')} {index + 1}</div>
               ))}
             </div>
           </AppScrollArea>
@@ -60,7 +63,7 @@ export function AppScrollAreaPage() {
       <DemoSection title="Both directions">
         <DemoPreview>
           <AppScrollArea
-            aria-label="Data matrix"
+            aria-label={t('Data matrix')}
             className="demo-scroll-frame"
             orientation="both"
             style={{ height: 220 }}
@@ -79,9 +82,9 @@ export function AppScrollAreaPage() {
           <div className="demo-scroll-comparison">
             {(['auto', 'always', 'hidden'] as const).map((scrollbar) => (
               <div className="demo-scroll-sample" key={scrollbar}>
-                <strong>{scrollbar}</strong>
+                <strong>{t(scrollbar)}</strong>
                 <AppScrollArea
-                  aria-label={`${scrollbar} scrollbar example`}
+                  aria-label={`${t(scrollbar)}${t('scrollbar example')}`}
                   className="demo-scroll-frame"
                   scrollbar={scrollbar}
                   style={{ height: 180 }}
@@ -98,15 +101,15 @@ export function AppScrollAreaPage() {
         <DemoPreview>
           <div className="demo-scroll-toolbar">
             <AppButton onClick={() => setShowOverflow((value) => !value)}>
-              {showOverflow ? 'Reduce content' : 'Add content'}
+              {t(showOverflow ? 'Reduce content' : 'Add content')}
             </AppButton>
           </div>
           <div className="demo-scroll-comparison">
             {(['auto', 'stable'] as const).map((gutter) => (
               <div className="demo-scroll-sample" key={gutter}>
-                <strong>gutter: {gutter}</strong>
+                <strong>{t('gutter')}: {t(gutter)}</strong>
                 <AppScrollArea
-                  aria-label={`${gutter} gutter example`}
+                  aria-label={`${t(gutter)}${t('gutter example')}`}
                   className="demo-scroll-frame"
                   gutter={gutter}
                   style={{ height: 180 }}
@@ -122,7 +125,7 @@ export function AppScrollAreaPage() {
       <DemoSection title="Theme-aware surface">
         <DemoPreview>
           <AppScrollArea
-            aria-label="Theme-aware activity"
+            aria-label={t('Theme-aware activity')}
             className="demo-scroll-frame"
             gutter="stable"
             style={{ height: 180 }}
@@ -137,17 +140,17 @@ export function AppScrollAreaPage() {
           <AppCard>
             <AppCardHeader
               icon={<FileClock />}
-              title="Release notes"
-              description="Recently installed versions"
+              title={t('Release notes')}
+              description={t('Recently installed versions')}
             />
             <AppScrollArea
-              aria-label="Release notes"
+              aria-label={t('Release notes')}
               gutter="stable"
               style={{ maxHeight: 220 }}
             >
               <ScrollRows count={14} />
             </AppScrollArea>
-            <AppCardFooter start="Version 0.6.0" end={<AppButton appearance="primary">Check for updates</AppButton>} />
+            <AppCardFooter start="Version 0.6.0" end={<AppButton appearance="primary">{t('Check for updates')}</AppButton>} />
           </AppCard>
         </DemoPreview>
       </DemoSection>
@@ -155,16 +158,16 @@ export function AppScrollAreaPage() {
       <DemoSection title="Settings detail pane">
         <DemoPreview>
           <div className="demo-scroll-settings-pane">
-            <header><Settings2 size={18} /><strong>Tool settings</strong></header>
-            <AppScrollArea aria-label="Tool settings" gutter="stable">
+            <header><Settings2 size={18} /><strong>{t('Tool settings')}</strong></header>
+            <AppScrollArea aria-label={t('Tool settings')} gutter="stable">
               <AppSettingsGroup>
                 {Array.from({ length: 10 }, (_, index) => (
                   <AppSettingsRow
                     key={index}
                     icon={<Clock3 />}
-                    title={`Option ${index + 1}`}
-                    description="Example configuration for a desktop tool"
-                    control={<AppButton size="compact">Configure</AppButton>}
+                    title={`${t('Option')} ${index + 1}`}
+                    description={t('Example configuration for a desktop tool')}
+                    control={<AppButton size="compact">{t('Configure')}</AppButton>}
                   />
                 ))}
               </AppSettingsGroup>
