@@ -1,4 +1,22 @@
 export { AppShell } from './shell/AppShell'
+export {
+  AppCommandProvider,
+  executeAppCommand,
+  formatAppShortcut,
+  isAppEditableTarget,
+  matchesAppShortcut,
+  useAppCommand,
+  useAppCommandExecutor,
+  useAppCommands,
+} from './command'
+export type {
+  AppCommand,
+  AppCommandApi,
+  AppCommandExecutionContext,
+  AppCommandExecutionSource,
+  AppCommandProviderProps,
+  AppShortcut,
+} from './command'
 export type { AppLocale } from './localization'
 export { AppButton, AppIconButton } from './button'
 export { AppEmptyState } from './empty-state'

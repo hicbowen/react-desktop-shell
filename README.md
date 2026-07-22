@@ -219,6 +219,32 @@ reorderable tabs, large filter sets, overflow menus, or routing.
 
 ## Button primitives
 
+## Commands and keyboard shortcuts
+
+`AppCommandProvider` keeps command metadata and execution in one platform-neutral
+model. Toolbars, menus, command palettes, and keyboard shortcuts can consume the
+same command without importing Wails, Electron, Tauri, or another host runtime.
+
+```tsx
+const commands: AppCommand[] = [{
+  id: 'file.save',
+  label: 'Save',
+  icon: <Save />,
+  shortcut: { ctrl: true, key: 's' },
+  execute: () => saveDocument(),
+}]
+
+<AppCommandProvider commands={commands}>
+  <Workspace />
+</AppCommandProvider>
+```
+
+Use `useAppCommand` to read one command and `useAppCommands` to execute commands
+from a named surface. Disabled and hidden commands do not execute. Shortcuts are
+ignored while users edit text by default; set `allowInEditable` only for a
+command that intentionally overrides native editing behavior. Nested providers
+inherit parent commands and may override them by id.
+
 `AppButton` provides standard, primary, subtle, and danger desktop commands in compact or standard sizes. It supports leading or trailing icons, stable loading states, native button attributes, and ref forwarding. Use `AppIconButton` for icon-only commands and always supply `ariaLabel` or `aria-label`; compose tooltips with `AppTooltip`.
 
 ```tsx

@@ -1,12 +1,38 @@
-import { useState } from 'react'
-import { Copy, Pencil, Plus, RefreshCw, Trash2 } from 'lucide-react'
-import { AppButton, AppCheckBox, AppContextMenu, AppSelect, AppTextBox, AppToolbar, useAppContextMenu } from '../../../../src'
+import { useMemo, useState } from 'react'
+import { Copy, Pencil, Plus, RefreshCw, Save, Trash2 } from 'lucide-react'
+import { AppButton, AppCheckBox, AppCommandProvider, AppContextMenu, AppSelect, AppTextBox, AppToolbar, formatAppShortcut, useAppCommand, useAppCommands, useAppContextMenu, type AppCommand } from '../../../../src'
 import { DemoControls, DemoPage, DemoPreview, DemoSection } from '../../components/DemoPage'
 
 export function AppToolbarPage() {
   const [compact, setCompact] = useState(false)
   const size = compact ? 'compact' : 'standard'
   return <DemoPage><DemoControls><AppCheckBox checked={compact} label="Compact controls" onCheckedChange={setCompact} /></DemoControls><DemoSection title="Three aligned regions"><DemoPreview><AppToolbar start={<><AppTextBox aria-label="Filter items" placeholder="Filter items" size={size} /><AppSelect aria-label="Status" defaultValue="all" options={[{ value: 'all', label: 'All states' }, { value: 'ready', label: 'Ready' }]} size={size} /></>} status={<span>24 items</span>} end={<><AppButton size={size}>Secondary</AppButton><AppButton appearance="primary" size={size}>Primary action</AppButton></>} /></DemoPreview><p className="demo-note">The compact toggle is page-local: {compact ? 'on' : 'off'}.</p></DemoSection></DemoPage>
+}
+
+function CommandButtons() {
+  const save = useAppCommand('file.save')
+  const { execute } = useAppCommands()
+
+  return <AppToolbar
+    start={<AppButton disabled={save?.disabled} icon={save?.icon} onClick={() => execute('file.save', { source: 'toolbar' })}>{save?.label}</AppButton>}
+    status={save?.shortcut ? <span>{formatAppShortcut(save.shortcut)}</span> : null}
+  />
+}
+
+export function AppCommandPage() {
+  const [saved, setSaved] = useState(0)
+  const [enabled, setEnabled] = useState(true)
+  const commands = useMemo<AppCommand[]>(() => [{
+    id: 'file.save',
+    label: 'Save document',
+    description: 'Save the active document',
+    icon: <Save />,
+    shortcut: { ctrl: true, key: 's' },
+    disabled: !enabled,
+    execute: () => setSaved((value) => value + 1),
+  }], [enabled])
+
+  return <AppCommandProvider commands={commands}><DemoPage><DemoControls><AppCheckBox checked={enabled} label="Command enabled" onCheckedChange={setEnabled} /></DemoControls><DemoSection title="Shared command state" description="The button and Ctrl+S shortcut execute the same platform-neutral command."><DemoPreview><CommandButtons /></DemoPreview><p className="demo-note">Executed {saved} times.</p></DemoSection></DemoPage></AppCommandProvider>
 }
 
 export function ContextMenuPage() {
