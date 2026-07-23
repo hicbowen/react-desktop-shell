@@ -122,6 +122,23 @@ describe('AppRail scroll fade', () => {
     expect(onChange).toHaveBeenCalledWith('home')
   })
 
+  it('supports uncontrolled value and the preferred onValueChange callback', () => {
+    const onValueChange = vi.fn()
+    render(
+      <AppRail
+        defaultValue="home"
+        items={items}
+        onValueChange={onValueChange}
+      />,
+    )
+
+    const buttons = container.querySelectorAll<HTMLButtonElement>('.app-rail__item')
+    expect(buttons[0]?.getAttribute('aria-current')).toBe('page')
+    act(() => buttons[1]?.click())
+    expect(buttons[1]?.getAttribute('aria-current')).toBe('page')
+    expect(onValueChange).toHaveBeenCalledWith('files')
+  })
+
   it('assigns depth-based indentation to submenu children', () => {
     render(
       <AppRail

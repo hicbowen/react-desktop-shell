@@ -42,7 +42,7 @@ export function AppRailPage() {
           <div className="demo-rail-preview">
             <AppRail
               value={selected}
-              onChange={setSelected}
+              onValueChange={setSelected}
               items={[
                 {
                   key: 'first',
@@ -108,7 +108,7 @@ export function AppSelectorBarPage() {
               { key: 'done', label: t('Completed') },
             ]}
             value={basicView}
-            onChange={setBasicView}
+            onValueChange={setBasicView}
           />
         </DemoPreview>
       </DemoSection>
@@ -166,7 +166,7 @@ export function AppSelectorBarPage() {
                 { key: 'completed', label: t('Completed') },
               ]}
               value={taskView}
-              onChange={setTaskView}
+              onValueChange={setTaskView}
             />
             <div className="demo-selector-task-summary">
               <ListTodo aria-hidden="true" size={20} />
@@ -193,7 +193,7 @@ export function AppSelectorBarPage() {
                 },
               ]}
               value={unmountView}
-              onChange={setUnmountView}
+              onValueChange={setUnmountView}
             />
             <AppSelectorPanels value={unmountView}>
               <AppSelectorPanel id="unmount-recent" value="recent">
@@ -224,7 +224,7 @@ export function AppSelectorBarPage() {
                 },
               ]}
               value={hiddenView}
-              onChange={setHiddenView}
+              onValueChange={setHiddenView}
             />
             <AppSelectorPanels mountStrategy="hidden" value={hiddenView}>
               <AppSelectorPanel id="hidden-recent" value="recent">

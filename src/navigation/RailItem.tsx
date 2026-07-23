@@ -38,6 +38,7 @@ export function RailItem({
 
   const button = (
     <button
+      aria-current={active ? 'page' : undefined}
       aria-label={collapsed && !nested ? item.label : undefined}
       className={classNames.filter(Boolean).join(' ')}
       disabled={item.disabled}

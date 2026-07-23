@@ -16,8 +16,10 @@ const SCROLL_HINT_THRESHOLD = 1
 
 export function AppRail({
   value,
+  defaultValue,
   footerItems = [],
   items,
+  onValueChange,
   onChange,
   collapsed,
   collapseBreakpoint,
@@ -30,11 +32,21 @@ export function AppRail({
   const navRef = useRef<HTMLElement | null>(null)
   const triggerRefs = useRef(new Map<string, HTMLButtonElement>())
   const [canScrollDown, setCanScrollDown] = useState(false)
+  const isValueControlled = value !== undefined
+  const [internalValue, setInternalValue] = useState(defaultValue)
+  const currentValue = isValueControlled ? value : internalValue
+  const handleValueChange = useCallback((nextValue: string) => {
+    if (!isValueControlled) {
+      setInternalValue(nextValue)
+    }
+    onValueChange?.(nextValue)
+    onChange?.(nextValue)
+  }, [isValueControlled, onChange, onValueChange])
   const rail = useRailController({
-    value,
+    value: currentValue,
     footerItems,
     items,
-    onChange,
+    onChange: handleValueChange,
     collapsed,
     collapseBreakpoint,
     onCollapsedChange,
@@ -185,7 +197,7 @@ export function AppRail({
 
       {rail.currentFlyout && rail.activeFlyoutSubmenu ? (
         <RailFlyout
-          activeValue={value}
+          activeValue={currentValue}
           flyout={rail.currentFlyout}
           getTrigger={getFlyoutTrigger}
           onChange={rail.handleItemChange}

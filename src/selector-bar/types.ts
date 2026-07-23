@@ -13,6 +13,8 @@ export interface AppSelectorBarProps {
   items: AppSelectorBarItem[]
   value?: string
   defaultValue?: string
+  onValueChange?: (value: string) => void
+  /** @deprecated Use onValueChange instead. */
   onChange?: (key: string) => void
   size?: 'small' | 'medium'
   disabled?: boolean

@@ -214,10 +214,25 @@ describe('AppSelectorBar', () => {
     expect(onChange).toHaveBeenCalledWith('all')
   })
 
-  it('falls back and reports the new value when a controlled value is unavailable', () => {
+  it('does not replace or report an unavailable controlled value', () => {
+    const onValueChange = vi.fn()
+    render(<AppSelectorBar items={items.slice(1)} onValueChange={onValueChange} value="all" />)
+    expect(container.querySelectorAll('[aria-checked="true"]')).toHaveLength(0)
+    expect(onValueChange).not.toHaveBeenCalled()
+  })
+
+  it('uses onValueChange and keeps the deprecated onChange callback compatible', () => {
+    const onValueChange = vi.fn()
     const onChange = vi.fn()
-    render(<AppSelectorBar items={items.slice(1)} onChange={onChange} value="all" />)
-    expect(radio('Open').getAttribute('aria-checked')).toBe('true')
+    render(
+      <AppSelectorBar
+        items={items}
+        onChange={onChange}
+        onValueChange={onValueChange}
+      />,
+    )
+    act(() => radio('Open').click())
+    expect(onValueChange).toHaveBeenCalledWith('open')
     expect(onChange).toHaveBeenCalledWith('open')
   })
 

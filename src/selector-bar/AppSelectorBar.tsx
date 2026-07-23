@@ -26,6 +26,7 @@ export function AppSelectorBar({
   items,
   value,
   defaultValue,
+  onValueChange,
   onChange,
   size = 'medium',
   disabled = false,
@@ -51,9 +52,22 @@ export function AppSelectorBar({
     return resolveSelectorValue(defaultValue, items)
   })
   const requestedValue = isControlled ? value : internalValue
-  const selectedKey = resolveSelectorValue(requestedValue, items)
+  const selectedKey = isControlled
+    ? items.some((item) => item.key === requestedValue && !item.disabled)
+      ? requestedValue
+      : undefined
+    : resolveSelectorValue(requestedValue, items)
+  const notifyValueChange = (nextValue: string) => {
+    onValueChange?.(nextValue)
+    onChange?.(nextValue)
+  }
 
   useEffect(() => {
+    if (isControlled) {
+      reconciliationRef.current = undefined
+      return
+    }
+
     if (requestedValue === selectedKey) {
       reconciliationRef.current = undefined
       return
@@ -85,13 +99,14 @@ export function AppSelectorBar({
         value: requestedValue,
         fallback: selectedKey,
       }
+      onValueChange?.(selectedKey)
       onChange?.(selectedKey)
     }
 
     return () => {
       internalUpdateActive = false
     }
-  }, [isControlled, onChange, requestedValue, selectedKey])
+  }, [isControlled, onChange, onValueChange, requestedValue, selectedKey])
 
   const select = (key: string) => {
     if (disabled || !availableKeys.includes(key) || key === selectedKey) {
@@ -101,7 +116,7 @@ export function AppSelectorBar({
     if (!isControlled) {
       setInternalValue(key)
     }
-    onChange?.(key)
+    notifyValueChange(key)
   }
 
   const handleKeyDown = (

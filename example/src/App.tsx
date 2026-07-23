@@ -64,7 +64,7 @@ export function ExampleApp() {
             onToggleMaximize={() => setMaximized((value) => !value)}
           />
         }
-        rail={<AppRail value={activeKey} items={railItems} footerItems={railFooterItems} onChange={navigateTo} />}
+        rail={<AppRail value={activeKey} items={railItems} footerItems={railFooterItems} onValueChange={navigateTo} />}
         contentClassName="example-content"
       >
         <AppPage

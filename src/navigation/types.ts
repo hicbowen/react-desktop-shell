@@ -32,8 +32,11 @@ export type RailEntry = RailLinkItem | RailSubmenu | RailGroup
 
 export interface AppRailProps {
   value?: string
+  defaultValue?: string
   items: RailEntry[]
   footerItems?: RailItem[]
+  onValueChange?: (value: string) => void
+  /** @deprecated Use onValueChange instead. */
   onChange?: (key: string) => void
   collapsed?: boolean
   collapseBreakpoint?: number
