@@ -2,29 +2,32 @@ import { useState, type ComponentProps } from 'react'
 import { FileImage, FileSpreadsheet, UploadCloud } from 'lucide-react'
 import { AppFileDropOverlay } from '../../../../src'
 import { DemoPage, DemoPreview, DemoSection } from '../../components/DemoPage'
+import { useDemoCopy } from '../../i18n/interactiveTranslations'
 
 const imageAccept = ['image/*']
 const spreadsheetAccept = ['.xlsx', '.csv']
 
 function ReceivedFiles({ files }: { files: File[] }) {
+  const t = useDemoCopy()
   return (
     <div className="demo-file-drop-results">
-      <strong>Received {files.length} files</strong>
+      <strong>{t('Received')} {files.length} {t('files')}</strong>
       {files.length > 0 ? (
         <ul>{files.map((file) => <li key={`${file.name}-${file.size}`}>{file.name}</li>)}</ul>
       ) : (
-        <span>Drag files into this region to test the overlay.</span>
+        <span>{t('Drag files into this region to test the overlay.')}</span>
       )}
     </div>
   )
 }
 
 export function AppFileDropOverlayPage() {
+  const t = useDemoCopy()
   const [pageFiles, setPageFiles] = useState<File[]>([])
   const [localFiles, setLocalFiles] = useState<File[]>([])
   const [lastReject, setLastReject] = useState('None')
   const handleReject: ComponentProps<typeof AppFileDropOverlay>['onReject'] =
-    (files, reason) => setLastReject(`${reason}: ${files.length} file(s)`)
+    (files, reason) => setLastReject(`${t(reason)}：${files.length} ${t('files rejected')}`)
 
   return (
     <DemoPage>

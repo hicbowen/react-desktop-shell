@@ -163,6 +163,9 @@ export const zhCNMessages = {
     clear: '清除输入',
     loading: '正在加载',
   },
+  select: {
+    clear: '清除选择',
+  },
   numberBox: {
     increase: '增加数值',
     decrease: '减少数值',

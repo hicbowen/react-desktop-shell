@@ -55,6 +55,8 @@ export { AppRangeSlider } from './range-slider'
 export type { AppRangeSliderProps, AppRangeSliderValue } from './range-slider'
 export { AppFormLayout, AppValidationSummary } from './form-layout'
 export type { AppFormLayoutProps, AppValidationError, AppValidationSummaryProps } from './form-layout'
+export { AppCompactGroup, AppControlAddon } from './compact-group'
+export type { AppCompactGroupProps, AppControlAddonProps } from './compact-group'
 export { AppShortcutRecorder } from './shortcut-recorder'
 export type { AppShortcutRecorderProps } from './shortcut-recorder'
 export { AppToggleButton, AppToggleButtonGroup } from './toggle-button'
@@ -85,11 +87,11 @@ export { AppSlider } from './slider'
 export { AppTextArea, AppTextBox } from './text-input'
 export { AppComboBox } from './combo-box'
 export { AppAutoComplete } from './auto-complete'
-export { AppCheckBox, AppRadioGroup, AppSegmentedControl, AppToggleSwitch } from './selection-controls'
+export { AppCheckBox, AppCheckBoxGroup, AppRadioGroup, AppSegmentedControl, AppToggleSwitch } from './selection-controls'
 export { AppNumberBox, AppSelect } from './number-select'
 export { AppListView, AppListViewItem } from './list-view'
 export { AppExpander } from './expander'
-export { AppPopover } from './popover'
+export { AppConfirmPopover, AppPopover } from './popover'
 export {
   AppCalendar,
   AppDatePicker,
@@ -152,6 +154,8 @@ export type {
   AppAutoCompleteOption,
   AppAutoCompleteProps,
   AppCheckBoxProps,
+  AppCheckBoxGroupOption,
+  AppCheckBoxGroupProps,
   AppRadioGroupOption,
   AppRadioGroupProps,
   AppSegmentedControlOption,
@@ -164,6 +168,7 @@ export type {
   AppListViewProps,
   AppExpanderProps,
   AppPopoverProps,
+  AppConfirmPopoverProps,
   AppDatePickerProps,
   AppCalendarProps,
   AppDateRangePickerProps,

@@ -168,6 +168,9 @@ export const enUSMessages = {
     clear: 'Clear input',
     loading: 'Loading',
   },
+  select: {
+    clear: 'Clear selection',
+  },
   numberBox: {
     increase: 'Increase value',
     decrease: 'Decrease value',

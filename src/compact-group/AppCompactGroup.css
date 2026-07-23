@@ -1,0 +1,88 @@
+.app-compact-group {
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: stretch;
+  isolation: isolate;
+}
+
+.app-compact-group--horizontal {
+  flex-direction: row;
+}
+
+.app-compact-group--vertical {
+  flex-direction: column;
+}
+
+.app-compact-group--full-width {
+  width: 100%;
+}
+
+.app-compact-group--full-width > .app-compact-group__control:not(.app-control-addon) {
+  min-width: 0;
+  flex: 1 1 0;
+}
+
+.app-compact-group > .app-compact-group__control {
+  position: relative;
+  border-radius: 0;
+}
+
+.app-compact-group--horizontal > .app-compact-group__control + .app-compact-group__control {
+  margin-left: -1px;
+}
+
+.app-compact-group--horizontal > .app-compact-group__control:first-child {
+  border-radius: 5px 0 0 5px;
+}
+
+.app-compact-group--horizontal > .app-compact-group__control:last-child {
+  border-radius: 0 5px 5px 0;
+}
+
+.app-compact-group--horizontal > .app-compact-group__control:only-child {
+  border-radius: 5px;
+}
+
+.app-compact-group--vertical > .app-compact-group__control + .app-compact-group__control {
+  margin-top: -1px;
+}
+
+.app-compact-group--vertical > .app-compact-group__control:first-child {
+  border-radius: 5px 5px 0 0;
+}
+
+.app-compact-group--vertical > .app-compact-group__control:last-child {
+  border-radius: 0 0 5px 5px;
+}
+
+.app-compact-group--vertical > .app-compact-group__control:only-child {
+  border-radius: 5px;
+}
+
+.app-compact-group > .app-compact-group__control:hover,
+.app-compact-group > .app-compact-group__control:focus,
+.app-compact-group > .app-compact-group__control:focus-within {
+  z-index: 1;
+}
+
+.app-control-addon {
+  box-sizing: border-box;
+  min-height: 32px;
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  padding: 0 9px;
+  color: var(--app-shell-secondary-text-color, rgb(0 0 0 / 62%));
+  background: var(--app-shell-hover-bg, rgb(0 0 0 / 4%));
+  border: 1px solid var(--app-shell-border-color, rgb(0 0 0 / 18%));
+  font: inherit;
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+.app-control-addon--compact {
+  min-height: 27px;
+  padding-inline: 7px;
+  font-size: 12px;
+}

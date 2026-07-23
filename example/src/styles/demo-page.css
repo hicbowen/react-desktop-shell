@@ -763,6 +763,40 @@
   gap: 20px;
 }
 
+.demo-component-page--fill {
+  height: 100%;
+  min-height: 0;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+}
+
+.demo-source-panel {
+  min-width: 0;
+}
+
+.demo-source-panel .app-expander__content {
+  padding: 0;
+}
+
+.demo-source-code {
+  max-height: min(560px, 65vh);
+  margin: 0;
+  padding: 16px;
+  overflow: auto;
+  color: var(--app-shell-text-color);
+  background: color-mix(in srgb, var(--app-shell-text-color) 4%, transparent);
+  border-top: 1px solid var(--app-shell-border-color);
+  font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+  font-size: 12px;
+  line-height: 1.55;
+  tab-size: 2;
+  white-space: pre;
+}
+
+.demo-source-code:focus-visible {
+  outline: 2px solid var(--app-shell-accent-color);
+  outline-offset: -2px;
+}
+
 .demo-component-meta {
   padding: 10px 12px;
   display: flex;

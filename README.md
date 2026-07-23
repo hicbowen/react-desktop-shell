@@ -299,6 +299,33 @@ the application. It does not discover or invoke host APIs itself.
 <AppIconButton ariaLabel="More actions" appearance="subtle" icon={<MoreHorizontal />} />
 ```
 
+## Compact control groups
+
+`AppCompactGroup` visually joins adjacent controls by collapsing shared borders
+and applying outer corner radii. It is deliberately stateless: buttons retain
+independent actions, and inputs retain their own values, events, refs, and form
+behavior. Use `AppToggleButtonGroup` for persistent button selection and
+`AppSegmentedControl` for mutually exclusive modes instead. Direct children
+must accept and forward `className`.
+
+`AppControlAddon` provides non-interactive leading, trailing, or intermediate
+content such as units and short labels. Match its `size` to compact child
+controls when necessary.
+
+```tsx
+<AppCompactGroup>
+  <AppControlAddon>Last</AppControlAddon>
+  <AppNumberBox min={1} value={count} onValueChange={setCount} />
+  <AppControlAddon>times</AppControlAddon>
+</AppCompactGroup>
+
+<AppCompactGroup aria-label="History actions">
+  <AppButton>Back</AppButton>
+  <AppButton>Forward</AppButton>
+  <AppButton>Refresh</AppButton>
+</AppCompactGroup>
+```
+
 ## Fields and empty states
 
 `AppField` supplies label, description or error messaging, required state, and vertical or settings-friendly horizontal layout without controlling its child input. `AppEmptyState` presents a restrained regular or compact empty state with optional icon, description, and action.
@@ -371,21 +398,23 @@ DataTable control or pagination locale overrides.
 
 ## Text inputs
 
-`AppTextBox` wraps native input behavior with optional icons, clear and loading affordances. Their built-in accessible labels follow the `AppShell` locale. `AppTextArea` supports character counts and dependency-free automatic height within row limits, including padding and borders. Both forward refs and compose with `AppField`.
+`AppTextBox` wraps native input behavior with optional icons, clear and loading affordances. Their built-in accessible labels follow the `AppShell` locale. `AppTextArea` supports character counts, full-width layout, and dependency-free automatic height within row limits, including padding and borders. Its native `style` and other textarea attributes apply to the inner control, while `className` and `fullWidth` configure the component root. Both forward refs and compose with `AppField`.
 
 ```tsx
 <AppTextBox value={name} onChange={(event) => setName(event.target.value)} clearable />
 <AppTextArea autoResize minRows={2} maxRows={8} showCount maxLength={500} />
+<AppTextArea fullWidth placeholder="Notes" />
 ```
 
 ## Selection controls
 
-`AppCheckBox` uses a native checkbox and supports controlled, uncontrolled, and indeterminate states. While `indeterminate` remains true, the native property and `aria-checked="mixed"` are restored after every interaction; `onCheckedChange` reports the browser's resulting boolean checked value, and the parent decides when to clear `indeterminate`. `AppRadioGroup` provides labelled horizontal or vertical single-choice fields, while `AppSegmentedControl` presents a few short choices in a compact filled surface. `AppToggleSwitch` exposes switch semantics, immediate state changes, label placement, and compact sizing.
+`AppCheckBox` uses a native checkbox and supports controlled, uncontrolled, and indeterminate states. While `indeterminate` remains true, the native property and `aria-checked="mixed"` are restored after every interaction; `onCheckedChange` reports the browser's resulting boolean checked value, and the parent decides when to clear `indeterminate`. `AppCheckBoxGroup` manages a string array across labelled horizontal or vertical options. `AppRadioGroup` provides labelled horizontal or vertical single-choice fields, while `AppSegmentedControl` presents a few short choices in a compact filled surface and preserves string or numeric values in its callback. `AppToggleSwitch` exposes switch semantics, immediate state changes, label placement, and compact sizing.
 
 ```tsx
 <AppCheckBox checked={selected} onCheckedChange={setSelected} label="Include suggestions" />
 <AppRadioGroup defaultValue="comfortable" label="Density" options={densityOptions} />
 <AppSegmentedControl ariaLabel="Layout" defaultValue="list" options={layoutOptions} />
+<AppCheckBoxGroup name="topics" options={topicOptions} value={topics} onValueChange={setTopics} />
 <AppToggleSwitch defaultChecked label="Automatic updates" />
 ```
 
@@ -418,7 +447,9 @@ interaction.
 `AppDateRangePicker` uses a complete `AppDateRangeValue` for committed state.
 Selections inside the calendar remain pending until Apply is pressed. Cancel,
 Escape, and outside pointer dismissal discard pending dates without calling
-`onValueChange`. Range lengths include both endpoints.
+`onValueChange`. Range lengths include both endpoints. Its default minimum
+width adapts to its container and can be customized with
+`--rds-date-range-picker-min-width`.
 
 ```tsx
 const [range, setRange] =
@@ -506,11 +537,12 @@ submit the start and end as `HH:mm`.
 
 ## Number and select controls
 
-`AppNumberBox` separates temporary editing text from its committed value. Blur and Enter commit valid input, Escape restores the committed value, and buttons or Arrow keys apply normalized steps. Pointer step buttons keep the input focused and apply pending valid text as a single final update. In controlled mode, rejected parent updates restore the current prop value. `AppSelect` visually wraps a native single-value select. Its values are strings, matching native form behavior; convert domain numbers at the application boundary.
+`AppNumberBox` separates temporary editing text from its committed value. Blur and Enter commit valid input, Escape restores the committed value, and buttons or Arrow keys apply normalized steps. Pointer step buttons keep the input focused and apply pending valid text as a single final update. In controlled mode, rejected parent updates restore the current prop value. `AppSelect` visually wraps a native single-value select. Selected values are strings, matching native form behavior, while `null` explicitly represents no selection and `undefined` leaves the component uncontrolled. `placeholder` labels the empty state, `defaultValue` only initializes uncontrolled state, and `clearable` lets non-required selections return to `null`. Convert domain numbers at the application boundary.
 
 ```tsx
 <AppNumberBox value={duration} min={1} max={180} step={5} onValueChange={setDuration} />
 <AppSelect options={courses} value={course} onValueChange={setCourse} />
+<AppSelect clearable options={courses} placeholder="Choose a course" />
 ```
 
 ## Combo box
@@ -590,7 +622,30 @@ metadata, descriptions, and keyboard adjustment of the property-name column.
 </AppPopover>
 ```
 
-Do not use `AppPopover` for menus, modal confirmations, guided teaching, or short non-interactive hints. Use `AppMenuFlyout` for menus and commands, `AppDialog` for modal content or decisions, `AppTeachingTip` for guidance, and `AppTooltip` for hints.
+Do not assemble confirmation behavior manually inside `AppPopover`.
+`AppConfirmPopover` reuses the same anchored overlay infrastructure for a
+small, local decision. It focuses Cancel first, treats Escape, outside
+dismissal, and trigger dismissal as cancellation, restores trigger focus, and
+keeps the surface open with a loading state while an asynchronous confirmation
+is pending. A rejected confirmation remains open and is reported through
+`onConfirmError`.
+
+```tsx
+<AppConfirmPopover
+  title="Delete this item?"
+  description="This removes it from the current list."
+  confirmText="Delete"
+  confirmAppearance="danger"
+  onConfirm={deleteItem}
+  onConfirmError={reportError}
+  trigger={<AppButton appearance="danger">Delete</AppButton>}
+/>
+```
+
+Use `AppConfirmPopover` only for a single nearby action. Use
+`useAppMessageBox().confirm()` or `AppDialog` for global, highly destructive, or
+multi-step decisions. Use `AppMenuFlyout` for menus and commands,
+`AppTeachingTip` for guidance, and `AppTooltip` for hints.
 
 `AppCard` is a low-contrast Fluent content surface for desktop tools, settings,
 status summaries, recent projects, and utility entry points. It is not a fixed

@@ -2,10 +2,12 @@ import { Code2, Folder } from 'lucide-react'
 import { useState } from 'react'
 import { AppTag, type AppTagColor } from '../../../../src'
 import { DemoPage, DemoPreview, DemoSection } from '../../components/DemoPage'
+import { useDemoCopy } from '../../i18n/interactiveTranslations'
 
 const colors: AppTagColor[] = ['neutral', 'brand', 'blue', 'teal', 'green', 'yellow', 'orange', 'red', 'purple', 'pink']
 
 export function TagPage() {
+  const t = useDemoCopy()
   const [topics, setTopics] = useState(['React', 'TypeScript', 'Desktop'])
   return <DemoPage>
     <DemoSection title="Colors" description="Use semantic colors for meaning and palette colors for categories.">
@@ -26,7 +28,7 @@ export function TagPage() {
     </DemoSection>
     <DemoSection title="Dismissible tags" description="The remove button is the only interactive part of a tag.">
       <DemoPreview className="demo-component-row">
-        {topics.map((topic, index) => <AppTag color={colors[index + 1]} dismissLabel={`Remove ${topic}`} key={topic} onDismiss={() => setTopics((current) => current.filter((item) => item !== topic))}>{topic}</AppTag>)}
+        {topics.map((topic, index) => <AppTag color={colors[index + 1]} dismissLabel={`${t('Remove')} ${topic}`} key={topic} onDismiss={() => setTopics((current) => current.filter((item) => item !== topic))}>{topic}</AppTag>)}
         {topics.length === 0 ? <span className="demo-note">All tags removed.</span> : null}
       </DemoPreview>
     </DemoSection>

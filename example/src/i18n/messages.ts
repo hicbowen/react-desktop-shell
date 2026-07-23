@@ -7,6 +7,10 @@ export const enUSDemoMessages = {
   componentPage: {
     detailsLabel: 'Component details',
     related: 'Related',
+    sourceCode: 'Example source',
+    copySource: 'Copy source',
+    copied: 'Copied',
+    copyFailed: 'Copy failed',
     status: { stable: 'Stable', preview: 'Preview' },
   },
   search: {
@@ -51,6 +55,10 @@ export const zhCNDemoMessages: DemoMessages = {
   componentPage: {
     detailsLabel: '组件详情',
     related: '相关组件',
+    sourceCode: '示例源代码',
+    copySource: '复制源代码',
+    copied: '已复制',
+    copyFailed: '复制失败',
     status: { stable: '稳定', preview: '预览' },
   },
   search: {

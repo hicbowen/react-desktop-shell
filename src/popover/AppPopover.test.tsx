@@ -3,6 +3,7 @@ import { act, createRef, useState } from 'react'
 import { createRoot } from 'react-dom/client'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { AppOverlayHostContext } from '../overlay/AppOverlayHostContext'
+import { AppConfirmPopover } from './AppConfirmPopover'
 import { AppPopover } from './AppPopover'
 
 describe('AppPopover', () => {
@@ -61,6 +62,98 @@ describe('AppPopover', () => {
     expect(original).toHaveBeenCalledOnce()
     expect(popover()?.parentElement).toBe(document.body)
     expect(trigger().getAttribute('aria-expanded')).toBe('true')
+  })
+
+  it('runs lightweight confirmation and closes after success', async () => {
+    const confirm = vi.fn()
+    const openChange = vi.fn()
+    act(() => root.render(
+      <AppConfirmPopover
+        onConfirm={confirm}
+        onOpenChange={openChange}
+        title="Delete item?"
+        trigger={<button type="button">Delete</button>}
+      />,
+    ))
+    act(() => trigger().click())
+    flushFrames()
+    const dialog = document.body.querySelector<HTMLElement>('[role="dialog"]')
+    const actions = document.body.querySelectorAll<HTMLButtonElement>(
+      '.app-confirm-popover__actions button',
+    )
+    expect(dialog?.getAttribute('aria-labelledby')).toBeTruthy()
+    expect(document.activeElement).toBe(actions[0])
+    await act(async () => actions[1]?.click())
+    flushFrames()
+    expect(confirm).toHaveBeenCalledOnce()
+    expect(openChange).toHaveBeenLastCalledWith(false)
+    expect(popover()).toBeNull()
+    expect(document.activeElement).toBe(trigger())
+  })
+
+  it('treats outside dismissal as cancellation', () => {
+    const cancel = vi.fn()
+    act(() => root.render(
+      <AppConfirmPopover
+        defaultOpen
+        onCancel={cancel}
+        onConfirm={() => undefined}
+        title="Remove item?"
+        trigger={<button type="button">Remove</button>}
+      />,
+    ))
+    flushFrames()
+    pointerDown(host)
+    expect(cancel).toHaveBeenCalledOnce()
+    expect(popover()).toBeNull()
+  })
+
+  it('stays open and blocks dismissal while confirmation is pending', async () => {
+    let resolveConfirm!: () => void
+    const pending = new Promise<void>((resolve) => {
+      resolveConfirm = resolve
+    })
+    act(() => root.render(
+      <AppConfirmPopover
+        defaultOpen
+        onConfirm={() => pending}
+        title="Archive item?"
+        trigger={<button type="button">Archive</button>}
+      />,
+    ))
+    flushFrames()
+    const actions = document.body.querySelectorAll<HTMLButtonElement>(
+      '.app-confirm-popover__actions button',
+    )
+    act(() => actions[1]?.click())
+    expect(actions[0]?.disabled).toBe(true)
+    expect(actions[1]?.getAttribute('aria-busy')).toBe('true')
+    pointerDown(host)
+    expect(popover()).not.toBeNull()
+    await act(async () => resolveConfirm())
+    expect(popover()).toBeNull()
+  })
+
+  it('reports confirmation errors and keeps the popover open', async () => {
+    const error = new Error('Failed')
+    const onConfirmError = vi.fn()
+    act(() => root.render(
+      <AppConfirmPopover
+        defaultOpen
+        onConfirm={() => Promise.reject(error)}
+        onConfirmError={onConfirmError}
+        title="Retry action?"
+        trigger={<button type="button">Retry</button>}
+      />,
+    ))
+    flushFrames()
+    const actions = document.body.querySelectorAll<HTMLButtonElement>(
+      '.app-confirm-popover__actions button',
+    )
+    await act(async () => actions[1]?.click())
+    expect(onConfirmError).toHaveBeenCalledWith(error)
+    expect(popover()).not.toBeNull()
+    expect(actions[1]?.getAttribute('aria-busy')).toBeNull()
   })
 
   it('is non-interactive until positioning finishes', () => {

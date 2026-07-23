@@ -2,7 +2,7 @@ import { useId, useState } from 'react'
 import type { AppSegmentedControlProps } from './types'
 import './AppSelectionControls.css'
 
-export function AppSegmentedControl({
+export function AppSegmentedControl<T extends string | number = string>({
   ariaLabel,
   className,
   defaultValue,
@@ -16,13 +16,13 @@ export function AppSegmentedControl({
   size = 'standard',
   style,
   value,
-}: AppSegmentedControlProps) {
+}: AppSegmentedControlProps<T>) {
   const generatedName = useId()
   const [internalValue, setInternalValue] = useState(defaultValue)
   const selectedValue = value ?? internalValue
   const groupName = name ?? generatedName
 
-  const select = (nextValue: string) => {
+  const select = (nextValue: T) => {
     if (value === undefined) setInternalValue(nextValue)
     onValueChange?.(nextValue)
   }
@@ -58,7 +58,7 @@ export function AppSegmentedControl({
               onChange={() => select(option.value)}
               required={required}
               type="radio"
-              value={option.value}
+              value={String(option.value)}
             />
             <span className="app-segmented-control__content">
               {option.icon ? <span aria-hidden="true" className="app-segmented-control__icon">{option.icon}</span> : null}

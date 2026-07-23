@@ -20,6 +20,14 @@
 .app-check-box--disabled .app-check-box__box, .app-toggle-switch--disabled .app-toggle-switch__track { opacity: .55; }
 @media (prefers-reduced-motion: reduce) { .app-toggle-switch__track, .app-toggle-switch__thumb { transition: none; } }
 
+.app-check-box-group { display: grid; gap: 8px; color: var(--app-shell-text-color, #1f1f1f); font: inherit; font-size: 13px; }
+.app-check-box-group__heading { display: grid; gap: 2px; }
+.app-check-box-group__label { font-weight: 600; }
+.app-check-box-group__options { display: flex; gap: 10px 18px; }
+.app-check-box-group--vertical .app-check-box-group__options { flex-direction: column; }
+.app-check-box-group--horizontal .app-check-box-group__options { flex-flow: row wrap; }
+.app-check-box-group--disabled { color: var(--app-shell-disabled-text-color, rgb(0 0 0 / 36%)); }
+
 .app-radio-group {
   display: grid;
   gap: 8px;

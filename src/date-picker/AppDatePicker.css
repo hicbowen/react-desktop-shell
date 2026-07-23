@@ -104,7 +104,7 @@
 }
 
 .app-date-range-picker {
-  min-width: 340px;
+  min-width: min(var(--rds-date-range-picker-min-width, 340px), 100%);
 }
 
 .app-date-range-picker__segment {

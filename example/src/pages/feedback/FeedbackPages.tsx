@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { AppButton, AppDialog, AppInfoBar, AppTextBox, useAppMessageBox, useAppToast } from '../../../../src'
 import { DemoControls, DemoPage, DemoPreview, DemoSection } from '../../components/DemoPage'
+import { useDemoCopy } from '../../i18n/interactiveTranslations'
 
 export function AppInfoBarPage() {
   const [visible, setVisible] = useState({ info: true, success: true, warning: true, error: true })
@@ -10,7 +11,8 @@ export function AppInfoBarPage() {
 
 export function AppToastPage() {
   const toast = useAppToast()
-  return <DemoPage><DemoSection title="Transient notifications" description="Trigger one variant at a time and inspect placement, duration, actions, and dismissal."><DemoControls><AppButton onClick={() => toast.info('Informational notification')}>Info</AppButton><AppButton onClick={() => toast.success('Operation completed')}>Success</AppButton><AppButton onClick={() => toast.warning('Review required')}>Warning</AppButton><AppButton appearance="danger" onClick={() => toast.error('Operation failed')}>Error</AppButton><AppButton onClick={() => toast.show({ title: 'Persistent notification', message: 'Dismiss this notification manually.', duration: 0, action: { label: 'Action', onClick: () => undefined } })}>Persistent + action</AppButton><AppButton onClick={() => toast.dismissAll()}>Dismiss all</AppButton></DemoControls></DemoSection></DemoPage>
+  const t = useDemoCopy()
+  return <DemoPage><DemoSection title="Transient notifications" description="Trigger one variant at a time and inspect placement, duration, actions, and dismissal."><DemoControls><AppButton onClick={() => toast.info(t('Informational notification'))}>Info</AppButton><AppButton onClick={() => toast.success(t('Operation completed'))}>Success</AppButton><AppButton onClick={() => toast.warning(t('Review required'))}>Warning</AppButton><AppButton appearance="danger" onClick={() => toast.error(t('Operation failed'))}>Error</AppButton><AppButton onClick={() => toast.show({ title: t('Persistent notification'), message: t('Dismiss this notification manually.'), duration: 0, action: { label: t('Action'), onClick: () => undefined } })}>Persistent + action</AppButton><AppButton onClick={() => toast.dismissAll()}>Dismiss all</AppButton></DemoControls></DemoSection></DemoPage>
 }
 
 export function AppDialogPage() {
@@ -21,8 +23,9 @@ export function AppDialogPage() {
 
 export function MessageBoxPage() {
   const messageBox = useAppMessageBox()
+  const t = useDemoCopy()
   const [result, setResult] = useState('No response yet')
-  const confirm = async () => setResult(await messageBox.confirm({ title: 'Confirm selected action?', message: 'Message boxes provide a concise blocking decision.', confirmText: 'Continue', cancelText: 'Cancel' }) ? 'Confirmed' : 'Cancelled')
-  const choose = async () => setResult((await messageBox.show({ title: 'Choose an option', message: 'A message box may return a custom button key.', buttons: [{ key: 'secondary', label: 'Secondary' }, { key: 'primary', label: 'Primary', primary: true }], defaultButton: 'primary' })) ?? 'Dismissed')
+  const confirm = async () => setResult(await messageBox.confirm({ title: t('Confirm selected action?'), message: t('Message boxes provide a concise blocking decision.'), confirmText: t('Continue'), cancelText: t('Cancel') }) ? 'Confirmed' : 'Cancelled')
+  const choose = async () => setResult((await messageBox.show({ title: t('Choose an option'), message: t('A message box may return a custom button key.'), buttons: [{ key: 'secondary', label: t('Secondary') }, { key: 'primary', label: t('Primary'), primary: true }], defaultButton: 'primary' })) ?? 'Dismissed')
   return <DemoPage><DemoSection title="Promise-based decisions"><DemoControls><AppButton appearance="primary" onClick={() => void confirm()}>Confirm</AppButton><AppButton onClick={() => void choose()}>Custom buttons</AppButton></DemoControls><DemoPreview><span>Last result: <strong>{result}</strong></span></DemoPreview></DemoSection></DemoPage>
 }

@@ -172,7 +172,7 @@ export function AppSelectionBarPage() {
             {count > 0 ? (
               <AppSelectionBar
                 count={count}
-                label={`${count} items selected`}
+                label={`${count} ${t('items selected')}`}
                 onClear={() => setCount(0)}
                 actions={
                   <>

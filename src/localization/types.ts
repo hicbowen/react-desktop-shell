@@ -160,6 +160,9 @@ export interface AppLocaleMessages {
     increase: string
     decrease: string
   }
+  select: {
+    clear: string
+  }
   statusBadge: {
     neutral: string
     info: string

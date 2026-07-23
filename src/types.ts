@@ -19,6 +19,8 @@ export type { AppComboBoxOption, AppComboBoxProps } from './combo-box/types'
 export type { AppAutoCompleteOption, AppAutoCompleteProps } from './auto-complete/types'
 export type {
   AppCheckBoxProps,
+  AppCheckBoxGroupOption,
+  AppCheckBoxGroupProps,
   AppRadioGroupOption,
   AppRadioGroupProps,
   AppSegmentedControlOption,
@@ -26,9 +28,10 @@ export type {
   AppToggleSwitchProps,
 } from './selection-controls/types'
 export type { AppNumberBoxProps, AppSelectOption, AppSelectProps } from './number-select/types'
+export type { AppCompactGroupProps, AppControlAddonProps } from './compact-group/types'
 export type { AppListViewItemProps, AppListViewProps } from './list-view/types'
 export type { AppExpanderProps } from './expander/types'
-export type { AppPopoverProps } from './popover/types'
+export type { AppConfirmPopoverProps, AppPopoverProps } from './popover/types'
 export type {
   AppDatePickerProps,
   AppCalendarProps,

@@ -177,6 +177,14 @@ const zhCNSectionText: Record<string, string> = {
   'Rename resources with double-click or F2, then commit with Enter or cancel with Escape.': '双击或按 F2 重命名资源，按 Enter 提交，按 Escape 取消。',
   'Notification history': '通知历史',
   'Present persistent application events with unread state, actions, and host-controlled lifecycle.': '展示带未读状态、操作和宿主受控生命周期的持久应用事件。',
+  'Input addons': '输入附加内容',
+  'Attach explanatory content without moving it inside the input.': '在输入控件外侧附加说明内容，而不占用输入区域。',
+  'Independent buttons': '独立按钮',
+  'The group only joins the surfaces; every button keeps its own action.': '组合仅连接控件外观，每个按钮仍保留自己的独立操作。',
+  'Local confirmation': '局部确认',
+  'Keep confirmation close to a small, local action without blocking the rest of the page.': '让确认界面靠近小型局部操作，同时不阻塞页面其余部分。',
+  'Scope': '适用范围',
+  'Use MessageBox or Dialog when the decision is global, highly destructive, or requires more information.': '当决策影响全局、破坏性较高或需要更多信息时，请使用 MessageBox 或 Dialog。',
 }
 
 export function localizeSectionText(locale: 'zh-CN' | 'en-US', text?: string) {

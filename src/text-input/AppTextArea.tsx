@@ -4,7 +4,7 @@ import type { AppTextAreaProps } from './types'
 import { useAppFieldContext } from '../field/AppFieldContext'
 import './AppTextInput.css'
 
-export const AppTextArea = forwardRef<HTMLTextAreaElement, AppTextAreaProps>(function AppTextArea({ 'aria-describedby': ariaDescribedBy, 'aria-invalid': ariaInvalid, autoResize = false, className, defaultValue, disabled, id, invalid, maxRows, minRows = 2, onChange, required, resize = 'vertical', showCount = false, value, ...rest }, forwardedRef) {
+export const AppTextArea = forwardRef<HTMLTextAreaElement, AppTextAreaProps>(function AppTextArea({ 'aria-describedby': ariaDescribedBy, 'aria-invalid': ariaInvalid, autoResize = false, className, defaultValue, disabled, fullWidth = false, id, invalid, maxRows, minRows = 2, onChange, required, resize = 'vertical', showCount = false, value, ...rest }, forwardedRef) {
   const field = useAppFieldContext(); const resolvedDisabled = disabled ?? field?.disabled ?? false; const resolvedInvalid = ariaInvalid ?? invalid ?? field?.invalid; const resolvedRequired = required ?? field?.required
   const localRef = useRef<HTMLTextAreaElement>(null); const [count, setCount] = useState(() => String(value ?? defaultValue ?? '').length)
   const setRef = (node: HTMLTextAreaElement | null) => { localRef.current = node; if (typeof forwardedRef === 'function') forwardedRef(node); else if (forwardedRef) forwardedRef.current = node }
@@ -35,6 +35,6 @@ export const AppTextArea = forwardRef<HTMLTextAreaElement, AppTextAreaProps>(fun
   }, [autoResize, resizeNow, value])
   const handleChange = (event: ChangeEvent<HTMLTextAreaElement>) => { setCount(event.target.value.length); resizeNow(); onChange?.(event) }
   const length = value == null ? count : String(value).length
-  const classes = ['app-text-area', resolvedInvalid ? 'app-text-area--invalid' : '', autoResize ? 'app-text-area--auto' : '', className].filter(Boolean).join(' ')
+  const classes = ['app-text-area', resolvedInvalid ? 'app-text-area--invalid' : '', autoResize ? 'app-text-area--auto' : '', fullWidth ? 'app-text-area--full-width' : '', className].filter(Boolean).join(' ')
   return <span className={classes}><textarea {...rest} aria-describedby={ariaDescribedBy ?? field?.describedBy} aria-invalid={resolvedInvalid || undefined} className="app-text-area__control" defaultValue={value == null ? defaultValue : undefined} disabled={resolvedDisabled} id={id ?? field?.controlId} onChange={handleChange} ref={setRef} required={resolvedRequired} rows={minRows} style={{ resize: autoResize ? 'none' : resize, ...rest.style }} value={value} />{showCount ? <span aria-live="polite" className="app-text-area__count">{length}{rest.maxLength != null ? ` / ${rest.maxLength}` : ''}</span> : null}</span>
 })

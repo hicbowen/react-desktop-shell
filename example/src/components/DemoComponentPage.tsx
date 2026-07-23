@@ -1,6 +1,8 @@
 import type { ReactNode } from 'react'
 import type { DemoPageDefinition } from '../demoRegistry'
 import { useDemoI18n } from '../i18n/DemoI18nContext'
+import { DemoSourcePanel } from './DemoSourcePanel'
+import { getDemoSource } from './demoSource'
 
 export function DemoComponentPage({
   children,
@@ -18,9 +20,13 @@ export function DemoComponentPage({
   const relatedPages = (definition.related ?? [])
     .map((key) => pages.find((page) => page.key === key))
     .filter((page): page is DemoPageDefinition => Boolean(page))
+  const source = getDemoSource(definition.key)
 
   return (
-    <div className="demo-component-page">
+    <div className={[
+      'demo-component-page',
+      definition.layout === 'fill' ? 'demo-component-page--fill' : '',
+    ].filter(Boolean).join(' ')}>
       <div className="demo-component-meta" aria-label={text.detailsLabel}>
         <div className="demo-component-meta__context">
           <span>{definition.categoryLabel}</span>
@@ -42,6 +48,7 @@ export function DemoComponentPage({
         ) : null}
       </div>
       {children}
+      {source ? <DemoSourcePanel {...source} /> : null}
     </div>
   )
 }

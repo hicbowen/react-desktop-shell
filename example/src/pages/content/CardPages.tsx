@@ -20,6 +20,7 @@ import {
   AppIconButton,
 } from '../../../../src'
 import { DemoPage, DemoPreview, DemoSection } from '../../components/DemoPage'
+import { useDemoCopy } from '../../i18n/interactiveTranslations'
 
 const sameSurfaceContent = (
   <AppCardHeader
@@ -29,6 +30,7 @@ const sameSurfaceContent = (
 )
 
 export function AppCardPage() {
+  const t = useDemoCopy()
   const [mode, setMode] = useState('local')
   const [cardActivations, setCardActivations] = useState(0)
   const [internalStatus, setInternalStatus] = useState('No action yet')
@@ -194,7 +196,7 @@ export function AppCardPage() {
               Content action
             </AppButton>
             <AppCardFooter
-              start={internalStatus}
+              start={t(internalStatus)}
               end={
                 <AppButton
                   appearance="primary"

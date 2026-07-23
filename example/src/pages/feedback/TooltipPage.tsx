@@ -1,6 +1,7 @@
 import { Folder, Home, RefreshCw, Settings } from 'lucide-react'
 import { AppButton, AppRail, AppTooltip, type RailEntry } from '../../../../src'
 import { DemoPage, DemoPreview, DemoSection } from '../../components/DemoPage'
+import { useDemoCopy } from '../../i18n/interactiveTranslations'
 
 const compactRailItems: RailEntry[] = [
   { key: 'home', label: 'Home', icon: <Home size={16} /> },
@@ -14,6 +15,7 @@ const compactRailItems: RailEntry[] = [
 ]
 
 export function AppTooltipPage() {
+  const t = useDemoCopy()
   return (
     <DemoPage>
       <DemoSection
@@ -45,11 +47,11 @@ export function AppTooltipPage() {
         <DemoPreview className="demo-tooltip-grid">
           {(['top', 'right', 'bottom', 'left'] as const).map((placement) => (
             <AppTooltip
-              content={`${placement} placement`}
+              content={t(`${placement} placement`)}
               key={placement}
               placement={placement}
             >
-              <AppButton>{placement}</AppButton>
+              <AppButton>{t(placement)}</AppButton>
             </AppTooltip>
           ))}
           <AppTooltip

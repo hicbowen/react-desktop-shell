@@ -6,5 +6,5 @@ const courses = [{ value: 'python', label: 'Python' }, { value: 'visual', label:
 
 export function AppSelectPage() {
   const [course, setCourse] = useState('python')
-  return <DemoPage><DemoSection title="Select controls"><DemoPreview className="demo-form-stack"><AppSelect onValueChange={setCourse} options={courses} value={course} /><AppSelect options={courses} placeholder="Choose a course" /><AppSelect invalid options={courses} placeholder="Required" /><AppSelect disabled options={courses} value="python" /><AppField id="course-select" label="Course" orientation="horizontal"><AppSelect name="course" options={courses} defaultValue="python" /></AppField></DemoPreview></DemoSection></DemoPage>
+  return <DemoPage><DemoSection title="Select controls"><DemoPreview className="demo-form-stack"><AppSelect onValueChange={(value) => value && setCourse(value)} options={courses} value={course} /><AppSelect clearable defaultValue="python" options={courses} placeholder="Choose a course" /><AppSelect options={courses} placeholder="Choose a course" /><AppSelect invalid options={courses} placeholder="Required" /><AppSelect disabled options={courses} value="python" /><AppField id="course-select" label="Course" orientation="horizontal"><AppSelect name="course" options={courses} defaultValue="python" /></AppField></DemoPreview></DemoSection></DemoPage>
 }

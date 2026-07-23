@@ -1,0 +1,27 @@
+.app-popover.app-confirm-popover {
+  width: max-content;
+  min-width: 220px;
+  max-width: min(320px, calc(100vw - 20px));
+}
+
+.app-confirm-popover__dialog {
+  display: grid;
+  gap: 8px;
+}
+
+.app-confirm-popover__title {
+  line-height: 1.35;
+}
+
+.app-confirm-popover__description {
+  max-width: 280px;
+  color: var(--app-shell-secondary-text-color, rgb(0 0 0 / 62%));
+  line-height: 1.45;
+}
+
+.app-confirm-popover__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 6px;
+  padding-top: 2px;
+}

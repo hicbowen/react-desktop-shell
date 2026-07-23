@@ -40,6 +40,7 @@ import { AppTaskCenterPage } from './pages/feedback/TaskCenterPage'
 import { PopoverPage } from './pages/feedback/PopoverPage'
 import { AppTextAreaPage } from './pages/forms/AppTextAreaPage'
 import { AppTextBoxPage } from './pages/forms/AppTextBoxPage'
+import { AppCompactGroupPage } from './pages/forms/AppCompactGroupPage'
 import { AppSearchBoxPage } from './pages/forms/SearchBoxPage'
 import { AppColorPickerPage } from './pages/forms/ColorPickerPage'
 import { AppFilePickerPage } from './pages/forms/FilePickerPage'
@@ -68,6 +69,7 @@ import { AppCopyableTextPage } from './pages/content/CopyableTextPage'
 import { AppDropDownButtonPage } from './pages/actions/DropDownButtonPage'
 import { AppInlineEditPage } from './pages/forms/InlineEditPage'
 import { AppNotificationCenterPage } from './pages/feedback/NotificationCenterPage'
+import { AppConfirmPopoverPage } from './pages/feedback/ConfirmPopoverPage'
 import type { ResolvedAppLocale } from '../../src/localization/types'
 import { zhCNRegistry } from './i18n/registry.zh-CN'
 
@@ -109,6 +111,7 @@ const demoPageSources = [
   { key: 'loading-overlay', label: 'AppLoadingOverlay', description: 'Delayed local loading feedback that preserves content layout.', icon: <Clock3 size={16} />, component: AppLoadingOverlayPage },
   { key: 'task-center', label: 'AppTaskCenter', description: 'Host-neutral background task status, progress, and action requests.', icon: <Clock3 size={16} />, component: AppTaskCenterPage },
   { key: 'popover', label: 'Popover', description: 'Portal-based non-modal supporting content with anchored placement.', icon: <MessageSquare size={16} />, component: PopoverPage },
+  { key: 'app-confirm-popover', label: 'AppConfirmPopover', description: 'Anchored confirmation for small, local actions with async handling.', icon: <MessageSquare size={16} />, component: AppConfirmPopoverPage },
   { key: 'app-tooltip', label: 'AppTooltip', description: 'Non-interactive descriptions for hover and keyboard focus.', icon: <CircleHelp size={16} />, component: AppTooltipPage },
   { key: 'app-teaching-tip', label: 'AppTeachingTip', description: 'Controlled anchored guidance with title, content, and actions.', icon: <Lightbulb size={16} />, component: AppTeachingTipPage },
   { key: 'app-file-drop-overlay', label: 'AppFileDropOverlay', description: 'Accepting and rejecting overlays for local file drags.', icon: <UploadCloud size={16} />, component: AppFileDropOverlayPage },
@@ -128,6 +131,7 @@ const demoPageSources = [
   { key: 'app-dropdown-button', label: 'AppDropDownButton', description: 'A menu-only command button without an implied default action.', icon: <Columns3 size={16} />, component: AppDropDownButtonPage },
   { key: 'context-menu', label: 'Context Menu', description: 'Nested contextual commands and native text actions.', icon: <MousePointerClick size={16} />, component: ContextMenuPage },
   { key: 'app-text-box', label: 'AppTextBox', description: 'Single-line text input with icons, clearing, loading, and validation states.', icon: <Rows3 size={16} />, component: AppTextBoxPage },
+  { key: 'app-compact-group', label: 'AppCompactGroup', description: 'Join independent controls, buttons, and addons into one compact surface.', icon: <Columns3 size={16} />, component: AppCompactGroupPage },
   { key: 'app-inline-edit', label: 'AppInlineEdit', description: 'Desktop-style inline renaming with keyboard commands, selection, and validation.', icon: <Rows3 size={16} />, component: AppInlineEditPage },
   { key: 'app-text-area', label: 'AppTextArea', description: 'Multi-line text input with resizing, automatic growth, and character counting.', icon: <Rows3 size={16} />, component: AppTextAreaPage },
   { key: 'search-box', label: 'AppSearchBox', description: 'Search input with explicit submission, clearing, and optional debouncing.', icon: <Rows3 size={16} />, component: AppSearchBoxPage },
@@ -137,7 +141,7 @@ const demoPageSources = [
   { key: 'password-box', label: 'AppPasswordBox', description: 'Password entry with reveal, Caps Lock, and strength feedback.', icon: <Rows3 size={16} />, component: AppPasswordBoxPage },
   { key: 'range-slider', label: 'AppRangeSlider', description: 'Two-thumb range selection with distance constraints.', icon: <SlidersHorizontal size={16} />, component: AppRangeSliderPage },
   { key: 'form-layout', label: 'AppFormLayout', description: 'Responsive field alignment and linked validation summaries.', icon: <Rows3 size={16} />, component: AppFormLayoutPage },
-  { key: 'app-check-box', label: 'AppCheckBox', description: 'Binary and indeterminate choices with labels, descriptions, and controlled state.', icon: <ListChecks size={16} />, component: AppCheckBoxPage },
+  { key: 'app-check-box', label: 'AppCheckBox', description: 'Binary, indeterminate, and grouped choices with controlled state.', icon: <ListChecks size={16} />, component: AppCheckBoxPage },
   { key: 'app-radio-group', label: 'AppRadioGroup', description: 'Choose one value from a described set of mutually exclusive options.', icon: <ListChecks size={16} />, component: AppRadioGroupPage },
   { key: 'app-segmented-control', label: 'AppSegmentedControl', description: 'Switch quickly between a small set of adjacent views or modes.', icon: <ListChecks size={16} />, component: AppSegmentedControlPage },
   { key: 'app-toggle-switch', label: 'AppToggleSwitch', description: 'Turn persistent settings on or off with optional supporting descriptions.', icon: <ListChecks size={16} />, component: AppToggleSwitchPage },
@@ -187,6 +191,7 @@ const taxonomy: Record<DemoPageKey, DemoTaxonomy> = {
   'app-menu-flyout': { category: 'actions', subgroup: 'menus', apiNames: ['AppMenuFlyout'], status: 'stable' },
   'context-menu': { category: 'actions', subgroup: 'menus', apiNames: ['AppContextMenu'], status: 'stable' },
   'app-text-box': { category: 'input', subgroup: 'text', apiNames: ['AppTextBox'], status: 'stable', related: ['app-text-area', 'search-box', 'password-box'] },
+  'app-compact-group': { category: 'input', subgroup: 'text', apiNames: ['AppCompactGroup', 'AppControlAddon'], status: 'stable', related: ['app-text-box', 'app-number-box', 'app-select'] },
   'app-inline-edit': { category: 'input', subgroup: 'text', apiNames: ['AppInlineEdit'], status: 'stable', related: ['app-text-box'] },
   'app-text-area': { category: 'input', subgroup: 'text', apiNames: ['AppTextArea'], status: 'stable', related: ['app-text-box'] },
   'search-box': { category: 'input', subgroup: 'text', apiNames: ['AppSearchBox'], status: 'stable' },
@@ -196,7 +201,7 @@ const taxonomy: Record<DemoPageKey, DemoTaxonomy> = {
   'range-slider': { category: 'input', subgroup: 'numeric', apiNames: ['AppRangeSlider'], status: 'stable' },
   'app-number-box': { category: 'input', subgroup: 'numeric', apiNames: ['AppNumberBox'], status: 'stable', related: ['slider', 'range-slider'] },
   'app-select': { category: 'input', subgroup: 'selection', apiNames: ['AppSelect'], status: 'stable', related: ['multi-select', 'cascader'] },
-  'app-check-box': { category: 'input', subgroup: 'selection', apiNames: ['AppCheckBox'], status: 'stable', related: ['app-radio-group', 'app-toggle-switch'] },
+  'app-check-box': { category: 'input', subgroup: 'selection', apiNames: ['AppCheckBox', 'AppCheckBoxGroup'], status: 'stable', related: ['app-radio-group', 'app-toggle-switch'] },
   'app-radio-group': { category: 'input', subgroup: 'selection', apiNames: ['AppRadioGroup'], status: 'stable', related: ['app-check-box', 'app-segmented-control'] },
   'app-segmented-control': { category: 'input', subgroup: 'selection', apiNames: ['AppSegmentedControl'], status: 'stable', related: ['app-radio-group', 'app-selector-bar'] },
   'app-toggle-switch': { category: 'input', subgroup: 'selection', apiNames: ['AppToggleSwitch'], status: 'stable', related: ['app-check-box'] },
@@ -234,6 +239,7 @@ const taxonomy: Record<DemoPageKey, DemoTaxonomy> = {
   'task-center': { category: 'feedback', subgroup: 'status', apiNames: ['AppTaskCenter', 'AppTaskIndicator'], status: 'stable' },
   'app-tooltip': { category: 'feedback', subgroup: 'overlays', apiNames: ['AppTooltip'], status: 'stable' },
   popover: { category: 'feedback', subgroup: 'overlays', apiNames: ['AppPopover'], status: 'stable' },
+  'app-confirm-popover': { category: 'feedback', subgroup: 'overlays', apiNames: ['AppConfirmPopover'], status: 'stable', related: ['popover', 'message-box', 'app-dialog'] },
   'app-teaching-tip': { category: 'feedback', subgroup: 'overlays', apiNames: ['AppTeachingTip'], status: 'stable' },
   'app-dialog': { category: 'feedback', subgroup: 'modal', apiNames: ['AppDialog'], status: 'stable' },
   'message-box': { category: 'feedback', subgroup: 'modal', apiNames: ['useAppMessageBox'], status: 'stable' },
