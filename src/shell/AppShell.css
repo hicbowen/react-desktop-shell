@@ -17,6 +17,7 @@
   --app-scrollbar-track-color: transparent;
   --app-shell-text-color: #1f1f1f;
   --app-shell-muted-text-color: #707070;
+  --app-shell-secondary-text-color: #616161;
   --app-shell-disabled-text-color: rgb(0 0 0 / 36%);
   --app-shell-hover-bg: rgb(0 0 0 / 5%);
   --app-shell-control-hover-bg: #d4d4d4;
@@ -99,6 +100,7 @@
   --app-scrollbar-thumb-active-color: rgb(255 255 255 / 55%);
   --app-shell-text-color: #ffffff;
   --app-shell-muted-text-color: #a6a6a6;
+  --app-shell-secondary-text-color: #c5c5c5;
   --app-shell-disabled-text-color: rgb(255 255 255 / 36%);
   --app-shell-hover-bg: rgb(255 255 255 / 6%);
   --app-shell-control-hover-bg: #3a3a3a;
@@ -435,6 +437,7 @@
     --app-scrollbar-thumb-active-color: rgb(255 255 255 / 55%);
     --app-shell-text-color: #ffffff;
     --app-shell-muted-text-color: #a6a6a6;
+    --app-shell-secondary-text-color: #c5c5c5;
     --app-shell-disabled-text-color: rgb(255 255 255 / 36%);
     --app-shell-hover-bg: rgb(255 255 255 / 6%);
     --app-shell-control-hover-bg: #3a3a3a;

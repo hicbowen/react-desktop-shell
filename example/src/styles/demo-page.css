@@ -403,9 +403,13 @@
 }
 
 .demo-rail-preview {
-    width: 260px;
+    width: min(100%, var(--app-sidebar-expanded-width, 316px));
     height: 300px;
     overflow: hidden;
+}
+
+.demo-rail-preview > .app-rail {
+    --app-rail-width: 100%;
 }
 
 .demo-selector-task-view {

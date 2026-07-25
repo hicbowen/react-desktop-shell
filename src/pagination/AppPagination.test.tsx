@@ -28,6 +28,7 @@ describe('AppPagination', () => {
     const onValueChange = vi.fn()
     act(() => root.render(<AppPagination defaultValue={{ pageIndex: 2, pageSize: 10 }} onValueChange={onValueChange} total={50} />))
     const select = container.querySelector('select')!
+    expect(select.closest('.app-select')).not.toBeNull()
     act(() => { select.value = '20'; select.dispatchEvent(new Event('change', { bubbles: true })) })
     expect(onValueChange).toHaveBeenCalledWith({ pageIndex: 0, pageSize: 20 })
   })

@@ -151,6 +151,7 @@ export function AppDataTablePage() {
 }
 
 export function AppSelectionBarPage() {
+  const t = useDemoCopy()
   const [count, setCount] = useState(3)
   const [disabled, setDisabled] = useState(false)
 

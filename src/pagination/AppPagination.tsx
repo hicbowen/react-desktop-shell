@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useAppLocale } from '../localization/useAppLocale'
+import { AppSelect } from '../number-select'
 import type { AppPaginationProps, AppPaginationValue } from './types'
 import './AppPagination.css'
 
@@ -62,7 +63,7 @@ export function AppPagination({
   return <nav aria-label={text.label} className={classes} style={style}>
     {showSummary ? <div className="app-pagination__summary">{(formatRange ?? text.range)(start, end, total)}</div> : null}
     <div className="app-pagination__controls">
-      {showPageSizeSelector ? <label className="app-pagination__size"><span>{sizeLabel}</span><select aria-label={sizeLabel} disabled={disabled} value={current.pageSize} onChange={(event) => update({ pageIndex: 0, pageSize: Number(event.currentTarget.value) })}>{pageSizeOptions.map((option) => <option key={option} value={option}>{option}</option>)}</select></label> : null}
+      {showPageSizeSelector ? <label className="app-pagination__size"><span>{sizeLabel}</span><AppSelect aria-label={sizeLabel} className="app-pagination__size-select" disabled={disabled} options={pageSizeOptions.map((option) => ({ label: String(option), value: String(option) }))} size={compact ? 'compact' : 'standard'} value={String(current.pageSize)} onValueChange={(nextPageSize) => { if (nextPageSize != null) update({ pageIndex: 0, pageSize: Number(nextPageSize) }) }} /></label> : null}
       {showFirstLastButtons ? <button aria-label={text.firstPage} className="app-pagination__button" disabled={disabled || atFirstPage} onClick={() => update({ ...current, pageIndex: 0 })} type="button"><PaginationIcon direction="first" /></button> : null}
       <button aria-label={text.previousPage} className="app-pagination__button" disabled={disabled || atFirstPage} onClick={() => update({ ...current, pageIndex: current.pageIndex - 1 })} type="button"><PaginationIcon direction="previous" /></button>
       <span className="app-pagination__page">{(formatPage ?? text.page)(total === 0 ? 0 : current.pageIndex + 1, pageCount)}</span>
