@@ -33,12 +33,15 @@
   .app-select select::picker(select) {
     --app-select-picker-closed-top: calc(4px + var(--app-select-selected-offset, 0px));
     --app-select-picker-closed-bottom: calc(100% - 38px - var(--app-select-selected-offset, 0px));
+    --app-select-picker-max-height: min(320px, calc(100vh - 16px));
+    --app-select-picker-preferred-top: calc(anchor(center) - 22px - var(--app-select-selected-offset, 0px));
+    --app-select-picker-max-top: calc(100vh - 8px - var(--app-select-picker-max-height));
 
     inset: auto;
-    top: calc(anchor(center) - 22px - var(--app-select-selected-offset, 0px));
+    top: clamp(8px, var(--app-select-picker-preferred-top), var(--app-select-picker-max-top));
     left: anchor(left);
     width: anchor-size(width);
-    max-height: min(320px, calc(100vh - 16px));
+    max-height: var(--app-select-picker-max-height);
     max-width: calc(100vw - 16px);
     margin: 0;
     padding: 4px;
