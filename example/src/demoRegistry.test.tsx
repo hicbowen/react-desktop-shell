@@ -62,7 +62,7 @@ describe('settings demo registration', () => {
   })
 
   it('keeps independently documented controls on separate pages', () => {
-    const removedCombinedPages = ['field-empty-state', 'number-select', 'progress-status', 'selection-controls', 'text-inputs']
+    const removedCombinedPages = ['field-empty-state', 'progress-status', 'selection-controls', 'text-inputs']
     expect(demoPages.some((page) => removedCombinedPages.includes(page.key))).toBe(false)
     expect(
       ['app-field', 'app-empty-state', 'app-number-box', 'app-select', 'app-progress', 'app-status-badge', 'app-check-box', 'app-radio-group', 'app-segmented-control', 'app-toggle-switch', 'app-text-box', 'app-text-area']

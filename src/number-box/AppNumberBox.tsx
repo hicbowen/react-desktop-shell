@@ -3,7 +3,7 @@ import type { FocusEvent, KeyboardEvent } from 'react'
 import { useAppFieldContext } from '../field/AppFieldContext'
 import { useAppLocale } from '../localization/useAppLocale'
 import type { AppNumberBoxProps } from './types'
-import './AppNumberSelect.css'
+import './AppNumberBox.css'
 
 function resolveBounds(min?: number, max?: number) {
   const lower = Number.isFinite(min) ? min : undefined

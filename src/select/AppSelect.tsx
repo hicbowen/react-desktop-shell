@@ -1,9 +1,9 @@
 import { forwardRef, useRef, useState } from 'react'
-import type { ChangeEvent } from 'react'
+import type { ChangeEvent, CSSProperties } from 'react'
 import { useAppFieldContext } from '../field/AppFieldContext'
 import { useAppLocale } from '../localization/useAppLocale'
 import type { AppSelectProps } from './types'
-import './AppNumberSelect.css'
+import './AppSelect.css'
 
 export const AppSelect = forwardRef<HTMLSelectElement, AppSelectProps>(
   function AppSelect(
@@ -41,8 +41,18 @@ export const AppSelect = forwardRef<HTMLSelectElement, AppSelectProps>(
           : options.find((option) => !option.disabled)?.value ?? null,
     )
     const displayedValue = value === undefined ? internalValue : value
+    const showPlaceholder =
+      displayedValue == null && placeholder !== undefined
     const hasEmptyOption =
       displayedValue == null || placeholder !== undefined || clearable
+    const selectedOptionIndex = Math.max(
+      0,
+      options.findIndex((option) => option.value === displayedValue),
+    )
+    const selectStyle = {
+      ...rest.style,
+      '--app-select-selected-offset': `${selectedOptionIndex * 34}px`,
+    } as CSSProperties
     const canClear =
       clearable &&
       displayedValue != null &&
@@ -86,12 +96,11 @@ export const AppSelect = forwardRef<HTMLSelectElement, AppSelectProps>(
           onChange={change}
           ref={setRef}
           required={resolvedRequired}
+          style={selectStyle}
           value={displayedValue ?? ''}
         >
           {hasEmptyOption ? (
-            <option disabled={!clearable} hidden={placeholder === undefined} value="">
-              {placeholder ?? ''}
-            </option>
+            <option aria-hidden="true" disabled hidden value="" />
           ) : null}
           {options.map((option) => (
             <option
@@ -103,6 +112,11 @@ export const AppSelect = forwardRef<HTMLSelectElement, AppSelectProps>(
             </option>
           ))}
         </select>
+        {showPlaceholder ? (
+          <span aria-hidden="true" className="app-select__placeholder">
+            {placeholder}
+          </span>
+        ) : null}
         {canClear ? (
           <button
             aria-label={messages.select.clear}

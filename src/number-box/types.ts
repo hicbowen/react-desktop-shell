@@ -1,0 +1,2 @@
+import type { InputHTMLAttributes } from 'react'
+export interface AppNumberBoxProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'value' | 'defaultValue' | 'onChange' | 'type' | 'size'> { value?: number | null; defaultValue?: number | null; onValueChange?: (value: number | null) => void; min?: number; max?: number; step?: number; precision?: number; allowEmpty?: boolean; formatValue?: (value: number) => string; parseValue?: (value: string) => number | null }

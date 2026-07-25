@@ -3,7 +3,7 @@ import { act } from 'react'
 import { createRoot } from 'react-dom/client'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { AppButton } from '../button'
-import { AppNumberBox } from '../number-select'
+import { AppNumberBox } from '../number-box'
 import { AppCompactGroup, AppControlAddon } from './AppCompactGroup'
 
 describe('AppCompactGroup', () => {

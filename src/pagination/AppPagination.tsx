@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useAppLocale } from '../localization/useAppLocale'
-import { AppSelect } from '../number-select'
+import { AppSelect } from '../select'
 import type { AppPaginationProps, AppPaginationValue } from './types'
 import './AppPagination.css'
 

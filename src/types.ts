@@ -27,7 +27,8 @@ export type {
   AppSegmentedControlProps,
   AppToggleSwitchProps,
 } from './selection-controls/types'
-export type { AppNumberBoxProps, AppSelectOption, AppSelectProps } from './number-select/types'
+export type { AppNumberBoxProps } from './number-box/types'
+export type { AppSelectOption, AppSelectProps } from './select/types'
 export type { AppCompactGroupProps, AppControlAddonProps } from './compact-group/types'
 export type { AppListViewItemProps, AppListViewProps } from './list-view/types'
 export type { AppExpanderProps } from './expander/types'

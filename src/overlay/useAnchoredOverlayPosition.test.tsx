@@ -171,15 +171,17 @@ describe('useAnchoredOverlayPosition', () => {
     expect(cancelAnimationFrame).toHaveBeenCalledWith(frame)
   })
 
-  it('remeasures when an additional dependency changes', () => {
+  it('remeasures dependency changes without hiding the current position', () => {
     render({ open: true, dependency: 1 })
     flushFrame()
     expect(overlay().dataset.measured).toBe('true')
 
     render({ open: true, dependency: 2 })
 
-    expect(overlay().dataset.measured).toBe('false')
+    expect(overlay().dataset.measured).toBe('true')
     expect(requestAnimationFrame).toHaveBeenCalledTimes(2)
+    flushFrame()
+    expect(overlay().dataset.measured).toBe('true')
   })
 
   it('is safe when the trigger or overlay ref is unavailable', () => {

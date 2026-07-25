@@ -97,8 +97,6 @@ export function useAnchoredOverlayPosition({
       return
     }
 
-    setPosition(initialPosition(preferredPlacement))
-
     const measure = () => {
       const resolvedTriggerRect =
         triggerRect ?? triggerRef?.current?.getBoundingClientRect()
