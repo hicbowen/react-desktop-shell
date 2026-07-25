@@ -31,6 +31,9 @@
   }
 
   .app-select select::picker(select) {
+    --app-select-picker-closed-top: calc(4px + var(--app-select-selected-offset, 0px));
+    --app-select-picker-closed-bottom: calc(100% - 38px - var(--app-select-selected-offset, 0px));
+
     inset: auto;
     top: calc(anchor(center) - 22px - var(--app-select-selected-offset, 0px));
     left: anchor(left);
@@ -49,16 +52,18 @@
       0 8px 20px rgb(0 0 0 / 14%),
       0 2px 6px rgb(0 0 0 / 10%)
     );
+    clip-path: inset(
+      var(--app-select-picker-closed-top)
+      0
+      var(--app-select-picker-closed-bottom)
+      0
+      round 6px
+    );
     font: inherit;
-    opacity: 0;
-    transform: translateY(-8px) scale(.96);
-    transform-origin: top center;
     backdrop-filter: blur(30px) saturate(1.15);
-    transition:
-      opacity var(--rds-motion-normal, 180ms) var(--rds-ease-enter, cubic-bezier(.1, .9, .2, 1)),
-      transform var(--rds-motion-normal, 180ms) var(--rds-ease-enter, cubic-bezier(.1, .9, .2, 1)),
-      display var(--rds-motion-normal, 180ms),
-      overlay var(--rds-motion-normal, 180ms);
+    transition-property: clip-path, display, overlay;
+    transition-duration: 0ms;
+    transition-timing-function: linear;
     transition-behavior: allow-discrete;
   }
 
@@ -67,14 +72,20 @@
   }
 
   .app-select select:open::picker(select) {
-    opacity: 1;
-    transform: translateY(0) scale(1);
+    clip-path: inset(0 round 8px);
+    transition-duration: 250ms;
+    transition-timing-function: var(--rds-ease-enter, cubic-bezier(.1, .9, .2, 1));
   }
 
   @starting-style {
     .app-select select:open::picker(select) {
-      opacity: 0;
-      transform: translateY(-8px) scale(.96);
+      clip-path: inset(
+        var(--app-select-picker-closed-top)
+        0
+        var(--app-select-picker-closed-bottom)
+        0
+        round 6px
+      );
     }
   }
 
