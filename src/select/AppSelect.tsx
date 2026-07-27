@@ -49,9 +49,18 @@ export const AppSelect = forwardRef<HTMLSelectElement, AppSelectProps>(
       0,
       options.findIndex((option) => option.value === displayedValue),
     )
+    const pickerEstimatedHeight = Math.min(320, options.length * 34 + 10)
+    const pickerMaxSelectedOffset = Math.max(0, pickerEstimatedHeight - 44)
+    const pickerVisibleSelectedOffset = Math.min(
+      selectedOptionIndex * 34,
+      pickerMaxSelectedOffset,
+    )
     const selectStyle = {
       ...rest.style,
       '--app-select-selected-offset': `${selectedOptionIndex * 34}px`,
+      '--app-select-picker-estimated-height': `${pickerEstimatedHeight}px`,
+      '--app-select-picker-max-selected-offset': `${pickerMaxSelectedOffset}px`,
+      '--app-select-picker-position-offset': `${pickerVisibleSelectedOffset}px`,
     } as CSSProperties
     const canClear =
       clearable &&
@@ -78,6 +87,32 @@ export const AppSelect = forwardRef<HTMLSelectElement, AppSelectProps>(
       selectRef.current?.focus()
     }
 
+    const preparePickerPosition = () => {
+      const select = selectRef.current
+      if (!select) return
+      const bounds = select.getBoundingClientRect()
+      const viewportHeight =
+        document.documentElement.clientHeight || window.innerHeight
+      const pickerHeight = Math.min(
+        pickerEstimatedHeight,
+        Math.max(0, viewportHeight - 16),
+      )
+      const anchorCenter = bounds.top + bounds.height / 2
+      const minimumOffset = Math.max(
+        0,
+        anchorCenter + pickerHeight - viewportHeight - 14,
+      )
+      const maximumOffset = Math.max(0, anchorCenter - 30)
+      const positionOffset = Math.min(
+        maximumOffset,
+        Math.max(minimumOffset, pickerVisibleSelectedOffset),
+      )
+      select.style.setProperty(
+        '--app-select-picker-position-offset',
+        `${positionOffset}px`,
+      )
+    }
+
     return (
       <span
         className={[
@@ -94,6 +129,14 @@ export const AppSelect = forwardRef<HTMLSelectElement, AppSelectProps>(
           disabled={resolvedDisabled}
           id={id ?? field?.controlId}
           onChange={change}
+          onKeyDown={(event) => {
+            preparePickerPosition()
+            rest.onKeyDown?.(event)
+          }}
+          onPointerDown={(event) => {
+            preparePickerPosition()
+            rest.onPointerDown?.(event)
+          }}
           ref={setRef}
           required={resolvedRequired}
           style={selectStyle}

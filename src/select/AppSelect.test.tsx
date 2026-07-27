@@ -99,6 +99,21 @@ describe('AppSelect', () => {
         .querySelector<HTMLSelectElement>('select')
         ?.style.getPropertyValue('--app-select-selected-offset'),
     ).toBe('34px')
+    expect(
+      host
+        .querySelector<HTMLSelectElement>('select')
+        ?.style.getPropertyValue('--app-select-picker-estimated-height'),
+    ).toBe('78px')
+    expect(
+      host
+        .querySelector<HTMLSelectElement>('select')
+        ?.style.getPropertyValue('--app-select-picker-max-selected-offset'),
+    ).toBe('34px')
+    expect(
+      host
+        .querySelector<HTMLSelectElement>('select')
+        ?.style.getPropertyValue('--app-select-picker-position-offset'),
+    ).toBe('34px')
   })
 
   it('clears to null while preserving the native select ref', () => {

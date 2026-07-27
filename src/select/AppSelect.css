@@ -31,14 +31,17 @@
   }
 
   .app-select select::picker(select) {
-    --app-select-picker-closed-top: calc(4px + var(--app-select-selected-offset, 0px));
-    --app-select-picker-closed-bottom: calc(100% - 38px - var(--app-select-selected-offset, 0px));
+    --app-select-picker-visible-selected-offset: clamp(
+      0px,
+      var(--app-select-selected-offset, 0px),
+      var(--app-select-picker-max-selected-offset, 276px)
+    );
+    --app-select-picker-closed-top: calc(4px + var(--app-select-picker-visible-selected-offset));
+    --app-select-picker-closed-bottom: calc(100% - 38px - var(--app-select-picker-visible-selected-offset));
     --app-select-picker-max-height: min(320px, calc(100vh - 16px));
-    --app-select-picker-preferred-top: calc(anchor(center) - 22px - var(--app-select-selected-offset, 0px));
-    --app-select-picker-max-top: calc(100vh - 8px - var(--app-select-picker-max-height));
 
     inset: auto;
-    top: clamp(8px, var(--app-select-picker-preferred-top), var(--app-select-picker-max-top));
+    top: calc(anchor(center) - 22px - var(--app-select-picker-position-offset, 0px));
     left: anchor(left);
     width: anchor-size(width);
     max-height: var(--app-select-picker-max-height);
