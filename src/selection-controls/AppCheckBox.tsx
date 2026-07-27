@@ -60,7 +60,17 @@ export const AppCheckBox = forwardRef<HTMLInputElement, AppCheckBoxProps>(
           type="checkbox"
         />
         <span aria-hidden="true" className="app-check-box__box">
-          {indeterminate ? '−' : resolved ? '✓' : ''}
+          {indeterminate ? (
+            <span className="app-check-box__indeterminate" />
+          ) : resolved ? (
+            <svg
+              className="app-check-box__check"
+              focusable="false"
+              viewBox="0 0 16 16"
+            >
+              <path d="M3.5 8.25L6.5 11L12.5 4.75" />
+            </svg>
+          ) : null}
         </span>
         {label || description ? (
           <span className="app-selection-label">
