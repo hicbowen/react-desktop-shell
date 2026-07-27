@@ -1,10 +1,17 @@
-.app-empty-state { box-sizing: border-box; width: 100%; max-width: 560px; display: flex; flex-direction: column; gap: 7px; padding: 32px 24px; color: var(--app-shell-text-color, #1f1f1f); }
-.app-empty-state--compact { gap: 5px; padding: 18px 16px; }
-.app-empty-state--center { align-items: center; margin-inline: auto; text-align: center; }
-.app-empty-state--start { align-items: flex-start; text-align: start; }
-.app-empty-state__icon { width: 28px; height: 28px; display: grid; place-items: center; margin-bottom: 3px; color: var(--app-shell-secondary-text-color, rgb(0 0 0 / 48%)); }
-.app-empty-state--compact .app-empty-state__icon { width: 22px; height: 22px; }
-.app-empty-state__icon > svg { width: 100%; height: 100%; }
+.app-empty-state { box-sizing: border-box; width: 100%; min-width: 0; display: flex; color: var(--app-shell-text-color, #1f1f1f); }
+.app-empty-state__content { box-sizing: border-box; width: 100%; max-width: 560px; display: flex; flex-direction: column; gap: 7px; padding: 32px 24px; }
+.app-empty-state--layout-fill { flex: 1 1 auto; min-height: 0; align-items: center; justify-content: center; }
+.app-empty-state--layout-inline .app-empty-state__content { padding: 12px; }
+.app-empty-state--center .app-empty-state__content { align-items: center; margin-inline: auto; text-align: center; }
+.app-empty-state--start .app-empty-state__content { align-items: flex-start; text-align: start; }
+.app-empty-state--small .app-empty-state__content { gap: 5px; padding: 18px 16px; }
+.app-empty-state--small.app-empty-state--layout-inline .app-empty-state__content { padding: 10px 12px; }
+.app-empty-state--large .app-empty-state__content { gap: 9px; padding: 48px 32px; }
+.app-empty-state__visual { width: 28px; height: 28px; display: grid; flex: 0 0 auto; place-items: center; margin-bottom: 3px; color: var(--app-shell-secondary-text-color, rgb(0 0 0 / 48%)); }
+.app-empty-state--small .app-empty-state__visual { width: 22px; height: 22px; }
+.app-empty-state--large .app-empty-state__visual { width: 64px; height: 52px; margin-bottom: 7px; }
+.app-empty-state__visual > svg { width: 100%; height: 100%; }
 .app-empty-state__title { font-size: 15px; font-weight: 600; line-height: 1.35; }
 .app-empty-state__description { max-width: 46ch; color: var(--app-shell-secondary-text-color, rgb(0 0 0 / 62%)); font-size: 13px; line-height: 1.5; }
-.app-empty-state__action { margin-top: 8px; }
+.app-empty-state__actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+.app-empty-state--center .app-empty-state__actions { justify-content: center; }

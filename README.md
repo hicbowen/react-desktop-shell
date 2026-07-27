@@ -328,13 +328,22 @@ controls when necessary.
 
 ## Fields and empty states
 
-`AppField` supplies label, description or error messaging, required state, and vertical or settings-friendly horizontal layout without controlling its child input. `AppEmptyState` presents a restrained regular or compact empty state with optional icon, description, and action.
+`AppField` supplies label, description or error messaging, required state, and vertical or settings-friendly horizontal layout without controlling its child input. `AppEmptyState` presents empty content at inline, content, or fill layouts, with optional visual, title, description, and actions. The legacy `icon`, `action`, and `appearance` props remain supported.
 
 ```tsx
 <AppField id="student-name" label="Student name" description="Used in feedback reports" required error={error}>
   <AppTextBox />
 </AppField>
 <AppEmptyState title="No students yet" description="Add a student to begin." action={<AppButton>Add student</AppButton>} />
+
+<AppEmptyState
+  layout="fill"
+  visual="default"
+  title="No matching students"
+  description="Try changing or clearing the current filters."
+/>
+
+<AppEmptyState layout="inline" size="small" visual="none" description="No matching results" />
 ```
 
 RDS inputs consume field associations automatically. For a native or third-party control, provide matching identifiers manually:
