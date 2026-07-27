@@ -1,6 +1,6 @@
 import type { RowSelectionState, SortingState } from '@tanstack/react-table'
 import { useState } from 'react'
-import { AppButton, AppToggleSwitch, AppToolbar, useAppContextMenu, useAppToast } from '../../../../src'
+import { AppButton, AppEmptyState, AppToggleSwitch, AppToolbar, useAppContextMenu, useAppToast } from '../../../../src'
 import { AppDataTable, AppDataView, AppSelectionBar } from '../../../../src/data'
 import { DemoControls, DemoPage, DemoPreview, DemoSection } from '../../components/DemoPage'
 import { tableRows } from '../../fixtures/tableRows'
@@ -94,6 +94,14 @@ export function AppDataTablePage() {
             columns={columns}
             controls={tableControls}
             data={tableRows}
+            emptyContent={
+              <AppEmptyState
+                description={t('Try changing or clearing the current search and filters.')}
+                layout="fill"
+                title={t('No matching items')}
+                visual="simple"
+              />
+            }
             getRowId={(row) => row.id}
             pagination={
               pagination

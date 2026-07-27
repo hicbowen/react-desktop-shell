@@ -573,6 +573,8 @@ interface DataTableFrameProps<TData> {
   loading: boolean
   controls?: ReactNode
   pagination?: ReactNode
+  state?: 'empty' | 'loading'
+  stateContent?: ReactNode
   scrollRef?: RefObject<HTMLDivElement | null>
   virtualized?: boolean
   stickyLayout: DataTableStickyLayout
@@ -591,6 +593,8 @@ export function DataTableFrame<TData>({
   loading,
   controls,
   pagination,
+  state,
+  stateContent,
   scrollRef,
   virtualized = false,
   stickyLayout,
@@ -607,24 +611,41 @@ export function DataTableFrame<TData>({
     >
       {controls}
       <div
-        ref={scrollRef}
-        className="app-data-table__scroll app-scrollbar"
+        className={[
+          'app-data-table__viewport',
+          state ? 'app-data-table__viewport--with-state' : '',
+        ].filter(Boolean).join(' ')}
         style={{ maxHeight }}
       >
-        <table
-          aria-busy={loading || undefined}
-          className="app-data-table__table"
-          style={{ width: tableWidth, minWidth: tableWidth }}
+        <div
+          ref={scrollRef}
+          className="app-data-table__scroll app-scrollbar"
+          style={{ maxHeight }}
         >
-          <DataTableHeader
-            columnResizeMode={columnResizeMode}
-            enableColumnResizing={enableColumnResizing}
-            stickyHeader={stickyHeader}
-            stickyLayout={stickyLayout}
-            table={table}
-          />
-          <tbody>{children}</tbody>
-        </table>
+          <table
+            aria-busy={loading || undefined}
+            className="app-data-table__table"
+            style={{ width: tableWidth, minWidth: tableWidth }}
+          >
+            <DataTableHeader
+              columnResizeMode={columnResizeMode}
+              enableColumnResizing={enableColumnResizing}
+              stickyHeader={stickyHeader}
+              stickyLayout={stickyLayout}
+              table={table}
+            />
+            <tbody>{children}</tbody>
+          </table>
+        </div>
+        {state ? (
+          <div
+            className="app-data-table__state-overlay"
+            data-state={state}
+            role={state === 'loading' ? 'status' : undefined}
+          >
+            {stateContent}
+          </div>
+        ) : null}
       </div>
       {pagination}
     </div>
@@ -696,22 +717,6 @@ export function DataTableRow<TData>({
           {flexRender(cell.column.columnDef.cell, cell.getContext())}
         </td>
       ))}
-    </tr>
-  )
-}
-
-export function DataTableStateRow({
-  columnCount,
-  content,
-}: {
-  columnCount: number
-  content: ReactNode
-}) {
-  return (
-    <tr className="app-data-table__state-row">
-      <td className="app-data-table__state" colSpan={columnCount}>
-        {content}
-      </td>
     </tr>
   )
 }

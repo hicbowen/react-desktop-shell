@@ -2,7 +2,6 @@ import { lazy, Suspense, useRef } from 'react'
 import {
   DataTableFrame,
   DataTableRow,
-  DataTableStateRow,
   useAppDataTable,
   APP_DATA_TABLE_SELECTION_COLUMN_ID,
 } from './internal/dataTableCore'
@@ -59,6 +58,13 @@ export function AppDataTable<TData>(props: AppDataTableProps<TData>) {
       stickyLayout={core.stickyLayout}
     />
   ))
+  const state = core.loading ? 'loading' : rows.length === 0 ? 'empty' : undefined
+  const stateContent =
+    state === 'loading'
+      ? core.loadingContent
+      : state === 'empty'
+        ? core.emptyContent
+        : undefined
 
   return (
     <DataTableFrame
@@ -73,21 +79,13 @@ export function AppDataTable<TData>(props: AppDataTableProps<TData>) {
       maxHeight={core.maxHeight}
       stickyHeader={core.stickyHeader}
       stickyLayout={core.stickyLayout}
+      state={state}
+      stateContent={stateContent}
       style={core.style}
       table={core.table}
       virtualized={virtualizationEnabled}
     >
-      {core.loading ? (
-        <DataTableStateRow
-          columnCount={core.visibleColumnCount}
-          content={core.loadingContent}
-        />
-      ) : rows.length === 0 ? (
-        <DataTableStateRow
-          columnCount={core.visibleColumnCount}
-          content={core.emptyContent}
-        />
-      ) : virtualizationEnabled ? (
+      {state ? null : virtualizationEnabled ? (
         <Suspense fallback={null}>
           <AppDataTableVirtualRows
             columnFilters={tableState.columnFilters}

@@ -585,9 +585,19 @@ describe('AppDataTable controls', () => {
     renderTable({ loading: true, loadingContent: 'Loading records' })
     expect(container.textContent).toContain('Loading records')
     expect(container.querySelector('.app-data-table__controls')).not.toBeNull()
+    expect(container.querySelector('.app-data-table__state-overlay')?.getAttribute('data-state')).toBe('loading')
+    expect(container.querySelector('.app-data-table__state-overlay')?.getAttribute('role')).toBe('status')
+    expect(bodyRows()).toHaveLength(0)
 
     renderTable({ data: [], emptyContent: 'No matching records' })
     expect(container.textContent).toContain('No matching records')
+    const overlay = container.querySelector('.app-data-table__state-overlay')
+    expect(overlay?.getAttribute('data-state')).toBe('empty')
+    expect(overlay?.getAttribute('role')).toBeNull()
+    expect(overlay?.parentElement?.classList.contains('app-data-table__viewport')).toBe(true)
+    expect(overlay?.previousElementSibling?.classList.contains('app-data-table__scroll')).toBe(true)
+    expect(overlay?.closest('table')).toBeNull()
+    expect(bodyRows()).toHaveLength(0)
   })
 
   it('keeps sorting, resizing, and pinning available with controls', () => {
@@ -825,7 +835,7 @@ describe('AppDataTable controls', () => {
     expect(container.querySelector('.app-data-table--sticky-header.app-data-table--with-pagination')).not.toBeNull()
     expect(container.querySelector('.app-data-table__resize-handle')).not.toBeNull()
     expect(container.querySelector('[data-column-id="name"][data-pinned="left"]')).not.toBeNull()
-    expect(container.querySelector('.app-data-table__scroll + .app-data-table__pagination')).not.toBeNull()
+    expect(container.querySelector('.app-data-table__viewport + .app-data-table__pagination')).not.toBeNull()
   })
 
   it('keeps ordinary columns unchanged when sticky columns are omitted', () => {
@@ -1130,9 +1140,9 @@ describe('AppDataTable controls', () => {
     expect(onRowContextMenu.mock.calls[0]?.[0].original).toBe(virtualData[0])
 
     renderTable({ loading: true, onRowContextMenu, virtualization: false })
-    contextMenu(bodyRows()[0]!)
+    expect(bodyRows()).toHaveLength(0)
     renderTable({ data: [], loading: false, onRowContextMenu })
-    contextMenu(bodyRows()[0]!)
+    expect(bodyRows()).toHaveLength(0)
     expect(onRowContextMenu).toHaveBeenCalledOnce()
   })
 

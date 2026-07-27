@@ -119,6 +119,8 @@ export const zhCNInteractiveText: Record<string, string> = {
   'Try changing or clearing the current filters.': '请尝试更改或清除当前筛选条件。',
   'No matching students': '没有匹配的学生',
   'No matching results': '没有匹配的结果',
+  'No matching items': '没有匹配的项目',
+  'Try changing or clearing the current search and filters.': '请尝试更改或清除当前搜索和筛选条件。',
   'Used in feedback and learning plans': '用于反馈和学习计划',
   'Student name': '学生姓名',
   Course: '课程',
