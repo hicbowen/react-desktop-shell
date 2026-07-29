@@ -79,7 +79,7 @@
 .app-segmented-control__option { position: relative; min-width: 0; display: flex; flex: 0 0 auto; cursor: default; }
 .app-segmented-control--full-width .app-segmented-control__option { flex: 1 1 0; }
 .app-segmented-control__option input { position: absolute; width: 1px; height: 1px; opacity: 0; }
-.app-segmented-control__content { min-width: 0; box-sizing: border-box; display: inline-flex; flex: 1; align-items: center; justify-content: center; gap: 6px; padding: 0 12px; white-space: nowrap; border-radius: 4px; }
+.app-segmented-control__content { min-width: 0; box-sizing: border-box; display: inline-flex; flex: 1; align-items: center; justify-content: center; gap: 6px; padding: 0 12px; white-space: nowrap; border-radius: 4px; transition: background-color 100ms ease-out, box-shadow 100ms ease-out; }
 .app-segmented-control--standard .app-segmented-control__content { height: 30px; font-size: 13px; }
 .app-segmented-control--compact .app-segmented-control__content { height: 24px; padding-right: 9px; padding-left: 9px; font-size: 12px; }
 .app-segmented-control__option:hover:not(.app-segmented-control__option--disabled) input:not(:checked) + .app-segmented-control__content { background: var(--app-shell-hover-bg, rgb(0 0 0 / 5%)); }
@@ -93,7 +93,8 @@
 @media (prefers-reduced-motion: reduce) {
   .app-check-box__box,
   .app-radio-group__indicator,
-  .app-radio-group__indicator::after {
+  .app-radio-group__indicator::after,
+  .app-segmented-control__content {
     transition: none;
   }
   .app-check-box__check,

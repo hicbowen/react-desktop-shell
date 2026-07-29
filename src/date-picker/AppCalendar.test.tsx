@@ -87,6 +87,7 @@ describe('AppCalendar', () => {
   afterEach(() => {
     act(() => root.unmount())
     container.remove()
+    vi.useRealTimers()
   })
 
   const render = (node: React.ReactNode) =>
@@ -208,6 +209,26 @@ describe('AppCalendar', () => {
     ).toBe(true)
     expect(
       container
+        .querySelector('[data-date="2026-07-01"]')
+        ?.classList.contains('app-calendar__day--selected'),
+    ).toBe(true)
+    expect(
+      container
+        .querySelector('[data-date="2026-07-02"]')
+        ?.classList.contains('app-calendar__day--selected'),
+    ).toBe(false)
+    expect(
+      container
+        .querySelector('[data-date="2026-07-02"]')
+        ?.getAttribute('aria-selected'),
+    ).toBe('true')
+    expect(
+      container
+        .querySelector('[data-date="2026-07-03"]')
+        ?.classList.contains('app-calendar__day--selected'),
+    ).toBe(true)
+    expect(
+      container
         .querySelector('[data-date="2026-07-11"]')
         ?.classList.contains('app-calendar__day--preview-middle'),
     ).toBe(true)
@@ -230,6 +251,65 @@ describe('AppCalendar', () => {
     expect(container.textContent).toContain('August 2026')
     expect(title?.textContent).toContain('July 2026')
     expect(title?.textContent).toContain('August 2026')
+  })
+
+  it('renders range decoration only in the owning month', () => {
+    render(
+      <LocaleBoundary>
+        <AppCalendar
+          dialogLabel="Date range picker"
+          displayedMonth={{ year: 2026, month: 7, day: 1 }}
+          focusedDate={{ year: 2026, month: 7, day: 31 }}
+          onDateSelect={() => undefined}
+          onDisplayedMonthChange={() => undefined}
+          onFocusedDateChange={() => undefined}
+          selectedRange={{
+            start: { year: 2026, month: 7, day: 31 },
+            end: { year: 2026, month: 8, day: 2 },
+          }}
+          showOutsideDays
+          visibleMonths={2}
+        />
+      </LocaleBoundary>,
+    )
+
+    const july31 = container.querySelectorAll('[data-date="2026-07-31"]')
+    const august1 = container.querySelectorAll('[data-date="2026-08-01"]')
+    const august2 = container.querySelectorAll('[data-date="2026-08-02"]')
+
+    expect(july31).toHaveLength(2)
+    expect(august1).toHaveLength(2)
+    expect(august2).toHaveLength(2)
+    expect(
+      [...july31].filter((day) =>
+        day.classList.contains('app-calendar__day--range-start'),
+      ),
+    ).toHaveLength(1)
+    expect(
+      [...august1].filter((day) =>
+        day.classList.contains('app-calendar__day--range-middle'),
+      ),
+    ).toHaveLength(1)
+    expect(
+      [...august2].filter((day) =>
+        day.classList.contains('app-calendar__day--range-end'),
+      ),
+    ).toHaveLength(1)
+  })
+
+  it('marks today only in the owning month', () => {
+    vi.useFakeTimers()
+    vi.setSystemTime(new Date(2026, 6, 30, 12))
+
+    render(<CalendarHarness visibleMonths={2} />)
+
+    const july30 = container.querySelectorAll('[data-date="2026-07-30"]')
+    expect(july30).toHaveLength(2)
+    expect(
+      [...july30].filter(
+        (day) => day.getAttribute('aria-current') === 'date',
+      ),
+    ).toHaveLength(1)
   })
 
   it('uses locale-specific month and weekday ordering', () => {

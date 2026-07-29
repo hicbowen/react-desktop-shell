@@ -19,6 +19,7 @@
   --app-shell-muted-text-color: #707070;
   --app-shell-secondary-text-color: #616161;
   --app-shell-disabled-text-color: rgb(0 0 0 / 36%);
+  --app-shell-disabled-bg: rgb(0 0 0 / 6%);
   --app-shell-hover-bg: rgb(0 0 0 / 5%);
   --app-shell-control-hover-bg: #d4d4d4;
   --app-shell-active-bg: rgb(17 94 163 / 8%);
@@ -102,6 +103,7 @@
   --app-shell-muted-text-color: #a6a6a6;
   --app-shell-secondary-text-color: #c5c5c5;
   --app-shell-disabled-text-color: rgb(255 255 255 / 36%);
+  --app-shell-disabled-bg: rgb(255 255 255 / 6%);
   --app-shell-hover-bg: rgb(255 255 255 / 6%);
   --app-shell-control-hover-bg: #3a3a3a;
   --app-shell-active-bg: rgb(96 205 255 / 14%);
@@ -439,6 +441,7 @@
     --app-shell-muted-text-color: #a6a6a6;
     --app-shell-secondary-text-color: #c5c5c5;
     --app-shell-disabled-text-color: rgb(255 255 255 / 36%);
+    --app-shell-disabled-bg: rgb(255 255 255 / 6%);
     --app-shell-hover-bg: rgb(255 255 255 / 6%);
     --app-shell-control-hover-bg: #3a3a3a;
     --app-shell-active-bg: rgb(96 205 255 / 14%);

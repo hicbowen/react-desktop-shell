@@ -23,6 +23,7 @@ export interface CalendarDayState {
   disabled: boolean
   unavailable: boolean
   selected: boolean
+  visuallySelected: boolean
   rangeStart: boolean
   rangeMiddle: boolean
   rangeEnd: boolean
@@ -133,21 +134,27 @@ export function AppCalendarGrid({
                 const selected =
                   isSameAppDate(value, selectedDate) ||
                   Boolean(selectedRange && isDateInRange(value, selectedRange))
+                const inDisplayedMonth = !outsideMonth
                 const focused =
                   !outsideMonth && isSameAppDate(value, focusedDate)
                 const state: CalendarDayState = {
                   value,
                   outsideMonth,
-                  today: isSameAppDate(value, today),
+                  today: inDisplayedMonth && isSameAppDate(value, today),
                   disabled,
                   unavailable,
                   selected,
-                  rangeStart: selectedRangeState.start,
-                  rangeMiddle: selectedRangeState.middle,
-                  rangeEnd: selectedRangeState.end,
-                  previewStart: previewRangeState.start,
-                  previewMiddle: previewRangeState.middle,
-                  previewEnd: previewRangeState.end,
+                  visuallySelected:
+                    inDisplayedMonth &&
+                    (isSameAppDate(value, selectedDate) ||
+                      selectedRangeState.start ||
+                      selectedRangeState.end),
+                  rangeStart: inDisplayedMonth && selectedRangeState.start,
+                  rangeMiddle: inDisplayedMonth && selectedRangeState.middle,
+                  rangeEnd: inDisplayedMonth && selectedRangeState.end,
+                  previewStart: inDisplayedMonth && previewRangeState.start,
+                  previewMiddle: inDisplayedMonth && previewRangeState.middle,
+                  previewEnd: inDisplayedMonth && previewRangeState.end,
                   focused,
                 }
                 const hidden = outsideMonth && !showOutsideDays
@@ -155,7 +162,7 @@ export function AppCalendarGrid({
                   'app-calendar__day',
                   state.outsideMonth ? 'app-calendar__day--outside' : '',
                   hidden ? 'app-calendar__day--hidden' : '',
-                  state.selected ? 'app-calendar__day--selected' : '',
+                  state.visuallySelected ? 'app-calendar__day--selected' : '',
                   state.rangeStart ? 'app-calendar__day--range-start' : '',
                   state.rangeMiddle ? 'app-calendar__day--range-middle' : '',
                   state.rangeEnd ? 'app-calendar__day--range-end' : '',
@@ -170,11 +177,23 @@ export function AppCalendarGrid({
                   <td
                     className={[
                       'app-calendar__cell',
+                      state.rangeStart
+                        ? 'app-calendar__cell--range-start'
+                        : '',
                       state.rangeMiddle
                         ? 'app-calendar__cell--range-middle'
                         : '',
+                      state.rangeEnd
+                        ? 'app-calendar__cell--range-end'
+                        : '',
+                      state.previewStart
+                        ? 'app-calendar__cell--preview-start'
+                        : '',
                       state.previewMiddle
                         ? 'app-calendar__cell--preview-middle'
+                        : '',
+                      state.previewEnd
+                        ? 'app-calendar__cell--preview-end'
                         : '',
                     ]
                       .filter(Boolean)

@@ -155,6 +155,40 @@ describe('AppDateRangePicker', () => {
     expect(container.textContent).toContain('07/20/2026')
   })
 
+  it('shows and advances the active range segment', () => {
+    render(<AppDateRangePicker defaultOpen visibleMonths={1} />)
+    flushFrames()
+
+    const segments = container.querySelectorAll<HTMLButtonElement>(
+      '.app-date-range-picker__segment',
+    )
+    expect(segments[0]?.textContent).toBe('Start date')
+    expect(segments[1]?.textContent).toBe('End date')
+    expect(
+      segments[0]?.classList.contains(
+        'app-date-range-picker__segment--active',
+      ),
+    ).toBe(true)
+    expect(
+      segments[1]?.classList.contains(
+        'app-date-range-picker__segment--active',
+      ),
+    ).toBe(false)
+
+    clickDate('2026-07-10')
+
+    expect(
+      segments[0]?.classList.contains(
+        'app-date-range-picker__segment--active',
+      ),
+    ).toBe(false)
+    expect(
+      segments[1]?.classList.contains(
+        'app-date-range-picker__segment--active',
+      ),
+    ).toBe(true)
+  })
+
   it('does not submit pending values on Cancel, Escape, or outside click', () => {
     const change = vi.fn()
     render(
@@ -490,6 +524,33 @@ describe('AppDateRangePicker', () => {
     expect(popup()?.style.width).toBe('max-content')
     expect(popup()?.style.left).toBe('320px')
     expect(popup()?.style.top).toBe('217px')
+  })
+
+  it('keeps an end date in the right month when the range fits two months', () => {
+    render(
+      <AppDateRangePicker
+        value={{
+          start: { year: 2026, month: 7, day: 4 },
+          end: { year: 2026, month: 8, day: 21 },
+        }}
+        visibleMonths={2}
+      />,
+    )
+
+    act(() =>
+      container
+        .querySelectorAll<HTMLButtonElement>(
+          '.app-date-range-picker__segment',
+        )[1]
+        ?.click(),
+    )
+    flushFrames()
+
+    expect(
+      [...popup()!.querySelectorAll('.app-calendar__title')].map(
+        (title) => title.textContent,
+      ),
+    ).toEqual(['July 2026', 'August 2026'])
   })
 
   it('uses its own anchor and repositions on scroll and resize', () => {

@@ -57,6 +57,10 @@
   background: var(--app-shell-accent-color, #005fb8);
 }
 
+.app-time-panel__option[aria-selected='true']:hover:not(:disabled) {
+  background: var(--app-shell-accent-hover-color, #075a9e);
+}
+
 .app-time-panel__option:focus-visible {
   outline: 2px solid var(--app-shell-accent-color, #005fb8);
   outline-offset: -2px;
@@ -175,28 +179,6 @@
 
 .app-time-picker__action {
   min-width: 68px;
-  height: 30px;
-  padding: 0 12px;
-  color: inherit;
-  background: transparent;
-  border: 1px solid var(--app-shell-border-color, rgb(0 0 0 / 18%));
-  border-radius: 5px;
-  font: inherit;
-  font-size: 13px;
-}
-
-.app-time-picker__action:hover:not(:disabled) {
-  background: var(--app-shell-hover-bg, rgb(0 0 0 / 5%));
-}
-
-.app-time-picker__action--primary {
-  color: var(--app-shell-accent-text-color, #fff);
-  background: var(--app-shell-accent-color, #005fb8);
-  border-color: transparent;
-}
-
-.app-time-picker__action:disabled {
-  opacity: 0.48;
 }
 
 @keyframes app-time-picker-enter {

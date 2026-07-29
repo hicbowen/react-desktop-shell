@@ -5,6 +5,7 @@ import {
   type KeyboardEvent,
 } from 'react'
 import { createPortal } from 'react-dom'
+import { AppButton } from '../button'
 import { useAppFieldContext } from '../field/AppFieldContext'
 import { useAppLocale } from '../localization/useAppLocale'
 import { OverlayParentContext } from '../overlay/OverlayTreeContext'
@@ -13,6 +14,7 @@ import { AppCalendar } from './AppCalendar'
 import { findAvailableDate, isCalendarDateDisabled } from './calendarMath'
 import { formatAppDateISO } from './dateFormat'
 import {
+  addMonths,
   appDateToLocalDate,
   clampAppDate,
   compareAppDates,
@@ -101,6 +103,42 @@ function getInitialDate(
   )
 }
 
+function getInitialDisplayedMonth(
+  value: AppDateRangeValue | null,
+  target: RangeEditTarget,
+  focusedDate: AppDateValue,
+  visibleMonths: 1 | 2,
+) {
+  const focusedMonth = startOfMonth(focusedDate)
+  const selected = value?.[target]
+
+  if (
+    visibleMonths === 1 ||
+    !selected ||
+    !isValidAppDate(selected) ||
+    compareAppDates(selected, focusedDate) !== 0
+  ) {
+    return focusedMonth
+  }
+
+  if (target === 'start') return focusedMonth
+
+  const start = value?.start
+  if (start && isValidAppDate(start)) {
+    const startMonth = startOfMonth(start)
+    const monthSpan =
+      (focusedMonth.year - startMonth.year) * 12 +
+      focusedMonth.month -
+      startMonth.month
+
+    if (monthSpan >= 0 && monthSpan < visibleMonths) {
+      return startMonth
+    }
+  }
+
+  return startOfMonth(addMonths(focusedMonth, 1 - visibleMonths))
+}
+
 export function AppDateRangePicker({
   value,
   defaultValue = null,
@@ -155,7 +193,12 @@ export function AppDateRangePicker({
   )
   const [focusedDate, setFocusedDate] = useState(initialDate)
   const [displayedMonth, setDisplayedMonth] = useState(
-    startOfMonth(initialDate),
+    getInitialDisplayedMonth(
+      committedValue ?? null,
+      editTarget,
+      initialDate,
+      resolvedVisibleMonths,
+    ),
   )
   const wasOpenRef = useRef(false)
   const resetPending = () => {
@@ -189,7 +232,14 @@ export function AppDateRangePicker({
       setPending(toPending(committedValue ?? null))
       setHoveredDate(null)
       setFocusedDate(next)
-      setDisplayedMonth(startOfMonth(next))
+      setDisplayedMonth(
+        getInitialDisplayedMonth(
+          committedValue ?? null,
+          editTarget,
+          next,
+          resolvedVisibleMonths,
+        ),
+      )
     }
     wasOpenRef.current = overlay.visible
   }, [
@@ -199,6 +249,7 @@ export function AppDateRangePicker({
     maxValue,
     minValue,
     overlay.visible,
+    resolvedVisibleMonths,
   ])
 
   const setCommittedValue = (next: AppDateRangeValue | null) => {
@@ -330,25 +381,24 @@ export function AppDateRangePicker({
                 ? messages.dateRangePicker.invalidRange
                 : null}
           </div>
-          <button
+          <AppButton
             className="app-date-range-picker__action"
             onClick={cancel}
-            type="button"
           >
             {messages.common.cancel}
-          </button>
-          <button
-            className="app-date-range-picker__action app-date-range-picker__action--primary"
+          </AppButton>
+          <AppButton
+            appearance="primary"
+            className="app-date-range-picker__action"
             disabled={!canApply}
             onClick={() => {
               if (!completePending || !canApply) return
               setCommittedValue(completePending)
               overlay.requestClose('apply')
             }}
-            type="button"
           >
             {messages.common.apply}
-          </button>
+          </AppButton>
         </footer>
       </div>
     </OverlayParentContext.Provider>
@@ -377,6 +427,9 @@ export function AppDateRangePicker({
           aria-required={resolvedRequired || undefined}
           className={[
             'app-date-range-picker__segment',
+            overlay.visible && editTarget === 'start'
+              ? 'app-date-range-picker__segment--active'
+              : '',
             committedValue?.start
               ? ''
               : 'app-date-range-picker__segment--placeholder',
@@ -402,6 +455,9 @@ export function AppDateRangePicker({
           aria-haspopup="dialog"
           className={[
             'app-date-range-picker__segment',
+            overlay.visible && editTarget === 'end'
+              ? 'app-date-range-picker__segment--active'
+              : '',
             committedValue?.end
               ? ''
               : 'app-date-range-picker__segment--placeholder',

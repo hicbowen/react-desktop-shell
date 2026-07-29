@@ -54,6 +54,7 @@ export const zhCNInteractiveText: Record<string, string> = {
   panel: '面板', note: '备注', 'Type a note': '输入备注', Count: '计数',
   Standard: '标准', Save: '保存', Subtle: '微妙', Delete: '删除', Compact: '紧凑',
   Before: '图标在前', After: '图标在后', 'Saving changes': '正在保存更改', Disabled: '已禁用',
+  'Primary disabled': '主按钮已禁用',
   'More actions': '更多操作', 'More actions with tooltip': '带工具提示的更多操作', Rename: '重命名',
   'Open menu': '打开菜单', 'Open dialog': '打开对话框', Done: '完成',
   'Button composition': '按钮组合', 'Buttons can be used as dialog actions.': '按钮可以用作对话框操作。',

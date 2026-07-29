@@ -108,6 +108,7 @@
 }
 
 .app-date-range-picker__segment {
+  position: relative;
   min-width: 0;
   min-height: 30px;
   flex: 1;
@@ -116,12 +117,45 @@
   color: inherit;
   background: transparent;
   border: 0;
+  border-radius: 4px 4px 0 0;
   outline: 0;
   font: inherit;
   font-size: 13px;
   text-align: left;
   text-overflow: ellipsis;
   white-space: nowrap;
+  transition:
+    color var(--rds-motion-fast, 120ms) ease,
+    background-color var(--rds-motion-fast, 120ms) ease;
+}
+
+.app-date-range-picker__segment::after {
+  content: '';
+  position: absolute;
+  inset-inline: 8px;
+  inset-block-end: 0;
+  height: 2px;
+  background: var(--app-shell-accent-color, #005fb8);
+  border-radius: 999px;
+  opacity: 0;
+  transform: scaleX(0.45);
+  transition:
+    opacity var(--rds-motion-fast, 120ms) ease,
+    transform var(--rds-motion-fast, 120ms)
+      var(--rds-ease-standard, ease);
+}
+
+.app-date-range-picker__segment--active {
+  background: color-mix(
+    in srgb,
+    var(--app-shell-accent-color, #005fb8) 3%,
+    transparent
+  );
+}
+
+.app-date-range-picker__segment--active::after {
+  opacity: 1;
+  transform: scaleX(1);
 }
 
 .app-date-range-picker__segment--placeholder {
@@ -150,28 +184,6 @@
 
 .app-date-range-picker__action {
   min-width: 68px;
-  height: 30px;
-  padding: 0 12px;
-  color: inherit;
-  background: transparent;
-  border: 1px solid var(--app-shell-border-color, rgb(0 0 0 / 18%));
-  border-radius: 5px;
-  font: inherit;
-  font-size: 13px;
-}
-
-.app-date-range-picker__action:hover:not(:disabled) {
-  background: var(--app-shell-hover-bg, rgb(0 0 0 / 5%));
-}
-
-.app-date-range-picker__action--primary {
-  color: var(--app-shell-accent-text-color, #fff);
-  background: var(--app-shell-accent-color, #005fb8);
-  border-color: transparent;
-}
-
-.app-date-range-picker__action:disabled {
-  opacity: 0.48;
 }
 
 .app-calendar__header {
@@ -265,16 +277,86 @@
   text-align: center;
 }
 
+.app-calendar__cell--range-start::before,
 .app-calendar__cell--range-middle::before,
-.app-calendar__cell--preview-middle::before {
+.app-calendar__cell--range-end::before,
+.app-calendar__cell--preview-start::before,
+.app-calendar__cell--preview-middle::before,
+.app-calendar__cell--preview-end::before {
   content: '';
   position: absolute;
-  inset: 3px 0;
-  background: var(--app-date-picker-range-bg, rgb(0 95 184 / 12%));
+  inset-block: 3px;
+  pointer-events: none;
 }
 
+.app-calendar__cell--range-start::before,
+.app-calendar__cell--range-middle::before,
+.app-calendar__cell--range-end::before {
+  background: var(
+    --app-date-picker-range-bg,
+    color-mix(
+      in srgb,
+      var(--app-shell-accent-color, #005fb8) 12%,
+      transparent
+    )
+  );
+}
+
+.app-calendar__cell--preview-start::before,
+.app-calendar__cell--preview-middle::before,
+.app-calendar__cell--preview-end::before {
+  background: var(
+    --app-date-picker-preview-bg,
+    color-mix(
+      in srgb,
+      var(--app-shell-accent-color, #005fb8) 7%,
+      transparent
+    )
+  );
+}
+
+.app-calendar__cell--range-middle::before,
 .app-calendar__cell--preview-middle::before {
-  background: var(--app-date-picker-preview-bg, rgb(0 95 184 / 7%));
+  inset-inline: 0;
+}
+
+.app-calendar__cell--range-start::before,
+.app-calendar__cell--preview-start::before {
+  inset-inline-start: calc(50% + 15px);
+  inset-inline-end: 0;
+}
+
+.app-calendar__cell--range-end::before,
+.app-calendar__cell--preview-end::before {
+  inset-inline-start: 0;
+  inset-inline-end: calc(50% + 15px);
+}
+
+.app-calendar__cell--range-start.app-calendar__cell--range-end::before,
+.app-calendar__cell--preview-start.app-calendar__cell--preview-end::before {
+  display: none;
+}
+
+.app-calendar__cell--range-middle:hover::before {
+  background: var(
+    --app-date-picker-range-hover-bg,
+    color-mix(
+      in srgb,
+      var(--app-shell-accent-color, #005fb8) 18%,
+      transparent
+    )
+  );
+}
+
+.app-calendar__cell--preview-middle:hover::before {
+  background: var(
+    --app-date-picker-range-bg,
+    color-mix(
+      in srgb,
+      var(--app-shell-accent-color, #005fb8) 12%,
+      transparent
+    )
+  );
 }
 
 .app-calendar__day {
@@ -290,7 +372,7 @@
   font: inherit;
 }
 
-.app-calendar__day:hover:not(:disabled) {
+.app-calendar__day:hover:not(:disabled):not(.app-calendar__day--selected):not(.app-calendar__day--range-start):not(.app-calendar__day--range-middle):not(.app-calendar__day--range-end):not(.app-calendar__day--preview-start):not(.app-calendar__day--preview-middle):not(.app-calendar__day--preview-end) {
   background: var(--app-shell-hover-bg, rgb(0 0 0 / 5%));
 }
 
@@ -305,9 +387,49 @@
   background: var(--app-shell-accent-color, #005fb8);
 }
 
+.app-calendar__day--selected:hover:not(:disabled),
+.app-calendar__day--range-start:hover:not(:disabled),
+.app-calendar__day--range-end:hover:not(:disabled) {
+  background: var(--app-shell-accent-hover-color, #075a9e);
+}
+
+.app-calendar__day--range-start:not(.app-calendar__day--range-end) {
+  border-start-end-radius: 0;
+  border-end-end-radius: 0;
+}
+
+.app-calendar__day--range-end:not(.app-calendar__day--range-start) {
+  border-start-start-radius: 0;
+  border-end-start-radius: 0;
+}
+
 .app-calendar__day--preview-start,
 .app-calendar__day--preview-end {
   border-color: var(--app-shell-accent-color, #005fb8);
+}
+
+.app-calendar__day--preview-start:not(.app-calendar__day--selected),
+.app-calendar__day--preview-end:not(.app-calendar__day--selected) {
+  background: var(
+    --app-date-picker-preview-bg,
+    color-mix(
+      in srgb,
+      var(--app-shell-accent-color, #005fb8) 7%,
+      transparent
+    )
+  );
+}
+
+.app-calendar__day--preview-start:hover:not(:disabled):not(.app-calendar__day--selected),
+.app-calendar__day--preview-end:hover:not(:disabled):not(.app-calendar__day--selected) {
+  background: var(
+    --app-date-picker-range-bg,
+    color-mix(
+      in srgb,
+      var(--app-shell-accent-color, #005fb8) 12%,
+      transparent
+    )
+  );
 }
 
 .app-calendar__day--outside {
@@ -327,6 +449,8 @@
     animation: none;
   }
 
+  .app-date-range-picker__segment,
+  .app-date-range-picker__segment::after,
   .app-calendar *,
   .app-calendar *::before {
     scroll-behavior: auto;

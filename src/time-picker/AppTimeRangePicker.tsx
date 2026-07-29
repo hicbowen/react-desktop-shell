@@ -6,6 +6,7 @@ import {
   type KeyboardEvent,
 } from 'react'
 import { createPortal } from 'react-dom'
+import { AppButton } from '../button'
 import { useAppFieldContext } from '../field/AppFieldContext'
 import { useAppLocale } from '../localization/useAppLocale'
 import { OverlayParentContext } from '../overlay/OverlayTreeContext'
@@ -270,25 +271,24 @@ export function AppTimeRangePicker({
                   ? messages.timeRangePicker.durationTooLong(maxDuration)
                   : messages.timeRangePicker.duration(duration)}
           </div>
-          <button
+          <AppButton
             className="app-time-picker__action"
             onClick={cancel}
-            type="button"
           >
             {messages.common.cancel}
-          </button>
-          <button
-            className="app-time-picker__action app-time-picker__action--primary"
+          </AppButton>
+          <AppButton
+            appearance="primary"
+            className="app-time-picker__action"
             disabled={!canApply}
             onClick={() => {
               if (!canApply) return
               setCommittedValue(pending)
               overlay.requestClose('apply')
             }}
-            type="button"
           >
             {messages.common.apply}
-          </button>
+          </AppButton>
         </footer>
       </div>
     </OverlayParentContext.Provider>
