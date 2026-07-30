@@ -1,4 +1,11 @@
-import { forwardRef, useEffect, useRef, useState, type KeyboardEvent } from 'react'
+import {
+  forwardRef,
+  useEffect,
+  useRef,
+  useState,
+  type CompositionEvent,
+  type KeyboardEvent,
+} from 'react'
 import { AppTextBox } from '../text-input'
 import { useAppLocale } from '../localization/useAppLocale'
 import type { AppSearchBoxProps } from './types'
@@ -14,6 +21,8 @@ export const AppSearchBox = forwardRef<HTMLInputElement, AppSearchBoxProps>(func
   onSearch,
   debounceMs,
   clearOnEscape = true,
+  onCompositionEnd,
+  onCompositionStart,
   onKeyDown,
   placeholder,
   ...rest
@@ -21,34 +30,80 @@ export const AppSearchBox = forwardRef<HTMLInputElement, AppSearchBoxProps>(func
   const { messages } = useAppLocale()
   const controlled = value !== undefined
   const [internalValue, setInternalValue] = useState(defaultValue)
+  const [isComposing, setIsComposing] = useState(false)
   const currentValue = value ?? internalValue
-  const skipNextDebounce = useRef(false)
+  const composingRef = useRef(false)
+  const debounceTimerRef = useRef<number | null>(null)
+  const skipDebounceValueRef = useRef<string | null>(null)
 
   useEffect(() => {
-    if (debounceMs === undefined || !onSearch || skipNextDebounce.current) {
-      skipNextDebounce.current = false
-      return
-    }
-    const timer = window.setTimeout(() => onSearch(currentValue), Math.max(0, debounceMs))
-    return () => window.clearTimeout(timer)
-  }, [currentValue, debounceMs, onSearch])
+    if (isComposing || debounceMs === undefined || !onSearch) return
 
+    if (skipDebounceValueRef.current !== null) {
+      const skippedValue = skipDebounceValueRef.current
+      skipDebounceValueRef.current = null
+      if (skippedValue === currentValue) return
+    }
+
+    const timer = window.setTimeout(() => {
+      debounceTimerRef.current = null
+      onSearch(currentValue)
+    }, Math.max(0, debounceMs))
+    debounceTimerRef.current = timer
+
+    return () => {
+      window.clearTimeout(timer)
+      if (debounceTimerRef.current === timer) {
+        debounceTimerRef.current = null
+      }
+    }
+  }, [currentValue, debounceMs, isComposing, onSearch])
+
+  const clearPendingDebounce = () => {
+    if (debounceTimerRef.current !== null) {
+      window.clearTimeout(debounceTimerRef.current)
+      debounceTimerRef.current = null
+    }
+  }
   const change = (next: string) => {
     if (!controlled) setInternalValue(next)
     onValueChange?.(next)
   }
-  const submit = (next: string) => {
-    skipNextDebounce.current = true
+  const submit = (next: string, skipMatchingDebounce = false) => {
+    clearPendingDebounce()
+    if (skipMatchingDebounce) {
+      skipDebounceValueRef.current = next
+    }
     onSearch?.(next)
+  }
+  const handleCompositionStart = (
+    event: CompositionEvent<HTMLInputElement>,
+  ) => {
+    composingRef.current = true
+    setIsComposing(true)
+    onCompositionStart?.(event)
+  }
+  const handleCompositionEnd = (
+    event: CompositionEvent<HTMLInputElement>,
+  ) => {
+    composingRef.current = false
+    setIsComposing(false)
+    onCompositionEnd?.(event)
   }
   const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
     onKeyDown?.(event)
-    if (event.defaultPrevented) return
+    if (
+      event.defaultPrevented ||
+      composingRef.current ||
+      event.nativeEvent.isComposing
+    ) {
+      return
+    }
     if (event.key === 'Enter') submit(currentValue)
     if (event.key === 'Escape' && clearOnEscape && currentValue) {
       event.preventDefault()
       change('')
-      submit('')
+      submit('', true)
     }
   }
 
@@ -57,7 +112,9 @@ export const AppSearchBox = forwardRef<HTMLInputElement, AppSearchBoxProps>(func
     aria-label={rest['aria-label'] ?? messages.searchBox.label}
     clearable
     onChange={(event) => change(event.currentTarget.value)}
-    onClear={() => submit('')}
+    onClear={() => submit('', true)}
+    onCompositionEnd={handleCompositionEnd}
+    onCompositionStart={handleCompositionStart}
     onKeyDown={handleKeyDown}
     placeholder={placeholder ?? messages.searchBox.placeholder}
     ref={forwardedRef}

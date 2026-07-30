@@ -165,7 +165,7 @@ const zhCNSectionText: Record<string, string> = {
   'Use semantic colors for meaning and palette colors for categories.': '使用语义色表达含义，使用调色板颜色区分类别。',
   'Use sliders for relative adjustments; use a number box when exact entry is the primary task.': '相对调整使用滑块；需要精确输入时使用数字输入框。',
   'Use the same accessible calendar surface independently from date-picker inputs.': '脱离日期选择输入框，独立使用同一套无障碍日历界面。',
-  'Value changes stay immediate while search submission can be explicit or debounced.': '输入值即时变化，搜索提交则可以显式触发或使用防抖。',
+  'Value changes stay immediate while explicit and debounced search wait for IME composition to finish.': '输入值保持即时变化，显式搜索与防抖搜索则会等待输入法组词结束。',
   'These controls update the gallery\'s real outer AppShell.': '这些控件会更新组件展廊真实的外层 AppShell。',
   'The default strategy releases inactive panels, so their local input and counter state reset when selected again.': '默认策略会释放非活动面板，因此重新选中时其本地输入和计数状态会重置。',
   'The hidden strategy keeps every panel mounted, preserving local state while removing inactive panels from layout and accessibility navigation.': '隐藏策略会保持所有面板挂载，在保留本地状态的同时从布局和无障碍导航中移除非活动面板。',

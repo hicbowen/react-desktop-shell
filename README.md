@@ -409,10 +409,17 @@ DataTable control or pagination locale overrides.
 
 `AppTextBox` wraps native input behavior with optional icons, clear and loading affordances. Their built-in accessible labels follow the `AppShell` locale. `AppTextArea` supports character counts, full-width layout, and dependency-free automatic height within row limits, including padding and borders. Its native `style` and other textarea attributes apply to the inner control, while `className` and `fullWidth` configure the component root. Both forward refs and compose with `AppField`.
 
+`AppSearchBox` keeps `onValueChange` immediate for controlled input state while
+deferring debounced `onSearch` calls until IME composition finishes. Enter and
+Escape do not submit or clear while the user is choosing a composed character.
+Use `onSearch` rather than `onValueChange` for filtering that should wait until
+composition completes.
+
 ```tsx
 <AppTextBox value={name} onChange={(event) => setName(event.target.value)} clearable />
 <AppTextArea autoResize minRows={2} maxRows={8} showCount maxLength={500} />
 <AppTextArea fullWidth placeholder="Notes" />
+<AppSearchBox debounceMs={250} onSearch={setFilter} onValueChange={setQuery} value={query} />
 ```
 
 ## Selection controls
