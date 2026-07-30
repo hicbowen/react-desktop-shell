@@ -23,6 +23,8 @@ function rangeLabel(value: AppDateRangeValue | null) {
 export function DateRangePickerPage() {
   const [controlled, setControlled] =
     useState<AppDateRangeValue | null>(defaultRange)
+  const [automatic, setAutomatic] =
+    useState<AppDateRangeValue | null>(null)
   const [dialogOpen, setDialogOpen] = useState(false)
   const [dialogRange, setDialogRange] =
     useState<AppDateRangeValue | null>(null)
@@ -45,6 +47,19 @@ export function DateRangePickerPage() {
           />
           <span className="demo-note">
             Applied range: {rangeLabel(controlled)}
+          </span>
+        </DemoPreview>
+      </DemoSection>
+
+      <DemoSection title="Automatic commit">
+        <DemoPreview className="demo-form-stack">
+          <AppDateRangePicker
+            commitMode="auto"
+            onValueChange={setAutomatic}
+            value={automatic}
+          />
+          <span className="demo-note">
+            Selected range: {rangeLabel(automatic)}
           </span>
         </DemoPreview>
       </DemoSection>

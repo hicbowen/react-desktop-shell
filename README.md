@@ -455,11 +455,12 @@ interaction.
 ## Date range picker
 
 `AppDateRangePicker` uses a complete `AppDateRangeValue` for committed state.
-Selections inside the calendar remain pending until Apply is pressed. Cancel,
-Escape, and outside pointer dismissal discard pending dates without calling
-`onValueChange`. Range lengths include both endpoints. Its default minimum
-width adapts to its container and can be customized with
-`--rds-date-range-picker-min-width`.
+By default, selections inside the calendar remain pending until Apply is
+pressed. Set `commitMode="auto"` to commit and close as soon as a complete,
+valid range is selected. In either mode, dismissing an incomplete selection
+with Escape or an outside pointer does not call `onValueChange`. Range lengths
+include both endpoints. Its default minimum width adapts to its container and
+can be customized with `--rds-date-range-picker-min-width`.
 
 ```tsx
 const [range, setRange] =
@@ -467,6 +468,7 @@ const [range, setRange] =
 
 <AppDateRangePicker
   endName="endDate"
+  commitMode="auto"
   onValueChange={setRange}
   startName="startDate"
   value={range}

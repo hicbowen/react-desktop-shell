@@ -57,6 +57,7 @@ export interface AppDateRangePickerProps {
   value?: AppDateRangeValue | null
   defaultValue?: AppDateRangeValue | null
   onValueChange?: (value: AppDateRangeValue | null) => void
+  commitMode?: 'explicit' | 'auto'
   open?: boolean
   defaultOpen?: boolean
   onOpenChange?: (open: boolean) => void

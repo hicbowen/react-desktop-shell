@@ -407,6 +407,7 @@ export const zhCNInteractiveText: Record<string, string> = {
   'Start date': '开始日期',
   'Applied range:': '已应用范围：',
   'The second picker is limited to July–August 2026, including month navigation.': '第二个日期范围选择器限制在 2026 年 7 月至 8 月，月份导航同样受此范围限制。',
+  'Selected range:': '已选范围：',
   'Apply stays disabled until the inclusive range length is valid.': '在包含首尾日期的范围长度有效之前，“应用”按钮会保持禁用。',
   'Report period': '报告周期',
   'Choose range': '选择日期范围',

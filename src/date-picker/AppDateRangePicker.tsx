@@ -143,6 +143,7 @@ export function AppDateRangePicker({
   value,
   defaultValue = null,
   onValueChange,
+  commitMode = 'explicit',
   open,
   defaultOpen = false,
   onOpenChange,
@@ -281,28 +282,44 @@ export function AppDateRangePicker({
     if (readOnly) return
 
     setHoveredDate(null)
-    setPending((current) => {
-      if (!current.start || (!current.start && !current.end)) {
-        setEditTarget('end')
-        return { start: date, end: null }
-      }
+    let nextPending: PendingDateRange
+    let nextEditTarget = editTarget
 
-      if (!current.end) {
-        const normalized = normalizeDateRange(current.start, date)
-        setEditTarget('end')
-        return normalized
+    if (!pending.start) {
+      nextPending = { start: date, end: null }
+      nextEditTarget = 'end'
+    } else if (!pending.end) {
+      nextPending = normalizeDateRange(pending.start, date)
+      nextEditTarget = 'end'
+    } else if (editTarget === 'start') {
+      if (compareAppDates(date, pending.end) > 0) {
+        nextPending = { start: date, end: null }
+        nextEditTarget = 'end'
+      } else {
+        nextPending = { start: date, end: pending.end }
       }
+    } else {
+      nextPending = normalizeDateRange(pending.start, date)
+    }
 
-      if (editTarget === 'start') {
-        if (compareAppDates(date, current.end) > 0) {
-          setEditTarget('end')
-          return { start: date, end: null }
-        }
-        return { start: date, end: current.end }
-      }
+    setPending(nextPending)
+    setEditTarget(nextEditTarget)
 
-      return normalizeDateRange(current.start, date)
-    })
+    const nextRange = toCompleteRange(nextPending)
+    if (
+      commitMode === 'auto' &&
+      nextRange &&
+      isSelectableDateRange(nextRange, {
+        minValue,
+        maxValue,
+        isDateUnavailable,
+        minDuration,
+        maxDuration,
+      })
+    ) {
+      setCommittedValue(nextRange)
+      overlay.requestClose('apply')
+    }
   }
   const completePending = toCompleteRange(pending)
   const displayedStart = overlay.visible
@@ -376,36 +393,42 @@ export function AppDateRangePicker({
           showOutsideDays={showOutsideDays}
           visibleMonths={resolvedVisibleMonths}
         />
-        <footer className="app-date-range-picker__footer">
-          <div
-            aria-live="polite"
-            className="app-date-range-picker__summary"
-          >
-            {duration
-              ? messages.dateRangePicker.selectedDays(duration)
-              : completePending
-                ? messages.dateRangePicker.invalidRange
-                : null}
-          </div>
-          <AppButton
-            className="app-date-range-picker__action"
-            onClick={cancel}
-          >
-            {messages.common.cancel}
-          </AppButton>
-          <AppButton
-            appearance="primary"
-            className="app-date-range-picker__action"
-            disabled={!canApply}
-            onClick={() => {
-              if (!completePending || !canApply) return
-              setCommittedValue(completePending)
-              overlay.requestClose('apply')
-            }}
-          >
-            {messages.common.apply}
-          </AppButton>
-        </footer>
+        {commitMode === 'explicit' || completePending ? (
+          <footer className="app-date-range-picker__footer">
+            <div
+              aria-live="polite"
+              className="app-date-range-picker__summary"
+            >
+              {duration
+                ? messages.dateRangePicker.selectedDays(duration)
+                : completePending
+                  ? messages.dateRangePicker.invalidRange
+                  : null}
+            </div>
+            {commitMode === 'explicit' ? (
+              <>
+                <AppButton
+                  className="app-date-range-picker__action"
+                  onClick={cancel}
+                >
+                  {messages.common.cancel}
+                </AppButton>
+                <AppButton
+                  appearance="primary"
+                  className="app-date-range-picker__action"
+                  disabled={!canApply}
+                  onClick={() => {
+                    if (!completePending || !canApply) return
+                    setCommittedValue(completePending)
+                    overlay.requestClose('apply')
+                  }}
+                >
+                  {messages.common.apply}
+                </AppButton>
+              </>
+            ) : null}
+          </footer>
+        ) : null}
       </div>
     </OverlayParentContext.Provider>
   ) : null

@@ -221,6 +221,116 @@ describe('AppDateRangePicker', () => {
     ).toBe(true)
   })
 
+  it('automatically commits and closes after selecting a valid range', () => {
+    const change = vi.fn()
+    render(
+      <AppDateRangePicker
+        commitMode="auto"
+        defaultOpen
+        onValueChange={change}
+        visibleMonths={1}
+      />,
+    )
+    flushFrames()
+    expect(action('Apply')).toBeUndefined()
+
+    clickDate('2026-07-20')
+    expect(change).not.toHaveBeenCalled()
+    expect(popup()).not.toBeNull()
+
+    clickDate('2026-07-10')
+    expect(change).toHaveBeenCalledOnce()
+    expect(change).toHaveBeenCalledWith({
+      start: { year: 2026, month: 7, day: 10 },
+      end: { year: 2026, month: 7, day: 20 },
+    })
+    expect(popup()).toBeNull()
+    expect(container.textContent).toContain('07/10/2026')
+    expect(container.textContent).toContain('07/20/2026')
+  })
+
+  it('keeps invalid automatic ranges open until they become valid', () => {
+    const change = vi.fn()
+    render(
+      <AppDateRangePicker
+        commitMode="auto"
+        defaultOpen
+        minDuration={3}
+        onValueChange={change}
+        visibleMonths={1}
+      />,
+    )
+    flushFrames()
+    clickDate('2026-07-10')
+    clickDate('2026-07-11')
+
+    expect(change).not.toHaveBeenCalled()
+    expect(popup()).not.toBeNull()
+    expect(popup()?.textContent).toContain('2 selected days')
+    expect(action('Apply')).toBeUndefined()
+
+    clickDate('2026-07-12')
+    expect(change).toHaveBeenCalledWith({
+      start: { year: 2026, month: 7, day: 10 },
+      end: { year: 2026, month: 7, day: 12 },
+    })
+    expect(popup()).toBeNull()
+  })
+
+  it('discards an incomplete automatic range when dismissed', () => {
+    const change = vi.fn()
+    render(
+      <AppDateRangePicker
+        commitMode="auto"
+        defaultOpen
+        onValueChange={change}
+        visibleMonths={1}
+      />,
+    )
+    flushFrames()
+    clickDate('2026-07-10')
+    act(() =>
+      outside.dispatchEvent(
+        new PointerEvent('pointerdown', {
+          bubbles: true,
+          cancelable: true,
+        }),
+      ),
+    )
+
+    expect(change).not.toHaveBeenCalled()
+    expect(popup()).toBeNull()
+  })
+
+  it('automatically commits endpoint edits when controlled close is rejected', () => {
+    const change = vi.fn()
+    const openChange = vi.fn()
+    render(
+      <AppDateRangePicker
+        commitMode="auto"
+        onOpenChange={openChange}
+        onValueChange={change}
+        open
+        value={{
+          start: { year: 2026, month: 7, day: 10 },
+          end: { year: 2026, month: 7, day: 16 },
+        }}
+        visibleMonths={1}
+      />,
+    )
+    flushFrames()
+    clickDate('2026-07-08')
+
+    expect(change).toHaveBeenCalledOnce()
+    expect(change).toHaveBeenCalledWith({
+      start: { year: 2026, month: 7, day: 8 },
+      end: { year: 2026, month: 7, day: 16 },
+    })
+    expect(openChange).toHaveBeenCalledWith(false)
+    expect(popup()).not.toBeNull()
+    expect(popup()?.textContent).toContain('9 selected days')
+  })
+
   it('does not submit pending values on Cancel, Escape, or outside click', () => {
     const change = vi.fn()
     render(

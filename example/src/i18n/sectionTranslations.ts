@@ -6,6 +6,7 @@ const zhCNSectionText: Record<string, string> = {
   'Appearances and sizes': '外观与尺寸',
   Appearance: '外观',
   'Automatic action overflow': '操作自动溢出',
+  'Automatic commit': '自动提交',
   'Background tasks': '后台任务',
   'Basic and default values': '基础用法与默认值',
   'Basic range': '基础范围',
