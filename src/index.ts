@@ -91,7 +91,7 @@ export { AppCheckBox, AppCheckBoxGroup, AppRadioGroup, AppSegmentedControl, AppT
 export { AppNumberBox } from './number-box'
 export { AppSelect } from './select'
 export { AppListView, AppListViewItem } from './list-view'
-export { AppExpander } from './expander'
+export { AppExpander, AppExpanderGroup } from './expander'
 export { AppHoverCard } from './hover-card'
 export { AppConfirmPopover, AppPopover } from './popover'
 export {
@@ -172,6 +172,9 @@ export type {
   AppSelectProps,
   AppListViewItemProps,
   AppListViewProps,
+  AppExpanderGroupExpansionMode,
+  AppExpanderGroupProps,
+  AppExpanderGroupValue,
   AppExpanderProps,
   AppHoverCardProps,
   AppPopoverProps,

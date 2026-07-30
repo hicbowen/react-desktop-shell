@@ -19,4 +19,12 @@
 .app-expander__content { padding: 10px 12px 12px; border-top: 1px solid var(--app-shell-border-color, rgb(0 0 0 / 10%)); font-size: 13px; }
 .app-expander--disabled { color: var(--app-shell-disabled-text-color, rgb(0 0 0 / 36%)); }
 .app-expander__region[hidden] { display: none; }
+.app-expander-group { width: 100%; min-width: 0; display: flex; flex-direction: column; }
+.app-expander-group > .app-expander { border-radius: 0; }
+.app-expander-group > .app-expander:first-child { border-radius: 7px 7px 0 0; }
+.app-expander-group > .app-expander:last-child { border-radius: 0 0 7px 7px; }
+.app-expander-group > .app-expander:only-child { border-radius: 7px; }
+.app-expander-group > .app-expander + .app-expander { margin-top: -1px; }
+.app-expander-group > .app-expander:hover,
+.app-expander-group > .app-expander:focus-within { z-index: 1; }
 @media (prefers-reduced-motion: reduce) { .app-expander__chevron, .app-expander__region { transition: none !important; } }

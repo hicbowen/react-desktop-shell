@@ -1,5 +1,6 @@
 import { useEffect, useId, useRef, useState } from 'react'
 import type { TransitionEvent } from 'react'
+import { useAppExpanderGroupContext } from './AppExpanderGroupContext'
 import type { AppExpanderProps } from './types'
 import './AppExpander.css'
 
@@ -31,13 +32,19 @@ export function AppExpander({
   onExpandedChange,
   style,
   title,
+  value,
 }: AppExpanderProps) {
   const generatedId = useId()
   const triggerId = `${generatedId}-trigger`
   const regionId = `${generatedId}-panel`
-  const controlled = expanded !== undefined
+  const group = useAppExpanderGroupContext()
+  const itemValue = value ?? generatedId
+  const grouped = group !== null
+  const controlled = grouped || expanded !== undefined
   const [internal, setInternal] = useState(defaultExpanded)
-  const open = controlled ? expanded : internal
+  const open = grouped
+    ? group.isExpanded(itemValue)
+    : expanded ?? internal
   const reducedMotion = useReducedMotion()
   const [retainedContent, setRetainedContent] = useState(open)
   const [animatedExpanded, setAnimatedExpanded] = useState(open)
@@ -100,6 +107,7 @@ export function AppExpander({
   const toggle = () => {
     if (disabled) return
     const next = !open
+    if (group && !group.requestExpandedChange(itemValue, next)) return
     if (!controlled) setInternal(next)
     onExpandedChange?.(next)
   }

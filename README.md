@@ -632,6 +632,27 @@ metadata, descriptions, and keyboard adjustment of the property-name column.
 </AppExpander>
 ```
 
+`AppExpanderGroup` joins adjacent expanders into one continuous surface. It
+keeps each item independent by default. Set `expansionMode="single"` for
+accordion behavior or `"multiple"` for group-owned multi-expansion state.
+Coordinated items use `value`; the group supports controlled and uncontrolled
+values and Arrow Up, Arrow Down, Home, and End navigation.
+
+```tsx
+<AppExpanderGroup
+  collapsible={false}
+  defaultValue="general"
+  expansionMode="single"
+>
+  <AppExpander title="General" value="general">
+    <GeneralSettings />
+  </AppExpander>
+  <AppExpander title="Advanced" value="advanced">
+    <AdvancedSettings />
+  </AppExpander>
+</AppExpanderGroup>
+```
+
 ## Popover
 
 `AppPopover` renders lightweight, non-modal supporting content in the overlay portal. It is suitable for auxiliary information, compact form editing, and other interactions that should leave the rest of the page available. It does not lock focus, make the page inert, or prevent background interaction. It supports controlled or uncontrolled state, anchored placement with collision handling, outside/Escape dismissal, Escape focus restoration, optional initial focus, and trigger-width matching. Pass `ariaLabel` when the content should be exposed as a named region. The trigger must be a ref-capable DOM element or `forwardRef` component, not a Fragment.

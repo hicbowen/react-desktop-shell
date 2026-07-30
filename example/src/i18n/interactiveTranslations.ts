@@ -210,6 +210,7 @@ export const zhCNInteractiveText: Record<string, string> = {
   Review: '检查',
   'The row main action invokes the item; trailing buttons remain separate actions.': '行的主要操作会打开该项目，末尾按钮仍是独立操作。',
   General: '常规',
+  Appearance: '外观',
   Type: '类型',
   JSON: 'JSON',
   Enabled: '已启用',

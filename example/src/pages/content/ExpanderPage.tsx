@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Settings } from 'lucide-react'
 import {
   AppExpander,
+  AppExpanderGroup,
   AppIconButton,
   AppSelect,
   AppTextBox,
@@ -61,6 +62,38 @@ export function ExpanderPage() {
           </div>
         </AppExpander>
       </div>
+    </DemoSection>
+    <DemoSection
+      description="Use single mode when one related section should remain open at a time."
+      title="Continuous accordion group"
+    >
+      <AppExpanderGroup
+        collapsible={false}
+        defaultValue="general"
+        expansionMode="single"
+      >
+        <AppExpander title="General" value="general">
+          <div className="demo-expander-form">
+            <AppToggleSwitch label="Automatic save" />
+          </div>
+        </AppExpander>
+        <AppExpander title="Appearance" value="appearance">
+          <div className="demo-expander-control">
+            <AppSelect
+              options={[
+                { value: 'comfortable', label: 'Comfortable' },
+                { value: 'spacious', label: 'Spacious' },
+              ]}
+            />
+          </div>
+        </AppExpander>
+        <AppExpander title="Advanced" value="advanced">
+          <div className="demo-expander-form">
+            <AppToggleSwitch label="Verbose logging" />
+            <AppTextBox placeholder="Custom cache path" />
+          </div>
+        </AppExpander>
+      </AppExpanderGroup>
     </DemoSection>
   </DemoPage>
 }

@@ -226,7 +226,7 @@ const taxonomy: Record<DemoPageKey, DemoTaxonomy> = {
   'app-link': { category: 'content', subgroup: 'markers', apiNames: ['AppLink'], status: 'stable' },
   'app-avatar-persona': { category: 'content', subgroup: 'markers', apiNames: ['AppAvatar', 'AppPersona'], status: 'stable' },
   'app-copyable-text': { category: 'content', subgroup: 'structure', apiNames: ['AppCopyableText'], status: 'stable' },
-  expander: { category: 'content', subgroup: 'containers', apiNames: ['AppExpander'], status: 'stable' },
+  expander: { category: 'content', subgroup: 'containers', apiNames: ['AppExpander', 'AppExpanderGroup'], status: 'stable' },
   'app-tag': { category: 'content', subgroup: 'markers', apiNames: ['AppTag'], status: 'stable' },
   'app-skeleton': { category: 'content', subgroup: 'states', apiNames: ['AppSkeleton', 'AppSkeletonGroup'], status: 'stable' },
   'app-progress': { category: 'content', subgroup: 'states', apiNames: ['AppProgressBar', 'AppProgressRing'], status: 'stable', related: ['app-skeleton', 'loading-overlay'] },
