@@ -130,6 +130,7 @@ import { AppSegmentedControlPage } from './pages/forms/AppSegmentedControlPage'
 import { AppToggleSwitchPage } from './pages/forms/AppToggleSwitchPage'
 import { AppNumberBoxPage } from './pages/forms/AppNumberBoxPage'
 import { AppSelectPage } from './pages/forms/AppSelectPage'
+import { AppComboBoxPage } from './pages/forms/AppComboBoxPage'
 import { AutoCompletePage } from './pages/forms/AutoCompletePage'
 import { CascaderPage } from './pages/forms/CascaderPage'
 import { SliderPage } from './pages/forms/SliderPage'
@@ -225,6 +226,7 @@ const demoPageSources = [
   { key: 'app-toggle-switch', label: 'AppToggleSwitch', description: 'Turn persistent settings on or off with optional supporting descriptions.', icon: <ToggleRight size={16} />, component: AppToggleSwitchPage },
   { key: 'app-number-box', label: 'AppNumberBox', description: 'Stepped numeric entry with bounds, precision, and controlled validation.', icon: <Hash size={16} />, component: AppNumberBoxPage },
   { key: 'app-select', label: 'AppSelect', description: 'Reliable native single-option selection with validation and disabled states.', icon: <ListFilter size={16} />, component: AppSelectPage },
+  { key: 'app-combo-box', label: 'AppComboBox', description: 'Strict single-option selection with editable filtering and keyboard navigation.', icon: <ChevronsUpDown size={16} />, component: AppComboBoxPage },
   { key: 'auto-complete', label: 'AppAutoComplete', description: 'Free text input with filtered suggestions and keyboard navigation.', icon: <WandSparkles size={16} />, component: AutoCompletePage },
   { key: 'cascader', label: 'AppCascader', description: 'Choose a leaf value from a hierarchy shown in successive columns.', icon: <ListTree size={16} />, component: CascaderPage },
   { key: 'slider', label: 'AppSlider', description: 'Adjust a relative numeric value along a styled range track.', icon: <SlidersHorizontal size={16} />, component: SliderPage },
@@ -274,11 +276,12 @@ const taxonomy: Record<DemoPageKey, DemoTaxonomy> = {
   'app-text-area': { category: 'input', subgroup: 'text', apiNames: ['AppTextArea'], status: 'stable', related: ['app-text-box'] },
   'search-box': { category: 'input', subgroup: 'text', apiNames: ['AppSearchBox'], status: 'stable' },
   'password-box': { category: 'input', subgroup: 'text', apiNames: ['AppPasswordBox'], status: 'stable' },
-  'auto-complete': { category: 'input', subgroup: 'text', apiNames: ['AppAutoComplete'], status: 'stable' },
+  'auto-complete': { category: 'input', subgroup: 'text', apiNames: ['AppAutoComplete'], status: 'stable', related: ['app-combo-box'] },
   slider: { category: 'input', subgroup: 'numeric', apiNames: ['AppSlider'], status: 'stable' },
   'range-slider': { category: 'input', subgroup: 'numeric', apiNames: ['AppRangeSlider'], status: 'stable' },
   'app-number-box': { category: 'input', subgroup: 'numeric', apiNames: ['AppNumberBox'], status: 'stable', related: ['slider', 'range-slider'] },
-  'app-select': { category: 'input', subgroup: 'selection', apiNames: ['AppSelect'], status: 'stable', related: ['multi-select', 'cascader'] },
+  'app-select': { category: 'input', subgroup: 'selection', apiNames: ['AppSelect'], status: 'stable', related: ['app-combo-box', 'multi-select', 'cascader'] },
+  'app-combo-box': { category: 'input', subgroup: 'selection', apiNames: ['AppComboBox'], status: 'stable', related: ['app-select', 'auto-complete'] },
   'app-check-box': { category: 'input', subgroup: 'selection', apiNames: ['AppCheckBox', 'AppCheckBoxGroup'], status: 'stable', related: ['app-radio-group', 'app-toggle-switch'] },
   'app-radio-group': { category: 'input', subgroup: 'selection', apiNames: ['AppRadioGroup'], status: 'stable', related: ['app-check-box', 'app-segmented-control'] },
   'app-segmented-control': { category: 'input', subgroup: 'selection', apiNames: ['AppSegmentedControl'], status: 'stable', related: ['app-radio-group', 'app-selector-bar'] },

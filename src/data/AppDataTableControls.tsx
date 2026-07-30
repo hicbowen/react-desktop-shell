@@ -12,6 +12,7 @@ import { useAnchoredOverlayPosition } from '../overlay/useAnchoredOverlayPositio
 import { useOverlayDismiss } from '../overlay/useOverlayDismiss'
 import { useAppLocale } from '../localization/useAppLocale'
 import type { AppLocaleMessages } from '../localization/types'
+import { CheckMark } from '../selection-controls/CheckBoxIndicator'
 import type {
   AppDataTableControlsOptions,
   AppDataTableFilterDefinition,
@@ -317,7 +318,7 @@ export function AppDataTableControls<TData>({
                               aria-hidden="true"
                               className="app-data-table__filter-check"
                             >
-                              {checked ? '✓' : ''}
+                              {checked ? <CheckMark /> : null}
                             </span>
                             <span>{option.label}</span>
                           </button>

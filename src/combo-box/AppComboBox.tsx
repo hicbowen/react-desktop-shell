@@ -13,12 +13,24 @@ import { AppAnchoredPopup } from '../overlay/AppAnchoredPopup'
 import type { AppComboBoxProps } from './types'
 import './AppComboBox.css'
 
+function getOptionDisplay(
+  option: AppComboBoxProps['options'][number] | undefined,
+) {
+  if (!option) return ''
+  return typeof option.label === 'string' || typeof option.label === 'number'
+    ? String(option.label)
+    : option.value
+}
+
+function getValueDisplay(options: AppComboBoxProps['options'], value: string) {
+  return getOptionDisplay(options.find((option) => option.value === value))
+}
+
 export const AppComboBox = forwardRef<HTMLInputElement, AppComboBoxProps>(
   function AppComboBox(
     {
       'aria-describedby': ariaDescribedBy,
       'aria-invalid': ariaInvalid,
-      allowCustomValue = true,
       className,
       clearable = false,
       defaultOpen = false,
@@ -49,31 +61,51 @@ export const AppComboBox = forwardRef<HTMLInputElement, AppComboBoxProps>(
     const localRef = useRef<HTMLInputElement>(null)
     const rootRef = useRef<HTMLSpanElement>(null)
     const [uncontrolledValue, setUncontrolledValue] = useState(defaultValue)
-    const [draft, setDraft] = useState(value ?? defaultValue)
+    const [draft, setDraft] = useState(() =>
+      getValueDisplay(options, value ?? defaultValue),
+    )
     const [uncontrolledOpen, setUncontrolledOpen] = useState(defaultOpen)
     const [activeIndex, setActiveIndex] = useState(-1)
     const isControlled = value !== undefined
     const isOpenControlled = open !== undefined
     const committedValue = isControlled ? value : uncontrolledValue
+    const committedDisplay = useMemo(
+      () => getValueDisplay(options, committedValue),
+      [committedValue, options],
+    )
+    const previousCommitRef = useRef({
+      display: committedDisplay,
+      value: committedValue,
+    })
     const resolvedOpen = isOpenControlled ? open : uncontrolledOpen
     const resolvedDisabled = disabled ?? field?.disabled ?? false
     const resolvedInvalid = ariaInvalid ?? invalid ?? field?.invalid
     const resolvedRequired = required ?? field?.required
 
     const filteredOptions = useMemo(() => {
-      const query = draft.trim().toLocaleLowerCase()
+      const query = draft === committedDisplay
+        ? ''
+        : draft.trim().toLocaleLowerCase()
       if (!query) return options
       return options.filter((option) => {
-        const label = typeof option.label === 'string' || typeof option.label === 'number'
-          ? String(option.label)
-          : option.value
+        const label = getOptionDisplay(option)
         return `${label} ${option.value}`.toLocaleLowerCase().includes(query)
       })
-    }, [draft, options])
+    }, [committedDisplay, draft, options])
 
     useEffect(() => {
-      if (isControlled) setDraft(value)
-    }, [isControlled, value])
+      const previous = previousCommitRef.current
+      const valueChanged = previous.value !== committedValue
+      previousCommitRef.current = {
+        display: committedDisplay,
+        value: committedValue,
+      }
+      setDraft((current) =>
+        valueChanged || current === previous.display
+          ? committedDisplay
+          : current,
+      )
+    }, [committedDisplay, committedValue])
 
     useEffect(() => {
       if (!resolvedOpen) setActiveIndex(-1)
@@ -88,15 +120,15 @@ export const AppComboBox = forwardRef<HTMLInputElement, AppComboBoxProps>(
       if (!isOpenControlled) setUncontrolledOpen(next)
       onOpenChange?.(next)
     }
-    const commit = (next: string) => {
-      setDraft(next)
+    const commit = (next: string, display = getValueDisplay(options, next)) => {
+      setDraft(display)
       if (!isControlled) setUncontrolledValue(next)
       onValueChange?.(next)
     }
     const choose = (index: number) => {
       const option = filteredOptions[index]
       if (!option || option.disabled) return
-      commit(option.value)
+      commit(option.value, getOptionDisplay(option))
       requestOpen(false)
       localRef.current?.focus()
     }
@@ -132,15 +164,13 @@ export const AppComboBox = forwardRef<HTMLInputElement, AppComboBoxProps>(
         choose(activeIndex)
       } else if (event.key === 'Escape' && resolvedOpen) {
         event.preventDefault()
-        setDraft(committedValue)
+        setDraft(committedDisplay)
         requestOpen(false)
       }
     }
     const handleBlur = (event: React.FocusEvent<HTMLInputElement>) => {
       onBlur?.(event)
-      if (!allowCustomValue && !options.some((option) => option.value === draft)) {
-        setDraft(committedValue)
-      }
+      setDraft(committedDisplay)
     }
     const handleOptionPointerDown = (
       event: ReactPointerEvent<HTMLButtonElement>,
@@ -173,12 +203,7 @@ export const AppComboBox = forwardRef<HTMLInputElement, AppComboBoxProps>(
           id={inputId}
           onBlur={handleBlur}
           onChange={(event) => {
-            const next = event.target.value
-            setDraft(next)
-            if (allowCustomValue) {
-              if (!isControlled) setUncontrolledValue(next)
-              onValueChange?.(next)
-            }
+            setDraft(event.target.value)
             requestOpen(true)
           }}
           onClick={() => requestOpen(true)}

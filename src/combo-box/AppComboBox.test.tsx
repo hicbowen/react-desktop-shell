@@ -32,20 +32,28 @@ describe('AppComboBox', () => {
   const input = () => container.querySelector<HTMLInputElement>('[role="combobox"]')!
   const key = (value: string) => act(() => input().dispatchEvent(new KeyboardEvent('keydown', { bubbles: true, cancelable: true, key: value })))
 
-  it('filters and commits custom values on blur', () => {
+  it('filters without committing draft text and restores the selected label on blur', () => {
     const change = vi.fn()
-    render(<AppComboBox options={options} onValueChange={change} />)
+    render(
+      <AppComboBox
+        defaultValue="python"
+        options={options}
+        onValueChange={change}
+      />,
+    )
     act(() => input().focus())
     act(() => {
       const setter = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value')?.set
-      setter?.call(input(), 'py')
+      setter?.call(input(), 'sc')
       input().dispatchEvent(new Event('input', { bubbles: true }))
     })
     expect(document.body.querySelectorAll('.app-combo-box__listbox [role="option"]')).toHaveLength(1)
-    expect(change).toHaveBeenLastCalledWith('py')
+    expect(change).not.toHaveBeenCalled()
+    act(() => input().dispatchEvent(new FocusEvent('focusout', { bubbles: true })))
+    expect(input().value).toBe('Python')
   })
 
-  it('supports keyboard selection and skips disabled options', () => {
+  it('commits option values while displaying labels', () => {
     const change = vi.fn()
     render(<AppComboBox options={options} onValueChange={change} />)
     act(() => input().focus())
@@ -53,7 +61,7 @@ describe('AppComboBox', () => {
     expect(input().getAttribute('aria-activedescendant')).toContain('-1')
     key('Enter')
     expect(change).toHaveBeenCalledWith('scratch')
-    expect(input().value).toBe('scratch')
+    expect(input().value).toBe('Scratch')
     expect(input().getAttribute('aria-expanded')).toBe('false')
   })
 
@@ -87,7 +95,7 @@ describe('AppComboBox', () => {
     act(() => input().click())
     expect(openChange).toHaveBeenCalledWith(true)
     expect(input().getAttribute('aria-expanded')).toBe('false')
-    expect(input().value).toBe('python')
+    expect(input().value).toBe('Python')
   })
 
   it('restores focus after keyboard selection', () => {
@@ -99,14 +107,19 @@ describe('AppComboBox', () => {
     expect(input().getAttribute('aria-activedescendant')).toBeNull()
   })
 
-  it('reverts unsupported input when custom values are disabled', () => {
-    render(<AppComboBox allowCustomValue={false} defaultValue="python" options={options} />)
+  it('reverts unsupported input because values must come from options', () => {
+    render(<AppComboBox defaultValue="python" options={options} />)
     act(() => {
       const setter = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value')?.set
       setter?.call(input(), 'unknown')
       input().dispatchEvent(new Event('input', { bubbles: true }))
       input().dispatchEvent(new FocusEvent('focusout', { bubbles: true }))
     })
-    expect(input().value).toBe('python')
+    expect(input().value).toBe('Python')
+  })
+
+  it('renders an empty input for a value that is not in the option list', () => {
+    render(<AppComboBox options={options} value="missing" />)
+    expect(input().value).toBe('')
   })
 })

@@ -70,6 +70,7 @@ export const zhCNRegistry: Record<string, DemoPageTranslation> = {
   'app-toggle-switch': { label: '切换开关', description: '开启或关闭持久设置，并可显示辅助说明。' },
   'app-number-box': { label: '数字输入框', description: '支持步进、边界、精度和受控验证的数字输入。' },
   'app-select': { label: '选择框', description: '支持验证和禁用状态的可靠原生单项选择。' },
+  'app-combo-box': { label: '可编辑选择框', description: '支持可编辑筛选和键盘导航的严格单项选择。' },
   'auto-complete': { label: 'AppAutoComplete', description: '支持筛选建议和键盘导航的自由文本输入。' },
   cascader: { label: 'AppCascader', description: '从依次展开的多列层级结构中选择叶子值。' },
   slider: { label: 'AppSlider', description: '沿样式化轨道调整相对数值。' },

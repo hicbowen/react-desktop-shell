@@ -6,6 +6,7 @@ import {
   useState,
 } from 'react'
 import type { AppCheckBoxProps } from './types'
+import { CheckBoxIndicator } from './CheckBoxIndicator'
 import './AppSelectionControls.css'
 
 const useBrowserLayoutEffect =
@@ -59,19 +60,7 @@ export const AppCheckBox = forwardRef<HTMLInputElement, AppCheckBoxProps>(
           ref={setRef}
           type="checkbox"
         />
-        <span aria-hidden="true" className="app-check-box__box">
-          {indeterminate ? (
-            <span className="app-check-box__indeterminate" />
-          ) : resolved ? (
-            <svg
-              className="app-check-box__check"
-              focusable="false"
-              viewBox="0 0 16 16"
-            >
-              <path d="M3.5 8.25L6.5 11L12.5 4.75" />
-            </svg>
-          ) : null}
-        </span>
+        <CheckBoxIndicator checked={resolved} indeterminate={indeterminate} />
         {label || description ? (
           <span className="app-selection-label">
             <span>{label}</span>

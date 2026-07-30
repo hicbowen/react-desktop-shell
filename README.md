@@ -93,6 +93,12 @@ function App() {
 
 `AppShell` composes the sidebar header, title bar, navigation rail, and content area into a full-height desktop shell. The sidebar starts at the top of the window, while the title bar belongs to the main content area.
 
+To match native desktop applications, text selection and the text cursor are
+disabled by default inside `AppShell`. Text inputs, textareas, and editable
+content remain selectable. Add `className="app-shell__selectable"` or
+`data-app-selectable="true"` to copyable content such as article text, logs, or
+code output.
+
 ```tsx
 <AppShell
   theme="system"
@@ -567,8 +573,10 @@ submit the start and end as `HH:mm`.
 
 ## Combo box
 
-`AppComboBox` combines editable text with a filtered option list. It supports
-controlled and uncontrolled values, custom values, keyboard navigation,
+`AppComboBox` combines editable filtering with strict option selection. Typing
+only filters the option list; choosing an option commits its `value`, while the
+input displays its text `label`. Unsupported text is restored on blur or
+Escape. It supports controlled and uncontrolled values, keyboard navigation,
 clearing, and `AppField` associations.
 
 ```tsx
@@ -580,7 +588,9 @@ clearing, and `AppField` associations.
 />
 ```
 
-Set `allowCustomValue={false}` when the committed value must match an option.
+Use `AppAutoComplete` instead when arbitrary text is a valid committed value
+and options are suggestions rather than the complete set of allowed values.
+Non-text option labels fall back to the option `value` inside the input.
 
 ## List view
 

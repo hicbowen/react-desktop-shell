@@ -25,6 +25,7 @@ import {
 } from '../overlay/trigger'
 import { useAnchoredOverlayPosition } from '../overlay/useAnchoredOverlayPosition'
 import { useOverlayDismiss } from '../overlay/useOverlayDismiss'
+import { CheckMark } from '../selection-controls/CheckBoxIndicator'
 import {
   OverlayParentContext,
   useOverlayTree,
@@ -379,7 +380,7 @@ function AppMenuFlyoutInner(
                 tabIndex={activeIndex === index ? 0 : -1}
                 type="button"
               >
-                <span className="app-menu-flyout__icon">{entry.checked ? '✓' : entry.icon}</span>
+                <span className="app-menu-flyout__icon">{entry.checked ? <CheckMark /> : entry.icon}</span>
                 <span className="app-menu-flyout__label">{entry.label}</span>
                 {entry.shortcut ? <span className="app-menu-flyout__shortcut">{entry.shortcut}</span> : null}
               </button>

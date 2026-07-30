@@ -1,6 +1,6 @@
 import { useId, useState } from 'react'
+import { AppCheckBox } from './AppCheckBox'
 import type { AppCheckBoxGroupProps } from './types'
-import './AppSelectionControls.css'
 
 export function AppCheckBoxGroup({
   ariaLabel,
@@ -63,32 +63,22 @@ export function AppCheckBoxGroup({
         {options.map((option, index) => {
           const optionDisabled = disabled || Boolean(option.disabled)
           return (
-            <label
-              className={`app-check-box${optionDisabled ? ' app-check-box--disabled' : ''}`}
+            <AppCheckBox
+              checked={selected.has(option.value)}
+              description={option.description}
+              disabled={optionDisabled}
+              form={form}
               key={option.value}
-            >
-              <input
-                checked={selected.has(option.value)}
-                disabled={optionDisabled}
-                form={form}
-                name={name}
-                onChange={(event) => toggle(option.value, event.target.checked)}
-                required={
-                  required &&
-                  selectedValues.length === 0 &&
-                  index === requiredOptionIndex
-                }
-                type="checkbox"
-                value={option.value}
-              />
-              <span aria-hidden="true" className="app-check-box__box">
-                {selected.has(option.value) ? '✓' : ''}
-              </span>
-              <span className="app-selection-label">
-                <span>{option.label}</span>
-                {option.description ? <span className="app-selection-description">{option.description}</span> : null}
-              </span>
-            </label>
+              label={option.label}
+              name={name}
+              onCheckedChange={(checked) => toggle(option.value, checked)}
+              required={
+                required &&
+                selectedValues.length === 0 &&
+                index === requiredOptionIndex
+              }
+              value={option.value}
+            />
           )
         })}
       </div>

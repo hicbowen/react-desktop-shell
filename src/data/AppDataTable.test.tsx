@@ -373,6 +373,12 @@ describe('AppDataTable controls', () => {
     expect(
       container.querySelector('[data-testid="selected-count"]')?.textContent,
     ).toBe('2')
+    expect(
+      container.querySelector('thead .app-check-box__check'),
+    ).not.toBeNull()
+    expect(
+      container.querySelectorAll('tbody .app-check-box__check'),
+    ).toHaveLength(2)
   })
 
   it('closes the filter menu on outside click and Escape', () => {

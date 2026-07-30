@@ -84,7 +84,29 @@
   overflow: hidden;
   color: var(--app-shell-text-color);
   background: var(--app-shell-chrome-bg);
+  cursor: default;
+  user-select: none;
+  -webkit-user-select: none;
   transition: grid-template-columns 160ms ease;
+}
+
+.app-shell :where(
+  input:not([type]),
+  input[type='text'],
+  input[type='search'],
+  input[type='email'],
+  input[type='url'],
+  input[type='tel'],
+  input[type='password'],
+  input[type='number'],
+  textarea,
+  [contenteditable]:not([contenteditable='false']),
+  .app-shell__selectable,
+  [data-app-selectable='true']
+) {
+  cursor: text;
+  user-select: text;
+  -webkit-user-select: text;
 }
 
 .app-shell[data-theme='dark'] {

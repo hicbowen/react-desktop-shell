@@ -2,15 +2,12 @@
 .app-check-box { position: relative; }
 .app-check-box input, .app-toggle-switch input { position: absolute; width: 1px; height: 1px; opacity: 0; }
 .app-check-box__box { width: 18px; height: 18px; box-sizing: border-box; display: grid; flex: 0 0 18px; place-items: center; color: transparent; background: var(--app-shell-card-bg, #fff); border: 1px solid var(--app-shell-secondary-text-color, rgb(0 0 0 / 58%)); border-radius: 4px; font-size: 14px; line-height: 1; transition: color 100ms ease-out, background-color 100ms ease-out, border-color 100ms ease-out, transform 80ms ease-out; }
+.app-check-box__check { width: 16px; height: 16px; display: block; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; animation: app-check-box-check-in 190ms var(--rds-ease-enter, cubic-bezier(.1, .9, .2, 1)) both; }
+.app-check-box__check path { stroke-dasharray: 14; animation: app-check-box-stroke-in 240ms var(--rds-ease-enter, cubic-bezier(.1, .9, .2, 1)) 25ms both; }
+.app-check-box__indeterminate { width: 10px; height: 2px; display: block; background: currentColor; border-radius: 999px; animation: app-check-box-indeterminate-in 190ms var(--rds-ease-enter, cubic-bezier(.1, .9, .2, 1)) both; }
 .app-check-box input:checked + .app-check-box__box, .app-check-box input:indeterminate + .app-check-box__box { color: var(--app-shell-accent-text-color, #fff); background: var(--app-shell-accent-color, #005fb8); border-color: var(--app-shell-accent-color, #005fb8); }
 .app-check-box:not(.app-check-box--disabled):hover .app-check-box__box { border-color: color-mix(in srgb, var(--app-shell-text-color, #1f1f1f) 78%, transparent); }
 .app-check-box:not(.app-check-box--disabled):active .app-check-box__box { transform: scale(.9); }
-.app-check-box__check { width: 16px; height: 16px; display: block; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; animation: app-check-box-check-in 160ms var(--rds-ease-enter, cubic-bezier(.1, .9, .2, 1)) both; }
-.app-check-box__check path { stroke-dasharray: 14; animation: app-check-box-stroke-in 160ms var(--rds-ease-enter, cubic-bezier(.1, .9, .2, 1)) both; }
-.app-check-box__indeterminate { width: 10px; height: 2px; display: block; background: currentColor; border-radius: 999px; animation: app-check-box-indeterminate-in 140ms var(--rds-ease-enter, cubic-bezier(.1, .9, .2, 1)) both; }
-@keyframes app-check-box-check-in { from { opacity: 0; transform: scale(.72); } to { opacity: 1; transform: scale(1); } }
-@keyframes app-check-box-stroke-in { from { stroke-dashoffset: 14; } to { stroke-dashoffset: 0; } }
-@keyframes app-check-box-indeterminate-in { from { opacity: 0; transform: scaleX(.35); } to { opacity: 1; transform: scaleX(1); } }
 .app-check-box input:focus-visible + .app-check-box__box, .app-toggle-switch input:focus-visible + .app-toggle-switch__track { outline: 2px solid var(--app-shell-accent-color, #005fb8); outline-offset: 2px; }
 .app-selection-label { display: grid; gap: 2px; padding-top: 1px; line-height: 1.35; }
 .app-selection-description { color: var(--app-shell-secondary-text-color, rgb(0 0 0 / 62%)); font-size: 12px; }
@@ -90,16 +87,30 @@
 .app-segmented-control__label { overflow: hidden; text-overflow: ellipsis; }
 .app-segmented-control--disabled, .app-segmented-control__option--disabled { color: var(--app-shell-disabled-text-color, rgb(0 0 0 / 36%)); }
 
+@keyframes app-check-box-check-in {
+  from { opacity: 0; transform: scale(.82); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes app-check-box-stroke-in {
+  from { stroke-dashoffset: 14; }
+  to { stroke-dashoffset: 0; }
+}
+
+@keyframes app-check-box-indeterminate-in {
+  from { opacity: 0; transform: scaleX(.35); }
+  to { opacity: 1; transform: scaleX(1); }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .app-check-box__box,
+  .app-check-box__check,
+  .app-check-box__check path,
+  .app-check-box__indeterminate,
   .app-radio-group__indicator,
   .app-radio-group__indicator::after,
   .app-segmented-control__content {
     transition: none;
-  }
-  .app-check-box__check,
-  .app-check-box__check path,
-  .app-check-box__indeterminate {
     animation: none;
   }
 }

@@ -17,7 +17,6 @@ export interface AppComboBoxProps extends Omit<
   open?: boolean
   defaultOpen?: boolean
   onOpenChange?: (open: boolean) => void
-  allowCustomValue?: boolean
   clearable?: boolean
   invalid?: boolean
   size?: 'compact' | 'standard'
