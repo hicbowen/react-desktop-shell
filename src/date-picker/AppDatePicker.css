@@ -207,8 +207,12 @@
   border-radius: 5px;
 }
 
-.app-calendar__nav:hover {
+.app-calendar__nav:hover:not(:disabled) {
   background: var(--app-shell-hover-bg, rgb(0 0 0 / 5%));
+}
+
+.app-calendar__nav:disabled {
+  color: var(--app-shell-disabled-text-color, rgb(0 0 0 / 36%));
 }
 
 .app-calendar__nav:focus-visible,

@@ -305,6 +305,12 @@ export function AppDateRangePicker({
     })
   }
   const completePending = toCompleteRange(pending)
+  const displayedStart = overlay.visible
+    ? pending.start
+    : committedValue?.start ?? null
+  const displayedEnd = overlay.visible
+    ? pending.end
+    : committedValue?.end ?? null
   const duration =
     completePending &&
     isValidAppDate(completePending.start) &&
@@ -430,7 +436,7 @@ export function AppDateRangePicker({
             overlay.visible && editTarget === 'start'
               ? 'app-date-range-picker__segment--active'
               : '',
-            committedValue?.start
+            displayedStart
               ? ''
               : 'app-date-range-picker__segment--placeholder',
           ]
@@ -443,8 +449,8 @@ export function AppDateRangePicker({
           ref={startRef}
           type="button"
         >
-          {committedValue?.start
-            ? formatDate(committedValue.start)
+          {displayedStart
+            ? formatDate(displayedStart)
             : messages.dateRangePicker.startPlaceholder}
         </button>
         <span aria-hidden="true" className="app-date-range-picker__separator">
@@ -458,7 +464,7 @@ export function AppDateRangePicker({
             overlay.visible && editTarget === 'end'
               ? 'app-date-range-picker__segment--active'
               : '',
-            committedValue?.end
+            displayedEnd
               ? ''
               : 'app-date-range-picker__segment--placeholder',
           ]
@@ -470,8 +476,8 @@ export function AppDateRangePicker({
           ref={endRef}
           type="button"
         >
-          {committedValue?.end
-            ? formatDate(committedValue.end)
+          {displayedEnd
+            ? formatDate(displayedEnd)
             : messages.dateRangePicker.endPlaceholder}
         </button>
         {allowClear && committedValue && !resolvedDisabled && !readOnly ? (

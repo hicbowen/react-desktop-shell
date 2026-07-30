@@ -134,14 +134,36 @@ describe('AppDateRangePicker', () => {
     render(
       <AppDateRangePicker
         defaultOpen
+        endName="endDate"
         onValueChange={change}
+        startName="startDate"
         visibleMonths={1}
       />,
     )
     flushFrames()
     clickDate('2026-07-20')
-    clickDate('2026-07-10')
+
+    const segments = container.querySelectorAll<HTMLButtonElement>(
+      '.app-date-range-picker__segment',
+    )
+    expect(segments[0]?.textContent).toBe('07/20/2026')
+    expect(segments[1]?.textContent).toBe('End date')
     expect(change).not.toHaveBeenCalled()
+
+    clickDate('2026-07-10')
+    expect(segments[0]?.textContent).toBe('07/10/2026')
+    expect(segments[1]?.textContent).toBe('07/20/2026')
+    expect(change).not.toHaveBeenCalled()
+    expect(
+      container.querySelector<HTMLInputElement>(
+        'input[name="startDate"]',
+      )?.value,
+    ).toBe('')
+    expect(
+      container.querySelector<HTMLInputElement>(
+        'input[name="endDate"]',
+      )?.value,
+    ).toBe('')
     expect(action('Apply').disabled).toBe(false)
     expect(popup()?.textContent).toContain('11 selected days')
 
@@ -151,8 +173,18 @@ describe('AppDateRangePicker', () => {
       end: { year: 2026, month: 7, day: 20 },
     })
     expect(popup()).toBeNull()
-    expect(container.textContent).toContain('07/10/2026')
-    expect(container.textContent).toContain('07/20/2026')
+    expect(segments[0]?.textContent).toBe('07/10/2026')
+    expect(segments[1]?.textContent).toBe('07/20/2026')
+    expect(
+      container.querySelector<HTMLInputElement>(
+        'input[name="startDate"]',
+      )?.value,
+    ).toBe('2026-07-10')
+    expect(
+      container.querySelector<HTMLInputElement>(
+        'input[name="endDate"]',
+      )?.value,
+    ).toBe('2026-07-20')
   })
 
   it('shows and advances the active range segment', () => {
@@ -201,8 +233,14 @@ describe('AppDateRangePicker', () => {
     flushFrames()
     clickDate('2026-07-10')
     clickDate('2026-07-12')
+    expect(container.textContent).toContain('07/10/2026')
+    expect(container.textContent).toContain('07/12/2026')
     act(() => action('Cancel').click())
     expect(change).not.toHaveBeenCalled()
+    expect(container.textContent).toContain('Start date')
+    expect(container.textContent).toContain('End date')
+    expect(container.textContent).not.toContain('07/10/2026')
+    expect(container.textContent).not.toContain('07/12/2026')
 
     act(() =>
       container
@@ -593,8 +631,11 @@ describe('AppDateRangePicker', () => {
     )
     flushFrames()
     expect(popup()).not.toBeNull()
-    expect(container.textContent).toContain('Start date')
-    expect(container.textContent).toContain('End date')
+    const segments = container.querySelectorAll<HTMLButtonElement>(
+      '.app-date-range-picker__segment',
+    )
+    expect(segments[0]?.textContent).toBe('07/10/2026')
+    expect(segments[1]?.textContent).toBe('07/12/2026')
     expect(popup()?.textContent).toContain('3 selected days')
     expect(action('Apply')).toBeDefined()
   })

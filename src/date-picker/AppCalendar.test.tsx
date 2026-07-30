@@ -37,12 +37,16 @@ function LocaleBoundary({
 function CalendarHarness({
   initialFocus = { year: 2026, month: 7, day: 16 },
   locale = 'en-US',
+  maxValue = { year: 2027, month: 12, day: 31 },
+  minValue = { year: 2025, month: 1, day: 1 },
   onSelect = () => undefined,
   unavailable,
   visibleMonths = 1,
 }: {
   initialFocus?: AppDateValue
   locale?: ResolvedAppLocale
+  maxValue?: AppDateValue
+  minValue?: AppDateValue
   onSelect?: (value: AppDateValue) => void
   unavailable?: (value: AppDateValue) => boolean
   visibleMonths?: 1 | 2
@@ -60,8 +64,8 @@ function CalendarHarness({
         displayedMonth={displayedMonth}
         focusedDate={focusedDate}
         isDateUnavailable={unavailable}
-        maxValue={{ year: 2027, month: 12, day: 31 }}
-        minValue={{ year: 2025, month: 1, day: 1 }}
+        maxValue={maxValue}
+        minValue={minValue}
         onDateSelect={onSelect}
         onDisplayedMonthChange={setDisplayedMonth}
         onFocusedDateChange={setFocusedDate}
@@ -251,6 +255,53 @@ describe('AppCalendar', () => {
     expect(container.textContent).toContain('August 2026')
     expect(title?.textContent).toContain('July 2026')
     expect(title?.textContent).toContain('August 2026')
+  })
+
+  it('stops month and keyboard navigation at min and max values', () => {
+    render(
+      <CalendarHarness
+        maxValue={{ year: 2026, month: 8, day: 24 }}
+        minValue={{ year: 2026, month: 7, day: 8 }}
+      />,
+    )
+
+    const navigation = container.querySelectorAll<HTMLButtonElement>(
+      '.app-calendar__nav',
+    )
+    expect(navigation[0]?.disabled).toBe(true)
+    expect(navigation[1]?.disabled).toBe(false)
+
+    act(() => navigation[1]?.click())
+    expect(container.textContent).toContain('August 2026')
+    expect(navigation[0]?.disabled).toBe(false)
+    expect(navigation[1]?.disabled).toBe(true)
+
+    keyDown('PageDown')
+    expect(focused().dataset.date).toBe('2026-08-24')
+    keyDown('PageDown', true)
+    expect(focused().dataset.date).toBe('2026-08-24')
+  })
+
+  it('keeps the complete two-month window within date limits', () => {
+    render(
+      <CalendarHarness
+        maxValue={{ year: 2026, month: 9, day: 30 }}
+        minValue={{ year: 2026, month: 7, day: 1 }}
+        visibleMonths={2}
+      />,
+    )
+
+    const navigation = container.querySelectorAll<HTMLButtonElement>(
+      '.app-calendar__nav',
+    )
+    expect(navigation[0]?.disabled).toBe(true)
+    expect(navigation[1]?.disabled).toBe(false)
+
+    act(() => navigation[1]?.click())
+    expect(container.textContent).toContain('August 2026')
+    expect(container.textContent).toContain('September 2026')
+    expect(navigation[0]?.disabled).toBe(false)
+    expect(navigation[1]?.disabled).toBe(true)
   })
 
   it('renders range decoration only in the owning month', () => {

@@ -434,6 +434,7 @@ contains only `year`, `month`, and `day` and therefore has no time or time zone.
 The component supports controlled or uncontrolled values and open state,
 minimum and maximum dates, unavailable-date callbacks, `AppField`, clear
 actions, and dialog-local overlays.
+`minValue` and `maxValue` also constrain calendar month navigation.
 
 ```tsx
 const [date, setDate] = useState<AppDateValue | null>(null)
@@ -475,8 +476,9 @@ const [range, setRange] =
 
 Use `minDuration` and `maxDuration` to validate inclusive natural-day lengths.
 The start and end dates must be selectable; unavailable dates may still occur
-inside the range. Separate `startName` and `endName` hidden inputs submit ISO
-calendar dates.
+inside the range. `minValue` and `maxValue` constrain both selectable dates
+and calendar month navigation. Separate `startName` and `endName` hidden
+inputs submit ISO calendar dates.
 
 ### `Date` and `AppDateValue`
 

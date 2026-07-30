@@ -57,7 +57,8 @@ export function DatePickerPage() {
           />
         </DemoPreview>
         <p className="demo-note">
-          The first picker is limited to July 8–24. The second disables weekends.
+          The first picker is limited to July 8–24, and month navigation
+          cannot leave July. The second disables weekends.
         </p>
       </DemoSection>
 

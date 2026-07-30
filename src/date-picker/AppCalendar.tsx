@@ -84,6 +84,14 @@ export function AppCalendar({
   const months = Array.from({ length: visibleMonths }, (_, index) =>
     addMonths(firstMonth, index),
   )
+  const previousFirstMonth = addMonths(firstMonth, -1)
+  const nextLastMonth = addMonths(firstMonth, visibleMonths)
+  const canMovePrevious =
+    !minValue ||
+    monthCompare(previousFirstMonth, startOfMonth(minValue)) >= 0
+  const canMoveNext =
+    !maxValue ||
+    monthCompare(nextLastMonth, startOfMonth(maxValue)) <= 0
   const monthFormatter = new Intl.DateTimeFormat(locale, {
     year: 'numeric',
     month: 'long',
@@ -119,6 +127,13 @@ export function AppCalendar({
   }
 
   const moveMonth = (amount: number) => {
+    if (
+      (amount < 0 && !canMovePrevious) ||
+      (amount > 0 && !canMoveNext)
+    ) {
+      return
+    }
+
     const nextMonth = addMonths(firstMonth, amount)
     const nextFocused = addMonths(focusedDate, amount)
     onDisplayedMonthChange(nextMonth)
@@ -207,6 +222,7 @@ export function AppCalendar({
         <button
           aria-label={messages.datePicker.previousMonthLabel}
           className="app-calendar__nav"
+          disabled={!canMovePrevious}
           onClick={() => moveMonth(-1)}
           type="button"
         >
@@ -227,6 +243,7 @@ export function AppCalendar({
         <button
           aria-label={messages.datePicker.nextMonthLabel}
           className="app-calendar__nav"
+          disabled={!canMoveNext}
           onClick={() => moveMonth(1)}
           type="button"
         >

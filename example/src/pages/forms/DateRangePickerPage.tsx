@@ -61,6 +61,10 @@ export function DateRangePickerPage() {
             visibleMonths={1}
           />
         </DemoPreview>
+        <p className="demo-note">
+          The second picker is limited to July–August 2026, including
+          month navigation.
+        </p>
       </DemoSection>
 
       <DemoSection title="Duration limits">
