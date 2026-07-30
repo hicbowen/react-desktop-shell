@@ -8,6 +8,9 @@ const zhCNSectionText: Record<string, string> = {
   'Automatic action overflow': '操作自动溢出',
   'Automatic commit': '自动提交',
   'Background tasks': '后台任务',
+  'Activity indicator': '活动任务指示器',
+  'Surface active background work in compact application chrome.':
+    '在紧凑的应用框架区域中显示正在进行的后台任务。',
   'Basic and default values': '基础用法与默认值',
   'Basic range': '基础范围',
   'Basic time range': '基础时间范围',
