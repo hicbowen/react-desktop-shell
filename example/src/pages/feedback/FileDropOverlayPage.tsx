@@ -1,5 +1,10 @@
 import { useState, type ComponentProps } from 'react'
-import { FileImage, FileSpreadsheet, UploadCloud } from 'lucide-react'
+import {
+  CircleCheck,
+  FileImage,
+  FileSpreadsheet,
+  UploadCloud,
+} from 'lucide-react'
 import { AppFileDropOverlay } from '../../../../src'
 import { DemoPage, DemoPreview, DemoSection } from '../../components/DemoPage'
 import { useDemoCopy } from '../../i18n/interactiveTranslations'
@@ -9,14 +14,56 @@ const spreadsheetAccept = ['.xlsx', '.csv']
 
 function ReceivedFiles({ files }: { files: File[] }) {
   const t = useDemoCopy()
+
   return (
     <div className="demo-file-drop-results">
       <strong>{t('Received')} {files.length} {t('files')}</strong>
+      <ul>{files.slice(0, 3).map((file) => <li key={`${file.name}-${file.size}`}>{file.name}</li>)}</ul>
+      {files.length > 3 ? <span>+{files.length - 3} {t('more files')}</span> : null}
+    </div>
+  )
+}
+
+function DropSurfaceContent({ files }: { files: File[] }) {
+  const t = useDemoCopy()
+
+  return (
+    <div className="demo-file-drop-stage">
+      <div className="demo-file-drop-stage__content">
+        <div className="demo-file-drop-stage__icon" aria-hidden="true">
+          {files.length > 0 ? <CircleCheck /> : <UploadCloud />}
+        </div>
+        {files.length > 0 ? (
+          <ReceivedFiles files={files} />
+        ) : (
+          <div className="demo-file-drop-stage__copy">
+            <strong>{t('Drop files here')}</strong>
+            <span>{t('All file types are supported. You can drop multiple files at once.')}</span>
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
+
+function LatestDropResult({
+  files,
+  lastReject,
+}: {
+  files: File[]
+  lastReject: string
+}) {
+  const t = useDemoCopy()
+
+  return (
+    <div className="demo-file-drop-card demo-file-drop-card--result">
+      <strong>{t('Latest result')}</strong>
       {files.length > 0 ? (
-        <ul>{files.map((file) => <li key={`${file.name}-${file.size}`}>{file.name}</li>)}</ul>
+        <ReceivedFiles files={files} />
       ) : (
-        <span>{t('Drag files into this region to test the overlay.')}</span>
+        <span>{t('No files received yet')}</span>
       )}
+      <span>{t('Last rejection:')} {t(lastReject)}</span>
     </div>
   )
 }
@@ -40,10 +87,7 @@ export function AppFileDropOverlayPage() {
             onReject={handleReject}
             style={{ height: '100%', width: '100%' }}
           >
-            <div className="demo-file-drop-stage">
-              <UploadCloud size={28} />
-              <ReceivedFiles files={pageFiles} />
-            </div>
+            <DropSurfaceContent files={pageFiles} />
           </AppFileDropOverlay>
         </DemoPreview>
       </DemoSection>
@@ -65,7 +109,7 @@ export function AppFileDropOverlayPage() {
           <AppFileDropOverlay disabled onFiles={setLocalFiles}>
             <div className="demo-file-drop-card demo-file-drop-card--disabled"><strong>Disabled</strong><span>Drag events pass through without activation</span></div>
           </AppFileDropOverlay>
-          <div className="demo-file-drop-card"><ReceivedFiles files={localFiles} /><span>Last rejection: {lastReject}</span></div>
+          <LatestDropResult files={localFiles} lastReject={lastReject} />
         </DemoPreview>
       </DemoSection>
     </DemoPage>
