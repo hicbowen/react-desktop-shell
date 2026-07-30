@@ -1,8 +1,8 @@
 import type { ReactNode } from 'react'
 import type { DemoPageDefinition } from '../demoRegistry'
 import { useDemoI18n } from '../i18n/DemoI18nContext'
-import { DemoSourcePanel } from './DemoSourcePanel'
 import { getDemoSource } from './demoSource'
+import { DemoSourceContext } from './DemoSourceContext'
 
 export function DemoComponentPage({
   children,
@@ -23,6 +23,7 @@ export function DemoComponentPage({
   const source = getDemoSource(definition.key)
 
   return (
+    <DemoSourceContext.Provider value={source ?? null}>
     <div className={[
       'demo-component-page',
       definition.layout === 'fill' ? 'demo-component-page--fill' : '',
@@ -48,7 +49,7 @@ export function DemoComponentPage({
         ) : null}
       </div>
       {children}
-      {source ? <DemoSourcePanel {...source} /> : null}
     </div>
+    </DemoSourceContext.Provider>
   )
 }

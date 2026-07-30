@@ -38,7 +38,7 @@ describe('DemoSourcePanel', () => {
       <DemoI18nContext.Provider
         value={{ locale: 'en-US', messages: demoMessages['en-US'] }}
       >
-        <DemoSourcePanel path="example.tsx" source="<AppButton />" />
+        <DemoSourcePanel source="<AppButton />" />
       </DemoI18nContext.Provider>,
     ))
 
@@ -50,7 +50,7 @@ describe('DemoSourcePanel', () => {
     )
     const region = host.querySelector<HTMLElement>('.app-expander__region')
     expect(expanderTrigger?.textContent).toContain('Example source')
-    expect(expanderTrigger?.textContent).toContain('example.tsx')
+    expect(expanderTrigger?.textContent).not.toContain('.tsx')
     expect(region?.hidden).toBe(true)
 
     await act(async () => copyButton?.click())
@@ -60,5 +60,29 @@ describe('DemoSourcePanel', () => {
     act(() => expanderTrigger?.click())
     expect(region?.hidden).toBe(false)
     expect(region?.textContent).toContain('<AppButton />')
+  })
+
+  it('renders build-time highlighted markup without changing copied source', async () => {
+    act(() => root.render(
+      <DemoI18nContext.Provider
+        value={{ locale: 'en-US', messages: demoMessages['en-US'] }}
+      >
+        <DemoSourcePanel
+          highlightedHtml={'<pre class="shiki"><code><span style="color:#00f">const</span> view = &lt;AppButton /&gt;</code></pre>'}
+          source="const view = <AppButton />"
+        />
+      </DemoI18nContext.Provider>,
+    ))
+
+    act(() => host
+      .querySelector<HTMLButtonElement>('.app-expander__trigger')
+      ?.click())
+    expect(host.querySelector('.demo-source-highlight .shiki')).not.toBeNull()
+    expect(host.querySelector('.shiki span')?.textContent).toBe('const')
+
+    await act(async () => host
+      .querySelector<HTMLButtonElement>('.app-expander__actions button')
+      ?.click())
+    expect(writeText).toHaveBeenCalledWith('const view = <AppButton />')
   })
 })

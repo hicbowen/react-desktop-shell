@@ -924,35 +924,83 @@
 .demo-component-page--fill {
   height: 100%;
   min-height: 0;
-  grid-template-rows: auto minmax(0, 1fr) auto;
+  grid-template-rows: auto minmax(0, 1fr);
 }
 
 .demo-source-panel {
   min-width: 0;
 }
 
+.demo-source-panel--section {
+  margin-top: -6px;
+}
+
+.demo-source-panel--section .app-expander__trigger {
+  min-height: 38px;
+  padding-block: 5px;
+}
+
+.demo-source-panel--section .app-expander__title {
+  font-size: 12px;
+}
+
 .demo-source-panel .app-expander__content {
   padding: 0;
 }
 
-.demo-source-code {
-  max-height: min(560px, 65vh);
-  margin: 0;
-  padding: 16px;
-  overflow: auto;
-  color: var(--app-shell-text-color);
-  background: color-mix(in srgb, var(--app-shell-text-color) 4%, transparent);
-  border-top: 1px solid var(--app-shell-border-color);
-  font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
-  font-size: 12px;
-  line-height: 1.55;
-  tab-size: 2;
-  white-space: pre;
+.demo-source-highlight {
+  min-width: 0;
 }
 
-.demo-source-code:focus-visible {
+.demo-source-code,
+.demo-source-highlight .shiki {
+  max-height: min(440px, 60vh);
+  margin: 0;
+  padding: 16px;
+  overflow-x: hidden;
+  overflow-y: auto;
+  color: var(--app-shell-text-color);
+  background: color-mix(
+    in srgb,
+    var(--app-shell-text-color) 4%,
+    transparent
+  ) !important;
+  border-top: 1px solid var(--app-shell-border-color);
+  font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+  font-size: 13px;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+  tab-size: 2;
+  white-space: pre-wrap;
+}
+
+.demo-source-highlight .shiki code {
+  display: block;
+  min-width: 0;
+}
+
+.demo-source-code:focus-visible,
+.demo-source-highlight .shiki:focus-visible {
   outline: 2px solid var(--app-shell-accent-color);
   outline-offset: -2px;
+}
+
+.app-shell[data-theme='dark'] .demo-source-highlight .shiki,
+.app-shell[data-theme='dark'] .demo-source-highlight .shiki span {
+  color: var(--shiki-dark) !important;
+  font-style: var(--shiki-dark-font-style, inherit) !important;
+  font-weight: var(--shiki-dark-font-weight, inherit) !important;
+  text-decoration: var(--shiki-dark-text-decoration, inherit) !important;
+}
+
+@media (prefers-color-scheme: dark) {
+  .app-shell[data-theme='system'] .demo-source-highlight .shiki,
+  .app-shell[data-theme='system'] .demo-source-highlight .shiki span {
+    color: var(--shiki-dark) !important;
+    font-style: var(--shiki-dark-font-style, inherit) !important;
+    font-weight: var(--shiki-dark-font-weight, inherit) !important;
+    text-decoration: var(--shiki-dark-text-decoration, inherit) !important;
+  }
 }
 
 .demo-component-meta {

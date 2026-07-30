@@ -4,10 +4,12 @@ import { AppButton, AppExpander } from '../../../src'
 import { useDemoI18n } from '../i18n/DemoI18nContext'
 
 export function DemoSourcePanel({
-  path,
+  className,
+  highlightedHtml,
   source,
 }: {
-  path: string
+  className?: string
+  highlightedHtml?: string
   source: string
 }) {
   const { messages } = useDemoI18n()
@@ -54,13 +56,20 @@ export function DemoSourcePanel({
           {buttonLabel}
         </AppButton>
       }
-      className="demo-source-panel"
-      description={path}
+      className={['demo-source-panel', className].filter(Boolean).join(' ')}
       title={text.sourceCode}
     >
-      <pre className="demo-source-code" tabIndex={0}>
-        <code>{source}</code>
-      </pre>
+      {highlightedHtml ? (
+        <div
+          className="demo-source-highlight app-shell__selectable"
+          // The HTML is generated from trusted local TSX by Shiki at build time.
+          dangerouslySetInnerHTML={{ __html: highlightedHtml }}
+        />
+      ) : (
+        <pre className="demo-source-code app-shell__selectable" tabIndex={0}>
+          <code>{source}</code>
+        </pre>
+      )}
     </AppExpander>
   )
 }

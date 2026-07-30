@@ -16,14 +16,18 @@ describe('demo source registry', () => {
     expect(missing).toEqual([])
   })
 
-  it('returns the original TSX module and display path', () => {
+  it('returns section-level JSX and the original display path', () => {
     const result = getDemoSource('app-compact-group')
 
     expect(result?.path).toBe(
       'example/src/pages/forms/AppCompactGroupPage.tsx',
     )
-    expect(result?.source).toContain(
-      'export function AppCompactGroupPage()',
+    expect(result?.sections.length).toBeGreaterThan(0)
+    expect(result?.sections[0]?.source).toContain('<AppCompactGroup')
+    expect(result?.sections[0]?.source).not.toContain('<DemoSection')
+    expect(result?.sections[0]?.source).not.toMatch(/^;/)
+    expect(result?.sections[0]?.highlightedHtml).toContain(
+      'class="shiki shiki-themes light-plus dark-plus"',
     )
   })
 })

@@ -1,6 +1,7 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import { resolve } from 'node:path'
+import { demoSectionSourcesPlugin } from './example/demoSectionSourcesPlugin'
 
 export default defineConfig({
   build: {
@@ -22,5 +23,5 @@ export default defineConfig({
         id.startsWith('@tanstack/react-table/'),
     },
   },
-  plugins: [react()],
+  plugins: [demoSectionSourcesPlugin(), react()],
 })

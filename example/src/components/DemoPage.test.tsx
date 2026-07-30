@@ -3,7 +3,8 @@ import { act } from 'react'
 import { createRoot } from 'react-dom/client'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import { DemoI18nContext, demoMessages } from '../i18n/DemoI18nContext'
-import { DemoPage } from './DemoPage'
+import { DemoPage, DemoSection } from './DemoPage'
+import { DemoSourceContext } from './DemoSourceContext'
 
 function ExampleOptions({
   ariaLabel,
@@ -55,5 +56,48 @@ describe('DemoPage localization', () => {
     expect(host.querySelector('[aria-label]')?.getAttribute('aria-label')).toBe('布局')
     expect(host.querySelector('[data-value]')?.textContent).toBe('设计')
     expect(host.querySelector('[data-value]')?.getAttribute('data-value')).toBe('design')
+  })
+
+  it('attaches each extracted source to its matching demo section', () => {
+    act(() => root.render(
+      <DemoI18nContext.Provider
+        value={{ locale: 'en-US', messages: demoMessages['en-US'] }}
+      >
+        <DemoSourceContext.Provider
+          value={{
+            path: 'example/src/pages/ExamplePage.tsx',
+            sections: [
+              {
+                source: '<AppButton />',
+                highlightedHtml:
+                  '<pre class="shiki"><code>&lt;AppButton /&gt;</code></pre>',
+              },
+              {
+                source: '<AppLink href="#docs" />',
+                highlightedHtml:
+                  '<pre class="shiki"><code>&lt;AppLink href="#docs" /&gt;</code></pre>',
+              },
+            ],
+          }}
+        >
+          <DemoPage>
+            <DemoSection title="Button example"><button>Preview</button></DemoSection>
+            <DemoSection title="Link example"><a href="#docs">Preview</a></DemoSection>
+          </DemoPage>
+        </DemoSourceContext.Provider>
+      </DemoI18nContext.Provider>,
+    ))
+
+    const sections = host.querySelectorAll('.demo-section')
+    expect(sections).toHaveLength(2)
+    expect(sections[0]?.querySelector('.demo-source-panel')).not.toBeNull()
+    expect(sections[1]?.querySelector('.demo-source-panel')).not.toBeNull()
+
+    act(() => sections[1]
+      ?.querySelector<HTMLButtonElement>('.app-expander__trigger')
+      ?.click())
+    expect(sections[1]?.querySelector('.shiki')).not.toBeNull()
+    expect(sections[1]?.textContent).toContain('<AppLink href="#docs" />')
+    expect(sections[1]?.textContent).not.toContain('<AppButton />')
   })
 })
