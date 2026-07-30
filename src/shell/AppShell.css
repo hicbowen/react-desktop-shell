@@ -109,6 +109,10 @@
   -webkit-user-select: text;
 }
 
+.app-shell a[href]:not([aria-disabled='true']) {
+  cursor: pointer;
+}
+
 .app-shell[data-theme='dark'] {
   color-scheme: dark;
 
