@@ -15,4 +15,3 @@ export interface AppMultiSelectProps {
   className?: string
   style?: CSSProperties
 }
-export type AppTagPickerProps = AppMultiSelectProps

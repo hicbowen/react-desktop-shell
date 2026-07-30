@@ -1,2 +1,2 @@
-export { AppMultiSelect, AppTagPicker } from './AppMultiSelect'
-export type { AppMultiSelectOption, AppMultiSelectProps, AppTagPickerProps } from './types'
+export { AppMultiSelect } from './AppMultiSelect'
+export type { AppMultiSelectOption, AppMultiSelectProps } from './types'

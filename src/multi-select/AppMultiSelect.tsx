@@ -37,5 +37,3 @@ export function AppMultiSelect({ options, value, defaultValue = [], onValueChang
     <AppAnchoredPopup ariaMultiselectable className="app-multi-select__list" dependencies={[available.length]} onDismiss={() => setOpen(false)} open={open && !disabled && !readOnly} role="listbox" triggerRef={rootRef}>{available.length ? available.map((option, index) => <button aria-selected="false" className={index === active ? 'app-multi-select__option--active' : ''} disabled={option.disabled || (maxSelected !== undefined && selected.length >= maxSelected)} key={option.value} onMouseDown={(event) => event.preventDefault()} onClick={() => choose(option)} role="option" type="button">{option.label}</button>) : <span className="app-multi-select__empty">{text.empty}</span>}</AppAnchoredPopup>
   </div>
 }
-
-export const AppTagPicker = AppMultiSelect
