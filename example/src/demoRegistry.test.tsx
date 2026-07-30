@@ -44,11 +44,13 @@ describe('settings demo registration', () => {
   it('organizes component pages by task and responsibility', () => {
     const inputPages = demoPages.filter((page) => page.category === 'input')
     expect(new Set(inputPages.map((page) => page.subgroup))).toEqual(
-      new Set(['text', 'numeric', 'selection', 'date-time', 'specialized']),
+      new Set(['text', 'numeric', 'selection', 'date-time', 'specialized', 'form']),
     )
     expect(demoPages.find((page) => page.key === 'app-scroll-area')).toMatchObject({ category: 'shell', subgroup: 'layout' })
-    expect(demoPages.find((page) => page.key === 'app-pagination')).toMatchObject({ category: 'navigation', subgroup: 'collection' })
+    expect(demoPages.find((page) => page.key === 'app-pagination')).toMatchObject({ category: 'navigation', subgroup: 'controls' })
     expect(demoPages.find((page) => page.key === 'tree-view')).toMatchObject({ category: 'data', subgroup: 'collections' })
+    expect(demoPages.find((page) => page.key === 'app-field')).toMatchObject({ category: 'input', subgroup: 'form' })
+    expect(demoPages.find((page) => page.key === 'form-layout')).toMatchObject({ category: 'input', subgroup: 'form' })
     expect(demoPages.every((page) => page.status && page.apiNames)).toBe(true)
   })
 
@@ -59,6 +61,27 @@ describe('settings demo registration', () => {
         (entry) => entry.type === 'submenu' && entry.label === 'Date & time' && entry.children.some((item) => item.key === 'date-picker'),
       ),
     ).toBe(true)
+    expect(
+      railItems.some(
+        (entry) => entry.type === 'submenu' && entry.label === 'Form structure' && entry.children.some((item) => item.key === 'app-field'),
+      ),
+    ).toBe(true)
+  })
+
+  it('avoids single-component responsibility groups', () => {
+    const componentPages = demoPages.filter(
+      (page) => page.category !== 'getting-started' && page.category !== 'settings',
+    )
+    const groupSizes = new Map<string, number>()
+
+    for (const page of componentPages) {
+      const key = `${page.category}/${page.subgroup}`
+      groupSizes.set(key, (groupSizes.get(key) ?? 0) + 1)
+    }
+
+    expect(
+      [...groupSizes.entries()].filter(([, count]) => count < 2),
+    ).toEqual([])
   })
 
   it('keeps independently documented controls on separate pages', () => {

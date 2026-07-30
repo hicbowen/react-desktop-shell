@@ -1,8 +1,8 @@
 export const enUSDemoMessages = {
   overview: {
-    eyebrow: 'COMPONENT GALLERY',
-    title: 'Desktop React components, one focused example at a time',
-    description: 'Choose a component by its exported name. Each page keeps its own state so examples remain easy to inspect, test, and copy.',
+    eyebrow: 'REACT DESKTOP SHELL',
+    title: 'React components for desktop application interfaces',
+    description: 'Browse by capability to inspect focused examples, interaction states, and implementation code.',
   },
   componentPage: {
     detailsLabel: 'Component details',
@@ -35,12 +35,12 @@ export const enUSDemoMessages = {
   },
   categories: {
     shell: ['Application frame', 'Windows, pages, panes, and layout containers.'],
-    navigation: ['Navigation', 'Application, page, and collection navigation patterns.'],
-    actions: ['Commands & actions', 'Buttons, shared commands, shortcuts, and menus.'],
-    input: ['Input & selection', 'Text, numeric, selection, date-time, and specialized inputs.'],
-    data: ['Data & collections', 'Lists, trees, tables, selection actions, and properties.'],
-    content: ['Content display', 'Containers, markers, content states, and structure.'],
-    feedback: ['Feedback & overlays', 'Status feedback, supporting overlays, dialogs, and drag feedback.'],
+    navigation: ['Navigation', 'Application and in-page navigation controls.'],
+    actions: ['Commands & actions', 'Buttons, commands, keyboard shortcuts, and menus.'],
+    input: ['Input & selection', 'Text, numeric, choice, date-time, and form controls.'],
+    data: ['Data & collections', 'Lists, trees, tables, and data interactions.'],
+    content: ['Content display', 'Containers, labels, identity, states, and primitives.'],
+    feedback: ['Feedback & overlays', 'Status, notifications, anchored, modal, and surface overlays.'],
   },
 }
 
@@ -48,9 +48,9 @@ export type DemoMessages = typeof enUSDemoMessages
 
 export const zhCNDemoMessages: DemoMessages = {
   overview: {
-    eyebrow: '组件展廊',
-    title: '专为桌面应用打造的 React 组件，一次看懂一个示例',
-    description: '按组件的导出名称选择页面。每个页面独立维护状态，便于查看、测试和复制示例。',
+    eyebrow: 'REACT DESKTOP SHELL',
+    title: '构建桌面应用所需的 React 组件',
+    description: '按功能分类浏览组件，查看独立示例、交互状态和实现代码。',
   },
   componentPage: {
     detailsLabel: '组件详情',
@@ -83,11 +83,11 @@ export const zhCNDemoMessages: DemoMessages = {
   },
   categories: {
     shell: ['应用框架', '窗口、页面、窗格和布局容器。'],
-    navigation: ['导航', '应用、页面和集合导航模式。'],
-    actions: ['命令与操作', '按钮、共享命令、快捷键和菜单。'],
-    input: ['输入与选择', '文本、数值、选择、日期时间和专用输入。'],
-    data: ['数据与集合', '列表、树、表格、选择操作和属性。'],
-    content: ['内容展示', '内容容器、标记、状态和结构。'],
-    feedback: ['反馈与浮层', '状态反馈、辅助浮层、对话框和拖放反馈。'],
+    navigation: ['导航', '应用导航和页面内导航控件。'],
+    actions: ['命令与操作', '按钮、命令、快捷键和菜单。'],
+    input: ['输入与选择', '文本、数值、选择、日期时间和表单控件。'],
+    data: ['数据与集合', '列表、树、表格和数据交互。'],
+    content: ['内容展示', '内容容器、标签与身份、状态和基础结构。'],
+    feedback: ['反馈与浮层', '状态、通知、锚定浮层、模态和区域浮层。'],
   },
 }
