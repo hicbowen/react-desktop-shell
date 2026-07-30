@@ -1,0 +1,54 @@
+.app-hover-card {
+  position: fixed;
+  z-index: var(--rds-z-overlay, 1050);
+  box-sizing: border-box;
+  min-width: 220px;
+  max-width: min(
+    var(--app-hover-card-max-width, 360px),
+    max(0px, calc(100vw - 20px))
+  );
+  max-height: calc(100vh - 20px);
+  overflow: auto;
+  padding: 12px;
+  color: var(--app-shell-text-color, #1f1f1f);
+  background: var(
+    --app-shell-overlay-bg,
+    var(--app-shell-card-bg, #fff)
+  );
+  border: 1px solid
+    var(--app-shell-menu-border-color, rgb(0 0 0 / 12%));
+  border-radius: 8px;
+  box-shadow: var(
+    --app-shell-menu-shadow,
+    0 6px 18px rgb(0 0 0 / 16%)
+  );
+  font: inherit;
+  font-size: 13px;
+  line-height: 1.4;
+  pointer-events: auto;
+  animation: app-hover-card-enter var(--rds-motion-fast, 120ms)
+    var(--rds-ease-enter, ease-out);
+}
+
+.app-hover-card:focus {
+  outline: none;
+}
+
+@keyframes app-hover-card-enter {
+  from {
+    opacity: 0;
+    transform: translateY(-2px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .app-hover-card {
+    animation: none;
+    scroll-behavior: auto;
+  }
+}

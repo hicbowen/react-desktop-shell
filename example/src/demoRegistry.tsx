@@ -70,6 +70,7 @@ import { AppDropDownButtonPage } from './pages/actions/DropDownButtonPage'
 import { AppInlineEditPage } from './pages/forms/InlineEditPage'
 import { AppNotificationCenterPage } from './pages/feedback/NotificationCenterPage'
 import { AppConfirmPopoverPage } from './pages/feedback/ConfirmPopoverPage'
+import { AppHoverCardPage } from './pages/feedback/HoverCardPage'
 import type { ResolvedAppLocale } from '../../src/localization/types'
 import { zhCNRegistry } from './i18n/registry.zh-CN'
 
@@ -111,6 +112,7 @@ const demoPageSources = [
   { key: 'loading-overlay', label: 'AppLoadingOverlay', description: 'Delayed local loading feedback that preserves content layout.', icon: <Clock3 size={16} />, component: AppLoadingOverlayPage },
   { key: 'task-center', label: 'AppTaskCenter', description: 'Host-neutral background task status, progress, and action requests.', icon: <Clock3 size={16} />, component: AppTaskCenterPage },
   { key: 'popover', label: 'Popover', description: 'Portal-based non-modal supporting content with anchored placement.', icon: <MessageSquare size={16} />, component: PopoverPage },
+  { key: 'app-hover-card', label: 'AppHoverCard', description: 'Interactive details that open from hover, focus, or a pinned click.', icon: <MessageSquare size={16} />, component: AppHoverCardPage },
   { key: 'app-confirm-popover', label: 'AppConfirmPopover', description: 'Anchored confirmation for small, local actions with async handling.', icon: <MessageSquare size={16} />, component: AppConfirmPopoverPage },
   { key: 'app-tooltip', label: 'AppTooltip', description: 'Non-interactive descriptions for hover and keyboard focus.', icon: <CircleHelp size={16} />, component: AppTooltipPage },
   { key: 'app-teaching-tip', label: 'AppTeachingTip', description: 'Controlled anchored guidance with title, content, and actions.', icon: <Lightbulb size={16} />, component: AppTeachingTipPage },
@@ -239,6 +241,7 @@ const taxonomy: Record<DemoPageKey, DemoTaxonomy> = {
   'task-center': { category: 'feedback', subgroup: 'status', apiNames: ['AppTaskCenter', 'AppTaskIndicator'], status: 'stable' },
   'app-tooltip': { category: 'feedback', subgroup: 'overlays', apiNames: ['AppTooltip'], status: 'stable' },
   popover: { category: 'feedback', subgroup: 'overlays', apiNames: ['AppPopover'], status: 'stable' },
+  'app-hover-card': { category: 'feedback', subgroup: 'overlays', apiNames: ['AppHoverCard'], status: 'stable', related: ['popover', 'app-tooltip'] },
   'app-confirm-popover': { category: 'feedback', subgroup: 'overlays', apiNames: ['AppConfirmPopover'], status: 'stable', related: ['popover', 'message-box', 'app-dialog'] },
   'app-teaching-tip': { category: 'feedback', subgroup: 'overlays', apiNames: ['AppTeachingTip'], status: 'stable' },
   'app-dialog': { category: 'feedback', subgroup: 'modal', apiNames: ['AppDialog'], status: 'stable' },

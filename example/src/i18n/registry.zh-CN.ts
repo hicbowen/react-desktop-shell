@@ -33,6 +33,7 @@ export const zhCNRegistry: Record<string, DemoPageTranslation> = {
   'loading-overlay': { label: 'AppLoadingOverlay', description: '延迟显示局部加载反馈，同时保持内容布局。' },
   'task-center': { label: 'AppTaskCenter', description: '与宿主无关的后台任务状态、进度和操作请求。' },
   popover: { label: '弹出框', description: '基于 Portal、锚定定位的非模态辅助内容。' },
+  'app-hover-card': { label: 'AppHoverCard', description: '通过悬停、聚焦或单击固定打开的交互式详情浮层。' },
   'app-confirm-popover': { label: '确认弹出框', description: '为小型局部操作提供支持异步处理的锚定确认。' },
   'app-tooltip': { label: 'AppTooltip', description: '在悬停和键盘聚焦时显示非交互说明。' },
   'app-teaching-tip': { label: 'AppTeachingTip', description: '受控的锚定式引导，包含标题、内容和操作。' },

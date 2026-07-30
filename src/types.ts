@@ -32,6 +32,7 @@ export type { AppSelectOption, AppSelectProps } from './select/types'
 export type { AppCompactGroupProps, AppControlAddonProps } from './compact-group/types'
 export type { AppListViewItemProps, AppListViewProps } from './list-view/types'
 export type { AppExpanderProps } from './expander/types'
+export type { AppHoverCardProps } from './hover-card/types'
 export type { AppConfirmPopoverProps, AppPopoverProps } from './popover/types'
 export type {
   AppDatePickerProps,
