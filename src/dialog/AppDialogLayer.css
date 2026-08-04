@@ -66,12 +66,16 @@
   font-size: 18px;
   font-weight: 600;
   line-height: 1.3;
+  user-select: text;
+  -webkit-user-select: text;
 }
 
 .app-dialog__description {
   color: var(--app-shell-muted-text-color);
   font-size: 13px;
   line-height: 1.45;
+  user-select: text;
+  -webkit-user-select: text;
 }
 
 .app-dialog__content {
@@ -162,6 +166,8 @@
   font-size: 17px;
   font-weight: 600;
   line-height: 1.35;
+  user-select: text;
+  -webkit-user-select: text;
 }
 
 .app-message-box--with-icon .app-message-box__title,
@@ -174,6 +180,8 @@
   color: var(--app-shell-muted-text-color);
   font-size: 13px;
   line-height: 1.5;
+  user-select: text;
+  -webkit-user-select: text;
 }
 
 @keyframes app-dialog-overlay-enter {

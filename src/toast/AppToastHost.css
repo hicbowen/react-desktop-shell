@@ -82,6 +82,8 @@
   font-weight: 600;
   line-height: 1.35;
   overflow-wrap: anywhere;
+  user-select: text;
+  -webkit-user-select: text;
 }
 
 .app-toast__message {
@@ -89,6 +91,8 @@
   font-size: 12px;
   line-height: 1.45;
   overflow-wrap: anywhere;
+  user-select: text;
+  -webkit-user-select: text;
 }
 
 .app-toast__action,

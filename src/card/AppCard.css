@@ -158,6 +158,12 @@
   overflow-wrap: anywhere;
 }
 
+.app-card:not(.app-card--interactive) .app-card-header__title,
+.app-card:not(.app-card--interactive) .app-card-header__description {
+  user-select: text;
+  -webkit-user-select: text;
+}
+
 .app-card-header__action {
   display: flex;
   flex: 0 0 auto;

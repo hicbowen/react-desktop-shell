@@ -57,6 +57,8 @@
   font-weight: 600;
   line-height: 1.4;
   overflow-wrap: anywhere;
+  user-select: text;
+  -webkit-user-select: text;
 }
 
 .app-info-bar__message,
@@ -65,6 +67,8 @@
   font-size: 12px;
   line-height: 1.5;
   overflow-wrap: anywhere;
+  user-select: text;
+  -webkit-user-select: text;
 }
 
 .app-info-bar__details {

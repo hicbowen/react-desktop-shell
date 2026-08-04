@@ -108,6 +108,8 @@
   font-weight: var(--app-page-title-weight);
   line-height: 1.2;
   overflow-wrap: anywhere;
+  user-select: text;
+  -webkit-user-select: text;
 }
 
 .app-page__description {
@@ -116,6 +118,8 @@
   font-size: 14px;
   line-height: 1.5;
   overflow-wrap: anywhere;
+  user-select: text;
+  -webkit-user-select: text;
 }
 
 .app-page__actions {

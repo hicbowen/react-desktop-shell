@@ -15,3 +15,4 @@
 .app-empty-state__description { max-width: 46ch; color: var(--app-shell-secondary-text-color, rgb(0 0 0 / 62%)); font-size: 13px; line-height: 1.5; }
 .app-empty-state__actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
 .app-empty-state--center .app-empty-state__actions { justify-content: center; }
+.app-empty-state__title,.app-empty-state__description{user-select:text;-webkit-user-select:text}

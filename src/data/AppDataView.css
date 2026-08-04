@@ -831,6 +831,11 @@
   cursor: default;
 }
 
+.app-data-table tbody td {
+  user-select: text;
+  -webkit-user-select: text;
+}
+
 .app-data-table__row--clickable:hover td {
   background: var(--app-data-hover-bg);
 }
