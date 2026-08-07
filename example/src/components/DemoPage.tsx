@@ -108,6 +108,7 @@ interface DemoSectionProps {
   title: string
   description?: string
   children: ReactNode
+  showSource?: boolean
   highlightedSource?: string
   source?: string
 }
@@ -169,13 +170,14 @@ export function DemoSection({
   title,
   description,
   children,
+  showSource = true,
   highlightedSource,
   source,
 }: DemoSectionProps) {
   const { locale } = useDemoI18n()
   const localizedTitle = localizeSectionText(locale, title)
   const localizedDescription = localizeSectionText(locale, description)
-  return <section className="demo-section"><header><h2>{localizedTitle}</h2>{localizedDescription ? <p>{localizedDescription}</p> : null}</header>{children}{source ? <DemoSourcePanel className="demo-source-panel--section" highlightedHtml={highlightedSource} source={source} /> : null}</section>
+  return <section className="demo-section"><header><h2>{localizedTitle}</h2>{localizedDescription ? <p>{localizedDescription}</p> : null}</header>{children}{showSource && source ? <DemoSourcePanel className="demo-source-panel--section" highlightedHtml={highlightedSource} source={source} /> : null}</section>
 }
 
 export function DemoPreview({

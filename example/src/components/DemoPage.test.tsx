@@ -100,4 +100,49 @@ describe('DemoPage localization', () => {
     expect(sections[1]?.textContent).toContain('<AppLink href="#docs" />')
     expect(sections[1]?.textContent).not.toContain('<AppButton />')
   })
+
+  it('can hide one source panel without shifting later section sources', () => {
+    act(() => root.render(
+      <DemoI18nContext.Provider
+        value={{ locale: 'en-US', messages: demoMessages['en-US'] }}
+      >
+        <DemoSourceContext.Provider
+          value={{
+            path: 'example/src/pages/ExamplePage.tsx',
+            sections: [
+              {
+                source: '<AppButton />',
+                highlightedHtml:
+                  '<pre class="shiki"><code>&lt;AppButton /&gt;</code></pre>',
+              },
+              {
+                source: '<div className="diagram" />',
+                highlightedHtml:
+                  '<pre class="shiki"><code>&lt;div className="diagram" /&gt;</code></pre>',
+              },
+              {
+                source: '<AppPage />',
+                highlightedHtml:
+                  '<pre class="shiki"><code>&lt;AppPage /&gt;</code></pre>',
+              },
+            ],
+          }}
+        >
+          <DemoPage>
+            <DemoSection title="Button example"><button>Preview</button></DemoSection>
+            <DemoSection showSource={false} title="Diagram example"><div>Preview</div></DemoSection>
+            <DemoSection title="Page example"><div>Preview</div></DemoSection>
+          </DemoPage>
+        </DemoSourceContext.Provider>
+      </DemoI18nContext.Provider>,
+    ))
+
+    const sections = host.querySelectorAll('.demo-section')
+    expect(sections).toHaveLength(3)
+    expect(sections[0]?.querySelector('.demo-source-panel')).not.toBeNull()
+    expect(sections[1]?.querySelector('.demo-source-panel')).toBeNull()
+    expect(sections[2]?.querySelector('.demo-source-panel')).not.toBeNull()
+    expect(sections[2]?.textContent).toContain('<AppPage />')
+    expect(sections[2]?.textContent).not.toContain('<div className="diagram" />')
+  })
 })
