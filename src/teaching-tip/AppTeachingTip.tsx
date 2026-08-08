@@ -8,6 +8,7 @@ import {
   type Ref,
 } from 'react'
 import { createPortal } from 'react-dom'
+import { Dismiss16Regular } from '@fluentui/react-icons/svg/dismiss'
 import { useAppOverlayHost } from '../overlay/AppOverlayHostContext'
 import { OVERLAY_SURFACE_FALLBACK_STYLE } from '../overlay/surfaceFallback'
 import { getElementRef, useMergedRefs } from '../overlay/trigger'
@@ -31,14 +32,6 @@ interface TeachingTipTriggerProps {
 
 function describedBy(original: string | undefined, id: string | null) {
   return [original, id].filter(Boolean).join(' ') || undefined
-}
-
-function CloseIcon() {
-  return (
-    <svg aria-hidden="true" viewBox="0 0 16 16">
-      <path d="M3.15 3.15a.5.5 0 0 1 .7 0L8 7.29l4.15-4.14a.5.5 0 0 1 .7.7L8.71 8l4.14 4.15a.5.5 0 0 1-.7.7L8 8.71l-4.15 4.14a.5.5 0 0 1-.7-.7L7.29 8 3.15 3.85a.5.5 0 0 1 0-.7Z" />
-    </svg>
-  )
 }
 
 export function AppTeachingTip({
@@ -187,7 +180,7 @@ export function AppTeachingTip({
                   onClick={closeAndRestoreFocus}
                   type="button"
                 >
-                  <CloseIcon />
+                  <Dismiss16Regular aria-hidden="true" focusable="false" />
                 </button>
               ) : null}
             </div>

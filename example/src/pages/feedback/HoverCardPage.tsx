@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { FileText, UserRound } from 'lucide-react'
+import { FileText, UserRound } from '../../components/fluentIcons'
 import {
   AppButton,
   AppHoverCard,

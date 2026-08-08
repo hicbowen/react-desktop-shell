@@ -1,4 +1,4 @@
-import { Code2, Folder } from 'lucide-react'
+import { Code2, Folder } from '../../components/fluentIcons'
 import { useState } from 'react'
 import { AppTag, type AppTagColor } from '../../../../src'
 import { DemoPage, DemoPreview, DemoSection } from '../../components/DemoPage'

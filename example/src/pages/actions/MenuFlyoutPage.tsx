@@ -6,7 +6,7 @@ import {
   RefreshCw,
   Share2,
   Trash2,
-} from 'lucide-react'
+} from '../../components/fluentIcons'
 import {
   AppMenuFlyout,
   AppToolbar,

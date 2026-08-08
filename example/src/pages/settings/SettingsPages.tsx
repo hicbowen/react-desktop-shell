@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { BadgeInfo, Languages, ListFilter, Palette, Sparkles } from 'lucide-react'
+import { BadgeInfo, Languages, ListFilter, Palette, Sparkles } from '../../components/fluentIcons'
 import { AppSelect, AppSettingsGroup, AppSettingsRow, AppToggleSwitch } from '../../../../src'
 import { DemoPage, DemoSection } from '../../components/DemoPage'
 import { useDemoShell } from '../../components/DemoShellContext'

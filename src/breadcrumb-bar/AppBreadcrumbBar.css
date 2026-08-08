@@ -11,4 +11,4 @@
 .app-breadcrumb-bar__label { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .app-breadcrumb-bar__icon { width: 16px; height: 16px; display: inline-flex; flex: 0 0 16px; }
 .app-breadcrumb-bar__separator { width: 16px; display: inline-flex; flex: 0 0 16px; align-items: center; justify-content: center; color: var(--app-shell-muted-text-color, #707070); }
-.app-breadcrumb-bar__separator svg { width: 12px; height: 12px; fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 1.2; }
+.app-breadcrumb-bar__separator svg { width: 12px; height: 12px; display: block; fill: currentColor; stroke: none; }

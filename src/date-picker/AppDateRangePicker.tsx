@@ -5,6 +5,7 @@ import {
   type KeyboardEvent,
 } from 'react'
 import { createPortal } from 'react-dom'
+import { CalendarLtr16Regular } from '@fluentui/react-icons/svg/calendar-ltr'
 import { AppButton } from '../button'
 import { useAppFieldContext } from '../field/AppFieldContext'
 import { useAppLocale } from '../localization/useAppLocale'
@@ -39,14 +40,6 @@ type RangeEditTarget = 'start' | 'end'
 interface PendingDateRange {
   start: AppDateValue | null
   end: AppDateValue | null
-}
-
-function CalendarIcon() {
-  return (
-    <svg aria-hidden="true" viewBox="0 0 16 16">
-      <path d="M4.5 1a.5.5 0 0 1 .5.5V2h6v-.5a.5.5 0 0 1 1 0V2h.5A1.5 1.5 0 0 1 14 3.5v9a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 2 12.5v-9A1.5 1.5 0 0 1 3.5 2H4v-.5a.5.5 0 0 1 .5-.5ZM3 6v6.5a.5.5 0 0 0 .5.5h9a.5.5 0 0 0 .5-.5V6H3Zm.5-3a.5.5 0 0 0-.5.5V5h10V3.5a.5.5 0 0 0-.5-.5H12v.5a.5.5 0 0 1-1 0V3H5v.5a.5.5 0 0 1-1 0V3h-.5Z" />
-    </svg>
-  )
 }
 
 function toPending(value: AppDateRangeValue | null): PendingDateRange {
@@ -530,7 +523,7 @@ export function AppDateRangePicker({
           ref={calendarButtonRef}
           type="button"
         >
-          <CalendarIcon />
+          <CalendarLtr16Regular aria-hidden="true" focusable="false" />
         </button>
       </div>
       {startName ? (

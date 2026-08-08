@@ -1,5 +1,6 @@
 import { forwardRef, useRef, useState } from 'react'
 import type { ChangeEvent, CSSProperties } from 'react'
+import { ChevronDown16Regular } from '@fluentui/react-icons/svg/chevron-down'
 import { useAppFieldContext } from '../field/AppFieldContext'
 import { useAppLocale } from '../localization/useAppLocale'
 import type { AppSelectProps } from './types'
@@ -171,9 +172,7 @@ export const AppSelect = forwardRef<HTMLSelectElement, AppSelectProps>(
           </button>
         ) : (
           <span aria-hidden="true" className="app-select__chevron">
-            <svg focusable="false" viewBox="0 0 16 16">
-              <path d="M4 6L8 10L12 6" />
-            </svg>
+            <ChevronDown16Regular aria-hidden="true" focusable="false" />
           </span>
         )}
       </span>

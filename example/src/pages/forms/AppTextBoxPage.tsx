@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Mail, Search } from 'lucide-react'
+import { Mail, Search } from '../../components/fluentIcons'
 import { AppField, AppTextBox } from '../../../../src'
 import { DemoPage, DemoPreview, DemoSection } from '../../components/DemoPage'
 import { useDemoCopy } from '../../i18n/interactiveTranslations'

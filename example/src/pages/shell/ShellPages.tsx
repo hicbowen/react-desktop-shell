@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { FolderGit2, FolderOpen, Home, Settings } from 'lucide-react'
+import { FolderGit2, FolderOpen, Home, Settings } from '../../components/fluentIcons'
 import {
   AppButton,
   AppIconButton,

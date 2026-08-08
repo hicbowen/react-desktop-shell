@@ -1,4 +1,4 @@
-import { UserPlus, Users } from 'lucide-react'
+import { UserPlus, Users } from '../../components/fluentIcons'
 import { AppButton, AppEmptyState } from '../../../../src'
 import { DemoPage, DemoPreview, DemoSection } from '../../components/DemoPage'
 

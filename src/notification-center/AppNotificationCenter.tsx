@@ -1,12 +1,17 @@
+import { CheckmarkCircle16Regular } from '@fluentui/react-icons/svg/checkmark-circle'
+import { Dismiss16Regular } from '@fluentui/react-icons/svg/dismiss'
+import { ErrorCircle16Regular } from '@fluentui/react-icons/svg/error-circle'
+import { Info16Regular } from '@fluentui/react-icons/svg/info'
+import { Warning16Regular } from '@fluentui/react-icons/svg/warning'
 import { useAppLocale } from '../localization/useAppLocale'
 import type { AppNotificationCenterProps, AppNotificationIndicatorProps, AppNotificationStatus } from './types'
 import './AppNotificationCenter.css'
 
 function StatusIcon({ status }: { status: AppNotificationStatus }) {
-  if (status === 'success') return <path d="m3 8 3 3 7-7" />
-  if (status === 'warning') return <><path d="M8 2 2 14h12L8 2Z" /><path d="M8 6v4M8 12v.1" /></>
-  if (status === 'error') return <><circle cx="8" cy="8" r="6" /><path d="m6 6 4 4m0-4-4 4" /></>
-  return <><circle cx="8" cy="8" r="6" /><path d="M8 7v4M8 5v.1" /></>
+  if (status === 'success') return <CheckmarkCircle16Regular aria-hidden="true" focusable="false" />
+  if (status === 'warning') return <Warning16Regular aria-hidden="true" focusable="false" />
+  if (status === 'error') return <ErrorCircle16Regular aria-hidden="true" focusable="false" />
+  return <Info16Regular aria-hidden="true" focusable="false" />
 }
 
 export function AppNotificationIndicator({ ariaLabel, className, max = 99, notifications }: AppNotificationIndicatorProps) {
@@ -45,14 +50,14 @@ export function AppNotificationCenter({
       <div className="app-notification-center__list">
         {notifications.length ? notifications.map((notification) => {
           const status = notification.status ?? 'neutral'
-          const mainContent = <><span className={`app-notification-center__icon app-notification-center__icon--${status}`}>{notification.icon ?? <svg aria-hidden="true" viewBox="0 0 16 16"><StatusIcon status={status} /></svg>}</span><span className="app-notification-center__content"><span className="app-notification-center__title">{notification.title}</span>{notification.body ? <span className="app-notification-center__body">{notification.body}</span> : null}{notification.timestamp ? <time className="app-notification-center__time">{notification.timestamp}</time> : null}</span></>
+          const mainContent = <><span className={`app-notification-center__icon app-notification-center__icon--${status}`}>{notification.icon ?? <StatusIcon status={status} />}</span><span className="app-notification-center__content"><span className="app-notification-center__title">{notification.title}</span>{notification.body ? <span className="app-notification-center__body">{notification.body}</span> : null}{notification.timestamp ? <time className="app-notification-center__time">{notification.timestamp}</time> : null}</span></>
           return (
             <article className={['app-notification-center__item', notification.read ? '' : 'app-notification-center__item--unread'].filter(Boolean).join(' ')} key={notification.id}>
               {onInvoke ? <button aria-label={typeof notification.title === 'string' ? notification.title : undefined} className="app-notification-center__main" onClick={() => onInvoke(notification.id)} type="button">{mainContent}</button> : <div className="app-notification-center__main">{mainContent}</div>}
               <div className="app-notification-center__controls">
                 {notification.actions?.map((action) => <button className={action.primary ? 'app-notification-center__action--primary' : undefined} disabled={action.disabled || !onAction} key={action.key} onClick={() => onAction?.(notification.id, action.key)} type="button">{action.label}</button>)}
                 {onMarkRead ? <button aria-label={notification.read ? text.markUnread : text.markRead} onClick={() => onMarkRead(notification.id, !notification.read)} type="button">{notification.read ? '○' : '●'}</button> : null}
-                {notification.dismissible !== false && onDismiss ? <button aria-label={text.dismiss} onClick={() => onDismiss(notification.id)} type="button">×</button> : null}
+                {notification.dismissible !== false && onDismiss ? <button aria-label={text.dismiss} onClick={() => onDismiss(notification.id)} type="button"><Dismiss16Regular aria-hidden="true" focusable="false" /></button> : null}
               </div>
             </article>
           )

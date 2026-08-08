@@ -1,4 +1,4 @@
-import { Folder, Home, RefreshCw, Settings } from 'lucide-react'
+import { Folder, Home, RefreshCw, Settings } from '../../components/fluentIcons'
 import { AppButton, AppRail, AppTooltip, type RailEntry } from '../../../../src'
 import { DemoPage, DemoPreview, DemoSection } from '../../components/DemoPage'
 import { useDemoCopy } from '../../i18n/interactiveTranslations'

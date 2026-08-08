@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { Copy, Pencil, Plus, RefreshCw, Save, Trash2 } from 'lucide-react'
+import { Copy, Pencil, Plus, RefreshCw, Save, Trash2 } from '../../components/fluentIcons'
 import { AppButton, AppCheckBox, AppCommandProvider, AppContextMenu, AppSelect, AppTextBox, AppToolbar, formatAppShortcut, useAppCommand, useAppCommands, useAppContextMenu, type AppCommand } from '../../../../src'
 import { DemoControls, DemoPage, DemoPreview, DemoSection } from '../../components/DemoPage'
 import { useDemoCopy } from '../../i18n/interactiveTranslations'

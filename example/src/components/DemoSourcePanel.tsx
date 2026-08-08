@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { Check, Copy } from 'lucide-react'
+import { Check, Copy } from './fluentIcons'
 import { AppButton, AppExpander } from '../../../src'
 import { useDemoI18n } from '../i18n/DemoI18nContext'
 

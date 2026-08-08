@@ -1,4 +1,4 @@
-import { Download, FileImage, FileText } from 'lucide-react'
+import { Download, FileImage, FileText } from '../../components/fluentIcons'
 import { AppDropDownButton, useAppToast } from '../../../../src'
 import { DemoPage, DemoPreview, DemoSection } from '../../components/DemoPage'
 import { useDemoCopy } from '../../i18n/interactiveTranslations'

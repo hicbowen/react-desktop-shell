@@ -10,7 +10,7 @@ import {
   Inbox,
   ListTodo,
   LockKeyhole,
-} from 'lucide-react'
+} from '../../components/fluentIcons'
 import {
   AppButton,
   AppRail,

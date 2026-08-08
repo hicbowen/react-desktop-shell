@@ -1,4 +1,5 @@
-import { Check, X } from 'lucide-react'
+import { Checkmark16Regular } from '@fluentui/react-icons/svg/checkmark'
+import { Dismiss16Regular } from '@fluentui/react-icons/svg/dismiss'
 import { useAppLocale } from '../localization/useAppLocale'
 import type { AppSelectionBarProps } from './types'
 import './AppDataView.css'
@@ -18,7 +19,7 @@ export function AppSelectionBar({
       style={style}
     >
       <div className="app-selection-bar__label">
-        <Check aria-hidden="true" size={16} strokeWidth={2.25} />
+        <Checkmark16Regular aria-hidden="true" focusable="false" />
         <span>{label ?? messages.dataTable.selectedCount(count)}</span>
       </div>
       {actions != null || onClear ? (
@@ -31,7 +32,7 @@ export function AppSelectionBar({
               type="button"
               onClick={onClear}
             >
-              <X aria-hidden="true" size={16} />
+              <Dismiss16Regular aria-hidden="true" focusable="false" />
             </button>
           ) : null}
         </div>

@@ -1,5 +1,6 @@
 import { useEffect, useId, useRef, useState } from 'react'
 import type { TransitionEvent } from 'react'
+import { ChevronDown16Regular } from '@fluentui/react-icons/svg/chevron-down'
 import { useAppExpanderGroupContext } from './AppExpanderGroupContext'
 import type { AppExpanderProps } from './types'
 import './AppExpander.css'
@@ -153,9 +154,7 @@ export function AppExpander({
             : null}
         </span>
         <span aria-hidden="true" className="app-expander__chevron">
-          <svg focusable="false" viewBox="0 0 16 16">
-            <path d="M4 6L8 10L12 6" />
-          </svg>
+          <ChevronDown16Regular focusable="false" />
         </span>
       </button>
       {actions ? <div className="app-expander__actions">{actions}</div> : null}

@@ -1,4 +1,4 @@
-import { UserRound } from 'lucide-react'
+import { UserRound } from '../../components/fluentIcons'
 import { AppAvatar, AppPersona } from '../../../../src'
 import { DemoPage, DemoPreview, DemoSection } from '../../components/DemoPage'
 import { useDemoCopy } from '../../i18n/interactiveTranslations'

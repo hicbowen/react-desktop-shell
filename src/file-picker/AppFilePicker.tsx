@@ -1,11 +1,11 @@
 import { useRef, useState, type ChangeEvent, type DragEvent } from 'react'
+import { Dismiss16Regular } from '@fluentui/react-icons/svg/dismiss'
+import { Document16Regular } from '@fluentui/react-icons/svg/document'
 import { AppButton } from '../button'
 import { useAppLocale } from '../localization/useAppLocale'
 import { isFileAccepted } from '../file-drop-overlay/fileAcceptance'
 import type { AppFilePickerProps, AppFilePickerRejectionReason } from './types'
 import './AppFilePicker.css'
-
-function FileIcon() { return <svg aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24"><path d="M7 3.75h6l4 4V20.25H7z" /><path d="M13 3.75v4h4" /></svg> }
 
 export function AppFilePicker({ files, defaultFiles = [], onFilesChange, onReject, accept, multiple = false, maxFileSize, disabled = false, allowDrop = true, adapter, className, style }: AppFilePickerProps) {
   const { messages } = useAppLocale()
@@ -47,8 +47,8 @@ export function AppFilePicker({ files, defaultFiles = [], onFilesChange, onRejec
   return <div className={['app-file-picker', dragging ? 'app-file-picker--dragging' : '', disabled ? 'app-file-picker--disabled' : '', className].filter(Boolean).join(' ')} style={style}>
     <input accept={accept?.join(',')} aria-hidden="true" className="app-file-picker__input" disabled={disabled} multiple={multiple} onChange={handleInput} ref={inputRef} tabIndex={-1} type="file" />
     <div className="app-file-picker__drop-zone" onDragEnter={(event) => { if (allowDrop && !disabled) { event.preventDefault(); setDragging(true) } }} onDragLeave={(event) => { if (!event.currentTarget.contains(event.relatedTarget as Node | null)) setDragging(false) }} onDragOver={(event) => { if (allowDrop && !disabled) event.preventDefault() }} onDrop={handleDrop}>
-      <FileIcon /><div><strong>{multiple ? text.chooseFiles : text.chooseFile}</strong>{allowDrop ? <span>{text.dropHint}</span> : null}</div><AppButton disabled={disabled} onClick={open} size="compact">{text.browse}</AppButton>
+      <Document16Regular aria-hidden="true" focusable="false" /><div><strong>{multiple ? text.chooseFiles : text.chooseFile}</strong>{allowDrop ? <span>{text.dropHint}</span> : null}</div><AppButton disabled={disabled} onClick={open} size="compact">{text.browse}</AppButton>
     </div>
-    {currentFiles.length ? <ul aria-label={text.selectedFiles} className="app-file-picker__files">{currentFiles.map((file, index) => <li key={`${file.name}-${file.size}-${index}`}><span><FileIcon />{file.name}</span><button aria-label={text.remove(file.name)} disabled={disabled} onClick={() => commit(currentFiles.filter((_, candidate) => candidate !== index) as File[])} type="button">×</button></li>)}</ul> : null}
+    {currentFiles.length ? <ul aria-label={text.selectedFiles} className="app-file-picker__files">{currentFiles.map((file, index) => <li key={`${file.name}-${file.size}-${index}`}><span><Document16Regular aria-hidden="true" focusable="false" />{file.name}</span><button aria-label={text.remove(file.name)} disabled={disabled} onClick={() => commit(currentFiles.filter((_, candidate) => candidate !== index) as File[])} type="button"><Dismiss16Regular aria-hidden="true" focusable="false" /></button></li>)}</ul> : null}
   </div>
 }

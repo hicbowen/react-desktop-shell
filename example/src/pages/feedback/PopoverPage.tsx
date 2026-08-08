@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react'
-import { Info, MoreHorizontal } from 'lucide-react'
+import { Info, MoreHorizontal } from '../../components/fluentIcons'
 import {
   AppButton,
   AppIconButton,

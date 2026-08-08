@@ -6,6 +6,7 @@ import {
   type KeyboardEvent,
 } from 'react'
 import { createPortal } from 'react-dom'
+import { Clock16Regular } from '@fluentui/react-icons/svg/clock'
 import { AppButton } from '../button'
 import { useAppFieldContext } from '../field/AppFieldContext'
 import { useAppLocale } from '../localization/useAppLocale'
@@ -28,14 +29,6 @@ import type {
 } from './types'
 import { useTimePickerOverlay } from './useTimePickerOverlay'
 import './AppTimePicker.css'
-
-function TimeIcon() {
-  return (
-    <svg aria-hidden="true" viewBox="0 0 16 16">
-      <path d="M8 1.5A6.5 6.5 0 1 1 1.5 8 6.5 6.5 0 0 1 8 1.5Zm0 1A5.5 5.5 0 1 0 13.5 8 5.5 5.5 0 0 0 8 2.5Zm0 2a.5.5 0 0 1 .5.5v2.79l1.85 1.06a.5.5 0 1 1-.5.87l-2.1-1.22A.5.5 0 0 1 7.5 8V5a.5.5 0 0 1 .5-.5Z" />
-    </svg>
-  )
-}
 
 function initialTime(
   value: AppTimeValue | null,
@@ -257,7 +250,7 @@ export function AppTimePicker({
           ref={timeButtonRef}
           type="button"
         >
-          <TimeIcon />
+          <Clock16Regular aria-hidden="true" focusable="false" />
         </button>
       </div>
       {name ? (

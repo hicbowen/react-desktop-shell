@@ -1,4 +1,4 @@
-import { MoreHorizontal, User } from 'lucide-react'
+import { MoreHorizontal, User } from '../../components/fluentIcons'
 import {
   AppIconButton,
   AppListView,

@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { AlignJustify, Columns3, Rows3 } from 'lucide-react'
+import { AlignJustify, Columns3, Rows3 } from '../../components/fluentIcons'
 import { AppSegmentedControl } from '../../../../src'
 import { DemoPage, DemoPreview, DemoSection } from '../../components/DemoPage'
 

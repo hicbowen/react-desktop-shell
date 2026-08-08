@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { FileCode2, FileText } from 'lucide-react'
+import { FileCode2, FileText } from '../../components/fluentIcons'
 import { AppButton, AppTabView, useAppContextMenu, type AppTabViewItem } from '../../../../src'
 import { DemoControls, DemoPage, DemoPreview, DemoSection } from '../../components/DemoPage'
 import { useDemoCopy } from '../../i18n/interactiveTranslations'

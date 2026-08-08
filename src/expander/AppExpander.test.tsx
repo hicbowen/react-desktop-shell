@@ -66,13 +66,13 @@ describe('AppExpander', () => {
     expect(region().getAttribute('aria-labelledby')).toBe(trigger().id)
   })
 
-  it('renders the chevron as an inline svg', () => {
+  it('renders the Fluent chevron as an inline svg', () => {
     act(() => root.render(<AppExpander title="Advanced">Content</AppExpander>))
     const chevron = host.querySelector<HTMLElement>('.app-expander__chevron')!
     const svg = chevron.querySelector('svg')
     expect(chevron.textContent).toBe('')
     expect(svg?.getAttribute('viewBox')).toBe('0 0 16 16')
-    expect(svg?.querySelector('path')?.getAttribute('d')).toBe('M4 6L8 10L12 6')
+    expect(svg?.querySelector('path')).not.toBeNull()
   })
 
   it('reveals uncontrolled content before the expansion animation', () => {

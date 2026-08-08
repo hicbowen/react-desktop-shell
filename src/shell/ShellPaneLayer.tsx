@@ -1,27 +1,9 @@
 import { cloneElement, isValidElement, useMemo } from 'react'
 import type { ReactElement, ReactNode } from 'react'
+import { Navigation20Regular } from '@fluentui/react-icons/svg/navigation'
 import type { AppRailProps } from '../navigation/types'
 import { useAppLocale } from '../localization/useAppLocale'
 import type { PaneController } from './usePaneController'
-
-function MenuIcon() {
-  return (
-    <svg
-      aria-hidden="true"
-      fill="none"
-      height="18"
-      viewBox="0 0 18 18"
-      width="18"
-    >
-      <path
-        d="M3 5h12M3 9h12M3 13h12"
-        stroke="currentColor"
-        strokeLinecap="round"
-        strokeWidth="1.5"
-      />
-    </svg>
-  )
-}
 
 export function ShellPaneToggleButton({
   ariaLabel,
@@ -40,7 +22,7 @@ export function ShellPaneToggleButton({
       onClick={onToggle}
       type="button"
     >
-      <MenuIcon />
+      <Navigation20Regular aria-hidden="true" focusable="false" />
     </button>
   )
 }

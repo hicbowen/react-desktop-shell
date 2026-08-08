@@ -10,7 +10,7 @@ import {
   Palette,
   Sparkles,
   Users,
-} from 'lucide-react'
+} from '../../components/fluentIcons'
 import {
   AppButton,
   AppCard,

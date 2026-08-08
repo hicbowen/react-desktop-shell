@@ -11,7 +11,8 @@
 .app-cascader__clear:focus-visible { outline: 2px solid var(--app-shell-accent-color, #005fb8); }
 .app-cascader__chevron { position: absolute; right: 8px; width: 16px; height: 16px; display: grid; place-items: center; color: var(--app-shell-secondary-text-color, rgb(0 0 0 / 62%)); pointer-events: none; transition: transform var(--rds-motion-fast, 120ms) ease; }
 .app-cascader:has(.app-cascader__popup) .app-cascader__chevron { transform: rotate(180deg); }
-.app-cascader__chevron svg, .app-cascader__option svg { width: 16px; height: 16px; display: block; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+.app-cascader__chevron svg, .app-cascader__option svg { width: 16px; height: 16px; display: block; }
+.app-cascader__chevron svg { fill: currentColor; stroke: none; }
 .app-cascader__popup { position: absolute; z-index: var(--rds-z-overlay, 1050); top: calc(100% + 4px); left: 0; display: flex; max-width: min(640px, calc(100vw - 20px)); max-height: min(300px, calc(100vh - 20px)); overflow: auto; padding: 4px; color: var(--app-shell-text-color, #1f1f1f); background: var(--app-shell-menu-bg, rgb(249 249 249 / 96%)); border: 1px solid var(--app-shell-menu-border-color, rgb(0 0 0 / 12%)); border-radius: 8px; box-shadow: var(--app-shell-menu-shadow, 0 6px 18px rgb(0 0 0 / 16%)); backdrop-filter: blur(24px); animation: app-cascader-enter var(--rds-motion-fast, 120ms) var(--rds-ease-enter, ease-out); }
 .app-cascader__column { width: 180px; min-width: 140px; display: grid; align-content: start; overflow-y: auto; padding: 0 4px; }
 .app-cascader__column + .app-cascader__column { border-left: 1px solid var(--app-shell-menu-border-color, rgb(0 0 0 / 10%)); }

@@ -7,18 +7,12 @@ import {
   type DragEvent,
   type KeyboardEvent,
 } from 'react'
+import { Add16Regular } from '@fluentui/react-icons/svg/add'
+import { Dismiss16Regular } from '@fluentui/react-icons/svg/dismiss'
 import { AppMenuFlyout } from '../menu-flyout'
 import { useAppLocale } from '../localization/useAppLocale'
 import type { AppTabViewItem, AppTabViewProps } from './types'
 import './AppTabView.css'
-
-function CloseIcon() {
-  return <svg aria-hidden="true" viewBox="0 0 12 12"><path d="m2.25 2.25 7.5 7.5m0-7.5-7.5 7.5" /></svg>
-}
-
-function AddIcon() {
-  return <svg aria-hidden="true" viewBox="0 0 12 12"><path d="M6 1.5v9M1.5 6h9" /></svg>
-}
 
 function getAvailableItem(items: readonly AppTabViewItem[], key?: string) {
   return items.find((item) => item.key === key && !item.disabled)
@@ -180,10 +174,10 @@ export function AppTabView({
               onClick={(event) => { event.stopPropagation(); onTabClose?.(item.key) }}
               tabIndex={selected ? 0 : -1}
               type="button"
-            ><CloseIcon /></button> : null}
+            ><Dismiss16Regular aria-hidden="true" focusable="false" /></button> : null}
           </div>
         })}
-        {onAddTab ? <button aria-label={addTabLabel ?? text.newTab} className="app-tab-view__add" onClick={onAddTab} type="button"><AddIcon /></button> : null}
+        {onAddTab ? <button aria-label={addTabLabel ?? text.newTab} className="app-tab-view__add" onClick={onAddTab} type="button"><Add16Regular aria-hidden="true" focusable="false" /></button> : null}
       </div>
       {tabListVisibility === 'always' || (tabListVisibility === 'auto' && tabsOverflow) ? <AppMenuFlyout
         ariaLabel={tabListLabel ?? text.allTabs}

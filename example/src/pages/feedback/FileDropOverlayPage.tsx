@@ -4,7 +4,7 @@ import {
   FileImage,
   FileSpreadsheet,
   UploadCloud,
-} from 'lucide-react'
+} from '../../components/fluentIcons'
 import { AppFileDropOverlay } from '../../../../src'
 import { DemoPage, DemoPreview, DemoSection } from '../../components/DemoPage'
 import { useDemoCopy } from '../../i18n/interactiveTranslations'

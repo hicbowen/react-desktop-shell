@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Clock3, FileClock, Settings2 } from 'lucide-react'
+import { Clock3, FileClock, Settings2 } from '../../components/fluentIcons'
 import {
   AppButton,
   AppCard,

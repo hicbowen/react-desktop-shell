@@ -1,4 +1,6 @@
 import { useEffect, useId, useRef, type KeyboardEvent } from 'react'
+import { ChevronLeft16Regular } from '@fluentui/react-icons/svg/chevron-left'
+import { ChevronRight16Regular } from '@fluentui/react-icons/svg/chevron-right'
 import { useAppLocale } from '../localization/useAppLocale'
 import {
   addDays,
@@ -40,22 +42,6 @@ export interface AppCalendarProps {
 
 function monthCompare(first: AppDateValue, second: AppDateValue) {
   return first.year - second.year || first.month - second.month
-}
-
-function PreviousIcon() {
-  return (
-    <svg aria-hidden="true" viewBox="0 0 16 16">
-      <path d="M10.6 2.8a.6.6 0 0 1 0 .85L6.25 8l4.35 4.35a.6.6 0 0 1-.85.85l-4.78-4.78a.6.6 0 0 1 0-.84L9.75 2.8a.6.6 0 0 1 .85 0Z" />
-    </svg>
-  )
-}
-
-function NextIcon() {
-  return (
-    <svg aria-hidden="true" viewBox="0 0 16 16">
-      <path d="M5.4 2.8a.6.6 0 0 0 0 .85L9.75 8 5.4 12.35a.6.6 0 1 0 .85.85l4.78-4.78a.6.6 0 0 0 0-.84L6.25 2.8a.6.6 0 0 0-.85 0Z" />
-    </svg>
-  )
 }
 
 export function AppCalendar({
@@ -226,7 +212,7 @@ export function AppCalendar({
           onClick={() => moveMonth(-1)}
           type="button"
         >
-          <PreviousIcon />
+          <ChevronLeft16Regular aria-hidden="true" focusable="false" />
         </button>
         <div
           aria-live="polite"
@@ -247,7 +233,7 @@ export function AppCalendar({
           onClick={() => moveMonth(1)}
           type="button"
         >
-          <NextIcon />
+          <ChevronRight16Regular aria-hidden="true" focusable="false" />
         </button>
       </header>
       <div className="app-calendar__months">

@@ -44,7 +44,7 @@ describe('AppSelect', () => {
     expect(ref.current?.querySelectorAll('option')[1]?.disabled).toBe(true)
   })
 
-  it('renders the select chevron as an inline svg', () => {
+  it('renders the Fluent select chevron as an inline svg', () => {
     act(() => root.render(
       <AppSelect options={[{ value: 'one', label: 'One' }]} />,
     ))
@@ -52,9 +52,7 @@ describe('AppSelect', () => {
     const svg = chevron.querySelector('svg')
     expect(chevron.textContent).toBe('')
     expect(svg?.getAttribute('viewBox')).toBe('0 0 16 16')
-    expect(svg?.querySelector('path')?.getAttribute('d')).toBe(
-      'M4 6L8 10L12 6',
-    )
+    expect(svg?.querySelector('path')).not.toBeNull()
   })
 
   it('supports placeholder, controlled, uncontrolled, and Field context', () => {

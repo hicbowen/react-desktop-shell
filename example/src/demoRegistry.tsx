@@ -75,7 +75,7 @@ import {
   UserRound,
   WandSparkles,
   Wrench,
-} from 'lucide-react'
+} from './components/fluentIcons'
 import type { RailEntry, RailItem } from '../../src'
 import { OverviewPage } from './pages/OverviewPage'
 import { AppPagePage, AppShellPage, AppSidePanePage, AppTitleBarPage } from './pages/shell/ShellPages'

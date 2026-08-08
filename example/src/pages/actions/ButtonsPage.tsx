@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { MoreHorizontal, Save, Send, Trash2 } from 'lucide-react'
+import { MoreHorizontal, Save, Send, Trash2 } from '../../components/fluentIcons'
 import { AppButton, AppDialog, AppIconButton, AppMenuFlyout, AppTooltip } from '../../../../src'
 import { DemoPage, DemoPreview, DemoSection } from '../../components/DemoPage'
 import { useDemoCopy } from '../../i18n/interactiveTranslations'

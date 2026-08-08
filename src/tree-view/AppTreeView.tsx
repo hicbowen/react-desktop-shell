@@ -1,4 +1,6 @@
 import { useMemo, useRef, useState, type CSSProperties, type DragEvent, type KeyboardEvent } from 'react'
+import { ChevronDown16Regular } from '@fluentui/react-icons/svg/chevron-down'
+import { ChevronRight16Regular } from '@fluentui/react-icons/svg/chevron-right'
 import { useAppLocale } from '../localization/useAppLocale'
 import type { AppTreeItem, AppTreeViewProps } from './types'
 import './AppTreeView.css'
@@ -13,7 +15,8 @@ function flatten(items: readonly AppTreeItem[], expanded: Set<string>, level = 1
 }
 
 function Chevron({ expanded, loading }: { expanded: boolean; loading?: boolean }) {
-  return <svg aria-hidden="true" className={loading ? 'app-tree-view__chevron app-tree-view__chevron--loading' : 'app-tree-view__chevron'} viewBox="0 0 12 12"><path d={expanded ? 'm2.5 4 3.5 3.5L9.5 4' : 'm4 2.5 3.5 3.5L4 9.5'} /></svg>
+  const Icon = expanded ? ChevronDown16Regular : ChevronRight16Regular
+  return <Icon aria-hidden="true" className={loading ? 'app-tree-view__chevron app-tree-view__chevron--loading' : 'app-tree-view__chevron'} focusable="false" />
 }
 
 export function AppTreeView({

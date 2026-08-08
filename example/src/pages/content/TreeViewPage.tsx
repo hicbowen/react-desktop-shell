@@ -1,4 +1,4 @@
-import { FileCode2, FileText, Folder } from 'lucide-react'
+import { FileCode2, FileText, Folder } from '../../components/fluentIcons'
 import { AppTreeView, type AppTreeItem } from '../../../../src'
 import { DemoPage, DemoSection } from '../../components/DemoPage'
 

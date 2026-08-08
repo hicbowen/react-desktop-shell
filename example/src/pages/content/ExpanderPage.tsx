@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Settings } from 'lucide-react'
+import { Settings } from '../../components/fluentIcons'
 import {
   AppExpander,
   AppExpanderGroup,

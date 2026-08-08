@@ -6,13 +6,10 @@ import {
   type CompositionEvent,
   type KeyboardEvent,
 } from 'react'
+import { Search16Regular } from '@fluentui/react-icons/svg/search'
 import { AppTextBox } from '../text-input'
 import { useAppLocale } from '../localization/useAppLocale'
 import type { AppSearchBoxProps } from './types'
-
-function SearchIcon() {
-  return <svg aria-hidden="true" fill="none" stroke="currentColor" strokeLinecap="round" strokeWidth="1.4" viewBox="0 0 16 16"><circle cx="7" cy="7" r="4.5" /><path d="m10.5 10.5 3 3" /></svg>
-}
 
 export const AppSearchBox = forwardRef<HTMLInputElement, AppSearchBoxProps>(function AppSearchBox({
   value,
@@ -119,7 +116,7 @@ export const AppSearchBox = forwardRef<HTMLInputElement, AppSearchBoxProps>(func
     placeholder={placeholder ?? messages.searchBox.placeholder}
     ref={forwardedRef}
     role="searchbox"
-    startIcon={<SearchIcon />}
+    startIcon={<Search16Regular aria-hidden="true" focusable="false" />}
     type="search"
     value={currentValue}
   />

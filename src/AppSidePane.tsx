@@ -6,6 +6,7 @@ import {
   useRef,
   useState,
 } from 'react'
+import { Dismiss16Regular } from '@fluentui/react-icons/svg/dismiss'
 import type { CSSProperties } from 'react'
 import type { AppSidePaneProps } from './types'
 import { useAppLocale } from './localization/useAppLocale'
@@ -229,12 +230,7 @@ export function AppSidePane({
               aria-label={messages.sidePane.close}
               onClick={onClose}
             >
-              <svg viewBox="0 0 16 16" aria-hidden="true">
-                <path
-                  d="M4.22 4.22a.75.75 0 0 1 1.06 0L8 6.94l2.72-2.72a.75.75 0 1 1 1.06 1.06L9.06 8l2.72 2.72a.75.75 0 1 1-1.06 1.06L8 9.06l-2.72 2.72a.75.75 0 0 1-1.06-1.06L6.94 8 4.22 5.28a.75.75 0 0 1 0-1.06Z"
-                  fill="currentColor"
-                />
-              </svg>
+              <Dismiss16Regular aria-hidden="true" focusable="false" />
             </button>
           ) : null}
         </header>

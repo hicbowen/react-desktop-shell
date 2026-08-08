@@ -1,4 +1,4 @@
-import { Boxes, Database, FormInput, LayoutPanelTop, MessageSquare, MousePointerClick, Navigation } from 'lucide-react'
+import { Boxes, Database, FormInput, LayoutPanelTop, MessageSquare, MousePointerClick, Navigation } from '../components/fluentIcons'
 import { DemoPage } from '../components/DemoPage'
 import { useDemoI18n } from '../i18n/DemoI18nContext'
 import { useDemoShell } from '../components/DemoShellContext'

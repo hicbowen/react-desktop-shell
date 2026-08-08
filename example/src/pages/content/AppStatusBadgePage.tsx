@@ -1,4 +1,4 @@
-import { Check, Clock3, XCircle } from 'lucide-react'
+import { Check, Clock3, XCircle } from '../../components/fluentIcons'
 import { AppCard, AppStatusBadge } from '../../../../src'
 import { DemoPage, DemoPreview, DemoSection } from '../../components/DemoPage'
 

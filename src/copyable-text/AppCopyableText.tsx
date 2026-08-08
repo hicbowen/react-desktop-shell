@@ -1,12 +1,14 @@
 import { useEffect, useRef, useState } from 'react'
+import { Checkmark16Regular } from '@fluentui/react-icons/svg/checkmark'
+import { Copy16Regular } from '@fluentui/react-icons/svg/copy'
 import { useAppLocale } from '../localization/useAppLocale'
 import type { AppCopyableTextProps } from './types'
 import './AppCopyableText.css'
 
 function CopyIcon({ copied }: { copied: boolean }) {
   return copied
-    ? <svg aria-hidden="true" viewBox="0 0 16 16"><path d="m3 8 3 3 7-7" /></svg>
-    : <svg aria-hidden="true" viewBox="0 0 16 16"><rect height="9" rx="1" width="8" x="5" y="2" /><path d="M3 5H2v9h8v-1" /></svg>
+    ? <Checkmark16Regular aria-hidden="true" focusable="false" />
+    : <Copy16Regular aria-hidden="true" focusable="false" />
 }
 
 async function writeClipboard(text: string) {

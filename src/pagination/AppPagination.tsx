@@ -1,15 +1,22 @@
 import { useState } from 'react'
+import { ChevronDoubleLeft16Regular } from '@fluentui/react-icons/svg/chevron-double-left'
+import { ChevronDoubleRight16Regular } from '@fluentui/react-icons/svg/chevron-double-right'
+import { ChevronLeft16Regular } from '@fluentui/react-icons/svg/chevron-left'
+import { ChevronRight16Regular } from '@fluentui/react-icons/svg/chevron-right'
 import { useAppLocale } from '../localization/useAppLocale'
 import { AppSelect } from '../select'
 import type { AppPaginationProps, AppPaginationValue } from './types'
 import './AppPagination.css'
 
 function PaginationIcon({ direction }: { direction: 'first' | 'previous' | 'next' | 'last' }) {
-  const points = direction === 'previous' || direction === 'first'
-    ? '14 6 8 12 14 18'
-    : '10 6 16 12 10 18'
-  const edge = direction === 'first' ? 6 : direction === 'last' ? 18 : undefined
-  return <svg aria-hidden="true" viewBox="0 0 24 24"><polyline points={points} />{edge !== undefined ? <line x1={edge} x2={edge} y1="6" y2="18" /> : null}</svg>
+  const Icon = direction === 'first'
+    ? ChevronDoubleLeft16Regular
+    : direction === 'previous'
+      ? ChevronLeft16Regular
+      : direction === 'next'
+        ? ChevronRight16Regular
+        : ChevronDoubleRight16Regular
+  return <Icon aria-hidden="true" focusable="false" />
 }
 
 function normalizeValue(value: AppPaginationValue, total: number) {

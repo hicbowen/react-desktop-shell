@@ -1,4 +1,6 @@
 import { forwardRef, useId, useMemo, useRef, useState, type KeyboardEvent, type PointerEvent as ReactPointerEvent } from 'react'
+import { ChevronDown16Regular } from '@fluentui/react-icons/svg/chevron-down'
+import { ChevronRight16Regular } from '@fluentui/react-icons/svg/chevron-right'
 import { useAppFieldContext } from '../field/AppFieldContext'
 import { useAppLocale } from '../localization/useAppLocale'
 import { AppAnchoredPopup } from '../overlay/AppAnchoredPopup'
@@ -171,7 +173,7 @@ export const AppCascader = forwardRef<HTMLButtonElement, AppCascaderProps>(funct
     </button>
     {name ? <input name={name} required={resolvedRequired} type="hidden" value={selectedValues.join('/')} /> : null}
     {clearable && selectedValues.length && !resolvedDisabled ? <button aria-label={messages.cascader.clear} className="app-cascader__clear" onClick={(event) => { event.stopPropagation(); commit([]) }} type="button"><span aria-hidden="true">×</span></button> : null}
-    <span aria-hidden="true" className="app-cascader__chevron"><svg focusable="false" viewBox="0 0 16 16"><path d="M4 6L8 10L12 6" /></svg></span>
+    <span aria-hidden="true" className="app-cascader__chevron"><ChevronDown16Regular focusable="false" /></span>
     <AppAnchoredPopup className="app-cascader__popup" dependencies={[columns.length]} id={treeId} matchTriggerWidth={false} maxHeight={300} onDismiss={() => requestOpen(false)} open={visible && !resolvedDisabled} role="tree" triggerRef={rootRef}>
       {options.length ? columns.map((column, level) => <span className="app-cascader__column" key={level} role="group">
         {column.map((option) => {
@@ -188,7 +190,7 @@ export const AppCascader = forwardRef<HTMLButtonElement, AppCascaderProps>(funct
             onPointerDown={(event: ReactPointerEvent<HTMLButtonElement>) => { event.preventDefault(); setOptionAtLevel(level, option) }}
             role="treeitem"
             type="button"
-          ><span>{option.label}</span>{option.children?.length ? <svg aria-hidden="true" focusable="false" viewBox="0 0 16 16"><path d="M6 4L10 8L6 12" /></svg> : null}</button>
+          ><span>{option.label}</span>{option.children?.length ? <ChevronRight16Regular aria-hidden="true" focusable="false" /> : null}</button>
         })}
       </span>) : <span className="app-cascader__empty">{resolvedEmptyContent}</span>}
     </AppAnchoredPopup>

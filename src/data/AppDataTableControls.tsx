@@ -7,6 +7,9 @@ import {
 } from 'react'
 import { createPortal } from 'react-dom'
 import type { Table } from '@tanstack/react-table'
+import { Dismiss16Regular } from '@fluentui/react-icons/svg/dismiss'
+import { Filter16Regular } from '@fluentui/react-icons/svg/filter'
+import { Search16Regular } from '@fluentui/react-icons/svg/search'
 import { useAppOverlayHost } from '../overlay/AppOverlayHostContext'
 import { useAnchoredOverlayPosition } from '../overlay/useAnchoredOverlayPosition'
 import { useOverlayDismiss } from '../overlay/useOverlayDismiss'
@@ -17,31 +20,6 @@ import type {
   AppDataTableControlsOptions,
   AppDataTableFilterDefinition,
 } from './types'
-
-function SearchIcon() {
-  return (
-    <svg aria-hidden="true" viewBox="0 0 16 16">
-      <circle cx="7" cy="7" r="4.25" />
-      <path d="m10.25 10.25 3 3" />
-    </svg>
-  )
-}
-
-function FilterIcon() {
-  return (
-    <svg aria-hidden="true" viewBox="0 0 16 16">
-      <path d="M2.5 3h11L9.25 8v4l-2.5 1V8z" />
-    </svg>
-  )
-}
-
-function CloseIcon() {
-  return (
-    <svg aria-hidden="true" viewBox="0 0 16 16">
-      <path d="m4.5 4.5 7 7m0-7-7 7" />
-    </svg>
-  )
-}
 
 function hasFilterValue(value: unknown) {
   if (Array.isArray(value)) {
@@ -149,7 +127,7 @@ export function AppDataTableControls<TData>({
       {searchEnabled ? (
         <div className="app-data-table__search">
           <span className="app-data-table__search-icon">
-            <SearchIcon />
+            <Search16Regular aria-hidden="true" focusable="false" />
           </span>
           <input
             aria-label={locale.searchAriaLabel}
@@ -166,7 +144,7 @@ export function AppDataTableControls<TData>({
               type="button"
               onClick={() => table.setGlobalFilter('')}
             >
-              <CloseIcon />
+              <Dismiss16Regular aria-hidden="true" focusable="false" />
             </button>
           ) : null}
         </div>
@@ -196,7 +174,7 @@ export function AppDataTableControls<TData>({
               activateWithKeyboard(event, toggleFilterMenu)
             }}
           >
-            <FilterIcon />
+            <Filter16Regular aria-hidden="true" focusable="false" />
             <span>{locale.filters}</span>
             {activeFilterCount > 0 ? (
               <span

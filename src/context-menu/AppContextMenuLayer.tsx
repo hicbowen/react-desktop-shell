@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
+import { ChevronRight16Regular } from '@fluentui/react-icons/svg/chevron-right'
 import type {
   AppContextMenuItem,
   AppContextMenuSeparatorItem,
@@ -703,12 +704,7 @@ export function AppContextMenuLayer({
                       className="app-context-menu__submenu-indicator"
                       aria-hidden="true"
                     >
-                      <svg viewBox="0 0 16 16" focusable="false">
-                        <path
-                          d="M6.47 4.22a.75.75 0 0 1 1.06 0l3.25 3.25a.75.75 0 0 1 0 1.06l-3.25 3.25a.75.75 0 1 1-1.06-1.06L9.19 8 6.47 5.28a.75.75 0 0 1 0-1.06Z"
-                          fill="currentColor"
-                        />
-                      </svg>
+                      <ChevronRight16Regular aria-hidden="true" focusable="false" />
                     </span>
                   ) : item.shortcut ? (
                     <span className="app-context-menu__shortcut">

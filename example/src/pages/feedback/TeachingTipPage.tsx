@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Download, FileImage, FileText } from 'lucide-react'
+import { Download, FileImage, FileText } from '../../components/fluentIcons'
 import {
   AppShell,
   AppSplitButton,

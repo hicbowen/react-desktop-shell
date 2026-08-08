@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { CloudArrowUp24Regular } from '@fluentui/react-icons/svg/cloud-arrow-up'
 import {
   previewFileDrag,
   validateDroppedFiles,
@@ -8,14 +9,6 @@ import { useAppLocale } from '../localization/useAppLocale'
 import './AppFileDropOverlay.css'
 
 type FileDropState = 'idle' | 'pending' | 'accept' | 'reject'
-
-function UploadIcon() {
-  return (
-    <svg aria-hidden="true" viewBox="0 0 24 24">
-      <path d="M11.3 4.3a1 1 0 0 1 1.4 0l4 4a1 1 0 0 1-1.4 1.4L13 7.41V15a1 1 0 1 1-2 0V7.41L8.7 9.7a1 1 0 0 1-1.4-1.4l4-4ZM5 14a1 1 0 0 1 1 1v3h12v-3a1 1 0 1 1 2 0v3a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-3a1 1 0 0 1 1-1Z" />
-    </svg>
-  )
-}
 
 function hasFileType(dataTransfer: DataTransfer) {
   return Array.from(dataTransfer.types ?? []).includes('Files')
@@ -186,7 +179,7 @@ export function AppFileDropOverlay({
           role="status"
         >
           <div className="app-file-drop__panel">
-            <div className="app-file-drop__icon">{icon ?? <UploadIcon />}</div>
+            <div className="app-file-drop__icon">{icon ?? <CloudArrowUp24Regular aria-hidden="true" focusable="false" />}</div>
             <div className="app-file-drop__title">
               {rejected ? resolvedRejectTitle : resolvedTitle}
             </div>

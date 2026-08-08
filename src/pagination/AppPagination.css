@@ -21,7 +21,7 @@
 .app-pagination__button:hover:not(:disabled) { background: var(--app-shell-hover-bg, rgb(0 0 0 / 5%)); border-color: var(--app-shell-border-color, rgb(0 0 0 / 14%)); }
 .app-pagination__button:active:not(:disabled) { background: var(--app-shell-pressed-bg, rgb(0 0 0 / 9%)); }
 .app-pagination__button:disabled { opacity: .55; }
-.app-pagination__button svg { width: 17px; height: 17px; fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 1.5; }
+.app-pagination__button svg { width: 17px; height: 17px; }
 .app-pagination__button:focus-visible { outline: 2px solid var(--app-shell-accent-color, #115ea3); outline-offset: 1px; }
 .app-pagination--compact { min-height: 40px; padding-block: 4px; }
 @media (max-width: 560px) { .app-pagination { flex-wrap: wrap; } .app-pagination__summary { display: none; } .app-pagination__controls { width: 100%; justify-content: flex-end; } }

@@ -260,11 +260,8 @@
 .app-data-table__filter-button > svg {
   width: 16px;
   height: 16px;
-  fill: none;
-  stroke: currentColor;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  stroke-width: 1.4;
+  fill: currentColor;
+  stroke: none;
 }
 
 .app-data-table__search-clear:hover,
@@ -631,11 +628,8 @@
 .app-data-table__pagination-button svg {
   width: 17px;
   height: 17px;
-  fill: none;
-  stroke: currentColor;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  stroke-width: 1.5;
+  fill: currentColor;
+  stroke: none;
 }
 
 .app-data-view--fill .app-data-table__viewport {
