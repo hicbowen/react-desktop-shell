@@ -1,2 +1,2 @@
 export { AppNumberBox } from './AppNumberBox'
-export type { AppNumberBoxProps } from './types'
+export type { AppNumberBoxProps, AppNumberBoxSpinButtonPlacement } from './types'

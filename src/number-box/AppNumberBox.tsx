@@ -1,7 +1,11 @@
 import { forwardRef, useEffect, useRef, useState } from 'react'
-import type { FocusEvent, KeyboardEvent } from 'react'
+import type { FocusEvent, KeyboardEvent, ReactNode } from 'react'
+import { ChevronDown16Regular } from '@fluentui/react-icons/svg/chevron-down'
+import { ChevronUp16Regular } from '@fluentui/react-icons/svg/chevron-up'
+import { ChevronUpDown16Regular } from '@fluentui/react-icons/svg/chevron-up-down'
 import { useAppFieldContext } from '../field/AppFieldContext'
 import { useAppLocale } from '../localization/useAppLocale'
+import { AppPopover } from '../popover'
 import type { AppNumberBoxProps } from './types'
 import './AppNumberBox.css'
 
@@ -28,10 +32,12 @@ export const AppNumberBox = forwardRef<HTMLInputElement, AppNumberBoxProps>(func
   defaultValue = null,
   disabled,
   formatValue = String,
+  largeStep,
   id,
   max,
   min,
   onBlur,
+  onFocus,
   onKeyDown,
   onValueChange,
   parseValue = (text) => {
@@ -42,11 +48,16 @@ export const AppNumberBox = forwardRef<HTMLInputElement, AppNumberBoxProps>(func
   readOnly = false,
   required,
   step = 1,
+  spinButtonPlacement = 'inline',
+  style,
   value,
   ...rest
 }, ref) {
   const field = useAppFieldContext()
   const { messages } = useAppLocale()
+  const rootRef = useRef<HTMLSpanElement>(null)
+  const compactPanelRef = useRef<HTMLDivElement>(null)
+  const [compactOpen, setCompactOpen] = useState(false)
   const resolvedDisabled = disabled ?? field?.disabled ?? false
   const controlled = value !== undefined
   const initialValue = defaultValue != null && Number.isFinite(defaultValue)
@@ -85,17 +96,42 @@ export const AppNumberBox = forwardRef<HTMLInputElement, AppNumberBoxProps>(func
     else commitValue(parsed)
   }
   const safeStep = Number.isFinite(step) && step > 0 ? step : 1
-  const changeBy = (direction: number) => {
+  const safeLargeStep = Number.isFinite(largeStep) && largeStep! > 0 ? largeStep! : safeStep * 10
+  const changeBy = (direction: number, amount = safeStep) => {
     const parsed = parseValue(editingText)
-    const base = parsed != null && Number.isFinite(parsed) ? parsed : committedValue
-    if (base == null) return
-    commitValue(base + safeStep * direction)
+    const base = parsed != null && Number.isFinite(parsed) ? parsed : committedValue ?? 0
+    commitValue(base + amount * direction)
   }
-  const handleBlur = (event: FocusEvent<HTMLInputElement>) => { commitText(); onBlur?.(event) }
+  const isWithinCompactSurface = (target: EventTarget | null) => {
+    if (!(target instanceof Node)) return false
+    return Boolean(rootRef.current?.contains(target) || compactPanelRef.current?.contains(target))
+  }
+  useEffect(() => {
+    if (spinButtonPlacement !== 'compact' || resolvedDisabled || readOnly) setCompactOpen(false)
+  }, [readOnly, resolvedDisabled, spinButtonPlacement])
+  const handleFocus = (event: FocusEvent<HTMLInputElement>) => {
+    onFocus?.(event)
+    if (!event.defaultPrevented && spinButtonPlacement === 'compact' && !resolvedDisabled && !readOnly) setCompactOpen(true)
+  }
+  const handleBlur = (event: FocusEvent<HTMLInputElement>) => {
+    commitText()
+    onBlur?.(event)
+    if (!isWithinCompactSurface(event.relatedTarget)) setCompactOpen(false)
+  }
+  const handleCompactTriggerFocus = () => {
+    if (!resolvedDisabled && !readOnly) setCompactOpen(true)
+  }
+  const handleCompactTriggerBlur = (event: FocusEvent<HTMLButtonElement>) => {
+    if (!isWithinCompactSurface(event.relatedTarget)) setCompactOpen(false)
+  }
+  const handleCompactPanelBlur = (event: FocusEvent<HTMLDivElement>) => {
+    if (!isWithinCompactSurface(event.relatedTarget)) setCompactOpen(false)
+  }
   const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
     onKeyDown?.(event)
     if (event.defaultPrevented || resolvedDisabled || readOnly) return
-    if (event.key === 'ArrowUp' || event.key === 'ArrowDown') { event.preventDefault(); changeBy(event.key === 'ArrowUp' ? 1 : -1) }
+    if (event.key === 'ArrowUp' || event.key === 'ArrowDown') { event.preventDefault(); changeBy(event.key === 'ArrowUp' ? 1 : -1, event.shiftKey ? safeLargeStep : safeStep) }
+    else if (event.key === 'PageUp' || event.key === 'PageDown') { event.preventDefault(); changeBy(event.key === 'PageUp' ? 1 : -1, safeLargeStep) }
     else if (event.key === 'Enter') { event.preventDefault(); commitText() }
     else if (event.key === 'Escape') { event.preventDefault(); restore() }
   }
@@ -105,6 +141,10 @@ export const AppNumberBox = forwardRef<HTMLInputElement, AppNumberBoxProps>(func
   const effectiveValue = parsedEditingValue != null && Number.isFinite(parsedEditingValue)
     ? parsedEditingValue
     : committedValue
+  const canIncrease = !resolvedDisabled && !readOnly && (effectiveValue == null || bounds.max == null || effectiveValue < bounds.max)
+  const canDecrease = !resolvedDisabled && !readOnly && (effectiveValue == null || bounds.min == null || effectiveValue > bounds.min)
+  const button = (direction: 1 | -1, label: string, icon: ReactNode, enabled: boolean) => <button aria-label={label} disabled={!enabled} onClick={() => changeBy(direction)} onPointerDown={(event) => event.preventDefault()} type="button"><span aria-hidden="true" className="app-number-box__button-icon">{icon}</span></button>
+  const compactControls = spinButtonPlacement === 'compact' ? <AppPopover ariaLabel={messages.numberBox.openActions} className="app-number-box__compact-popover" offset={6} onOpenChange={setCompactOpen} open={compactOpen} placement="right" trigger={<button aria-label={messages.numberBox.openActions} className="app-number-box__compact-trigger" disabled={resolvedDisabled || readOnly} onBlur={handleCompactTriggerBlur} onFocus={handleCompactTriggerFocus} onPointerDown={(event) => event.preventDefault()} type="button"><span aria-hidden="true" className="app-number-box__button-icon"><ChevronUpDown16Regular /></span></button>}><div className="app-number-box__compact-panel" onBlur={handleCompactPanelBlur} ref={compactPanelRef}>{button(1, messages.numberBox.increase, <ChevronUp16Regular />, canIncrease)}{button(-1, messages.numberBox.decrease, <ChevronDown16Regular />, canDecrease)}</div></AppPopover> : null
 
-  return <span className={['app-number-box', resolvedDisabled ? 'app-number-box--disabled' : '', className].filter(Boolean).join(' ')}><input {...rest} aria-describedby={ariaDescribedBy ?? field?.describedBy} aria-invalid={(ariaInvalid ?? field?.invalid) || undefined} aria-valuemax={bounds.max} aria-valuemin={bounds.min} aria-valuenow={committedValue ?? undefined} aria-valuetext={formattedCommittedValue} disabled={resolvedDisabled} id={id ?? field?.controlId} inputMode="decimal" onBlur={handleBlur} onChange={(event) => setEditingText(event.target.value)} onKeyDown={handleKeyDown} readOnly={readOnly} ref={ref} required={required ?? field?.required} role="spinbutton" type="text" value={editingText} /><span className="app-number-box__buttons"><button aria-label={messages.numberBox.increase} disabled={resolvedDisabled || readOnly || effectiveValue == null || (bounds.max != null && effectiveValue >= bounds.max)} onClick={() => changeBy(1)} onPointerDown={(event) => event.preventDefault()} type="button">+</button><button aria-label={messages.numberBox.decrease} disabled={resolvedDisabled || readOnly || effectiveValue == null || (bounds.min != null && effectiveValue <= bounds.min)} onClick={() => changeBy(-1)} onPointerDown={(event) => event.preventDefault()} type="button">−</button></span></span>
+  return <span className={['app-number-box', `app-number-box--${spinButtonPlacement}`, resolvedDisabled ? 'app-number-box--disabled' : '', className].filter(Boolean).join(' ')} ref={rootRef} style={style}><input {...rest} aria-describedby={ariaDescribedBy ?? field?.describedBy} aria-invalid={(ariaInvalid ?? field?.invalid) || undefined} aria-valuemax={bounds.max} aria-valuemin={bounds.min} aria-valuenow={committedValue ?? undefined} aria-valuetext={formattedCommittedValue} disabled={resolvedDisabled} id={id ?? field?.controlId} inputMode="decimal" onBlur={handleBlur} onChange={(event) => setEditingText(event.target.value)} onFocus={handleFocus} onKeyDown={handleKeyDown} readOnly={readOnly} ref={ref} required={required ?? field?.required} role="spinbutton" type="text" value={editingText} />{spinButtonPlacement === 'inline' ? <span className="app-number-box__buttons">{button(1, messages.numberBox.increase, <ChevronUp16Regular />, canIncrease)}{button(-1, messages.numberBox.decrease, <ChevronDown16Regular />, canDecrease)}</span> : compactControls}</span>
 })

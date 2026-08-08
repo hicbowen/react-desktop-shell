@@ -174,6 +174,7 @@ export const enUSMessages = {
   numberBox: {
     increase: 'Increase value',
     decrease: 'Decrease value',
+    openActions: 'Open value controls',
   },
   statusBadge: {
     neutral: 'Neutral',

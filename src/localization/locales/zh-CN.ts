@@ -169,6 +169,7 @@ export const zhCNMessages = {
   numberBox: {
     increase: '增加数值',
     decrease: '减少数值',
+    openActions: '打开数值调节控件',
   },
   statusBadge: {
     neutral: '中性',

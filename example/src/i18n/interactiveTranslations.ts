@@ -92,7 +92,7 @@ export const zhCNInteractiveText: Record<string, string> = {
   'No matching language': '没有匹配的语言', 'Loading suggestions': '正在加载建议',
   'Preferred language': '首选语言', 'Start typing': '开始输入',
   Empty: '空值', 'Even values only': '仅允许偶数', 'Lesson duration': '课程时长',
-  'Step buttons keep the input focused and apply pending text once. The final controlled example accepts only even values and restores rejected edits.': '步进按钮会保持输入框聚焦，并一次应用待处理文本。最后一个受控示例只接受偶数，并会恢复被拒绝的输入。',
+  'Step buttons keep the input focused and apply pending text once. Compact controls open a floating adjustment panel on focus. The final controlled example accepts only even values and restores rejected edits.': '步进按钮会保持输入框聚焦，并一次应用待处理文本。紧凑控件会在聚焦时打开浮动调节面板。最后一个受控示例只接受偶数，并会恢复被拒绝的输入。',
   Volume: '音量', Zoom: '缩放', 'Compact slider': '紧凑滑块', 'Disabled slider': '禁用滑块',
   'Invalid slider': '无效滑块', 'Brush size': '画笔大小', Quality: '质量', Low: '低', Medium: '中', High: '高',
   'Vertical level': '垂直级别',

@@ -71,6 +71,7 @@ const zhCNSectionText: Record<string, string> = {
   'Multiple selection': '多项选择',
   'Nested contextual actions': '嵌套上下文操作',
   'Number boxes': '数字输入框',
+  'Value behaviors': '数值行为',
   'Object properties': '对象属性',
   'Page composition': '页面组合',
   'Password input': '密码输入',

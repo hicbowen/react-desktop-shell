@@ -168,6 +168,7 @@ export type {
   AppSegmentedControlProps,
   AppToggleSwitchProps,
   AppNumberBoxProps,
+  AppNumberBoxSpinButtonPlacement,
   AppSelectOption,
   AppSelectProps,
   AppListViewItemProps,

@@ -159,6 +159,7 @@ export interface AppLocaleMessages {
   numberBox: {
     increase: string
     decrease: string
+    openActions: string
   }
   select: {
     clear: string
