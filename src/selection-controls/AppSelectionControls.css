@@ -11,16 +11,55 @@
 .app-check-box input:focus-visible + .app-check-box__box, .app-toggle-switch input:focus-visible + .app-toggle-switch__track { outline: 2px solid var(--app-shell-accent-color, #005fb8); outline-offset: 2px; }
 .app-selection-label { display: grid; gap: 2px; padding-top: 1px; line-height: 1.35; }
 .app-selection-description { color: var(--app-shell-secondary-text-color, rgb(0 0 0 / 62%)); font-size: 12px; }
-.app-toggle-switch { align-items: flex-start; }
+.app-toggle-switch {
+  --app-toggle-switch-thumb-size: 14px;
+  --app-toggle-switch-thumb-hover-size: 16px;
+  --app-toggle-switch-thumb-pressed-width: 17px;
+  --app-toggle-switch-thumb-pressed-height: 14px;
+  --app-toggle-switch-thumb-translate: 20px;
+  --app-toggle-switch-track-bg: var(--app-shell-card-bg, #fff);
+  --app-toggle-switch-track-hover-bg: var(--app-shell-hover-bg, var(--app-shell-card-hover-bg, rgb(0 0 0 / 5%)));
+  --app-toggle-switch-track-pressed-bg: var(--app-shell-card-pressed-bg, rgb(0 0 0 / 8%));
+  --app-toggle-switch-track-border: var(--app-shell-secondary-text-color, rgb(0 0 0 / 58%));
+  --app-toggle-switch-thumb-bg: var(--app-shell-secondary-text-color, #666);
+  --app-toggle-switch-thumb-hover-bg: var(--app-shell-text-color, #1f1f1f);
+  align-items: flex-start;
+}
+.app-toggle-switch:not(.app-toggle-switch--disabled) { cursor: pointer; }
 .app-toggle-switch--label-start { justify-content: space-between; }
 .app-toggle-switch__control { position: relative; display: inline-flex; flex: 0 0 auto; }
-.app-toggle-switch__track { width: 40px; height: 20px; box-sizing: border-box; padding: 2px; background: var(--app-shell-card-bg, #fff); border: 1px solid var(--app-shell-secondary-text-color, rgb(0 0 0 / 58%)); border-radius: 999px; transition: background-color var(--rds-motion-fast, 120ms) ease; }
-.app-toggle-switch__thumb { width: 14px; height: 14px; display: block; background: var(--app-shell-secondary-text-color, #666); border-radius: 50%; transition: transform var(--rds-motion-fast, 120ms) ease, background-color var(--rds-motion-fast, 120ms) ease; }
+.app-toggle-switch__track {
+  width: 40px;
+  height: 20px;
+  box-sizing: border-box;
+  padding: 2px;
+  display: flex;
+  align-items: center;
+  background: var(--app-toggle-switch-track-bg);
+  border: 1px solid var(--app-toggle-switch-track-border);
+  border-radius: 999px;
+  transition: background-color var(--rds-motion-fast, 120ms) ease, border-color var(--rds-motion-fast, 120ms) ease;
+}
+.app-toggle-switch__thumb {
+  width: var(--app-toggle-switch-thumb-size);
+  height: var(--app-toggle-switch-thumb-size);
+  display: block;
+  background: var(--app-toggle-switch-thumb-bg);
+  border-radius: 50%;
+  transition: width var(--rds-motion-fast, 120ms) ease, height var(--rds-motion-fast, 120ms) ease, margin-left var(--rds-motion-fast, 120ms) ease, transform var(--rds-motion-fast, 120ms) ease, background-color var(--rds-motion-fast, 120ms) ease;
+}
 .app-toggle-switch input:checked + .app-toggle-switch__track { background: var(--app-shell-accent-color, #005fb8); border-color: var(--app-shell-accent-color, #005fb8); }
-.app-toggle-switch input:checked + .app-toggle-switch__track .app-toggle-switch__thumb { background: var(--app-shell-accent-text-color, #fff); transform: translateX(20px); }
+.app-toggle-switch input:checked + .app-toggle-switch__track .app-toggle-switch__thumb { background: var(--app-shell-accent-text-color, #fff); transform: translateX(var(--app-toggle-switch-thumb-translate)); }
+.app-toggle-switch:not(.app-toggle-switch--disabled):hover .app-toggle-switch__track { background: var(--app-toggle-switch-track-hover-bg); border-color: var(--app-shell-text-color, #1f1f1f); }
+.app-toggle-switch:not(.app-toggle-switch--disabled):hover .app-toggle-switch__thumb { width: var(--app-toggle-switch-thumb-hover-size); height: var(--app-toggle-switch-thumb-hover-size); margin-left: -1px; background: var(--app-toggle-switch-thumb-hover-bg); }
+.app-toggle-switch:not(.app-toggle-switch--disabled):hover input:checked + .app-toggle-switch__track { background: var(--app-shell-accent-hover-color, #075a9e); border-color: var(--app-shell-accent-hover-color, #075a9e); }
+.app-toggle-switch:not(.app-toggle-switch--disabled):hover input:checked + .app-toggle-switch__track .app-toggle-switch__thumb { background: var(--app-shell-accent-text-color, #fff); }
+.app-toggle-switch:not(.app-toggle-switch--disabled):active .app-toggle-switch__track { background: var(--app-toggle-switch-track-pressed-bg); border-color: var(--app-shell-text-color, #1f1f1f); }
+.app-toggle-switch:not(.app-toggle-switch--disabled):active input:checked + .app-toggle-switch__track { background: var(--app-shell-accent-pressed-color, #0c4f87); border-color: var(--app-shell-accent-pressed-color, #0c4f87); }
+.app-toggle-switch:not(.app-toggle-switch--disabled):active .app-toggle-switch__thumb { width: var(--app-toggle-switch-thumb-pressed-width); height: var(--app-toggle-switch-thumb-pressed-height); margin-left: -1.5px; border-radius: 7px; transition: none; }
+.app-toggle-switch--compact { --app-toggle-switch-thumb-size: 12px; --app-toggle-switch-thumb-hover-size: 14px; --app-toggle-switch-thumb-pressed-width: 15px; --app-toggle-switch-thumb-pressed-height: 12px; --app-toggle-switch-thumb-translate: 16px; }
 .app-toggle-switch--compact .app-toggle-switch__track { width: 34px; height: 18px; }
-.app-toggle-switch--compact .app-toggle-switch__thumb { width: 12px; height: 12px; }
-.app-toggle-switch--compact input:checked + .app-toggle-switch__track .app-toggle-switch__thumb { transform: translateX(16px); }
+.app-toggle-switch--compact .app-toggle-switch__thumb { border-radius: 50%; }
 .app-check-box--disabled, .app-toggle-switch--disabled { color: var(--app-shell-disabled-text-color, rgb(0 0 0 / 36%)); }
 .app-check-box--disabled .app-check-box__box, .app-toggle-switch--disabled .app-toggle-switch__track { opacity: .55; }
 @media (prefers-reduced-motion: reduce) { .app-toggle-switch__track, .app-toggle-switch__thumb { transition: none; } }
