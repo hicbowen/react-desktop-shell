@@ -191,6 +191,30 @@ describe('AppTooltip', () => {
     expect(tooltip()?.style.top).toBe('154px')
   })
 
+  it('can position from a separate anchor while keeping the child as the trigger', () => {
+    const anchorRef = createRef<HTMLSpanElement>()
+    render(
+      <>
+        <span ref={anchorRef} className="tooltip-anchor" />
+        <AppTooltip anchorRef={anchorRef} content="Tooltip content" delay={0} placement="top">
+          <button type="button">Trigger</button>
+        </AppTooltip>
+      </>,
+    )
+    vi.mocked(HTMLElement.prototype.getBoundingClientRect).mockImplementation(
+      function (this: HTMLElement) {
+        if (this === anchorRef.current) return rect(500, 100, 20, 20)
+        if (this.classList.contains('app-tooltip')) return rect(0, 0, 160, 40)
+        return rect(300, 200, 100, 32)
+      },
+    )
+    pointerEnter()
+    flushMeasurement()
+
+    expect(tooltip()?.style.left).toBe('430px')
+    expect(tooltip()?.style.top).toBe('54px')
+  })
+
   it('automatically flips when the preferred placement has no room', () => {
     vi.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(
       function (this: HTMLElement) {

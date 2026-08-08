@@ -19,6 +19,8 @@ export interface AppSliderProps extends Omit<
   size?: 'compact' | 'standard'
   marks?: AppSliderMark[]
   showValue?: boolean
+  showTooltip?: boolean
+  tooltipDelay?: number
   formatValue?: (value: number) => ReactNode
   invalid?: boolean
   className?: string

@@ -41,6 +41,44 @@ describe('AppSlider', () => {
     expect(host.querySelector('output')?.textContent).toBe('40%')
   })
 
+  it('keeps the native range and exposes the formatted value through a tooltip', () => {
+    act(() => root.render(<AppSlider defaultValue={42} formatValue={(value) => `${value}%`} />))
+    expect(input().type).toBe('range')
+    expect(host.querySelector('.app-slider__thumb')).not.toBeNull()
+    act(() => input().focus())
+    expect(document.body.querySelector('[role="tooltip"]')?.textContent).toBe('42%')
+  })
+
+  it('can disable the transient value tooltip without changing the range semantics', () => {
+    act(() => root.render(<AppSlider defaultValue={42} showTooltip={false} />))
+    act(() => input().focus())
+    expect(document.body.querySelector('[role="tooltip"]')).toBeNull()
+    expect(input().value).toBe('42')
+  })
+
+  it('only activates thumb hover feedback when the pointer is over the thumb', () => {
+    act(() => root.render(<AppSlider defaultValue={50} />))
+    const control = host.querySelector<HTMLElement>('.app-slider__control')!
+    const thumb = host.querySelector<HTMLElement>('.app-slider__thumb')!
+    vi.spyOn(thumb, 'getBoundingClientRect').mockReturnValue({
+      bottom: 29,
+      height: 18,
+      left: 41,
+      right: 59,
+      top: 11,
+      width: 18,
+      x: 41,
+      y: 11,
+      toJSON: () => ({}),
+    } as DOMRect)
+
+    act(() => control.dispatchEvent(new PointerEvent('pointermove', { bubbles: true, clientX: 100, clientY: 20, pointerType: 'mouse' })))
+    expect(thumb.className).not.toContain('app-slider__thumb--hovered')
+
+    act(() => control.dispatchEvent(new PointerEvent('pointermove', { bubbles: true, clientX: 50, clientY: 20, pointerType: 'mouse' })))
+    expect(thumb.className).toContain('app-slider__thumb--hovered')
+  })
+
   it('renders bounded marks and vertical orientation', () => {
     act(() => root.render(<AppSlider marks={[{ value: -1 }, { value: 0, label: 'Low' }, { value: 100, label: 'High' }, { value: 101 }]} orientation="vertical" />))
     expect(host.querySelector('.app-slider')?.className).toContain('app-slider--vertical')

@@ -79,6 +79,8 @@ function AppTooltipInner({
   disabled = false,
   maxWidth = 320,
   className,
+  anchorRef,
+  positionDependencies = [],
   ...triggerProps
 }: AppTooltipProps & TooltipTriggerProps, forwardedRef: Ref<HTMLElement>) {
   const canShow = !disabled && hasContent(content)
@@ -101,15 +103,22 @@ function AppTooltipInner({
 
   const open = canShow && (hovered || focused)
   const overlayTree = useOverlayTree(open, overlayRef)
+  const { isInsideBranch, isTopMost } = overlayTree
+  const tooltipIsInsideBranch = useCallback(
+    (target: Node) =>
+      Boolean(anchorRef?.current?.contains(target)) ||
+      isInsideBranch(target),
+    [anchorRef, isInsideBranch],
+  )
   const position = useAnchoredOverlayPosition({
     open,
-    triggerRef,
+    triggerRef: anchorRef ?? triggerRef,
     overlayRef,
     preferredPlacement: placement,
     gap: TOOLTIP_GAP,
     viewportPadding: TOOLTIP_VIEWPORT_PADDING,
     maxWidth: resolvedMaxWidth,
-    dependencies: [content],
+    dependencies: [content, ...positionDependencies],
   })
 
   const cancelOpen = useCallback(() => {
@@ -160,8 +169,8 @@ function AppTooltipInner({
     closeOnExternalScroll: false,
     closeOnResize: false,
     restoreFocus: false,
-    isInsideBranch: overlayTree.isInsideBranch,
-    isTopMost: overlayTree.isTopMost,
+    isInsideBranch: tooltipIsInsideBranch,
+    isTopMost,
   })
 
   const childRef = getElementRef(child)

@@ -1,4 +1,4 @@
-import type { ReactElement, ReactNode } from 'react'
+import type { ReactElement, ReactNode, RefObject } from 'react'
 
 export type AppTooltipPlacement =
   | 'top'
@@ -22,4 +22,8 @@ export interface AppTooltipProps {
   disabled?: boolean
   maxWidth?: number
   className?: string
+  /** Use a separate element for overlay geometry while the child remains the interaction target. */
+  anchorRef?: RefObject<HTMLElement | null>
+  /** Values that should trigger a fresh anchor measurement while the tooltip is open. */
+  positionDependencies?: readonly unknown[]
 }
