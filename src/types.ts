@@ -106,6 +106,7 @@ export type {
   AppSelectorBarProps,
   AppSelectorPanelMountStrategy,
   AppSelectorPanelProps,
+  AppSelectorPanelsMotion,
   AppSelectorPanelsProps,
 } from './selector-bar'
 export type {

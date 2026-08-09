@@ -1,0 +1,93 @@
+.app-selector-panels,
+.app-selector-panel {
+  min-width: 0;
+}
+
+.app-selector-panels {
+  --app-selector-panel-enter-distance: 24px;
+  --app-selector-panel-slide-distance: 24px;
+  --app-selector-panel-motion-duration: 320ms;
+  --app-selector-panel-motion-easing: var(
+    --rds-ease-enter,
+    cubic-bezier(0.1, 0.9, 0.2, 1)
+  );
+}
+
+.app-selector-panels[data-motion='entrance']
+  > .app-selector-panel[data-state='active'] {
+  animation: app-selector-panel-enter var(--app-selector-panel-motion-duration)
+    var(--app-selector-panel-motion-easing) backwards;
+}
+
+.app-selector-panels[data-motion='directional'][data-direction='forward']
+  > .app-selector-panel[data-state='active'] {
+  animation: app-selector-panel-enter-forward
+    var(--app-selector-panel-motion-duration)
+    var(--app-selector-panel-motion-easing) backwards;
+}
+
+.app-selector-panels[data-motion='directional'][data-direction='backward']
+  > .app-selector-panel[data-state='active'] {
+  animation: app-selector-panel-enter-backward
+    var(--app-selector-panel-motion-duration)
+    var(--app-selector-panel-motion-easing) backwards;
+}
+
+.app-selector-panels[data-motion='directional'][data-direction='neutral']
+  > .app-selector-panel[data-state='active'] {
+  animation: app-selector-panel-enter-neutral
+    var(--app-selector-panel-motion-duration)
+    var(--app-selector-panel-motion-easing) backwards;
+}
+
+@keyframes app-selector-panel-enter {
+  from {
+    opacity: 0;
+    transform: translateY(var(--app-selector-panel-enter-distance));
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes app-selector-panel-enter-forward {
+  from {
+    opacity: 0;
+    transform: translateX(var(--app-selector-panel-slide-distance));
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes app-selector-panel-enter-backward {
+  from {
+    opacity: 0;
+    transform: translateX(calc(-1 * var(--app-selector-panel-slide-distance)));
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes app-selector-panel-enter-neutral {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .app-selector-panels > .app-selector-panel[data-state='active'] {
+    animation: none;
+  }
+}

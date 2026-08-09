@@ -228,6 +228,7 @@ export type {
   AppSelectorBarProps,
   AppSelectorPanelMountStrategy,
   AppSelectorPanelProps,
+  AppSelectorPanelsMotion,
   AppSelectorPanelsProps,
   AppScrollAreaGutter,
   AppScrollAreaOrientation,

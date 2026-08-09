@@ -205,6 +205,22 @@ in layout, focus navigation, or the active accessibility tree. Their React
 component instances, subscriptions, and effects still exist, so use this mode
 only when preserving local state is worth the retained resources.
 
+Panels use `motion="entrance"` by default, adding a short fade and vertical
+entrance when the active panel appears. Use `motion="directional"` to derive a
+subtle left or right entrance from the panel order, or `motion="none"` to turn
+panel motion off:
+
+```tsx
+<AppSelectorPanels value={view} mountStrategy="hidden" motion="directional">
+  <AppSelectorPanel value="recent"><RecentView /></AppSelectorPanel>
+  <AppSelectorPanel value="favorites"><FavoritesView /></AppSelectorPanel>
+</AppSelectorPanels>
+```
+
+Directional motion falls back to a neutral fade when there is no previous
+selection or either value is missing from the current panel order. All panel
+motion is disabled when the user requests reduced motion.
+
 The bar uses radiogroup semantics. `ArrowLeft` and `ArrowRight` move through
 enabled items and wrap at the ends; `Home` and `End` move to the first and last
 enabled items. `Tab` enters only the selected item (or the first enabled item),

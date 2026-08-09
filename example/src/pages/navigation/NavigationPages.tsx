@@ -178,7 +178,7 @@ export function AppSelectorBarPage() {
 
       <DemoSection
         title="Unmounted panels"
-        description="The default strategy releases inactive panels, so their local input and counter state reset when selected again."
+        description="The default strategy releases inactive panels and uses a subtle entrance motion, so local input and counter state reset when selected again."
       >
         <DemoPreview>
           <div className="demo-selector-panel-view">
@@ -195,7 +195,7 @@ export function AppSelectorBarPage() {
               value={unmountView}
               onValueChange={setUnmountView}
             />
-            <AppSelectorPanels value={unmountView}>
+            <AppSelectorPanels motion="entrance" value={unmountView}>
               <AppSelectorPanel id="unmount-recent" value="recent">
                 <SelectorPanelStateDemo label={t('Recent')} />
               </AppSelectorPanel>
@@ -209,7 +209,7 @@ export function AppSelectorBarPage() {
 
       <DemoSection
         title="State-preserving panels"
-        description="The hidden strategy keeps every panel mounted, preserving local state while removing inactive panels from layout and accessibility navigation."
+        description="The hidden strategy keeps every panel mounted while directional motion follows the selector order."
       >
         <DemoPreview>
           <div className="demo-selector-panel-view">
@@ -226,7 +226,11 @@ export function AppSelectorBarPage() {
               value={hiddenView}
               onValueChange={setHiddenView}
             />
-            <AppSelectorPanels mountStrategy="hidden" value={hiddenView}>
+            <AppSelectorPanels
+              motion="directional"
+              mountStrategy="hidden"
+              value={hiddenView}
+            >
               <AppSelectorPanel id="hidden-recent" value="recent">
                 <SelectorPanelStateDemo label={t('Recent')} />
               </AppSelectorPanel>

@@ -25,9 +25,16 @@ export interface AppSelectorBarProps {
 
 export type AppSelectorPanelMountStrategy = 'unmount' | 'hidden'
 
+export type AppSelectorPanelsMotion =
+  | 'none'
+  | 'entrance'
+  | 'directional'
+
 export interface AppSelectorPanelsProps {
   value?: string
   mountStrategy?: AppSelectorPanelMountStrategy
+  /** Controls the active panel's entrance. Defaults to 'entrance'. */
+  motion?: AppSelectorPanelsMotion
   children: ReactNode
   className?: string
 }

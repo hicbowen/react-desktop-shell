@@ -5,5 +5,6 @@ export type {
   AppSelectorBarProps,
   AppSelectorPanelMountStrategy,
   AppSelectorPanelProps,
+  AppSelectorPanelsMotion,
   AppSelectorPanelsProps,
 } from './types'
