@@ -60,7 +60,6 @@ export function AppShellPage() {
                 onClose={() => undefined}
                 onMinimize={() => undefined}
                 onToggleMaximize={() => setMaximized((value) => !value)}
-                title={t('Preview application')}
               />
             }
             rail={

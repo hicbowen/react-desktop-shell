@@ -59,7 +59,11 @@
   --app-shell-dialog-button-bg: rgb(255 255 255 / 62%);
   --app-shell-dialog-button-border-color: rgb(0 0 0 / 12%);
   --app-shell-dialog-primary-fg: #ffffff;
-  --app-shell-pane-scrim-bg: rgb(0 0 0 / 12%);
+  --app-shell-pane-scrim-bg: rgb(0 0 0 / 18%);
+  --app-shell-pane-shadow:
+    8px 0 28px rgb(0 0 0 / 14%),
+    2px 0 8px rgb(0 0 0 / 8%);
+  --app-shell-pane-content-reveal: 56px;
   --app-shell-toast-bg: rgb(249 249 249 / 94%);
   --app-shell-toast-border-color: rgb(0 0 0 / 12%);
   --app-shell-toast-shadow:
@@ -182,7 +186,10 @@
   --app-shell-dialog-button-bg: rgb(255 255 255 / 6%);
   --app-shell-dialog-button-border-color: rgb(255 255 255 / 12%);
   --app-shell-dialog-primary-fg: #00131f;
-  --app-shell-pane-scrim-bg: rgb(0 0 0 / 28%);
+  --app-shell-pane-scrim-bg: rgb(0 0 0 / 32%);
+  --app-shell-pane-shadow:
+    8px 0 32px rgb(0 0 0 / 38%),
+    2px 0 10px rgb(0 0 0 / 24%);
   --app-shell-toast-bg: rgb(44 44 44 / 94%);
   --app-shell-toast-border-color: rgb(255 255 255 / 12%);
   --app-shell-toast-shadow:
@@ -209,9 +216,8 @@
   pointer-events: none;
 }
 
-.app-shell__sidebar-header {
-  grid-column: 1;
-  grid-row: 1;
+.app-shell__titlebar-app {
+  width: 100%;
   min-width: 0;
   min-height: 0;
   height: var(--app-titlebar-height);
@@ -224,10 +230,6 @@
   user-select: none;
   -webkit-user-select: none;
   -webkit-app-region: drag;
-}
-
-.app-shell--sidebar-collapsed .app-shell__sidebar-header {
-  padding-right: 12px;
 }
 
 .app-shell__pane-toggle {
@@ -267,7 +269,7 @@
   background: transparent;
 }
 
-.app-shell__sidebar-icon {
+.app-shell__titlebar-icon {
   width: 22px;
   height: 22px;
   display: inline-flex;
@@ -277,15 +279,15 @@
   color: var(--app-shell-accent-color);
 }
 
-.app-shell__sidebar-icon > svg,
-.app-shell__sidebar-icon > img {
+.app-shell__titlebar-icon > svg,
+.app-shell__titlebar-icon > img {
   width: 22px;
   height: 22px;
   display: block;
   flex-shrink: 0;
 }
 
-.app-shell__sidebar-title {
+.app-shell__titlebar-title {
   min-width: 0;
   overflow: hidden;
   color: var(--app-shell-text-color);
@@ -296,7 +298,7 @@
 }
 
 .app-shell__titlebar {
-  grid-column: 2;
+  grid-column: 1 / -1;
   grid-row: 1;
   min-width: 0;
   min-height: 0;
@@ -305,18 +307,13 @@
   background: var(--app-shell-chrome-bg);
 }
 
-.app-shell--pane-minimal .app-shell__titlebar,
-.app-shell--sidebar-collapsed .app-shell__titlebar {
-  grid-column: 1 / -1;
-}
-
 .app-shell__titlebar-leading {
-  width: var(--app-sidebar-compact-width);
+  width: var(--app-sidebar-expanded-width);
+  min-width: 0;
   height: var(--app-titlebar-height);
   display: flex;
-  flex-shrink: 0;
+  flex-shrink: 1;
   align-items: center;
-  justify-content: center;
   -webkit-app-region: drag;
 }
 
@@ -369,7 +366,7 @@
 .app-shell__pane-layer {
   position: absolute;
   z-index: var(--rds-z-pane);
-  inset: 0;
+  inset: var(--app-titlebar-height) 0 0;
 }
 
 .app-shell__pane-backdrop {
@@ -380,21 +377,28 @@
   background: var(--app-shell-pane-scrim-bg);
   border: 0;
   cursor: default;
-  animation: app-shell-pane-backdrop-enter 180ms ease;
+  animation: app-shell-pane-backdrop-enter var(--rds-motion-normal)
+    var(--rds-ease-standard);
 }
 
 .app-shell__pane-overlay {
   position: relative;
   z-index: 1;
-  max-width: min(100%, var(--app-sidebar-expanded-width));
+  max-width: min(
+    var(--app-sidebar-expanded-width),
+    calc(100% - var(--app-shell-pane-content-reveal))
+  );
   height: 100%;
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
   overflow: hidden;
   color: var(--app-shell-text-color);
   background: var(--app-shell-chrome-bg);
-  box-shadow: 6px 0 18px rgb(0 0 0 / 10%);
-  animation: app-shell-pane-overlay-enter 180ms ease;
+  border-right: 1px solid var(--app-shell-border-color);
+  box-shadow: var(--app-shell-pane-shadow);
+  animation: app-shell-pane-overlay-enter var(--rds-motion-normal)
+    var(--rds-ease-enter);
 }
 
 .app-shell__pane-layer--closing {
@@ -402,11 +406,13 @@
 }
 
 .app-shell__pane-layer--closing .app-shell__pane-backdrop {
-  animation: app-shell-pane-backdrop-exit 180ms ease forwards;
+  animation: app-shell-pane-backdrop-exit var(--rds-motion-fast)
+    var(--rds-ease-exit) forwards;
 }
 
 .app-shell__pane-layer--closing .app-shell__pane-overlay {
-  animation: app-shell-pane-overlay-exit 180ms ease forwards;
+  animation: app-shell-pane-overlay-exit var(--rds-motion-normal)
+    var(--rds-ease-exit) forwards;
 }
 
 .app-shell__pane-overlay-sidebar {
@@ -533,7 +539,10 @@
     --app-shell-dialog-button-bg: rgb(255 255 255 / 6%);
     --app-shell-dialog-button-border-color: rgb(255 255 255 / 12%);
     --app-shell-dialog-primary-fg: #00131f;
-    --app-shell-pane-scrim-bg: rgb(0 0 0 / 28%);
+    --app-shell-pane-scrim-bg: rgb(0 0 0 / 32%);
+    --app-shell-pane-shadow:
+      8px 0 32px rgb(0 0 0 / 38%),
+      2px 0 10px rgb(0 0 0 / 24%);
     --app-shell-toast-bg: rgb(44 44 44 / 94%);
     --app-shell-toast-border-color: rgb(255 255 255 / 12%);
     --app-shell-toast-shadow:

@@ -91,7 +91,10 @@ function App() {
 
 ## App Shell
 
-`AppShell` composes the sidebar header, title bar, navigation rail, and content area into a full-height desktop shell. The sidebar starts at the top of the window, while the title bar belongs to the main content area.
+`AppShell` composes the app identity, pane toggle, title bar, navigation rail,
+and content area into a full-height desktop shell. The title bar spans the full
+window and keeps the app identity and pane toggle stable while the navigation
+rail switches between expanded, compact, and minimal modes.
 
 To match native desktop applications, text selection and the text cursor are
 disabled by default inside `AppShell`. Text inputs, textareas, and editable
@@ -1959,6 +1962,9 @@ Override variables on `.app-shell`, `.app-page`, `.app-rail`, and `.app-title-ba
 | `--app-shell-border-color`         | `rgb(0 0 0 / 8%)`     |
 | `--app-shell-accent-color`         | `#115ea3`             |
 | `--app-shell-danger-bg`            | `#ef4444`             |
+| `--app-shell-pane-scrim-bg`        | `rgb(0 0 0 / 18%)`    |
+| `--app-shell-pane-shadow`          | Layered right shadow  |
+| `--app-shell-pane-content-reveal`  | `56px`                |
 | `--app-shell-content-margin`       | `0`                   |
 | `--app-shell-content-radius`       | `10px 0 0 0`          |
 | `--app-shell-content-border-color` | `var(--app-shell-border-color)` |
@@ -2366,11 +2372,11 @@ Calling `show` again with the same id updates the existing toast. At most four t
 | `contextMenu`      | `'native' \| 'app'` | `'native'` | Controls whether native or shell-managed context menus are used. |
 | `clipboard`        | `AppClipboardAdapter` | Web Clipboard API | Optional clipboard bridge used by shell-managed menus. |
 | `toastOptions`     | `AppToastHostOptions` | `{ maxVisible: 4 }` | Optional toast host options. |
-| `title`            | `ReactNode`     | `undefined` | App title rendered in the default sidebar header. |
-| `icon`             | `ReactNode`     | `undefined` | Optional app icon rendered before the sidebar title. |
+| `title`            | `ReactNode`     | `undefined` | App title rendered in the title bar leading area. |
+| `icon`             | `ReactNode`     | `undefined` | Optional app icon rendered before the title bar app title. |
 | `sidebar`          | `AppShellSidebarOptions` | `undefined` | Controls shell-owned sidebar collapse and widths. |
-| `sidebarHeader`    | `ReactNode`     | `undefined` | Optional custom sidebar header slot. |
-| `titleBar`         | `ReactNode`     | `undefined` | Main-area title bar content. |
+| `sidebarHeader`    | `ReactNode`     | `undefined` | Optional custom replacement for the title bar leading area. |
+| `titleBar`         | `ReactNode`     | `undefined` | Remaining title bar content rendered after the app identity. |
 | `rail`             | `ReactNode`     | `undefined` | Navigation rail content rendered beside content. |
 | `children`         | `ReactNode`     | `undefined` | Main content rendered in the scrollable area.    |
 | `className`        | `string`        | `undefined` | Additional class name for the root element.      |

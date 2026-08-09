@@ -21,8 +21,7 @@ import '../scroll-area/AppScrollArea.css'
 import {
   ShellInlinePane,
   ShellPaneLayer,
-  ShellPaneToggleButton,
-  ShellSidebarHeader,
+  ShellTitleBarApp,
 } from './ShellPaneLayer'
 import { ShellOverlayLayer } from './ShellOverlayLayer'
 import { usePaneController } from './usePaneController'
@@ -62,11 +61,14 @@ export function AppShell({
   const sidebarCollapsed = pane.collapsed
   const isMinimal = pane.isMinimal
   const isPaneOpen = pane.isOpen
+  const isPaneClosing = pane.isClosing
   const suppressPaneTransition = pane.suppressTransition
   const sidebarExpandedWidth = pane.expandedWidth
   const sidebarCompactWidth = pane.compactWidth
   const resolvedDisplayMode = pane.resolvedDisplayMode
   const toggleSidebar = pane.toggle
+  const paneToggleRef = useRef<HTMLButtonElement | null>(null)
+  const paneInteractionModeRef = useRef<'keyboard' | 'pointer'>('keyboard')
   const contextMenuController = useContextMenuController({
     rootRef,
     mode: contextMenu,
@@ -166,30 +168,23 @@ export function AppShell({
                 onContextMenuCapture={contextMenuController.handleContextMenu}
                 onKeyDownCapture={contextMenuController.handleKeyDown}
               >
-              {hasSidebar && !isMinimal && !sidebarCollapsed && (
-                sidebarHeader ?? (
-                  <ShellSidebarHeader
-                    appTitle={title}
-                    ariaLabel={paneToggleAriaLabel}
-                    compact={sidebarCollapsed}
-                    icon={icon}
-                    onToggle={toggleSidebar}
-                    showToggle={sidebarCollapsible}
-                  />
-                )
-              )}
               <div className="app-shell__titlebar">
-                {hasSidebar &&
-                  sidebarCollapsible &&
-                  (sidebarCollapsed || (isMinimal && !isPaneOpen)) && (
-                    <div className="app-shell__titlebar-leading">
-                      <ShellPaneToggleButton
+                {hasSidebar && (
+                  <div className="app-shell__titlebar-leading">
+                    {sidebarHeader ?? (
+                      <ShellTitleBarApp
+                        appTitle={title}
                         ariaLabel={paneToggleAriaLabel}
-                        expanded={isMinimal ? isPaneOpen : false}
+                        expanded={isMinimal ? isPaneOpen : !sidebarCollapsed}
+                        icon={icon}
                         onToggle={toggleSidebar}
+                        showToggle={sidebarCollapsible}
+                        interactionModeRef={paneInteractionModeRef}
+                        toggleButtonRef={paneToggleRef}
                       />
-                    </div>
-                  )}
+                    )}
+                  </div>
+                )}
                 <div className="app-shell__titlebar-main">{titleBar}</div>
               </div>
               {hasSidebar && !isMinimal && (
@@ -199,7 +194,10 @@ export function AppShell({
                   onCollapsedChange={sidebar?.onCollapsedChange}
                 />
               )}
-              <div className="app-shell__body">
+              <div
+                className="app-shell__body"
+                inert={isMinimal && (isPaneOpen || isPaneClosing) ? true : undefined}
+              >
                 <div className={contentClassNames} style={contentStyle}>
                   {children}
                 </div>
@@ -208,10 +206,8 @@ export function AppShell({
                 <ShellPaneLayer
                   pane={pane}
                   rail={rail}
-                  sidebarHeader={sidebarHeader}
-                  title={title}
-                  icon={icon}
-                  ariaLabel={paneToggleAriaLabel}
+                  interactionModeRef={paneInteractionModeRef}
+                  toggleButtonRef={paneToggleRef}
                 />
               )}
               <ShellOverlayLayer

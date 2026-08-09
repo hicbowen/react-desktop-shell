@@ -6,6 +6,7 @@ import { createRoot, type Root } from 'react-dom/client'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { AppDialog } from '../dialog/AppDialog'
 import { useAppLocale } from '../localization/useAppLocale'
+import { AppRail } from '../navigation/AppRail'
 import { AppShell } from './AppShell'
 
 function LocaleReader({ name }: { name: string }) {
@@ -84,6 +85,81 @@ describe('AppShell locale', () => {
       </AppShell>,
     )
     expect(text('child')).toBe('en-US:0:12')
+  })
+
+  it('keeps the pane toggle and app identity in the title bar across modes', () => {
+    render(
+      <AppShell
+        icon={<span data-app-icon />}
+        rail={<nav>Navigation</nav>}
+        sidebar={{ defaultDisplayMode: 'expanded' }}
+        title="Desktop app"
+      />,
+    )
+
+    const shell = container.querySelector<HTMLElement>('.app-shell')
+    const titleBar = container.querySelector<HTMLElement>(
+      '.app-shell__titlebar',
+    )
+    const toggle = titleBar?.querySelector<HTMLButtonElement>(
+      '.app-shell__pane-toggle',
+    )
+
+    expect(titleBar?.querySelector('.app-shell__titlebar-title')?.textContent)
+      .toBe('Desktop app')
+    expect(titleBar?.querySelector('[data-app-icon]')).not.toBeNull()
+    expect(toggle?.getAttribute('aria-expanded')).toBe('true')
+    expect(shell?.dataset.paneMode).toBe('expanded')
+
+    act(() => toggle?.click())
+
+    expect(shell?.dataset.paneMode).toBe('compact')
+    expect(titleBar?.querySelector('.app-shell__titlebar-title')?.textContent)
+      .toBe('Desktop app')
+    expect(toggle?.getAttribute('aria-expanded')).toBe('false')
+  })
+
+  it('keeps the title bar visible while the minimal pane is open', () => {
+    vi.stubGlobal('matchMedia', vi.fn(() => ({ matches: true })))
+    render(
+      <AppShell
+        rail={
+          <AppRail
+            items={[{ key: 'home', label: 'Home' }]}
+            value="home"
+          />
+        }
+        sidebar={{ displayMode: 'minimal' }}
+        title="Desktop app"
+      />,
+    )
+
+    const titleBar = container.querySelector<HTMLElement>(
+      '.app-shell__titlebar',
+    )
+    const toggle = titleBar?.querySelector<HTMLButtonElement>(
+      '.app-shell__pane-toggle',
+    )
+
+    act(() => toggle?.click())
+
+    expect(toggle?.getAttribute('aria-expanded')).toBe('true')
+    expect(container.querySelector('.app-shell__pane-overlay')).not.toBeNull()
+    expect(titleBar?.querySelector('.app-shell__titlebar-title')?.textContent)
+      .toBe('Desktop app')
+    expect(container.querySelectorAll('.app-shell__pane-toggle')).toHaveLength(1)
+    expect(
+      container.querySelector('.app-shell__body')?.hasAttribute('inert'),
+    ).toBe(true)
+    expect(document.activeElement?.getAttribute('aria-current')).toBe('page')
+
+    act(() => toggle?.click())
+
+    expect(container.querySelector('.app-shell__pane-overlay')).toBeNull()
+    expect(
+      container.querySelector('.app-shell__body')?.hasAttribute('inert'),
+    ).toBe(false)
+    expect(document.activeElement).toBe(toggle)
   })
 
   it('preserves locale context through portals and dialog layers', () => {

@@ -1,17 +1,25 @@
-import { cloneElement, isValidElement, useMemo } from 'react'
-import type { ReactElement, ReactNode } from 'react'
+import { cloneElement, isValidElement, useEffect, useMemo, useRef } from 'react'
+import type { ReactElement, ReactNode, Ref, RefObject } from 'react'
 import { Navigation20Regular } from '@fluentui/react-icons/svg/navigation'
 import type { AppRailProps } from '../navigation/types'
 import { useAppLocale } from '../localization/useAppLocale'
 import type { PaneController } from './usePaneController'
 
+interface PaneInteractionModeRef {
+  current: 'keyboard' | 'pointer'
+}
+
 export function ShellPaneToggleButton({
   ariaLabel,
+  buttonRef,
   expanded,
+  interactionModeRef,
   onToggle,
 }: {
   ariaLabel: string
+  buttonRef?: Ref<HTMLButtonElement>
   expanded: boolean
+  interactionModeRef?: PaneInteractionModeRef
   onToggle: () => void
 }) {
   return (
@@ -19,7 +27,20 @@ export function ShellPaneToggleButton({
       aria-expanded={expanded}
       aria-label={ariaLabel}
       className="app-shell__pane-toggle"
+      onKeyDown={(event) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          if (interactionModeRef) {
+            interactionModeRef.current = 'keyboard'
+          }
+        }
+      }}
       onClick={onToggle}
+      onPointerDown={() => {
+        if (interactionModeRef) {
+          interactionModeRef.current = 'pointer'
+        }
+      }}
+      ref={buttonRef}
       type="button"
     >
       <Navigation20Regular aria-hidden="true" focusable="false" />
@@ -27,35 +48,41 @@ export function ShellPaneToggleButton({
   )
 }
 
-export function ShellSidebarHeader({
+export function ShellTitleBarApp({
   appTitle,
   ariaLabel,
-  compact,
+  expanded,
   icon,
+  interactionModeRef,
   onToggle,
   showToggle,
+  toggleButtonRef,
 }: {
   appTitle?: ReactNode
   ariaLabel: string
-  compact: boolean
+  expanded: boolean
   icon?: ReactNode
+  interactionModeRef?: PaneInteractionModeRef
   onToggle: () => void
   showToggle: boolean
+  toggleButtonRef?: Ref<HTMLButtonElement>
 }) {
   return (
-    <div className="app-shell__sidebar-header">
+    <div className="app-shell__titlebar-app">
       {showToggle && (
         <ShellPaneToggleButton
           ariaLabel={ariaLabel}
-          expanded={!compact}
+          buttonRef={toggleButtonRef}
+          expanded={expanded}
+          interactionModeRef={interactionModeRef}
           onToggle={onToggle}
         />
       )}
-      {!compact && icon && (
-        <span className="app-shell__sidebar-icon">{icon}</span>
+      {icon && (
+        <span className="app-shell__titlebar-icon">{icon}</span>
       )}
-      {!compact && appTitle && (
-        <span className="app-shell__sidebar-title">{appTitle}</span>
+      {appTitle && (
+        <span className="app-shell__titlebar-title">{appTitle}</span>
       )}
     </div>
   )
@@ -99,21 +126,19 @@ export function ShellInlinePane({
 }
 
 export function ShellPaneLayer({
+  interactionModeRef,
   pane,
   rail,
-  sidebarHeader,
-  title,
-  icon,
-  ariaLabel,
+  toggleButtonRef,
 }: {
+  interactionModeRef: PaneInteractionModeRef
   pane: PaneController
   rail: ReactNode
-  sidebarHeader: ReactNode
-  title: ReactNode
-  icon: ReactNode
-  ariaLabel: string
+  toggleButtonRef: RefObject<HTMLButtonElement | null>
 }) {
   const { messages } = useAppLocale()
+  const overlayRef = useRef<HTMLDivElement | null>(null)
+  const restoreFocus = useRef(false)
   const renderedRail = useMemo(() => {
     if (!rail) {
       return null
@@ -136,6 +161,28 @@ export function ShellPaneLayer({
     })
   }, [pane, rail])
 
+  useEffect(() => {
+    if (pane.isMinimal && pane.isOpen) {
+      restoreFocus.current = true
+      const overlay = overlayRef.current
+      const focusTarget = overlay?.querySelector<HTMLElement>(
+        '[aria-current="page"]:not(:disabled), button:not(:disabled), [href]',
+      )
+
+      if (interactionModeRef.current === 'keyboard') {
+        ;(focusTarget ?? overlay)?.focus({ preventScroll: true })
+      }
+      return
+    }
+
+    if (restoreFocus.current && !pane.isOpen && !pane.isClosing) {
+      restoreFocus.current = false
+      if (interactionModeRef.current === 'keyboard') {
+        toggleButtonRef.current?.focus({ preventScroll: true })
+      }
+    }
+  }, [interactionModeRef, pane.isClosing, pane.isMinimal, pane.isOpen, toggleButtonRef])
+
   if (!pane.isMinimal || (!pane.isOpen && !pane.isClosing)) {
     return null
   }
@@ -148,11 +195,18 @@ export function ShellPaneLayer({
       ]
         .filter(Boolean)
         .join(' ')}
+      onKeyDownCapture={() => {
+        interactionModeRef.current = 'keyboard'
+      }}
+      onPointerDownCapture={() => {
+        interactionModeRef.current = 'pointer'
+      }}
     >
       <button
         aria-label={messages.shell.closeNavigation}
         className="app-shell__pane-backdrop"
         onClick={pane.close}
+        tabIndex={-1}
         type="button"
       />
       <div
@@ -162,18 +216,10 @@ export function ShellPaneLayer({
             pane.finishClosing()
           }
         }}
+        ref={overlayRef}
         style={{ width: pane.expandedWidth }}
+        tabIndex={-1}
       >
-        {sidebarHeader ?? (
-          <ShellSidebarHeader
-            appTitle={title}
-            ariaLabel={ariaLabel}
-            compact={false}
-            icon={icon}
-            onToggle={pane.toggle}
-            showToggle={pane.collapsible}
-          />
-        )}
         <div className="app-shell__pane-overlay-sidebar">{renderedRail}</div>
       </div>
     </div>

@@ -326,11 +326,11 @@
 
 .demo-shell-diagram__rail {
     grid-column: 1;
-    grid-row: 1 / -1;
+    grid-row: 2 / -1;
 }
 
 .demo-shell-diagram__titlebar {
-    grid-column: 2;
+    grid-column: 1 / -1;
     grid-row: 1;
 }
 
