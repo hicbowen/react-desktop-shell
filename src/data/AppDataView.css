@@ -58,10 +58,6 @@
 
 .app-data-view__header > .app-toolbar {
   min-height: 32px;
-}
-
-.app-data-view__header > .app-toolbar {
-  min-height: 32px;
   margin-bottom: 0;
 }
 

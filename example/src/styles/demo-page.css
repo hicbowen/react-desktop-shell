@@ -1066,6 +1066,10 @@
   max-width: 100%;
 }
 
+.demo-search > .app-text-box {
+  width: 100%;
+}
+
 .demo-search__results {
   position: absolute;
   z-index: 30;
