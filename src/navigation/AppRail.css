@@ -176,8 +176,8 @@
 }
 
 .app-rail__item--active {
-  color: var(--app-rail-accent-color);
-  background: var(--app-rail-accent-bg);
+  color: var(--app-rail-text-color);
+  background: rgb(17 94 163 / 6%);
 }
 
 .app-rail__item--active:disabled {
