@@ -1,5 +1,14 @@
-import { useMemo, useRef, useState } from 'react'
-import type { CSSProperties } from 'react'
+import {
+  cloneElement,
+  isValidElement,
+  useMemo,
+  useRef,
+  useState,
+  type CSSProperties,
+  type ReactNode,
+} from 'react'
+import { AppTitleBar } from '../AppTitleBar'
+import { appTitleBarTypeMarker } from '../AppTitleBarMarker'
 import { AppContextMenuContext } from '../context-menu/AppContextMenuContext'
 import { useContextMenuController } from '../context-menu/useContextMenuController'
 import { AppDialogContext } from '../dialog/AppDialogContext'
@@ -25,6 +34,19 @@ import {
 } from './ShellPaneLayer'
 import { ShellOverlayLayer } from './ShellOverlayLayer'
 import { usePaneController } from './usePaneController'
+
+function isAppTitleBarType(type: unknown) {
+  if (type === AppTitleBar) return true
+
+  if (typeof type !== 'function' && (typeof type !== 'object' || type === null)) {
+    return false
+  }
+
+  if (Reflect.get(type, appTitleBarTypeMarker) === true) return true
+
+  // React Fast Refresh can temporarily retain the previous component function.
+  return typeof type === 'function' && type.name === AppTitleBar.name
+}
 
 export function AppShell({
   locale = 'system',
@@ -141,6 +163,30 @@ export function AppShell({
       ? localeContextValue.messages.shell.expandNavigation
       : localeContextValue.messages.shell.collapseNavigation
 
+  const titleBarLeading = hasSidebar
+    ? sidebarHeader ?? (
+        <ShellTitleBarApp
+          appTitle={title}
+          ariaLabel={paneToggleAriaLabel}
+          expanded={isMinimal ? isPaneOpen : !sidebarCollapsed}
+          icon={icon}
+          onToggle={toggleSidebar}
+          showToggle={sidebarCollapsible}
+          interactionModeRef={paneInteractionModeRef}
+          toggleButtonRef={paneToggleRef}
+        />
+      )
+    : undefined
+  const appTitleBar =
+    isValidElement<{ leading?: ReactNode }>(titleBar) &&
+    isAppTitleBarType(titleBar.type)
+      ? titleBar
+      : null
+  const renderedTitleBar =
+    appTitleBar && titleBarLeading !== undefined
+      ? cloneElement(appTitleBar, { leading: titleBarLeading })
+      : titleBar
+
   return (
     <AppLocaleContext.Provider value={localeContextValue}>
       <AppToastContext.Provider value={toastStore.toast}>
@@ -159,23 +205,14 @@ export function AppShell({
                 onKeyDownCapture={contextMenuController.handleKeyDown}
               >
               <div className="app-shell__titlebar">
-                {hasSidebar && (
+                {hasSidebar && !appTitleBar && (
                   <div className="app-shell__titlebar-leading">
-                    {sidebarHeader ?? (
-                      <ShellTitleBarApp
-                        appTitle={title}
-                        ariaLabel={paneToggleAriaLabel}
-                        expanded={isMinimal ? isPaneOpen : !sidebarCollapsed}
-                        icon={icon}
-                        onToggle={toggleSidebar}
-                        showToggle={sidebarCollapsible}
-                        interactionModeRef={paneInteractionModeRef}
-                        toggleButtonRef={paneToggleRef}
-                      />
-                    )}
+                    {titleBarLeading}
                   </div>
                 )}
-                <div className="app-shell__titlebar-main">{titleBar}</div>
+                <div className="app-shell__titlebar-main">
+                  {renderedTitleBar}
+                </div>
               </div>
               {hasSidebar && !isMinimal && (
                 <ShellInlinePane

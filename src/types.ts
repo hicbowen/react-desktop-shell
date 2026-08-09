@@ -172,8 +172,10 @@ export interface AppSidePaneProps {
 }
 
 export interface AppTitleBarProps {
+  leading?: ReactNode
   title?: ReactNode
   icon?: ReactNode
+  center?: ReactNode
   actions?: ReactNode
   onMinimize?: () => void
   maximized?: boolean

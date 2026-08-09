@@ -72,7 +72,7 @@
   --app-shell-content-margin: 0;
   --app-shell-content-radius: 10px 0 0 0;
   --app-shell-content-border-color: var(--app-shell-border-color);
-  --app-titlebar-height: 36px;
+  --app-titlebar-height: 38px;
   --app-sidebar-expanded-width: 316px;
   --app-sidebar-compact-width: 62px;
   --app-sidebar-width: var(--app-sidebar-expanded-width);
@@ -322,12 +322,12 @@
   flex: 1;
 }
 
-.app-shell__titlebar-main:empty {
-  -webkit-app-region: drag;
-}
-
 .app-shell__titlebar-main > .app-title-bar {
   width: 100%;
+}
+
+.app-shell__titlebar-main:empty {
+  -webkit-app-region: drag;
 }
 
 .app-shell__sidebar {

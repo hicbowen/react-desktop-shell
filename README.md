@@ -1781,6 +1781,7 @@ icon or another ReactNode without readable text, provide `ariaLabel` explicitly:
 <AppTitleBar
   title="My App"
   icon={<AppIcon />}
+  center={<WorkspaceSwitcher />}
   actions={<ToolbarActions />}
   onMinimize={handleMinimize}
   maximized={maximized}
@@ -1789,7 +1790,7 @@ icon or another ReactNode without readable text, provide `ariaLabel` explicitly:
 />
 ```
 
-If `onMinimize`, `onToggleMaximize`, or `onClose` are omitted, clicking the matching button is a safe no-op. Pass `maximized` to switch the maximize button into its restore state. Use `actions` for custom title bar controls rendered to the left of the window buttons.
+If `onMinimize`, `onToggleMaximize`, or `onClose` are omitted, clicking the matching button is a safe no-op. Pass `maximized` to switch the maximize button into its restore state. Use `center` for content geometrically centered in the full title bar, and `actions` for custom controls rendered to the left of the window buttons. When a direct `AppTitleBar` is passed to `AppShell.titleBar`, the shell places its pane toggle and app identity in the title bar's `leading` region so the center does not depend on the sidebar width or display mode.
 
 ## Rail
 
@@ -1946,7 +1947,7 @@ Override variables on `.app-shell`, `.app-page`, `.app-rail`, and `.app-title-ba
 }
 
 .app-title-bar {
-  --app-title-bar-height: 36px;
+  --app-title-bar-height: 38px;
 }
 ```
 
@@ -1989,7 +1990,7 @@ Override variables on `.app-shell`, `.app-page`, `.app-rail`, and `.app-title-ba
 | `--app-rail-flyout-bg`             | `var(--app-shell-surface-bg, #ffffff)` |
 | `--app-rail-flyout-border-color`   | `var(--app-shell-border-color, rgb(0 0 0 / 10%))` |
 | `--app-rail-flyout-shadow`         | `0 8px 24px rgb(0 0 0 / 16%)` |
-| `--app-title-bar-height`           | `var(--app-titlebar-height, 36px)` |
+| `--app-title-bar-height`           | `var(--app-titlebar-height, 38px)` |
 | `--app-title-bar-text-color`       | `var(--app-shell-text-color, #1f1f1f)` |
 | `--app-title-bar-icon-color`       | `var(--app-shell-accent-color, #115ea3)` |
 | `--app-title-bar-hover-bg`         | `var(--app-shell-control-hover-bg, #d4d4d4)` |
@@ -2489,8 +2490,10 @@ Calling `show` again with the same id updates the existing toast. At most four t
 
 | Prop               | Type            | Default     | Description                                            |
 | ------------------ | --------------- | ----------- | ------------------------------------------------------ |
+| `leading`          | `ReactNode`     | `undefined` | Replaces the built-in icon and title region.           |
 | `title`            | `ReactNode`     | `undefined` | App title content.                                     |
 | `icon`             | `ReactNode`     | `undefined` | App icon content.                                      |
+| `center`           | `ReactNode`     | `undefined` | Content geometrically centered in the full title bar.  |
 | `actions`          | `ReactNode`     | `undefined` | Custom controls rendered before the window buttons.    |
 | `onMinimize`       | `() => void`    | `undefined` | Called when the minimize button is clicked.            |
 | `maximized`        | `boolean`       | `false`     | Switches the maximize button into its restore state.   |
@@ -2601,8 +2604,10 @@ export interface AppPageProps {
 
 ```tsx
 export interface AppTitleBarProps {
+  leading?: ReactNode
   title?: ReactNode
   icon?: ReactNode
+  center?: ReactNode
   actions?: ReactNode
   onMinimize?: () => void
   maximized?: boolean

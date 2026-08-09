@@ -4,10 +4,17 @@ import { act } from 'react'
 import { createPortal } from 'react-dom'
 import { createRoot, type Root } from 'react-dom/client'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { AppTitleBar } from '../AppTitleBar'
 import { AppDialog } from '../dialog/AppDialog'
 import { useAppLocale } from '../localization/useAppLocale'
 import { AppRail } from '../navigation/AppRail'
+import type { AppTitleBarProps } from '../types'
 import { AppShell } from './AppShell'
+
+const PreviousAppTitleBar = (props: AppTitleBarProps) => (
+  <AppTitleBar {...props} />
+)
+Object.defineProperty(PreviousAppTitleBar, 'name', { value: 'AppTitleBar' })
 
 function LocaleReader({ name }: { name: string }) {
   const locale = useAppLocale()
@@ -148,6 +155,53 @@ describe('AppShell locale', () => {
     expect(titleBar?.querySelector('.app-shell__titlebar-title')?.textContent)
       .toBe('Desktop app')
     expect(toggle?.getAttribute('aria-expanded')).toBe('false')
+  })
+
+  it('injects app identity into a direct AppTitleBar leading slot', () => {
+    render(
+      <AppShell
+        rail={<nav>Navigation</nav>}
+        sidebar={{ defaultDisplayMode: 'expanded' }}
+        title="Desktop app"
+        titleBar={
+          <AppTitleBar center={<span data-title-center>Centered</span>} />
+        }
+      />,
+    )
+
+    const titleBar = container.querySelector<HTMLElement>(
+      '.app-shell__titlebar',
+    )
+    const appTitleBar = titleBar?.querySelector<HTMLElement>('.app-title-bar')
+
+    expect(titleBar?.querySelector('.app-shell__titlebar-leading')).toBeNull()
+    expect(
+      appTitleBar?.querySelector('.app-shell__titlebar-title')?.textContent,
+    ).toBe('Desktop app')
+    expect(appTitleBar?.querySelector('[data-title-center]')?.textContent).toBe(
+      'Centered',
+    )
+    expect(appTitleBar?.querySelectorAll('.app-shell__pane-toggle')).toHaveLength(
+      1,
+    )
+  })
+
+  it('recognizes an AppTitleBar function retained by Fast Refresh', () => {
+    render(
+      <AppShell
+        rail={<nav>Navigation</nav>}
+        sidebar={{ defaultDisplayMode: 'expanded' }}
+        title="Desktop app"
+        titleBar={<PreviousAppTitleBar center={<span>Centered</span>} />}
+      />,
+    )
+
+    const titleBar = container.querySelector<HTMLElement>(
+      '.app-shell__titlebar',
+    )
+
+    expect(titleBar?.querySelector('.app-shell__titlebar-leading')).toBeNull()
+    expect(titleBar?.querySelectorAll('.app-shell__pane-toggle')).toHaveLength(1)
   })
 
   it('keeps the title bar visible while the minimal pane is open', () => {

@@ -363,6 +363,18 @@
     min-height: 34px;
 }
 
+.demo-titlebar-center {
+    min-width: 0;
+    padding: 3px 10px;
+    overflow: hidden;
+    color: var(--app-shell-muted-text-color, #707070);
+    background: var(--app-shell-hover-bg, rgb(0 0 0 / 5%));
+    border-radius: 4px;
+    font-size: 12px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
 .demo-nested-page {
     min-height: 180px;
     border: 1px solid color-mix(in srgb, currentColor 14%, transparent);
@@ -1050,7 +1062,8 @@
 .demo-search {
   position: relative;
   width: min(300px, 32vw);
-  min-width: 220px;
+  min-width: 0;
+  max-width: 100%;
 }
 
 .demo-search__results {

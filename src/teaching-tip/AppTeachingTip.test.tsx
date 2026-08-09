@@ -361,6 +361,8 @@ describe('AppTeachingTip', () => {
     expect(vi.mocked(requestAnimationFrame).mock.calls.length).toBeGreaterThan(
       measurements,
     )
-    expect(tip()?.style.visibility).toBe('hidden')
+    expect(tip()?.style.visibility).toBe('visible')
+    flushMeasurement()
+    expect(tip()?.style.visibility).toBe('visible')
   })
 })

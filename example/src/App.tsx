@@ -71,6 +71,7 @@ export function ExampleApp() {
         theme={theme}
         titleBar={
           <AppTitleBar
+            center={<DemoSearch pages={localizedPages} fallbackPages={demoPages} onNavigate={navigateTo} />}
             maximized={maximized}
             onClose={() => undefined}
             onMinimize={() => undefined}
@@ -92,7 +93,6 @@ export function ExampleApp() {
             </span>
           }
           description={currentPage.description}
-          actions={<DemoSearch pages={localizedPages} fallbackPages={demoPages} onNavigate={navigateTo} />}
         >
           {isComponentPage ? (
             <DemoComponentPage

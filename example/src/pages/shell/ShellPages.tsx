@@ -56,6 +56,11 @@ export function AppShellPage() {
             title={t('Preview application')}
             titleBar={
               <AppTitleBar
+                center={
+                  <span className="demo-titlebar-center">
+                    {t('Editor workspace')}
+                  </span>
+                }
                 maximized={maximized}
                 onClose={() => undefined}
                 onMinimize={() => undefined}

@@ -1,6 +1,7 @@
 import { useMemo } from 'react'
 import type { AppTitleBarProps } from './types'
 import { useAppLocale } from './localization/useAppLocale'
+import { appTitleBarTypeMarker } from './AppTitleBarMarker'
 import './AppTitleBar.css'
 
 function MinimizeIcon() {
@@ -92,8 +93,10 @@ function CloseIcon() {
 }
 
 export function AppTitleBar({
+  leading,
   title,
   icon,
+  center,
   actions,
   onMinimize,
   maximized = false,
@@ -106,6 +109,7 @@ export function AppTitleBar({
   style,
 }: AppTitleBarProps) {
   const { messages } = useAppLocale()
+  const hasLeading = leading !== undefined
   const rootClassName = useMemo(() => {
     const classes = ['app-title-bar']
 
@@ -118,10 +122,24 @@ export function AppTitleBar({
 
   return (
     <header className={rootClassName} style={style}>
-      <div className="app-title-bar__left">
-        {icon && <span className="app-title-bar__icon">{icon}</span>}
-        {title && <span className="app-title-bar__title">{title}</span>}
+      <div
+        className={
+          hasLeading
+            ? 'app-title-bar__left app-title-bar__left--slot'
+            : 'app-title-bar__left'
+        }
+      >
+        {hasLeading ? (
+          leading
+        ) : (
+          <>
+            {icon && <span className="app-title-bar__icon">{icon}</span>}
+            {title && <span className="app-title-bar__title">{title}</span>}
+          </>
+        )}
       </div>
+
+      <div className="app-title-bar__center">{center}</div>
 
       <div className="app-title-bar__right">
         {actions && <div className="app-title-bar__actions">{actions}</div>}
@@ -164,3 +182,5 @@ export function AppTitleBar({
     </header>
   )
 }
+
+Object.defineProperty(AppTitleBar, appTitleBarTypeMarker, { value: true })

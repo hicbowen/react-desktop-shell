@@ -421,11 +421,12 @@ describe('AppTooltip', () => {
     expect(tooltip()?.style.visibility).toBe('visible')
 
     render(view('Updated', 'right'))
-    expect(tooltip()?.style.visibility).toBe('hidden')
+    expect(tooltip()?.style.visibility).toBe('visible')
     expect(vi.mocked(requestAnimationFrame).mock.calls.length).toBeGreaterThan(
       1,
     )
     flushMeasurement()
+    expect(tooltip()?.style.visibility).toBe('visible')
     expect(tooltip()?.dataset.placement).toBe('right')
   })
 })

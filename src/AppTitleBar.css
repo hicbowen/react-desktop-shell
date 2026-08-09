@@ -1,5 +1,5 @@
 .app-title-bar {
-  --app-title-bar-height: var(--app-titlebar-height, 36px);
+  --app-title-bar-height: var(--app-titlebar-height, 38px);
   --app-title-bar-text-color: var(--app-shell-text-color, #1f1f1f);
   --app-title-bar-icon-color: var(--app-shell-accent-color, #115ea3);
   --app-title-bar-hover-bg: var(--app-shell-control-hover-bg, #d4d4d4);
@@ -7,9 +7,13 @@
   --app-title-bar-bg: transparent;
 
   height: var(--app-title-bar-height);
-  display: flex;
+  display: grid;
+  grid-template-columns:
+    minmax(148px, 1fr)
+    minmax(0, max-content)
+    minmax(148px, 1fr);
+  position: relative;
   flex-shrink: 0;
-  justify-content: space-between;
   color: var(--app-title-bar-text-color);
   background: var(--app-title-bar-bg);
   font: inherit;
@@ -19,14 +23,24 @@
 }
 
 .app-title-bar__left {
+  grid-column: 1;
+  min-width: 0;
   height: var(--app-title-bar-height);
   display: flex;
   align-items: center;
   padding: 0 16px;
   gap: 8px;
-  min-width: 0;
   font-size: 14px;
   font-weight: 650;
+}
+
+.app-title-bar__left:empty {
+  padding: 0;
+}
+
+.app-title-bar__left--slot {
+  padding: 0;
+  overflow: hidden;
 }
 
 .app-title-bar__icon {
@@ -54,10 +68,37 @@
   white-space: nowrap;
 }
 
-.app-title-bar__right {
-  margin-left: auto;
+.app-title-bar__center {
+  position: absolute;
+  z-index: 1;
+  top: 0;
+  left: 50%;
+  width: max-content;
+  max-width: calc(100% - 296px);
+  min-width: 0;
+  height: var(--app-title-bar-height);
+  padding: 0 8px;
+  box-sizing: border-box;
   display: flex;
   align-items: center;
+  justify-content: center;
+  transform: translateX(-50%);
+  -webkit-app-region: no-drag;
+}
+
+.app-title-bar__center:empty {
+  -webkit-app-region: drag;
+}
+
+.app-title-bar__center > * {
+  max-width: 100%;
+}
+
+.app-title-bar__right {
+  grid-column: 3;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
   flex-shrink: 0;
 }
 
