@@ -211,10 +211,10 @@
 }
 
 .demo-scroll-matrix {
-    width: 840px;
+    width: 1080px;
     padding: 10px;
     display: grid;
-    grid-template-columns: repeat(10, 72px);
+    grid-template-columns: repeat(10, 96px);
     gap: 6px;
 }
 

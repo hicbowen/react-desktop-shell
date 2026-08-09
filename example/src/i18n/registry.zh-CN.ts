@@ -17,7 +17,7 @@ export const zhCNRegistry: Record<string, DemoPageTranslation> = {
   'app-link': { label: 'AppLink', description: '支持禁用、弱化和外部提示的原生应用链接。' },
   'app-avatar-persona': { label: 'AppAvatar / AppPersona', description: '展示身份、首字母、图像、在线状态和人员信息。' },
   'app-copyable-text': { label: 'AppCopyableText', description: '复制标识符和路径，并提供本地化成功反馈。' },
-  'app-scroll-area': { label: 'AppScrollArea', description: '带 Fluent 溢出、滚动条和边槽样式的原生滚动区域。' },
+  'app-scroll-area': { label: 'AppScrollArea', description: '保留原生滚动能力并带 WinUI 自适应滚动条覆盖层。' },
   'app-field': { label: '字段', description: '提供无障碍标签、说明、必填提示、错误信息和字段布局。' },
   'app-empty-state': { label: '空状态', description: '带可选引导和操作的紧凑或常规空内容。' },
   'list-view': { label: '列表视图', description: '支持选择、调用和键盘导航的桌面信息列表。' },

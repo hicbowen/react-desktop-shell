@@ -1,101 +1,415 @@
 .app-scroll-area {
   min-width: 0;
   min-height: 0;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
   overscroll-behavior: auto;
 }
 
-.app-scroll-area--vertical {
+.app-scroll-area__viewport {
+  min-width: 0;
+  min-height: 0;
+  flex: 1 1 auto;
+  overflow: hidden;
+  overscroll-behavior: inherit;
+  scrollbar-width: none;
+}
+
+.app-scroll-area__viewport::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  display: none;
+}
+
+.app-scroll-area__viewport:focus-visible {
+  outline: 2px solid var(--app-shell-accent-color, Highlight);
+  outline-offset: -2px;
+}
+
+.app-scroll-area--vertical > .app-scroll-area__viewport {
   overflow-x: hidden;
   overflow-y: auto;
 }
 
-.app-scroll-area--horizontal {
+.app-scroll-area--horizontal > .app-scroll-area__viewport {
   overflow-x: auto;
   overflow-y: hidden;
 }
 
-.app-scroll-area--both {
+.app-scroll-area--both > .app-scroll-area__viewport {
   overflow: auto;
 }
 
-.app-scroll-area--vertical.app-scroll-area--scrollbar-always {
+.app-scroll-area--vertical.app-scroll-area--scrollbar-always
+  > .app-scroll-area__viewport {
   overflow-y: scroll;
 }
 
-.app-scroll-area--horizontal.app-scroll-area--scrollbar-always {
+.app-scroll-area--horizontal.app-scroll-area--scrollbar-always
+  > .app-scroll-area__viewport {
   overflow-x: scroll;
 }
 
-.app-scroll-area--both.app-scroll-area--scrollbar-always {
+.app-scroll-area--both.app-scroll-area--scrollbar-always
+  > .app-scroll-area__viewport {
   overflow: scroll;
 }
 
-.app-scroll-area--gutter-stable {
-  scrollbar-gutter: stable;
+.app-scroll-area--gutter-stable.app-scroll-area--vertical
+  > .app-scroll-area__viewport,
+.app-scroll-area--gutter-stable.app-scroll-area--both
+  > .app-scroll-area__viewport {
+  margin-inline-end: var(--app-scrollbar-size, 12px);
 }
 
-.app-scroll-area,
+.app-scroll-area--gutter-stable.app-scroll-area--horizontal
+  > .app-scroll-area__viewport,
+.app-scroll-area--gutter-stable.app-scroll-area--both
+  > .app-scroll-area__viewport {
+  margin-block-end: var(--app-scrollbar-size, 12px);
+}
+
+.app-scroll-area__scrollbar {
+  position: absolute;
+  z-index: 1;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition:
+    opacity 83ms linear,
+    visibility 0s linear 83ms;
+}
+
+.app-scroll-area__scrollbar[data-visible='true'] {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transition-delay: 0s;
+}
+
+.app-scroll-area__scrollbar[data-disabled='true'] {
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+.app-scroll-area__scrollbar--vertical {
+  inset-block: 0;
+  inset-inline-end: 0;
+  width: var(--app-scrollbar-hit-size, 16px);
+}
+
+.app-scroll-area__scrollbar--vertical[data-cross-axis='true'] {
+  inset-block-end: var(--app-scrollbar-size, 12px);
+}
+
+.app-scroll-area__scrollbar--horizontal {
+  inset-inline: 0;
+  inset-block-end: 0;
+  height: var(--app-scrollbar-hit-size, 16px);
+}
+
+.app-scroll-area__scrollbar--horizontal[data-cross-axis='true'] {
+  inset-inline-end: var(--app-scrollbar-size, 12px);
+}
+
+.app-scroll-area__rail {
+  position: absolute;
+  display: flex;
+  background: transparent;
+  transition: background-color 83ms linear 500ms;
+}
+
+.app-scroll-area__scrollbar--vertical .app-scroll-area__rail {
+  inset-block: 0;
+  inset-inline-end: 0;
+  width: var(--app-scrollbar-size, 12px);
+  flex-direction: column;
+}
+
+.app-scroll-area__scrollbar--horizontal .app-scroll-area__rail {
+  inset-inline: 0;
+  inset-block-end: 0;
+  height: var(--app-scrollbar-size, 12px);
+  flex-direction: row;
+}
+
+.app-scroll-area__scrollbar:hover .app-scroll-area__rail,
+.app-scroll-area__scrollbar[data-dragging='true'] .app-scroll-area__rail {
+  background: var(
+    --app-scrollbar-track-expanded-color,
+    rgb(250 250 250 / 78%)
+  );
+}
+
+.app-scroll-area__scrollbar:hover .app-scroll-area__rail {
+  transition-delay: 80ms;
+}
+
+.app-scroll-area__scrollbar[data-dragging='true'] .app-scroll-area__rail {
+  transition-delay: 0s;
+}
+
+.app-scroll-area__track {
+  min-width: 0;
+  min-height: 0;
+  position: relative;
+  flex: 1 1 auto;
+  touch-action: none;
+}
+
+.app-scroll-area__thumb {
+  --app-scrollbar-thumb-length: 0px;
+  --app-scrollbar-thumb-offset: 0px;
+
+  position: absolute;
+  touch-action: none;
+  cursor: default;
+}
+
+.app-scroll-area__thumb::before {
+  content: '';
+  position: absolute;
+  inset: 3px;
+  background: var(--app-scrollbar-thumb-color, rgb(0 0 0 / 34%));
+  border-radius: 999px;
+  transition: background-color 83ms linear;
+}
+
+.app-scroll-area__scrollbar--vertical .app-scroll-area__thumb {
+  inset-inline-end: 0;
+  width: 8px;
+  height: var(--app-scrollbar-thumb-length);
+  transform: translate3d(0, var(--app-scrollbar-thumb-offset), 0);
+  transition: width 167ms cubic-bezier(0, 0, 0, 1) 500ms;
+}
+
+.app-scroll-area__scrollbar--horizontal .app-scroll-area__thumb {
+  inset-block-end: 0;
+  width: var(--app-scrollbar-thumb-length);
+  height: 8px;
+  transform: translate3d(var(--app-scrollbar-thumb-offset), 0, 0);
+  transition: height 167ms cubic-bezier(0, 0, 0, 1) 500ms;
+}
+
+.app-scroll-area__scrollbar:hover .app-scroll-area__thumb,
+.app-scroll-area__scrollbar[data-dragging='true'] .app-scroll-area__thumb {
+  transition-delay: 0s;
+}
+
+.app-scroll-area__scrollbar--vertical:hover .app-scroll-area__thumb,
+.app-scroll-area__scrollbar--vertical[data-dragging='true']
+  .app-scroll-area__thumb {
+  width: var(--app-scrollbar-size, 12px);
+}
+
+.app-scroll-area__scrollbar--horizontal:hover .app-scroll-area__thumb,
+.app-scroll-area__scrollbar--horizontal[data-dragging='true']
+  .app-scroll-area__thumb {
+  height: var(--app-scrollbar-size, 12px);
+}
+
+.app-scroll-area__thumb:hover::before {
+  background: var(--app-scrollbar-thumb-hover-color, rgb(0 0 0 / 44%));
+}
+
+.app-scroll-area__thumb:active::before,
+.app-scroll-area__scrollbar[data-dragging='true']
+  .app-scroll-area__thumb::before {
+  background: var(--app-scrollbar-thumb-active-color, rgb(0 0 0 / 54%));
+}
+
+.app-scroll-area__arrow {
+  width: 12px;
+  height: 12px;
+  min-width: 12px;
+  min-height: 12px;
+  margin: 0;
+  padding: 0;
+  position: relative;
+  align-self: center;
+  opacity: 0;
+  color: var(--app-scrollbar-arrow-color, rgb(0 0 0 / 62%));
+  background: transparent;
+  border: 0;
+  border-radius: 2px;
+  pointer-events: none;
+  touch-action: none;
+  transition: opacity 83ms linear 500ms;
+}
+
+.app-scroll-area__scrollbar:hover .app-scroll-area__arrow,
+.app-scroll-area__scrollbar[data-dragging='true'] .app-scroll-area__arrow {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.app-scroll-area__scrollbar:hover .app-scroll-area__arrow {
+  transition-delay: 80ms;
+}
+
+.app-scroll-area__scrollbar[data-dragging='true'] .app-scroll-area__arrow {
+  transition-delay: 0s;
+}
+
+.app-scroll-area__arrow:hover {
+  background: var(--app-scrollbar-arrow-hover-color, rgb(0 0 0 / 6%));
+}
+
+.app-scroll-area__arrow:active {
+  background: var(--app-scrollbar-arrow-active-color, rgb(0 0 0 / 10%));
+}
+
+.app-scroll-area__arrow > svg {
+  width: 8px;
+  height: 8px;
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  overflow: visible;
+  pointer-events: none;
+  transform-origin: center;
+}
+
+.app-scroll-area__arrow path {
+  fill: none;
+  stroke: currentcolor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.25;
+}
+
+.app-scroll-area__scrollbar--vertical
+  .app-scroll-area__arrow--decrement
+  > svg {
+  transform: none;
+}
+
+.app-scroll-area__scrollbar--vertical
+  .app-scroll-area__arrow--increment
+  > svg {
+  transform: rotate(180deg);
+}
+
+.app-scroll-area__scrollbar--horizontal
+  .app-scroll-area__arrow--decrement
+  > svg {
+  transform: rotate(-90deg);
+}
+
+.app-scroll-area__scrollbar--horizontal
+  .app-scroll-area__arrow--increment
+  > svg {
+  transform: rotate(90deg);
+}
+
+.app-scroll-area__corner {
+  width: var(--app-scrollbar-size, 12px);
+  height: var(--app-scrollbar-size, 12px);
+  position: absolute;
+  z-index: 1;
+  inset-inline-end: 0;
+  inset-block-end: 0;
+  background: transparent;
+  pointer-events: none;
+  transition: background-color 83ms linear 500ms;
+}
+
+.app-scroll-area__scrollbar:hover ~ .app-scroll-area__corner,
+.app-scroll-area__scrollbar[data-dragging='true']
+  ~ .app-scroll-area__corner {
+  background: var(
+    --app-scrollbar-track-expanded-color,
+    rgb(250 250 250 / 78%)
+  );
+  transition-delay: 0s;
+}
+
+/* Native fallback used by internal library surfaces that are not migrated yet. */
 .app-scrollbar {
-  scrollbar-color: var(--app-scrollbar-thumb-color, rgb(0 0 0 / 26%))
+  scrollbar-color: var(--app-scrollbar-thumb-color, rgb(0 0 0 / 34%))
     var(--app-scrollbar-track-color, transparent);
   scrollbar-width: thin;
 }
 
-.app-scroll-area::-webkit-scrollbar,
 .app-scrollbar::-webkit-scrollbar {
   width: var(--app-scrollbar-size, 12px);
   height: var(--app-scrollbar-size, 12px);
 }
 
-.app-scroll-area::-webkit-scrollbar-track,
 .app-scrollbar::-webkit-scrollbar-track {
   background: var(--app-scrollbar-track-color, transparent);
 }
 
-.app-scroll-area::-webkit-scrollbar-thumb,
 .app-scrollbar::-webkit-scrollbar-thumb {
   min-width: 32px;
   min-height: 32px;
-  background-color: var(--app-scrollbar-thumb-color, rgb(0 0 0 / 26%));
+  background-color: var(--app-scrollbar-thumb-color, rgb(0 0 0 / 34%));
   background-clip: padding-box;
   border: var(--app-scrollbar-thumb-inset, 3px) solid transparent;
   border-radius: 999px;
 }
 
-.app-scroll-area::-webkit-scrollbar-thumb:hover,
 .app-scrollbar::-webkit-scrollbar-thumb:hover {
   background-color: var(
     --app-scrollbar-thumb-hover-color,
-    rgb(0 0 0 / 38%)
+    rgb(0 0 0 / 44%)
   );
 }
 
-.app-scroll-area::-webkit-scrollbar-thumb:active,
 .app-scrollbar::-webkit-scrollbar-thumb:active {
   background-color: var(
     --app-scrollbar-thumb-active-color,
-    rgb(0 0 0 / 50%)
+    rgb(0 0 0 / 54%)
   );
 }
 
-.app-scroll-area::-webkit-scrollbar-corner,
 .app-scrollbar::-webkit-scrollbar-corner {
   background: transparent;
 }
 
-.app-scroll-area::-webkit-scrollbar-button,
 .app-scrollbar::-webkit-scrollbar-button {
   width: 0;
   height: 0;
   display: none;
 }
 
-.app-scroll-area--scrollbar-hidden {
-  scrollbar-width: none;
+@media (prefers-reduced-motion: reduce) {
+  .app-scroll-area__scrollbar,
+  .app-scroll-area__rail,
+  .app-scroll-area__thumb,
+  .app-scroll-area__thumb::before,
+  .app-scroll-area__arrow,
+  .app-scroll-area__corner {
+    transition: none;
+  }
 }
 
-.app-scroll-area--scrollbar-hidden::-webkit-scrollbar {
-  width: 0;
-  height: 0;
-  display: none;
+@media (forced-colors: active) {
+  .app-scroll-area:not(.app-scroll-area--scrollbar-hidden)
+    > .app-scroll-area__viewport {
+    margin-inline-end: 0;
+    margin-block-end: 0;
+    scrollbar-color: auto;
+    scrollbar-gutter: auto;
+    scrollbar-width: auto;
+  }
+
+  .app-scroll-area--gutter-stable:not(.app-scroll-area--scrollbar-hidden)
+    > .app-scroll-area__viewport {
+    scrollbar-gutter: stable;
+  }
+
+  .app-scroll-area:not(.app-scroll-area--scrollbar-hidden)
+    > .app-scroll-area__viewport::-webkit-scrollbar {
+    width: initial;
+    height: initial;
+    display: initial;
+  }
+
+  .app-scroll-area__scrollbar,
+  .app-scroll-area__corner {
+    display: none;
+  }
 }

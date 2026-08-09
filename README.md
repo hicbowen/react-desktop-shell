@@ -802,13 +802,15 @@ own public API and structure.
 
 ## AppScrollArea
 
-`AppScrollArea` is a thin Fluent wrapper around a native scrolling `div`. It
-standardizes overflow behavior and scrollbar appearance while preserving the
-browser's mouse-wheel, trackpad, touch, keyboard, inertia, and platform-level
-scrolling behavior. It does not draw a custom scrollbar or manage scroll state.
+`AppScrollArea` keeps a native scrolling viewport for the browser's mouse-wheel,
+trackpad, touch, keyboard, inertia, and programmatic scrolling behavior, then
+draws a WinUI-style scrollbar overlay above it. The compact indicator is 2px
+wide and morphs to a 6px traditional thumb with arrow buttons when hovered.
+Thumb position, dragging, track paging, and overflow changes are synchronized
+with the native viewport; application scroll state remains native.
 
-The component does not assign a width, height, or flex behavior. Its parent or
-the supplied style must create a constrained scrolling region:
+The component does not assign its own width, height, or external flex sizing.
+Its parent or the supplied style must create a constrained scrolling region:
 
 ```tsx
 <AppScrollArea style={{ height: 320 }}>
@@ -816,7 +818,7 @@ the supplied style must create a constrained scrolling region:
 </AppScrollArea>
 ```
 
-`orientation` controls native overflow:
+`orientation` controls viewport overflow and which overlay axes are available:
 
 - `vertical` is the default: vertical overflow is automatic and horizontal
   overflow is hidden.
@@ -825,16 +827,17 @@ the supplied style must create a constrained scrolling region:
 
 `scrollbar` controls scrollbar visibility policy:
 
-- `auto` uses normal native behavior and is the default.
-- `always` uses `overflow: scroll` in the enabled direction. Operating systems
-  using overlay scrollbars may still choose not to show a permanent track.
-- `hidden` hides only the visual scrollbar with standard and WebKit properties;
+- `auto` shows each custom axis only when its content overflows and is the
+  default.
+- `always` keeps the enabled custom axis visible, including its disabled state
+  when that direction does not currently overflow.
+- `hidden` hides only the visual scrollbar;
   wheel, trackpad, touch, keyboard, and programmatic scrolling remain available.
 
-`gutter="stable"` applies `scrollbar-gutter: stable` where supported. It can be
-useful for long lists, table-adjacent containers, settings pages, and fixed-layout
-dialogs, but is not the default because small panels should not always lose
-content width.
+`gutter="stable"` reserves the 12px traditional scrollbar surface instead of
+overlaying it on content. It can be useful for long lists, table-adjacent
+containers, settings pages, and fixed-layout dialogs, but is not the default
+because small panels should not always lose content width.
 
 ```tsx
 <AppScrollArea
@@ -851,13 +854,18 @@ content width.
 
 Scroll areas do not receive `tabIndex` or `role="region"` automatically. Add
 `tabIndex={0}` only when users need to focus the scrolling region directly, and
-provide an accessible label with it.
+provide an accessible label with it. The forwarded ref and HTML attributes
+target the native scrolling viewport; `className` and `style` target the outer
+layout container. Custom scrollbar controls are pointer-only and hidden from
+the accessibility tree so the viewport remains the single keyboard and assistive
+technology surface. Forced-colors mode falls back to the platform scrollbar.
 
-The Fluent scrollbar styling is scoped to `AppScrollArea` and explicit internal
-library scroll containers; it does not globally affect editors, third-party
-popups, form controls, or every element on the page. Do not wrap an existing
-scroll container in another `AppScrollArea`, use it as a substitute for virtual
-lists, or expect overflow to occur without a constrained size.
+The WinUI scrollbar overlay is scoped to `AppScrollArea`; existing internal
+library containers retain their native fallback until they are migrated. It does
+not globally affect editors, third-party popups, form controls, or every element
+on the page. Do not wrap an existing scroll container in another
+`AppScrollArea`, use it as a substitute for virtual lists, or expect overflow to
+occur without a constrained size.
 
 ## Dependencies and theming
 
