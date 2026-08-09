@@ -122,6 +122,18 @@ describe('AppTimePanel', () => {
     expect(container.querySelectorAll('[tabindex="0"]')).toHaveLength(2)
   })
 
+  it('uses one AppScrollArea for each time column', () => {
+    render(<Harness step={5} />)
+
+    const scrollAreas = container.querySelectorAll(
+      '.app-time-panel__list-scroll.app-scroll-area',
+    )
+    expect(scrollAreas).toHaveLength(2)
+    expect(lists()).toHaveLength(2)
+    expect(lists()[0]?.classList).toContain('app-time-panel__list')
+    expect(lists()[1]?.classList).toContain('app-time-panel__list')
+  })
+
   it('formats 12-hour labels while retaining 24-hour values', () => {
     render(<Harness hourCycle={12} initial={{ hour: 18, minute: 30 }} />)
     expect(selected(0).textContent).toBe('6 PM')

@@ -29,13 +29,19 @@
   text-align: center;
 }
 
-.app-time-panel__list {
+.app-time-panel__list-scroll {
+  --app-scrollbar-track-hover-color: color-mix(in srgb, currentcolor 4%, transparent);
+  --app-scrollbar-track-active-color: color-mix(in srgb, currentcolor 7%, transparent);
   height: var(--app-time-picker-column-height);
-  display: grid;
-  align-content: start;
-  overflow-y: auto;
+  box-sizing: border-box;
+  overflow: hidden;
   border: 1px solid var(--app-shell-border-color, rgb(0 0 0 / 12%));
   border-radius: 6px;
+}
+
+.app-time-panel__list {
+  display: grid;
+  align-content: start;
 }
 
 .app-time-panel__option {

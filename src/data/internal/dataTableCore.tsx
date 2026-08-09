@@ -31,12 +31,12 @@ import {
 } from '@tanstack/react-table'
 import { DataTableCheckbox } from '../DataTableCheckbox'
 import { useAppLocale } from '../../localization/useAppLocale'
+import { AppScrollArea } from '../../scroll-area/AppScrollArea'
 import type {
   AppDataTablePaginationOptions,
   AppDataTableProps,
 } from '../types'
 import { resolveControlFilterColumns } from './dataTableFilters'
-import '../../scroll-area/AppScrollArea.css'
 
 export const APP_DATA_TABLE_SELECTION_COLUMN_ID =
   '__app_data_table_selection'
@@ -617,10 +617,13 @@ export function DataTableFrame<TData>({
         ].filter(Boolean).join(' ')}
         style={{ maxHeight }}
       >
-        <div
+        <AppScrollArea
+          className="app-data-table__scroll-area"
+          orientation="both"
           ref={scrollRef}
-          className="app-data-table__scroll app-scrollbar"
           style={{ maxHeight }}
+          viewportClassName="app-data-table__scroll"
+          viewportStyle={{ maxHeight }}
         >
           <table
             aria-busy={loading || undefined}
@@ -636,7 +639,7 @@ export function DataTableFrame<TData>({
             />
             <tbody>{children}</tbody>
           </table>
-        </div>
+        </AppScrollArea>
         {state ? (
           <div
             className="app-data-table__state-overlay"

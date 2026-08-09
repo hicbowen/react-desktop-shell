@@ -172,6 +172,20 @@ describe('AppDataTable controls', () => {
     expect(bodyRows()).toHaveLength(4)
   })
 
+  it('uses AppScrollArea inside the positioned filter menu', () => {
+    renderTable()
+    openFilters()
+
+    const scrollArea = filterMenu()?.querySelector(
+      '.app-data-table__filter-menu-scroll',
+    )
+    expect(scrollArea?.classList).toContain('app-scroll-area')
+    expect(scrollArea?.getAttribute('data-gutter')).toBe('stable')
+    expect(
+      scrollArea?.querySelector('.app-data-table__filter-menu-content'),
+    ).not.toBeNull()
+  })
+
   it('updates uncontrolled global filtering from search input', () => {
     renderTable()
     setSearch('Alpha')
@@ -601,7 +615,8 @@ describe('AppDataTable controls', () => {
     expect(overlay?.getAttribute('data-state')).toBe('empty')
     expect(overlay?.getAttribute('role')).toBeNull()
     expect(overlay?.parentElement?.classList.contains('app-data-table__viewport')).toBe(true)
-    expect(overlay?.previousElementSibling?.classList.contains('app-data-table__scroll')).toBe(true)
+    expect(overlay?.previousElementSibling?.classList.contains('app-data-table__scroll-area')).toBe(true)
+    expect(overlay?.previousElementSibling?.querySelector('.app-data-table__scroll')).not.toBeNull()
     expect(overlay?.closest('table')).toBeNull()
     expect(bodyRows()).toHaveLength(0)
   })

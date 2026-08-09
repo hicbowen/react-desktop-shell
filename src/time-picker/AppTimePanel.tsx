@@ -4,6 +4,7 @@ import {
   type KeyboardEvent,
 } from 'react'
 import { useAppLocale } from '../localization/useAppLocale'
+import { AppScrollArea } from '../scroll-area/AppScrollArea'
 import { formatAppTime } from './timeFormat'
 import {
   compareAppTimes,
@@ -219,10 +220,11 @@ export function AppTimePanel({
         <div className="app-time-panel__label">
           {messages.timePicker.hourLabel}
         </div>
-        <div
+        <AppScrollArea
           aria-label={messages.timePicker.hourLabel}
-          className="app-time-panel__list app-scrollbar"
+          className="app-time-panel__list-scroll"
           role="listbox"
+          viewportClassName="app-time-panel__list"
         >
           {hours.map((hour) => {
             const disabled = !enabledHours.includes(hour)
@@ -248,16 +250,17 @@ export function AppTimePanel({
               </button>
             )
           })}
-        </div>
+        </AppScrollArea>
       </div>
       <div className="app-time-panel__column">
         <div className="app-time-panel__label">
           {messages.timePicker.minuteLabel}
         </div>
-        <div
+        <AppScrollArea
           aria-label={messages.timePicker.minuteLabel}
-          className="app-time-panel__list app-scrollbar"
+          className="app-time-panel__list-scroll"
           role="listbox"
+          viewportClassName="app-time-panel__list"
         >
           {minutes.map((minute, index) => {
             const disabled = !enabledMinutes.includes(minute)
@@ -283,7 +286,7 @@ export function AppTimePanel({
               </button>
             )
           })}
-        </div>
+        </AppScrollArea>
       </div>
     </div>
   )

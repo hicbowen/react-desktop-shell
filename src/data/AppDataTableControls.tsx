@@ -15,6 +15,7 @@ import { useAnchoredOverlayPosition } from '../overlay/useAnchoredOverlayPositio
 import { useOverlayDismiss } from '../overlay/useOverlayDismiss'
 import { useAppLocale } from '../localization/useAppLocale'
 import type { AppLocaleMessages } from '../localization/types'
+import { AppScrollArea } from '../scroll-area/AppScrollArea'
 import { CheckMark } from '../selection-controls/CheckBoxIndicator'
 import type {
   AppDataTableControlsOptions,
@@ -192,7 +193,7 @@ export function AppDataTableControls<TData>({
                   <div
                     ref={menuRef}
                     aria-label={locale.filters}
-                    className="app-data-table__filter-menu app-scrollbar"
+                    className="app-data-table__filter-menu"
                     data-placement={menuPosition.placement}
                     id={menuId}
                     role="menu"
@@ -217,6 +218,11 @@ export function AppDataTableControls<TData>({
                       visibility: menuPosition.measured ? 'visible' : 'hidden',
                     }}
                   >
+                    <AppScrollArea
+                      className="app-data-table__filter-menu-scroll"
+                      gutter="stable"
+                      viewportClassName="app-data-table__filter-menu-content"
+                    >
               {filterDefinitions.map((definition, index) => {
                 const column = table.getColumn(definition.columnId)
                 if (!column) {
@@ -319,6 +325,7 @@ export function AppDataTableControls<TData>({
                   </button>
                 </div>
               ) : null}
+                    </AppScrollArea>
                   </div>
                 )
 

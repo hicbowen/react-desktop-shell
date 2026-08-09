@@ -61,6 +61,12 @@ describe('AppDataView height modes', () => {
 
     expect(container.querySelector('.app-data-view--fill')).not.toBeNull()
     expect(container.querySelectorAll('.app-data-table__scroll')).toHaveLength(1)
+    expect(
+      container.querySelector('.app-data-table__scroll-area')?.classList,
+    ).toContain('app-scroll-area--both')
+    expect(
+      container.querySelector('.app-data-table__scroll')?.classList,
+    ).not.toContain('app-scrollbar')
   })
 
   it('keeps maxHeight on the table scroll element', () => {
