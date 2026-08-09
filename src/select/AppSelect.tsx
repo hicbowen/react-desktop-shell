@@ -4,6 +4,7 @@ import { ChevronDown16Regular } from '@fluentui/react-icons/svg/chevron-down'
 import { useAppFieldContext } from '../field/AppFieldContext'
 import { useAppLocale } from '../localization/useAppLocale'
 import type { AppSelectProps } from './types'
+import '../input-frame/AppInputFrame.css'
 import './AppSelect.css'
 
 export const AppSelect = forwardRef<HTMLSelectElement, AppSelectProps>(
@@ -118,8 +119,10 @@ export const AppSelect = forwardRef<HTMLSelectElement, AppSelectProps>(
       <span
         className={[
           'app-select',
+          'app-input-frame',
           `app-select--${size}`,
-          resolvedInvalid ? 'app-select--invalid' : '',
+          resolvedInvalid ? 'app-select--invalid app-input-frame--invalid' : '',
+          resolvedDisabled ? 'app-input-frame--disabled' : '',
           className ?? '',
         ].filter(Boolean).join(' ')}
       >

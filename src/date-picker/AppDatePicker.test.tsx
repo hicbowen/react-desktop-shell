@@ -105,6 +105,9 @@ describe('AppDatePicker', () => {
         onValueChange={change}
       />,
     )
+    expect(container.querySelector('.app-date-picker')?.classList).toContain(
+      'app-input-frame--active',
+    )
     flushFrames()
     clickDate('2026-07-20')
 

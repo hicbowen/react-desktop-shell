@@ -12,6 +12,7 @@ import { useAppFieldContext } from '../field/AppFieldContext'
 import { useAppLocale } from '../localization/useAppLocale'
 import { AppAnchoredPopup } from '../overlay/AppAnchoredPopup'
 import type { AppComboBoxProps } from './types'
+import '../input-frame/AppInputFrame.css'
 import './AppComboBox.css'
 
 function getOptionDisplay(
@@ -182,9 +183,12 @@ export const AppComboBox = forwardRef<HTMLInputElement, AppComboBoxProps>(
     }
     const classes = [
       'app-combo-box',
+      'app-input-frame',
       `app-combo-box--${size}`,
-      resolvedInvalid ? 'app-combo-box--invalid' : '',
-      resolvedDisabled ? 'app-combo-box--disabled' : '',
+      resolvedInvalid ? 'app-combo-box--invalid app-input-frame--invalid' : '',
+      resolvedDisabled ? 'app-combo-box--disabled app-input-frame--disabled' : '',
+      readOnly ? 'app-input-frame--readonly' : '',
+      resolvedOpen && !readOnly ? 'app-input-frame--active' : '',
       className,
     ].filter(Boolean).join(' ')
 

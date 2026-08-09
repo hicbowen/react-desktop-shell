@@ -3,6 +3,7 @@ import type { ChangeEvent } from 'react'
 import type { AppTextBoxProps } from './types'
 import { useAppFieldContext } from '../field/AppFieldContext'
 import { useAppLocale } from '../localization/useAppLocale'
+import '../input-frame/AppInputFrame.css'
 import './AppTextInput.css'
 
 const clearableTypes = new Set(['text', 'search', 'email', 'url', 'tel'])
@@ -19,6 +20,6 @@ export const AppTextBox = forwardRef<HTMLInputElement, AppTextBoxProps>(function
   const setRef = (node: HTMLInputElement | null) => { localRef.current = node; if (typeof forwardedRef === 'function') forwardedRef(node); else if (forwardedRef) forwardedRef.current = node }
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => { setCurrentValue(event.target.value); onChange?.(event) }
   const clear = () => { const input = localRef.current; if (!input) return; const setter = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value')?.set; setter?.call(input, ''); input.dispatchEvent(new Event('input', { bubbles: true })); setCurrentValue(''); onClear?.(); input.focus() }
-  const classes = ['app-text-box', `app-text-box--${size}`, resolvedInvalid ? 'app-text-box--invalid' : '', resolvedDisabled ? 'app-text-box--disabled' : '', className].filter(Boolean).join(' ')
+  const classes = ['app-text-box', 'app-input-frame', `app-text-box--${size}`, resolvedInvalid ? 'app-text-box--invalid app-input-frame--invalid' : '', resolvedDisabled ? 'app-text-box--disabled app-input-frame--disabled' : '', readOnly ? 'app-input-frame--readonly' : '', className].filter(Boolean).join(' ')
   return <span className={classes}>{startIcon ? <span aria-hidden="true" className="app-text-box__icon">{startIcon}</span> : null}<input {...rest} aria-describedby={ariaDescribedBy ?? field?.describedBy} aria-invalid={resolvedInvalid || undefined} className="app-text-box__input" defaultValue={value == null ? defaultValue : undefined} disabled={resolvedDisabled} id={id ?? field?.controlId} onChange={handleChange} readOnly={readOnly} ref={setRef} required={resolvedRequired} type={type} value={value} />{canClear ? <button aria-label={messages.textBox.clear} className="app-text-box__clear" onClick={clear} type="button"><span aria-hidden="true">×</span></button> : null}{loading ? <span aria-label={messages.textBox.loading} className="app-text-box__loading" role="status" /> : endIcon ? <span aria-hidden="true" className="app-text-box__icon">{endIcon}</span> : null}</span>
 })

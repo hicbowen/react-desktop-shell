@@ -55,6 +55,16 @@ describe('AppSelect', () => {
     expect(svg?.querySelector('path')).not.toBeNull()
   })
 
+  it('uses the shared frame for invalid and disabled states', () => {
+    act(() => root.render(
+      <AppSelect disabled invalid options={[{ value: 'one', label: 'One' }]} />,
+    ))
+    const frame = host.querySelector('.app-select')!
+    expect(frame.classList).toContain('app-input-frame')
+    expect(frame.classList).toContain('app-input-frame--invalid')
+    expect(frame.classList).toContain('app-input-frame--disabled')
+  })
+
   it('supports placeholder, controlled, uncontrolled, and Field context', () => {
     const changed = vi.fn()
     act(() => root.render(

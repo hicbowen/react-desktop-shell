@@ -3,6 +3,7 @@ import { AppTag } from '../tag'
 import { useAppLocale } from '../localization/useAppLocale'
 import { AppAnchoredPopup } from '../overlay/AppAnchoredPopup'
 import type { AppMultiSelectProps } from './types'
+import '../input-frame/AppInputFrame.css'
 import './AppMultiSelect.css'
 
 export function AppMultiSelect({ options, value, defaultValue = [], onValueChange, maxSelected, searchable = true, placeholder, disabled = false, readOnly = false, invalid = false, className, style }: AppMultiSelectProps) {
@@ -29,7 +30,7 @@ export function AppMultiSelect({ options, value, defaultValue = [], onValueChang
     else if (event.key === 'Escape') setOpen(false)
   }
   return <div className={['app-multi-select', invalid ? 'app-multi-select--invalid' : '', disabled ? 'app-multi-select--disabled' : '', className].filter(Boolean).join(' ')} onBlur={(event) => { if (!event.currentTarget.contains(event.relatedTarget)) setOpen(false) }} ref={rootRef} style={style}>
-    <div className="app-multi-select__control" onClick={() => { if (!disabled && !readOnly) setOpen(true) }}>
+    <div className={['app-multi-select__control', 'app-input-frame', invalid ? 'app-input-frame--invalid' : '', disabled ? 'app-input-frame--disabled' : '', readOnly ? 'app-input-frame--readonly' : '', open && !disabled && !readOnly ? 'app-input-frame--active' : ''].filter(Boolean).join(' ')} onClick={() => { if (!disabled && !readOnly) setOpen(true) }}>
       {selected.map((item) => { const option = options.find((candidate) => candidate.value === item); return <AppTag disabled={disabled || readOnly} dismissLabel={text.remove(typeof option?.label === 'string' ? option.label : item)} key={item} onDismiss={disabled || readOnly ? undefined : () => remove(item)} size="small">{option?.label ?? item}</AppTag> })}
       {searchable ? <input aria-label={text.label} disabled={disabled} onChange={(event) => { setQuery(event.currentTarget.value); setOpen(true); setActive(0) }} onFocus={() => setOpen(true)} onKeyDown={keyDown} placeholder={selected.length ? undefined : placeholder ?? text.placeholder} readOnly={readOnly} role="combobox" value={query} /> : selected.length === 0 ? <span className="app-multi-select__placeholder">{placeholder ?? text.placeholder}</span> : null}
       <span aria-hidden="true" className="app-multi-select__chevron">⌄</span>

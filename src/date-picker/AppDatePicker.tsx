@@ -26,6 +26,7 @@ import type {
   AppDateValue,
 } from './types'
 import { useDatePickerOverlay } from './useDatePickerOverlay'
+import '../input-frame/AppInputFrame.css'
 import './AppDatePicker.css'
 
 function getInitialDate(
@@ -206,8 +207,11 @@ export function AppDatePicker({
       <div
         className={[
           'app-date-picker',
-          resolvedInvalid ? 'app-date-picker--invalid' : '',
-          resolvedDisabled ? 'app-date-picker--disabled' : '',
+          'app-input-frame',
+          resolvedInvalid ? 'app-date-picker--invalid app-input-frame--invalid' : '',
+          resolvedDisabled ? 'app-date-picker--disabled app-input-frame--disabled' : '',
+          readOnly ? 'app-input-frame--readonly' : '',
+          overlay.visible ? 'app-input-frame--active' : '',
           className,
         ]
           .filter(Boolean)

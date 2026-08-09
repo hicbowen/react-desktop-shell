@@ -33,6 +33,7 @@ import type {
   AppTimeValue,
 } from './types'
 import { useTimePickerOverlay } from './useTimePickerOverlay'
+import '../input-frame/AppInputFrame.css'
 import './AppTimePicker.css'
 
 type TimeRangeEditTarget = 'start' | 'end'
@@ -293,8 +294,11 @@ export function AppTimeRangePicker({
         className={[
           'app-time-picker',
           'app-time-range-picker',
-          resolvedInvalid ? 'app-time-picker--invalid' : '',
-          resolvedDisabled ? 'app-time-picker--disabled' : '',
+          'app-input-frame',
+          resolvedInvalid ? 'app-time-picker--invalid app-input-frame--invalid' : '',
+          resolvedDisabled ? 'app-time-picker--disabled app-input-frame--disabled' : '',
+          readOnly ? 'app-input-frame--readonly' : '',
+          overlay.visible ? 'app-input-frame--active' : '',
           className,
         ]
           .filter(Boolean)

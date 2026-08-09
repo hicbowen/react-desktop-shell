@@ -33,6 +33,7 @@ import type {
 } from './types'
 import { useDatePickerOverlay } from './useDatePickerOverlay'
 import { useResolvedVisibleMonths } from './useResolvedVisibleMonths'
+import '../input-frame/AppInputFrame.css'
 import './AppDatePicker.css'
 
 type RangeEditTarget = 'start' | 'end'
@@ -432,8 +433,11 @@ export function AppDateRangePicker({
         className={[
           'app-date-picker',
           'app-date-range-picker',
-          resolvedInvalid ? 'app-date-picker--invalid' : '',
-          resolvedDisabled ? 'app-date-picker--disabled' : '',
+          'app-input-frame',
+          resolvedInvalid ? 'app-date-picker--invalid app-input-frame--invalid' : '',
+          resolvedDisabled ? 'app-date-picker--disabled app-input-frame--disabled' : '',
+          readOnly ? 'app-input-frame--readonly' : '',
+          overlay.visible ? 'app-input-frame--active' : '',
           className,
         ]
           .filter(Boolean)

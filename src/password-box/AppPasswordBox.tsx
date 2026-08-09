@@ -5,6 +5,7 @@ import { useAppFieldContext } from '../field/AppFieldContext'
 import { useAppLocale } from '../localization/useAppLocale'
 import { AppTooltip } from '../tooltip'
 import type { AppPasswordBoxProps } from './types'
+import '../input-frame/AppInputFrame.css'
 import '../text-input/AppTextInput.css'
 import './AppPasswordBox.css'
 
@@ -65,7 +66,7 @@ export const AppPasswordBox = forwardRef<HTMLInputElement, AppPasswordBoxProps>(
   const revealLabel = revealed ? messages.passwordBox.hide : messages.passwordBox.show
 
   return <span className={['app-password-box', className].filter(Boolean).join(' ')}>
-    <span className={['app-text-box', `app-text-box--${size}`, resolvedInvalid ? 'app-text-box--invalid' : '', resolvedDisabled ? 'app-text-box--disabled' : ''].filter(Boolean).join(' ')}>
+    <span className={['app-text-box', 'app-input-frame', `app-text-box--${size}`, resolvedInvalid ? 'app-text-box--invalid app-input-frame--invalid' : '', resolvedDisabled ? 'app-text-box--disabled app-input-frame--disabled' : '', readOnly ? 'app-input-frame--readonly' : ''].filter(Boolean).join(' ')}>
       <input
         {...props}
         aria-describedby={ariaDescribedBy ?? field?.describedBy}

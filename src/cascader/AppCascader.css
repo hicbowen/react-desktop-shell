@@ -1,8 +1,5 @@
-.app-cascader { position: relative; min-height: 32px; min-width: 180px; display: inline-flex; align-items: center; box-sizing: border-box; color: var(--app-shell-text-color, #1f1f1f); background: var(--app-shell-card-bg, #fff); border: 1px solid var(--app-shell-border-color, rgb(0 0 0 / 18%)); border-bottom-color: var(--app-shell-secondary-text-color, rgb(0 0 0 / 42%)); border-radius: 5px; }
-.app-cascader:focus-within { border-bottom-color: var(--app-shell-accent-color, #005fb8); box-shadow: inset 0 -1px var(--app-shell-accent-color, #005fb8); }
+.app-cascader { min-height: 32px; min-width: 180px; display: inline-flex; align-items: center; }
 .app-cascader--compact { min-height: 27px; }
-.app-cascader--invalid { border-bottom-color: var(--app-shell-danger-color, #c42b1c); }
-.app-cascader--disabled { color: var(--app-shell-disabled-text-color, rgb(0 0 0 / 36%)); background: var(--app-shell-card-hover-bg, rgb(0 0 0 / 4%)); }
 .app-cascader__trigger { min-width: 0; min-height: inherit; display: flex; align-items: center; flex: 1; padding: 0 52px 0 9px; overflow: hidden; color: inherit; background: transparent; border: 0; outline: 0; font: inherit; font-size: 13px; text-align: left; }
 .app-cascader__value, .app-cascader__placeholder { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .app-cascader__placeholder { color: var(--app-shell-secondary-text-color, rgb(0 0 0 / 62%)); }

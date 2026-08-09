@@ -13,6 +13,7 @@ import { useAppFieldContext } from '../field/AppFieldContext'
 import { useAppLocale } from '../localization/useAppLocale'
 import { AppAnchoredPopup } from '../overlay/AppAnchoredPopup'
 import type { AppAutoCompleteOption, AppAutoCompleteProps } from './types'
+import '../input-frame/AppInputFrame.css'
 import './AppAutoComplete.css'
 
 export const AppAutoComplete = forwardRef<HTMLInputElement, AppAutoCompleteProps>(
@@ -136,9 +137,12 @@ export const AppAutoComplete = forwardRef<HTMLInputElement, AppAutoCompleteProps
     const showPanel = visible && !resolvedDisabled && !readOnly
     const classes = [
       'app-auto-complete',
+      'app-input-frame',
       `app-auto-complete--${size}`,
-      resolvedInvalid ? 'app-auto-complete--invalid' : '',
-      resolvedDisabled ? 'app-auto-complete--disabled' : '',
+      resolvedInvalid ? 'app-auto-complete--invalid app-input-frame--invalid' : '',
+      resolvedDisabled ? 'app-auto-complete--disabled app-input-frame--disabled' : '',
+      readOnly ? 'app-input-frame--readonly' : '',
+      showPanel ? 'app-input-frame--active' : '',
       className,
     ].filter(Boolean).join(' ')
 

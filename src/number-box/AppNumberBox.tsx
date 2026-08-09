@@ -7,6 +7,7 @@ import { useAppFieldContext } from '../field/AppFieldContext'
 import { useAppLocale } from '../localization/useAppLocale'
 import { AppPopover } from '../popover'
 import type { AppNumberBoxProps } from './types'
+import '../input-frame/AppInputFrame.css'
 import './AppNumberBox.css'
 
 function resolveBounds(min?: number, max?: number) {
@@ -59,6 +60,7 @@ export const AppNumberBox = forwardRef<HTMLInputElement, AppNumberBoxProps>(func
   const compactPanelRef = useRef<HTMLDivElement>(null)
   const [compactOpen, setCompactOpen] = useState(false)
   const resolvedDisabled = disabled ?? field?.disabled ?? false
+  const resolvedInvalid = ariaInvalid ?? field?.invalid
   const controlled = value !== undefined
   const initialValue = defaultValue != null && Number.isFinite(defaultValue)
     ? normalizeNumber(defaultValue, min, max, precision)
@@ -146,5 +148,5 @@ export const AppNumberBox = forwardRef<HTMLInputElement, AppNumberBoxProps>(func
   const button = (direction: 1 | -1, label: string, icon: ReactNode, enabled: boolean) => <button aria-label={label} disabled={!enabled} onClick={() => changeBy(direction)} onPointerDown={(event) => event.preventDefault()} type="button"><span aria-hidden="true" className="app-number-box__button-icon">{icon}</span></button>
   const compactControls = spinButtonPlacement === 'compact' ? <AppPopover ariaLabel={messages.numberBox.openActions} className="app-number-box__compact-popover" offset={6} onOpenChange={setCompactOpen} open={compactOpen} placement="right" trigger={<button aria-label={messages.numberBox.openActions} className="app-number-box__compact-trigger" disabled={resolvedDisabled || readOnly} onBlur={handleCompactTriggerBlur} onFocus={handleCompactTriggerFocus} onPointerDown={(event) => event.preventDefault()} type="button"><span aria-hidden="true" className="app-number-box__button-icon"><ChevronUpDown16Regular /></span></button>}><div className="app-number-box__compact-panel" onBlur={handleCompactPanelBlur} ref={compactPanelRef}>{button(1, messages.numberBox.increase, <ChevronUp16Regular />, canIncrease)}{button(-1, messages.numberBox.decrease, <ChevronDown16Regular />, canDecrease)}</div></AppPopover> : null
 
-  return <span className={['app-number-box', `app-number-box--${spinButtonPlacement}`, resolvedDisabled ? 'app-number-box--disabled' : '', className].filter(Boolean).join(' ')} ref={rootRef} style={style}><input {...rest} aria-describedby={ariaDescribedBy ?? field?.describedBy} aria-invalid={(ariaInvalid ?? field?.invalid) || undefined} aria-valuemax={bounds.max} aria-valuemin={bounds.min} aria-valuenow={committedValue ?? undefined} aria-valuetext={formattedCommittedValue} disabled={resolvedDisabled} id={id ?? field?.controlId} inputMode="decimal" onBlur={handleBlur} onChange={(event) => setEditingText(event.target.value)} onFocus={handleFocus} onKeyDown={handleKeyDown} readOnly={readOnly} ref={ref} required={required ?? field?.required} role="spinbutton" type="text" value={editingText} />{spinButtonPlacement === 'inline' ? <span className="app-number-box__buttons">{button(1, messages.numberBox.increase, <ChevronUp16Regular />, canIncrease)}{button(-1, messages.numberBox.decrease, <ChevronDown16Regular />, canDecrease)}</span> : compactControls}</span>
+  return <span className={['app-number-box', 'app-input-frame', `app-number-box--${spinButtonPlacement}`, resolvedInvalid ? 'app-input-frame--invalid' : '', resolvedDisabled ? 'app-number-box--disabled app-input-frame--disabled' : '', readOnly ? 'app-input-frame--readonly' : '', compactOpen ? 'app-input-frame--active' : '', className].filter(Boolean).join(' ')} ref={rootRef} style={style}><input {...rest} aria-describedby={ariaDescribedBy ?? field?.describedBy} aria-invalid={resolvedInvalid || undefined} aria-valuemax={bounds.max} aria-valuemin={bounds.min} aria-valuenow={committedValue ?? undefined} aria-valuetext={formattedCommittedValue} disabled={resolvedDisabled} id={id ?? field?.controlId} inputMode="decimal" onBlur={handleBlur} onChange={(event) => setEditingText(event.target.value)} onFocus={handleFocus} onKeyDown={handleKeyDown} readOnly={readOnly} ref={ref} required={required ?? field?.required} role="spinbutton" type="text" value={editingText} />{spinButtonPlacement === 'inline' ? <span className="app-number-box__buttons">{button(1, messages.numberBox.increase, <ChevronUp16Regular />, canIncrease)}{button(-1, messages.numberBox.decrease, <ChevronDown16Regular />, canDecrease)}</span> : compactControls}</span>
 })

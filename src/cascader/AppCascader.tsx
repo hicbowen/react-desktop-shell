@@ -5,6 +5,7 @@ import { useAppFieldContext } from '../field/AppFieldContext'
 import { useAppLocale } from '../localization/useAppLocale'
 import { AppAnchoredPopup } from '../overlay/AppAnchoredPopup'
 import type { AppCascaderOption, AppCascaderProps } from './types'
+import '../input-frame/AppInputFrame.css'
 import './AppCascader.css'
 
 function resolvePath(options: AppCascaderOption[], values: string[]) {
@@ -150,7 +151,7 @@ export const AppCascader = forwardRef<HTMLButtonElement, AppCascaderProps>(funct
       ?? selectedOptions.map((option, index) => <span key={`${option.value}-${index}`}>{index ? separator : null}{option.label}</span>)
     : null
   const activeDescendant = activePath[activeLevel] == null ? undefined : `${treeId}-${activeLevel}-${activePath[activeLevel]}`
-  const classes = ['app-cascader', `app-cascader--${size}`, resolvedInvalid ? 'app-cascader--invalid' : '', resolvedDisabled ? 'app-cascader--disabled' : '', className].filter(Boolean).join(' ')
+  const classes = ['app-cascader', 'app-input-frame', `app-cascader--${size}`, resolvedInvalid ? 'app-cascader--invalid app-input-frame--invalid' : '', resolvedDisabled ? 'app-cascader--disabled app-input-frame--disabled' : '', visible ? 'app-input-frame--active' : '', className].filter(Boolean).join(' ')
 
   return <span className={classes} ref={rootRef} style={style}>
     <button

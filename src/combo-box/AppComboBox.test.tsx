@@ -73,6 +73,7 @@ describe('AppComboBox', () => {
       </AppField>,
     )
     expect(input().getAttribute('aria-invalid')).toBe('true')
+    expect(container.querySelector('.app-combo-box')?.classList).toContain('app-input-frame--invalid')
     expect(input().required).toBe(true)
     expect(input().getAttribute('aria-describedby')).not.toBeNull()
     act(() => container.querySelector<HTMLButtonElement>('.app-combo-box__clear')?.click())
@@ -96,6 +97,11 @@ describe('AppComboBox', () => {
     expect(openChange).toHaveBeenCalledWith(true)
     expect(input().getAttribute('aria-expanded')).toBe('false')
     expect(input().value).toBe('Python')
+  })
+
+  it('keeps the shared focus decoration active while its popup is open', () => {
+    render(<AppComboBox open options={options} />)
+    expect(container.querySelector('.app-combo-box')?.classList).toContain('app-input-frame--active')
   })
 
   it('restores focus after keyboard selection', () => {
