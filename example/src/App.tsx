@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { AppPage, AppRail, AppShell, AppTitleBar, useResolvedAppLocale, type AppLocale, type AppTheme, type PaneDisplayMode } from '../../src'
-import { DemoShellContext } from './components/DemoShellContext'
+import { DemoShellContext, type DemoPageLayout } from './components/DemoShellContext'
 import { DemoComponentPage } from './components/DemoComponentPage'
 import { DemoSearch } from './components/DemoSearch'
 import { demoPages, getDemoPages, getRailFooterItems, getRailItems } from './demoRegistry'
@@ -15,6 +15,10 @@ export function ExampleApp() {
   const [theme, setTheme] = useState<AppTheme>('system')
   const [locale, setLocale] = useState<AppLocale>('system')
   const [railDisplayMode, setRailDisplayMode] = useState<PaneDisplayMode>('auto')
+  const [pageLayoutRequest, setPageLayoutRequest] = useState<{
+    key: string
+    layout: DemoPageLayout
+  } | null>(null)
   const resolvedLocale = useResolvedAppLocale(locale)
   const localizedPages = useMemo(() => getDemoPages(resolvedLocale), [resolvedLocale])
   const railItems = useMemo(() => getRailItems(localizedPages), [localizedPages])
@@ -25,6 +29,9 @@ export function ExampleApp() {
     const nextHash = getDemoHash(nextKey)
     if (window.location.hash !== nextHash) window.location.hash = nextHash
   }, [])
+  const setPageLayout = useCallback((layout: DemoPageLayout | null) => {
+    setPageLayoutRequest(layout ? { key: activeKey, layout } : null)
+  }, [activeKey])
   useEffect(() => {
     const handleHashChange = () => setActiveKey(getDemoKeyFromHash(window.location.hash, demoPageKeys))
     window.addEventListener('hashchange', handleHashChange)
@@ -33,6 +40,11 @@ export function ExampleApp() {
   const currentPage = localizedPages.find((page) => page.key === activeKey) ?? localizedPages[0]!
   const Page = currentPage.component
   const isComponentPage = currentPage.category !== 'getting-started' && currentPage.category !== 'settings'
+  const pageLayout = pageLayoutRequest?.key === activeKey
+    ? pageLayoutRequest.layout
+    : currentPage.layout === 'fill'
+      ? 'fill'
+      : 'flow'
   const shellContext = useMemo(
     () => ({
       theme,
@@ -43,8 +55,9 @@ export function ExampleApp() {
       setRailDisplayMode,
       pages: localizedPages,
       navigateTo,
+      setPageLayout,
     }),
-    [locale, theme, railDisplayMode, localizedPages, navigateTo],
+    [locale, theme, railDisplayMode, localizedPages, navigateTo, setPageLayout],
   )
 
   return (
@@ -69,7 +82,7 @@ export function ExampleApp() {
       >
         <AppPage
           key={activeKey}
-          layout={currentPage.layout === 'fill' ? 'fill' : 'flow'}
+          layout={pageLayout}
           title={
             <span className="example-page-title">
               <span>{currentPage.label}</span>
@@ -82,7 +95,12 @@ export function ExampleApp() {
           actions={<DemoSearch pages={localizedPages} fallbackPages={demoPages} onNavigate={navigateTo} />}
         >
           {isComponentPage ? (
-            <DemoComponentPage definition={currentPage} pages={localizedPages} onNavigate={navigateTo}>
+            <DemoComponentPage
+              definition={currentPage}
+              layout={pageLayout}
+              pages={localizedPages}
+              onNavigate={navigateTo}
+            >
               <Page />
             </DemoComponentPage>
           ) : <Page />}

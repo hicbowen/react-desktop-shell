@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react'
 import type { DemoPageDefinition } from '../demoRegistry'
+import type { DemoPageLayout } from './DemoShellContext'
 import { useDemoI18n } from '../i18n/DemoI18nContext'
 import { getDemoSource } from './demoSource'
 import { DemoSourceContext } from './DemoSourceContext'
@@ -7,11 +8,13 @@ import { DemoSourceContext } from './DemoSourceContext'
 export function DemoComponentPage({
   children,
   definition,
+  layout,
   pages,
   onNavigate,
 }: {
   children: ReactNode
   definition: DemoPageDefinition
+  layout: DemoPageLayout
   pages: DemoPageDefinition[]
   onNavigate: (key: string) => void
 }) {
@@ -26,7 +29,7 @@ export function DemoComponentPage({
     <DemoSourceContext.Provider value={source ?? null}>
     <div className={[
       'demo-component-page',
-      definition.layout === 'fill' ? 'demo-component-page--fill' : '',
+      layout === 'fill' ? 'demo-component-page--fill' : '',
     ].filter(Boolean).join(' ')}>
       <div className="demo-component-meta" aria-label={text.detailsLabel}>
         <div className="demo-component-meta__context">

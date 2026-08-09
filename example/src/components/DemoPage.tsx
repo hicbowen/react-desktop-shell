@@ -3,6 +3,7 @@ import {
   cloneElement,
   isValidElement,
   useContext,
+  useLayoutEffect,
   type HTMLAttributes,
   type ReactElement,
   type ReactNode,
@@ -11,6 +12,7 @@ import { useDemoI18n } from '../i18n/DemoI18nContext'
 import { localizeInteractiveText } from '../i18n/interactiveTranslations'
 import { localizeSectionText } from '../i18n/sectionTranslations'
 import { DemoSourceContext } from './DemoSourceContext'
+import { DemoShellContext, type DemoPageLayout } from './DemoShellContext'
 import { DemoSourcePanel } from './DemoSourcePanel'
 
 const translatedPropNames = new Set([
@@ -153,13 +155,25 @@ function attachSectionSources(
   })
 }
 
+interface DemoPageProps extends HTMLAttributes<HTMLDivElement> {
+  pageLayout?: DemoPageLayout
+}
+
 export function DemoPage({
   children,
   className = '',
+  pageLayout,
   ...rest
-}: HTMLAttributes<HTMLDivElement>) {
+}: DemoPageProps) {
   const { locale } = useDemoI18n()
   const sourceContext = useContext(DemoSourceContext)
+  const shellContext = useContext(DemoShellContext)
+  const setPageLayout = shellContext?.setPageLayout
+  useLayoutEffect(() => {
+    if (!pageLayout || !setPageLayout) return
+    setPageLayout(pageLayout)
+    return () => setPageLayout(null)
+  }, [pageLayout, setPageLayout])
   const resolvedChildren = sourceContext
     ? attachSectionSources(children, sourceContext, { current: 0 })
     : children

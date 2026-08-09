@@ -1,6 +1,8 @@
 import { createContext, useContext } from 'react'
 import type { AppLocale, AppTheme, PaneDisplayMode } from '../../../src'
 
+export type DemoPageLayout = 'flow' | 'fill'
+
 type DemoShellValue = {
   theme: AppTheme
   setTheme: (theme: AppTheme) => void
@@ -10,6 +12,7 @@ type DemoShellValue = {
   setRailDisplayMode: (mode: PaneDisplayMode) => void
   pages?: readonly { key: string; category: string }[]
   navigateTo?: (key: string) => void
+  setPageLayout?: (layout: DemoPageLayout | null) => void
 }
 
 export const DemoShellContext = createContext<DemoShellValue | null>(null)

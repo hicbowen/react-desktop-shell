@@ -1,10 +1,11 @@
 // @vitest-environment jsdom
 import { act } from 'react'
 import { createRoot } from 'react-dom/client'
-import { afterEach, beforeEach, describe, expect, it } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { DemoI18nContext, demoMessages } from '../i18n/DemoI18nContext'
 import { DemoPage, DemoSection } from './DemoPage'
 import { DemoSourceContext } from './DemoSourceContext'
+import { DemoShellContext } from './DemoShellContext'
 
 function ExampleOptions({
   ariaLabel,
@@ -56,6 +57,33 @@ describe('DemoPage localization', () => {
     expect(host.querySelector('[aria-label]')?.getAttribute('aria-label')).toBe('布局')
     expect(host.querySelector('[data-value]')?.textContent).toBe('设计')
     expect(host.querySelector('[data-value]')?.getAttribute('data-value')).toBe('design')
+  })
+
+  it('reports requested page layout changes to the example shell', () => {
+    const setPageLayout = vi.fn()
+    const shellValue = {
+      locale: 'en-US' as const,
+      railDisplayMode: 'expanded' as const,
+      setLocale: vi.fn(),
+      setPageLayout,
+      setRailDisplayMode: vi.fn(),
+      setTheme: vi.fn(),
+      theme: 'light' as const,
+    }
+
+    act(() => root.render(
+      <DemoShellContext.Provider value={shellValue}>
+        <DemoPage pageLayout="fill">Preview</DemoPage>
+      </DemoShellContext.Provider>,
+    ))
+    expect(setPageLayout).toHaveBeenLastCalledWith('fill')
+
+    act(() => root.render(
+      <DemoShellContext.Provider value={shellValue}>
+        <DemoPage pageLayout="flow">Preview</DemoPage>
+      </DemoShellContext.Provider>,
+    ))
+    expect(setPageLayout).toHaveBeenLastCalledWith('flow')
   })
 
   it('attaches each extracted source to its matching demo section', () => {

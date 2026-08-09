@@ -15,7 +15,7 @@ export function AppDataTablePage() {
   const [selection, setSelection] = useState<RowSelectionState>({})
   const [sticky, setSticky] = useState(true)
   const [resizing, setResizing] = useState(true)
-  const [fixedHeight, setFixedHeight] = useState(true)
+  const [fixedHeight, setFixedHeight] = useState(false)
   const [fill, setFill] = useState(false)
   const [pagination, setPagination] = useState(true)
   const [virtualized, setVirtualized] = useState(false)
@@ -43,7 +43,10 @@ export function AppDataTablePage() {
       : ''
 
   return (
-    <DemoPage className={fill ? 'demo-page--fill' : ''}>
+    <DemoPage
+      className={fill ? 'demo-page--fill' : ''}
+      pageLayout={fill ? 'fill' : 'flow'}
+    >
       <DemoControls>
         <AppToggleSwitch checked={sticky} label={t('Sticky header')} onCheckedChange={setSticky} size="compact" />
         <AppToggleSwitch checked={resizing} label={t('Column resizing')} onCheckedChange={setResizing} size="compact" />
