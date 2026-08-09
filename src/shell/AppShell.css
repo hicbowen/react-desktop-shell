@@ -74,7 +74,7 @@
   --app-shell-content-border-color: var(--app-shell-border-color);
   --app-titlebar-height: 36px;
   --app-sidebar-expanded-width: 316px;
-  --app-sidebar-compact-width: 56px;
+  --app-sidebar-compact-width: 62px;
   --app-sidebar-width: var(--app-sidebar-expanded-width);
   --rds-motion-fast: 120ms;
   --rds-motion-normal: 180ms;
@@ -353,7 +353,7 @@
   min-width: 0;
   min-height: 0;
   margin: var(--app-shell-content-margin);
-  overflow: auto;
+  overflow: hidden;
   background: var(--app-shell-content-bg);
   border: 0;
   border-radius: var(--app-shell-content-radius);

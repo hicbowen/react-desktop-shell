@@ -13,6 +13,8 @@ export const AppScrollArea = forwardRef<HTMLDivElement, AppScrollAreaProps>(
       className,
       children,
       style,
+      viewportClassName,
+      viewportStyle,
       ...rest
     },
     ref,
@@ -52,6 +54,11 @@ export const AppScrollArea = forwardRef<HTMLDivElement, AppScrollAreaProps>(
       classNames.push(className)
     }
 
+    const viewportClassNames = ['app-scroll-area__viewport']
+    if (viewportClassName) {
+      viewportClassNames.push(viewportClassName)
+    }
+
     const allowsVertical = orientation !== 'horizontal'
     const allowsHorizontal = orientation !== 'vertical'
     const verticalVisible =
@@ -73,7 +80,12 @@ export const AppScrollArea = forwardRef<HTMLDivElement, AppScrollAreaProps>(
         data-scrollbar={scrollbar}
         style={style}
       >
-        <div {...rest} className="app-scroll-area__viewport" ref={viewportRef}>
+        <div
+          {...rest}
+          className={viewportClassNames.join(' ')}
+          ref={viewportRef}
+          style={viewportStyle}
+        >
           {children}
         </div>
         {scrollbar !== 'hidden' && allowsVertical ? (

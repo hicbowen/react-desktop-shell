@@ -859,9 +859,11 @@ Scroll areas do not receive `tabIndex` or `role="region"` automatically. Add
 `tabIndex={0}` only when users need to focus the scrolling region directly, and
 provide an accessible label with it. The forwarded ref and HTML attributes
 target the native scrolling viewport; `className` and `style` target the outer
-layout container. Custom scrollbar controls are pointer-only and hidden from
-the accessibility tree so the viewport remains the single keyboard and assistive
-technology surface. Forced-colors mode falls back to the platform scrollbar.
+layout container. Use `viewportClassName` and `viewportStyle` when styling the
+native viewport itself. Custom scrollbar controls are pointer-only and hidden
+from the accessibility tree so the viewport remains the single keyboard and
+assistive technology surface. Forced-colors mode falls back to the platform
+scrollbar.
 
 The WinUI scrollbar overlay is scoped to `AppScrollArea`; existing internal
 library containers retain their native fallback until they are migrated. It does
@@ -1881,7 +1883,7 @@ Prefer `AppShell` for WinUI-style pane display. `displayMode` controls how the N
   sidebar={{
     displayMode: 'auto',
     expandedWidth: 316,
-    compactWidth: 56,
+    compactWidth: 62,
     expandedBreakpoint: 1008,
     compactBreakpoint: 640,
   }}
@@ -1976,7 +1978,7 @@ Override variables on `.app-shell`, `.app-page`, `.app-rail`, and `.app-title-ba
 | `--app-page-text-color`            | `var(--app-shell-text-color, #1f1f1f)` |
 | `--app-page-muted-text-color`      | `var(--app-shell-muted-text-color, #707070)` |
 | `--app-rail-width`                 | `316px`               |
-| `--app-rail-collapsed-width`       | `56px`                |
+| `--app-rail-collapsed-width`       | `62px`                |
 | `--app-rail-text-color`            | `var(--app-shell-text-color, #1f1f1f)` |
 | `--app-rail-muted-text-color`      | `var(--app-shell-muted-text-color, rgba(0, 0, 0, 0.58))` |
 | `--app-rail-hover-bg`              | `var(--app-shell-hover-bg, rgba(0, 0, 0, 0.05))` |
@@ -2395,7 +2397,7 @@ Calling `show` again with the same id updates the existing toast. At most four t
 | `defaultPaneOpen`     | `boolean`                      | `false` | Initial uncontrolled minimal overlay open state. |
 | `onPaneOpenChange`    | `(open: boolean) => void`      | `undefined` | Called when the minimal overlay opens or closes. |
 | `expandedWidth`       | `number`                       | `316` | Expanded pane width in pixels. |
-| `compactWidth`        | `number`                       | `56` | Compact rail width in pixels. |
+| `compactWidth`        | `number`                       | `62` | Compact rail width in pixels. |
 | `expandedBreakpoint`  | `number`                       | `1008` | Auto mode width at which the pane resolves to expanded. |
 | `compactBreakpoint`   | `number`                       | `640` | Auto mode width at which the pane resolves to compact instead of minimal. |
 | `collapsed`           | `boolean`                      | `undefined` | Deprecated compatibility field. Use `displayMode`. |

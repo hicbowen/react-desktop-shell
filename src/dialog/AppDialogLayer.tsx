@@ -9,9 +9,9 @@ import {
 } from 'react'
 import type { CSSProperties } from 'react'
 import { AppOverlayHostContext } from '../overlay/AppOverlayHostContext'
+import { AppScrollArea } from '../scroll-area/AppScrollArea'
 import type { AppDialogRegistration } from './AppDialogContext'
 import './AppDialogLayer.css'
-import '../scroll-area/AppScrollArea.css'
 
 const EXIT_DURATION = 180
 const FOCUSABLE_SELECTOR = [
@@ -351,9 +351,13 @@ function AppDialogSurface({
             </header>
           ) : null}
           {dialog.children ? (
-            <div className="app-dialog__content app-scrollbar">
+            <AppScrollArea
+              className="app-dialog__content-scroll"
+              orientation="both"
+              viewportClassName="app-dialog__content"
+            >
               {dialog.children}
-            </div>
+            </AppScrollArea>
           ) : null}
           {dialog.actions ? (
             <footer className="app-dialog__actions">{dialog.actions}</footer>

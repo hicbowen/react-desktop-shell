@@ -74,6 +74,29 @@ describe('AppDialogLayer', () => {
     expect(container.textContent).not.toContain('正在检查更新……')
   })
 
+  it('uses AppScrollArea for dialog content below the fixed header', () => {
+    render([
+      registration('scroll-content', {
+        title: 'Scrollable dialog',
+        children: 'Long dialog content',
+      }),
+    ])
+
+    const scrollArea = container.querySelector<HTMLElement>(
+      '.app-dialog__content-scroll',
+    )
+    const viewport = scrollArea?.querySelector<HTMLElement>(
+      ':scope > .app-dialog__content',
+    )
+    expect(scrollArea?.classList).toContain('app-scroll-area')
+    expect(scrollArea?.dataset.orientation).toBe('both')
+    expect(viewport?.classList).toContain('app-scroll-area__viewport')
+    expect(viewport?.textContent).toContain('Long dialog content')
+    expect(scrollArea?.previousElementSibling?.classList).toContain(
+      'app-dialog__header',
+    )
+  })
+
   it('uses the latest action state and callback', () => {
     const initialCallback = vi.fn()
     const latestCallback = vi.fn()

@@ -1,4 +1,4 @@
-import type { HTMLAttributes } from 'react'
+import type { CSSProperties, HTMLAttributes } from 'react'
 
 export type AppScrollAreaOrientation = 'vertical' | 'horizontal' | 'both'
 export type AppScrollAreaScrollbar = 'auto' | 'always' | 'hidden'
@@ -8,4 +8,6 @@ export interface AppScrollAreaProps extends HTMLAttributes<HTMLDivElement> {
   orientation?: AppScrollAreaOrientation
   scrollbar?: AppScrollAreaScrollbar
   gutter?: AppScrollAreaGutter
+  viewportClassName?: string
+  viewportStyle?: CSSProperties
 }

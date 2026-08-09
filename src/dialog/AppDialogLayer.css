@@ -78,10 +78,14 @@
   -webkit-user-select: text;
 }
 
+.app-dialog__content-scroll {
+  min-height: 0;
+  flex: 0 1 auto;
+}
+
 .app-dialog__content {
   min-height: 0;
   padding: 10px 22px 18px;
-  overflow: auto;
   font-size: 14px;
   line-height: 1.5;
 }

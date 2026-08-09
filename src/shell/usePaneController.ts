@@ -3,7 +3,7 @@ import type { RefObject } from 'react'
 import type { AppShellSidebarOptions, PaneDisplayMode } from './types'
 
 const DEFAULT_SIDEBAR_EXPANDED_WIDTH = 316
-const DEFAULT_SIDEBAR_COMPACT_WIDTH = 56
+const DEFAULT_SIDEBAR_COMPACT_WIDTH = 62
 const DEFAULT_EXPANDED_BREAKPOINT = 1008
 const DEFAULT_COMPACT_BREAKPOINT = 640
 

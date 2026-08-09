@@ -1,7 +1,7 @@
 .app-rail,
 .app-rail-flyout {
   --app-rail-width: var(--app-sidebar-expanded-width, 316px);
-  --app-rail-collapsed-width: var(--app-sidebar-compact-width, 56px);
+  --app-rail-collapsed-width: var(--app-sidebar-compact-width, 62px);
   --app-rail-text-color: var(--app-shell-text-color, #1f1f1f);
   --app-rail-muted-text-color: var(
     --app-shell-muted-text-color,
@@ -69,16 +69,20 @@
   flex-direction: column;
 }
 
-.app-rail__nav {
-  flex: 1;
+.app-rail__nav-scroll {
+  --app-scrollbar-gutter-size: 8px;
+  --app-scrollbar-track-hover-color: color-mix(in srgb, currentcolor 4%, transparent);
+  --app-scrollbar-track-active-color: color-mix(in srgb, currentcolor 7%, transparent);
   min-height: 0;
+  flex: 1;
+}
+
+.app-rail__nav {
   padding: var(--app-rail-nav-top-padding) var(--app-rail-nav-padding)
     var(--app-rail-nav-padding);
   display: flex;
   flex-direction: column;
   gap: 2px;
-  overflow-x: hidden;
-  overflow-y: auto;
 }
 
 .app-rail__nav--fade-bottom {

@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 import type { AppPageProps } from './types'
+import { AppScrollArea } from './scroll-area/AppScrollArea'
 import './AppPage.css'
-import './scroll-area/AppScrollArea.css'
 
 export function AppPage({
   title,
@@ -37,7 +37,7 @@ export function AppPage({
   }, [className, layout, sidePane])
 
   const innerClassName = useMemo(() => {
-    const classes = ['app-page__inner', 'app-scrollbar']
+    const classes = ['app-page__inner']
 
     if (animated) {
       classes.push('app-page--animated')
@@ -63,7 +63,11 @@ export function AppPage({
           sidePane ? ' app-page__layout' : ''
         }`}
       >
-        <div className={innerClassName}>
+        <AppScrollArea
+          className="app-page__scroll-area"
+          orientation="both"
+          viewportClassName={innerClassName}
+        >
           {hasHeader && (
             <header className="app-page__header">
               <div className="app-page__heading">
@@ -80,7 +84,7 @@ export function AppPage({
           <div className={contentClassNames} style={contentStyle}>
             {children}
           </div>
-        </div>
+        </AppScrollArea>
         {sidePane ? (
           <div className="app-page__side-pane-slot">{sidePane}</div>
         ) : null}

@@ -61,14 +61,20 @@
   > .app-scroll-area__viewport,
 .app-scroll-area--gutter-stable.app-scroll-area--both
   > .app-scroll-area__viewport {
-  margin-inline-end: var(--app-scrollbar-size, 12px);
+  margin-inline-end: var(
+    --app-scrollbar-gutter-size,
+    var(--app-scrollbar-size, 12px)
+  );
 }
 
 .app-scroll-area--gutter-stable.app-scroll-area--horizontal
   > .app-scroll-area__viewport,
 .app-scroll-area--gutter-stable.app-scroll-area--both
   > .app-scroll-area__viewport {
-  margin-block-end: var(--app-scrollbar-size, 12px);
+  margin-block-end: var(
+    --app-scrollbar-gutter-size,
+    var(--app-scrollbar-size, 12px)
+  );
 }
 
 .app-scroll-area__scrollbar {
@@ -135,11 +141,17 @@
   flex-direction: row;
 }
 
-.app-scroll-area__scrollbar:hover .app-scroll-area__rail,
+.app-scroll-area__scrollbar:hover .app-scroll-area__rail {
+  background: var(
+    --app-scrollbar-track-hover-color,
+    var(--app-scrollbar-track-expanded-color, rgb(250 250 250 / 78%))
+  );
+}
+
 .app-scroll-area__scrollbar[data-dragging='true'] .app-scroll-area__rail {
   background: var(
-    --app-scrollbar-track-expanded-color,
-    rgb(250 250 250 / 78%)
+    --app-scrollbar-track-active-color,
+    var(--app-scrollbar-track-expanded-color, rgb(250 250 250 / 78%))
   );
 }
 

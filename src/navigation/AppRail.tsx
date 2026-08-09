@@ -1,9 +1,9 @@
 import { useCallback, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import type { AppRailProps } from './types'
 import './AppRail.css'
-import '../scroll-area/AppScrollArea.css'
 import { RailFlyout } from './RailFlyout'
 import { useAppLocale } from '../localization/useAppLocale'
+import { AppScrollArea } from '../scroll-area/AppScrollArea'
 import { RailItem as RailItemView } from './RailItem'
 import { RailSubmenu as RailSubmenuView } from './RailSubmenu'
 import {
@@ -29,7 +29,7 @@ export function AppRail({
 }: AppRailProps) {
   const { messages } = useAppLocale()
   const railRef = useRef<HTMLElement | null>(null)
-  const navRef = useRef<HTMLElement | null>(null)
+  const navRef = useRef<HTMLDivElement | null>(null)
   const triggerRefs = useRef(new Map<string, HTMLButtonElement>())
   const [canScrollDown, setCanScrollDown] = useState(false)
   const isValueControlled = value !== undefined
@@ -115,13 +115,16 @@ export function AppRail({
   return (
     <aside ref={railRef} className={rootClassName} style={style}>
       <div className="app-rail__nav-region">
-        <nav
+        <AppScrollArea
           ref={navRef}
-          className={`app-rail__nav app-scrollbar${
+          className="app-rail__nav-scroll"
+          gutter="stable"
+          viewportClassName={`app-rail__nav${
             canScrollDown ? ' app-rail__nav--fade-bottom' : ''
           }`}
           aria-label={messages.shell.primaryNavigation}
           onScroll={updateScrollHint}
+          role="navigation"
         >
           {items.map((item, index) => {
             if (isRailGroup(item)) {
@@ -176,7 +179,7 @@ export function AppRail({
               />
             )
           })}
-        </nav>
+        </AppScrollArea>
       </div>
 
       {footerItems.length > 0 && (

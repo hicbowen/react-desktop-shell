@@ -107,6 +107,18 @@ describe('AppScrollArea', () => {
     expect(area().style.height).toBe('240px')
   })
 
+  it('merges viewportClassName and forwards viewportStyle', () => {
+    render(
+      <AppScrollArea
+        viewportClassName="custom-viewport"
+        viewportStyle={{ paddingTop: 12 }}
+      />,
+    )
+    expect(viewport().classList).toContain('app-scroll-area__viewport')
+    expect(viewport().classList).toContain('custom-viewport')
+    expect(viewport().style.paddingTop).toBe('12px')
+  })
+
   it('forwards aria and custom data attributes', () => {
     render(
       <AppScrollArea

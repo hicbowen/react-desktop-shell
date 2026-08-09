@@ -87,6 +87,37 @@ describe('AppShell locale', () => {
     expect(text('child')).toBe('en-US:0:12')
   })
 
+  it('uses AppScrollArea for shell content and preserves content styling', () => {
+    render(
+      <AppShell
+        contentClassName="custom-shell-content"
+        contentStyle={{ paddingTop: 14 }}
+      >
+        Shell content
+      </AppShell>,
+    )
+
+    const scrollArea = container.querySelector<HTMLElement>(
+      '.app-shell__content',
+    )
+    const viewport = scrollArea?.querySelector<HTMLElement>(
+      ':scope > .app-scroll-area__viewport',
+    )
+    expect(scrollArea?.classList).toContain('app-scroll-area')
+    expect(scrollArea?.dataset.orientation).toBe('both')
+    expect(viewport?.classList).toContain('custom-shell-content')
+    expect(viewport?.style.paddingTop).toBe('14px')
+  })
+
+  it('reserves compact rail width without shrinking compact items', () => {
+    render(<AppShell sidebar={{ displayMode: 'compact' }} />)
+
+    const shell = container.querySelector<HTMLElement>('.app-shell')
+    expect(shell?.style.getPropertyValue('--app-sidebar-compact-width')).toBe(
+      '62px',
+    )
+  })
+
   it('keeps the pane toggle and app identity in the title bar across modes', () => {
     render(
       <AppShell

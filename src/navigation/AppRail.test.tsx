@@ -82,6 +82,25 @@ describe('AppRail scroll fade', () => {
     expect(nav().classList).not.toContain('app-rail__nav--fade-bottom')
   })
 
+  it('scrolls only the middle navigation region with AppScrollArea', () => {
+    render(
+      <AppRail
+        footerItems={[{ key: 'settings', label: 'Settings' }]}
+        items={items}
+      />,
+    )
+
+    const scrollArea = container.querySelector('.app-rail__nav-scroll')
+    const footer = container.querySelector('.app-rail__footer')
+
+    expect(scrollArea?.classList).toContain('app-scroll-area')
+    expect(scrollArea?.getAttribute('data-gutter')).toBe('stable')
+    expect(scrollArea?.querySelector('.app-rail__nav')).toBe(nav())
+    expect(nav().getAttribute('role')).toBe('navigation')
+    expect(scrollArea?.contains(footer)).toBe(false)
+    expect(scrollArea?.parentElement?.nextElementSibling).toBe(footer)
+  })
+
   it('applies the fade initially when more content is below', () => {
     scrollHeight = 180
     render(<AppRail items={items} />)

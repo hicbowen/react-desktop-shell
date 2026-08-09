@@ -12,12 +12,12 @@ import { appLocaleSettings } from '../localization/localeSettings'
 import { appLocaleMessages } from '../localization/messages'
 import { useResolvedAppLocale } from '../localization/resolveAppLocale'
 import { useToastStore } from '../toast/AppToastHost'
+import { AppScrollArea } from '../scroll-area/AppScrollArea'
 import {
   defaultClipboardAdapter,
 } from '../context-menu/AppContextMenuTextActions'
 import type { AppShellProps } from './types'
 import './AppShell.css'
-import '../scroll-area/AppScrollArea.css'
 import {
   ShellInlinePane,
   ShellPaneLayer,
@@ -112,16 +112,6 @@ export function AppShell({
     suppressPaneTransition,
   ])
 
-  const contentClassNames = useMemo(() => {
-    const classes = ['app-shell__content', 'app-scrollbar']
-
-    if (contentClassName) {
-      classes.push(contentClassName)
-    }
-
-    return classes.join(' ')
-  }, [contentClassName])
-
   const shellStyle = useMemo(
     () =>
       ({
@@ -198,9 +188,14 @@ export function AppShell({
                 className="app-shell__body"
                 inert={isMinimal && (isPaneOpen || isPaneClosing) ? true : undefined}
               >
-                <div className={contentClassNames} style={contentStyle}>
+                <AppScrollArea
+                  className="app-shell__content"
+                  orientation="both"
+                  viewportClassName={contentClassName}
+                  viewportStyle={contentStyle}
+                >
                   {children}
-                </div>
+                </AppScrollArea>
               </div>
               {hasSidebar && (
                 <ShellPaneLayer

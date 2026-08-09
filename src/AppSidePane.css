@@ -67,11 +67,14 @@
   height: 16px;
 }
 
-.app-side-pane__body {
+.app-side-pane__body-scroll {
   min-height: 0;
   flex: 1;
+}
+
+.app-side-pane__body {
+  min-height: 0;
   padding: 16px 18px;
-  overflow-y: auto;
   font-size: 13px;
   line-height: 1.5;
 }

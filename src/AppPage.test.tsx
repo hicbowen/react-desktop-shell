@@ -40,6 +40,22 @@ describe('AppPage layout', () => {
     expect(page().classList).toContain('app-page--fill')
   })
 
+  it('uses AppScrollArea while keeping the page inner as the viewport', () => {
+    render(<AppPage title="Page">Content</AppPage>)
+
+    const scrollArea = frame().querySelector<HTMLElement>(
+      ':scope > .app-page__scroll-area',
+    )
+    const viewport = scrollArea?.querySelector<HTMLElement>(
+      ':scope > .app-page__inner',
+    )
+    expect(scrollArea?.classList).toContain('app-scroll-area')
+    expect(scrollArea?.dataset.orientation).toBe('both')
+    expect(viewport?.classList).toContain('app-scroll-area__viewport')
+    expect(viewport?.classList).toContain('app-page--animated')
+    expect(viewport?.classList).not.toContain('app-scrollbar')
+  })
+
   it('always renders the stable frame class', () => {
     render(<AppPage title="Page">Content</AppPage>)
 
