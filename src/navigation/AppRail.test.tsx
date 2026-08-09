@@ -94,7 +94,7 @@ describe('AppRail scroll fade', () => {
     const footer = container.querySelector('.app-rail__footer')
 
     expect(scrollArea?.classList).toContain('app-scroll-area')
-    expect(scrollArea?.getAttribute('data-gutter')).toBe('stable')
+    expect(scrollArea?.getAttribute('data-gutter')).toBe('auto')
     expect(scrollArea?.querySelector('.app-rail__nav')).toBe(nav())
     expect(nav().getAttribute('role')).toBe('navigation')
     expect(scrollArea?.contains(footer)).toBe(false)

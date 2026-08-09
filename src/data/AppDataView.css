@@ -351,6 +351,11 @@
   flex: 1 1 auto;
 }
 
+.app-data-table__filter-menu-scroll[data-overflow-y='true']
+  > .app-data-table__filter-menu-content {
+  margin-inline-end: var(--app-scrollbar-gutter-size);
+}
+
 .app-data-table__filter-menu-content {
   box-sizing: border-box;
   padding: 6px;

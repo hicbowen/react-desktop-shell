@@ -180,7 +180,7 @@ describe('AppDataTable controls', () => {
       '.app-data-table__filter-menu-scroll',
     )
     expect(scrollArea?.classList).toContain('app-scroll-area')
-    expect(scrollArea?.getAttribute('data-gutter')).toBe('stable')
+    expect(scrollArea?.getAttribute('data-gutter')).toBe('auto')
     expect(
       scrollArea?.querySelector('.app-data-table__filter-menu-content'),
     ).not.toBeNull()

@@ -118,7 +118,6 @@ export function AppRail({
         <AppScrollArea
           ref={navRef}
           className="app-rail__nav-scroll"
-          gutter="stable"
           viewportClassName={`app-rail__nav${
             canScrollDown ? ' app-rail__nav--fade-bottom' : ''
           }`}

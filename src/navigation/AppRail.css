@@ -77,6 +77,10 @@
   flex: 1;
 }
 
+.app-rail__nav-scroll[data-overflow-y='true'] > .app-rail__nav {
+  margin-inline-end: var(--app-scrollbar-gutter-size);
+}
+
 .app-rail__nav {
   padding: var(--app-rail-nav-top-padding) var(--app-rail-nav-padding)
     var(--app-rail-nav-padding);

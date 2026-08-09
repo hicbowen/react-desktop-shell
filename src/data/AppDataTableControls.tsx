@@ -220,7 +220,6 @@ export function AppDataTableControls<TData>({
                   >
                     <AppScrollArea
                       className="app-data-table__filter-menu-scroll"
-                      gutter="stable"
                       viewportClassName="app-data-table__filter-menu-content"
                     >
               {filterDefinitions.map((definition, index) => {
