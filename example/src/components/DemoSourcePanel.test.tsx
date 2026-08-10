@@ -52,10 +52,12 @@ describe('DemoSourcePanel', () => {
     expect(expanderTrigger?.textContent).toContain('Example source')
     expect(expanderTrigger?.textContent).not.toContain('.tsx')
     expect(region?.hidden).toBe(true)
+    expect(copyButton?.classList).toContain('app-icon-button')
+    expect(copyButton?.getAttribute('aria-label')).toBe('Copy source')
 
     await act(async () => copyButton?.click())
     expect(writeText).toHaveBeenCalledWith('<AppButton />')
-    expect(copyButton?.textContent).toContain('Copied')
+    expect(copyButton?.getAttribute('aria-label')).toBe('Copied')
 
     act(() => expanderTrigger?.click())
     expect(region?.hidden).toBe(false)

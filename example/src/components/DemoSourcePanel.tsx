@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { Check, Copy } from './fluentIcons'
-import { AppButton, AppExpander } from '../../../src'
+import { AppExpander, AppIconButton, AppTooltip } from '../../../src'
 import { useDemoI18n } from '../i18n/DemoI18nContext'
 
 export function DemoSourcePanel({
@@ -47,14 +47,15 @@ export function DemoSourcePanel({
   return (
     <AppExpander
       actions={
-        <AppButton
-          aria-live="polite"
-          icon={copied ? <Check /> : <Copy />}
-          onClick={() => void copySource()}
-          size="compact"
-        >
-          {buttonLabel}
-        </AppButton>
+        <AppTooltip content={buttonLabel} placement="top">
+          <AppIconButton
+            aria-live="polite"
+            aria-label={buttonLabel}
+            icon={copied ? <Check /> : <Copy />}
+            onClick={() => void copySource()}
+            size="compact"
+          />
+        </AppTooltip>
       }
       className={['demo-source-panel', className].filter(Boolean).join(' ')}
       title={text.sourceCode}
