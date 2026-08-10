@@ -914,7 +914,9 @@
 .demo-list-placeholder > span { display: inline-flex; align-items: center; gap: 8px; }
 .demo-expander-stack { display: grid; gap: 10px; }
 .demo-expander-form { display: grid; gap: 10px; }
+.demo-expander-copy { display: grid; gap: 8px; }
 .demo-expander-text { margin: 0; line-height: 1.5; }
+.demo-expander-list { display: grid; gap: 6px; margin: 0; padding-left: 20px; line-height: 1.5; }
 .demo-expander-control { display: flex; align-items: center; }
 .example-page-title {
   display: flex;

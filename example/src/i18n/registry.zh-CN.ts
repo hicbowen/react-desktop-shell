@@ -24,7 +24,7 @@ export const zhCNRegistry: Record<string, DemoPageTranslation> = {
   'tree-view': { label: 'AppTreeView', description: '支持选择、延迟展开、键盘导航和拖放请求的层级资源。' },
   'status-bar': { label: 'AppStatusBar', description: '紧凑、常驻的工作区状态和上下文操作。' },
   'property-grid': { label: 'AppPropertyGrid', description: '支持分组编辑、重置和标签宽度调整的密集属性面板。' },
-  expander: { label: '折叠面板', description: '用于设置、发行说明和低频详细信息的可折叠区域。' },
+  expander: { label: '折叠面板', description: '收纳低频内容、组织设置面板，并协调手风琴式区域。' },
   'app-tag': { label: 'AppTag', description: '用于类别、属性和可移除值的彩色标签。' },
   'app-skeleton': { label: 'AppSkeleton', description: '用于加载中内容结构的无障碍动画占位符。' },
   'app-info-bar': { label: 'AppInfoBar', description: '行内展示信息、成功、警告和错误状态。' },
