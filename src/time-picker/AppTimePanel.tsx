@@ -223,6 +223,7 @@ export function AppTimePanel({
         <AppScrollArea
           aria-label={messages.timePicker.hourLabel}
           className="app-time-panel__list-scroll"
+          fill
           role="listbox"
           viewportClassName="app-time-panel__list"
         >
@@ -259,6 +260,7 @@ export function AppTimePanel({
         <AppScrollArea
           aria-label={messages.timePicker.minuteLabel}
           className="app-time-panel__list-scroll"
+          fill
           role="listbox"
           viewportClassName="app-time-panel__list"
         >

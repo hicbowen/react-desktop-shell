@@ -129,6 +129,8 @@ describe('AppTimePanel', () => {
       '.app-time-panel__list-scroll.app-scroll-area',
     )
     expect(scrollAreas).toHaveLength(2)
+    expect(scrollAreas[0]?.classList).toContain('app-scroll-area--fill')
+    expect(scrollAreas[1]?.classList).toContain('app-scroll-area--fill')
     expect(lists()).toHaveLength(2)
     expect(lists()[0]?.classList).toContain('app-time-panel__list')
     expect(lists()[1]?.classList).toContain('app-time-panel__list')

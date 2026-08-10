@@ -1,10 +1,13 @@
 .app-time-panel {
   --app-time-picker-column-height: 220px;
   --app-time-picker-option-height: 32px;
+  min-height: 0;
+  flex: 1 1 auto;
   display: grid;
   grid-template-columns: repeat(2, minmax(86px, 1fr));
   gap: 8px;
   padding: 10px;
+  overflow: hidden;
   color: var(--app-shell-text-color, #1f1f1f);
   font-size: 13px;
 }
@@ -19,6 +22,9 @@
 
 .app-time-panel__column {
   min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
 }
 
 .app-time-panel__label {
@@ -32,7 +38,9 @@
 .app-time-panel__list-scroll {
   --app-scrollbar-track-hover-color: color-mix(in srgb, currentcolor 4%, transparent);
   --app-scrollbar-track-active-color: color-mix(in srgb, currentcolor 7%, transparent);
-  height: var(--app-time-picker-column-height);
+  min-height: 0;
+  flex: 1 1 var(--app-time-picker-column-height);
+  height: auto;
   box-sizing: border-box;
   overflow: hidden;
   border: 1px solid var(--app-shell-border-color, rgb(0 0 0 / 12%));
@@ -136,6 +144,9 @@
 
 .app-time-picker__popup {
   position: fixed;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
   box-sizing: border-box;
   width: max-content;
   max-width: calc(100vw - 16px);
@@ -153,6 +164,7 @@
 
 .app-time-picker__footer {
   min-height: 46px;
+  flex: 0 0 auto;
   display: flex;
   justify-content: flex-end;
   align-items: center;
