@@ -16,6 +16,10 @@
     grid-template-rows: auto minmax(0, 1fr);
 }
 
+.demo-data-table-page>.demo-section {
+    grid-template-rows: auto auto minmax(0, 1fr);
+}
+
 .demo-section {
     display: grid;
     gap: 14px;
@@ -67,6 +71,10 @@
 .demo-tab-view-preview {
     height: 280px;
     padding: 0;
+}
+
+.demo-list-selection-preview {
+    max-width: 560px;
 }
 
 .demo-tab-view-preview .app-tab-view {

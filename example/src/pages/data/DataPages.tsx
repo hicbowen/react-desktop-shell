@@ -1,6 +1,6 @@
 import type { RowSelectionState, SortingState } from '@tanstack/react-table'
 import { useState } from 'react'
-import { AppButton, AppEmptyState, AppToggleSwitch, AppToolbar, useAppContextMenu, useAppToast } from '../../../../src'
+import { AppButton, AppEmptyState, AppSegmentedControl, AppSelect, AppToggleSwitch, AppToolbar, useAppContextMenu, useAppToast } from '../../../../src'
 import { AppDataTable, AppDataView, AppSelectionBar } from '../../../../src/data'
 import { DemoControls, DemoPage, DemoPreview, DemoSection } from '../../components/DemoPage'
 import { tableRows } from '../../fixtures/tableRows'
@@ -15,8 +15,8 @@ export function AppDataTablePage() {
   const [selection, setSelection] = useState<RowSelectionState>({})
   const [sticky, setSticky] = useState(true)
   const [resizing, setResizing] = useState(true)
-  const [fixedHeight, setFixedHeight] = useState(false)
-  const [fill, setFill] = useState(false)
+  const [heightMode, setHeightMode] = useState<'auto' | 'fixed' | 'fill'>('auto')
+  const [density, setDensity] = useState<'comfortable' | 'compact'>('comfortable')
   const [pagination, setPagination] = useState(true)
   const [virtualized, setVirtualized] = useState(false)
   const [stickyCategory, setStickyCategory] = useState(true)
@@ -24,46 +24,66 @@ export function AppDataTablePage() {
   const columns = createColumns(t)
   const tableControls = createTableControls(t)
 
-  const handleFixedHeightChange = (next: boolean) => {
-    setFixedHeight(next)
-    if (next) setFill(false)
-    if (!next && !fill) setVirtualized(false)
+  const handleHeightModeChange = (next: 'auto' | 'fixed' | 'fill') => {
+    setHeightMode(next)
+    if (next === 'auto') setVirtualized(false)
   }
 
-  const handleFillChange = (next: boolean) => {
-    setFill(next)
-    if (next) setFixedHeight(false)
-    if (!next && !fixedHeight) setVirtualized(false)
-  }
-
-  const tableClassName = fill
+  const tableClassName = heightMode === 'fill'
     ? 'demo-table-fill'
-    : fixedHeight
+    : heightMode === 'fixed'
       ? 'demo-table-fixed'
       : ''
 
   return (
     <DemoPage
-      className={fill ? 'demo-page--fill' : ''}
-      pageLayout={fill ? 'fill' : 'flow'}
+      className={heightMode === 'fill' ? 'demo-page--fill demo-data-table-page' : ''}
+      pageLayout={heightMode === 'fill' ? 'fill' : 'flow'}
     >
-      <DemoControls>
-        <AppToggleSwitch checked={sticky} label={t('Sticky header')} onCheckedChange={setSticky} size="compact" />
-        <AppToggleSwitch checked={resizing} label={t('Column resizing')} onCheckedChange={setResizing} size="compact" />
-        <AppToggleSwitch checked={stickyCategory} label={t('Sticky Category column')} onCheckedChange={setStickyCategory} size="compact" />
-        <AppToggleSwitch checked={fixedHeight} label={t('Fixed height')} onCheckedChange={handleFixedHeightChange} size="compact" />
-        <AppToggleSwitch checked={fill} label={t('Fill remaining height')} onCheckedChange={handleFillChange} size="compact" />
-        <AppToggleSwitch checked={pagination} label={t('Pagination')} onCheckedChange={setPagination} size="compact" />
-        <AppToggleSwitch checked={virtualized} disabled={!fill && !fixedHeight} label={t('Vertical virtualization')} onCheckedChange={setVirtualized} size="compact" />
-        <span>{t('Right-click a data row for row-specific actions')}</span>
-      </DemoControls>
       <DemoSection
         title="Complete data table"
         description="Compose page actions, selection actions, built-in search and filters, table interactions, and summary content in one data surface."
       >
+        <DemoControls>
+          <AppToggleSwitch checked={sticky} label={t('Sticky header')} onCheckedChange={setSticky} size="compact" />
+          <AppToggleSwitch checked={resizing} label={t('Column resizing')} onCheckedChange={setResizing} size="compact" />
+          <AppToggleSwitch checked={stickyCategory} label={t('Sticky Category column')} onCheckedChange={setStickyCategory} size="compact" />
+          <span>{t('Table height')}</span>
+          <AppSegmentedControl
+            ariaLabel={t('Table height')}
+            onValueChange={(value) => {
+              if (value === 'auto' || value === 'fixed' || value === 'fill') {
+                handleHeightModeChange(value)
+              }
+            }}
+            options={[
+              { value: 'auto', label: t('Automatic') },
+              { value: 'fixed', label: t('Fixed height') },
+              { value: 'fill', label: t('Fill remaining height') },
+            ]}
+            size="compact"
+            value={heightMode}
+          />
+          <span>{t('Table density')}</span>
+          <AppSelect
+            aria-label={t('Table density')}
+            onValueChange={(value) => {
+              if (value === 'comfortable' || value === 'compact') setDensity(value)
+            }}
+            options={[
+              { value: 'comfortable', label: t('Comfortable') },
+              { value: 'compact', label: t('Compact') },
+            ]}
+            size="compact"
+            value={density}
+          />
+          <AppToggleSwitch checked={pagination} label={t('Pagination')} onCheckedChange={setPagination} size="compact" />
+          <AppToggleSwitch checked={virtualized} disabled={heightMode === 'auto'} label={t('Vertical virtualization')} onCheckedChange={setVirtualized} size="compact" />
+          <span>{t('Right-click a data row for row-specific actions')}</span>
+        </DemoControls>
         <AppDataView
           className={`demo-table-layout ${tableClassName}`.trim()}
-          height={fill || fixedHeight ? 'fill' : 'auto'}
+          height={heightMode === 'auto' ? 'auto' : 'fill'}
           toolbar={
             <AppToolbar
               appearance="flat"
@@ -153,6 +173,7 @@ export function AppDataTablePage() {
             stickyHeader={sticky}
             stickyColumns={stickyCategory ? ['category'] : undefined}
             enableColumnResizing={resizing}
+            density={density}
             virtualization={virtualized ? { overscan: 5 } : false}
           />
         </AppDataView>

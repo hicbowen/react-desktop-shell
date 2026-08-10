@@ -1,12 +1,16 @@
+import { useState } from 'react'
 import { MoreHorizontal, User } from '../../components/fluentIcons'
 import {
   AppIconButton,
   AppListView,
   AppListViewItem,
+  AppSegmentedControl,
   AppStatusBadge,
   AppTooltip,
+  AppToggleSwitch,
 } from '../../../../src'
-import { DemoPage, DemoSection } from '../../components/DemoPage'
+import { DemoControls, DemoPage, DemoPreview, DemoSection } from '../../components/DemoPage'
+import { useDemoCopy } from '../../i18n/interactiveTranslations'
 
 const informationRows = [
   <AppListViewItem
@@ -65,17 +69,42 @@ const selectionRows = [
 ]
 
 export function ListViewPage() {
+  const t = useDemoCopy()
+  const [selectionMode, setSelectionMode] = useState<'single' | 'multiple'>('single')
+  const [compact, setCompact] = useState(false)
+
   return <DemoPage>
     <DemoSection title="Static information list">
       <AppListView ariaLabel="Students">{informationRows}</AppListView>
     </DemoSection>
     <DemoSection title="Selection lists">
-      <AppListView ariaLabel="Select a student" defaultValue={['ada']} selectionMode="single">
-        {selectionRows}
-      </AppListView>
-      <AppListView ariaLabel="Import preview" density="compact" selectionMode="multiple">
-        {selectionRows}
-      </AppListView>
+      <DemoControls>
+        <span>{t('Selection mode')}</span>
+        <AppSegmentedControl
+          ariaLabel={t('Selection mode')}
+          onValueChange={(value) => {
+            if (value === 'single' || value === 'multiple') setSelectionMode(value)
+          }}
+          options={[
+            { value: 'single', label: t('Single') },
+            { value: 'multiple', label: t('Multiple') },
+          ]}
+          size="compact"
+          value={selectionMode}
+        />
+        <AppToggleSwitch checked={compact} label={t('Compact density')} onCheckedChange={setCompact} size="compact" />
+      </DemoControls>
+      <DemoPreview className="demo-list-selection-preview">
+        <AppListView
+          ariaLabel={t('Select a student')}
+          className="demo-list-selection"
+          defaultValue={['ada']}
+          density={compact ? 'compact' : 'standard'}
+          selectionMode={selectionMode}
+        >
+          {selectionRows}
+        </AppListView>
+      </DemoPreview>
     </DemoSection>
     <DemoSection title="Invoke/action list">
       <AppListView
