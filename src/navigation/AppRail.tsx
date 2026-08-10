@@ -6,6 +6,7 @@ import { useAppLocale } from '../localization/useAppLocale'
 import { AppScrollArea } from '../scroll-area/AppScrollArea'
 import { RailItem as RailItemView } from './RailItem'
 import { RailSubmenu as RailSubmenuView } from './RailSubmenu'
+import { useSidebarLayoutContext } from '../shell/SidebarLayoutContext'
 import {
   isRailGroup,
   isRailSubmenu,
@@ -28,6 +29,7 @@ export function AppRail({
   style,
 }: AppRailProps) {
   const { messages } = useAppLocale()
+  const sidebarLayoutContext = useSidebarLayoutContext()
   const railRef = useRef<HTMLElement | null>(null)
   const navRef = useRef<HTMLDivElement | null>(null)
   const triggerRefs = useRef(new Map<string, HTMLButtonElement>())
@@ -82,11 +84,14 @@ export function AppRail({
     const nextCanScrollDown =
       nav.scrollTop + nav.clientHeight <
       nav.scrollHeight - SCROLL_HINT_THRESHOLD
+    sidebarLayoutContext?.reportNavigationOverflow(
+      nav.scrollHeight - nav.clientHeight > SCROLL_HINT_THRESHOLD,
+    )
 
     setCanScrollDown((current) =>
       current === nextCanScrollDown ? current : nextCanScrollDown,
     )
-  }, [])
+  }, [sidebarLayoutContext])
 
   useLayoutEffect(() => {
     const nav = navRef.current
@@ -95,6 +100,8 @@ export function AppRail({
       return
     }
 
+    const unregisterNavigationOverflow =
+      sidebarLayoutContext?.registerNavigationOverflow()
     updateScrollHint()
     window.addEventListener('resize', updateScrollHint)
 
@@ -109,8 +116,15 @@ export function AppRail({
     return () => {
       window.removeEventListener('resize', updateScrollHint)
       resizeObserver?.disconnect()
+      unregisterNavigationOverflow?.()
     }
-  }, [items, rail.expandedKeys, rail.isCollapsed, updateScrollHint])
+  }, [
+    items,
+    rail.expandedKeys,
+    rail.isCollapsed,
+    sidebarLayoutContext,
+    updateScrollHint,
+  ])
 
   return (
     <aside ref={railRef} className={rootClassName} style={style}>

@@ -64,6 +64,7 @@ describe('AppShellPage demo', () => {
     expect(sections).toHaveLength(2)
     expect(sections[0]?.querySelector('.demo-source-panel')).toBeNull()
     expect(sections[1]?.querySelector('.demo-source-panel')).not.toBeNull()
+    expect(host.querySelector('[role="radiogroup"]')).not.toBeNull()
 
     const filesItem = Array.from(host.querySelectorAll('.app-rail button')).find(
       (button) => button.textContent?.includes('Files'),
@@ -76,5 +77,13 @@ describe('AppShellPage demo', () => {
     )
     act(() => actionButton?.click())
     expect(host.textContent).toContain('Page action completed')
+
+    const compactMode = host.querySelector<HTMLInputElement>(
+      'input[type="radio"][value="compact"]',
+    )
+    act(() => compactMode?.click())
+    expect(
+      host.querySelector('.demo-shell-live-preview .app-shell')?.dataset.paneMode,
+    ).toBe('compact')
   })
 })

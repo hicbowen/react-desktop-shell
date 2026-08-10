@@ -14,6 +14,8 @@ export const zhCNInteractiveText: Record<string, string> = {
   Action: '操作',
   'Page content': '页面内容',
   'Preview application': '预览应用',
+  'Navigation display mode': '导航栏显示模式',
+  Expanded: '展开', Compact: '紧凑', Hidden: '隐藏', Automatic: '自动',
   'Page content is rendered inside AppShell.': '页面内容渲染在 AppShell 内部。',
   'Page action completed': '页面操作已完成',
   'Run action': '执行操作',

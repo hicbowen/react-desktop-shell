@@ -101,6 +101,32 @@ describe('AppRail scroll fade', () => {
     expect(scrollArea?.parentElement?.nextElementSibling).toBe(footer)
   })
 
+  it('shrinks the compact shell column only when navigation fits', () => {
+    render(
+      <AppShell
+        rail={<AppRail items={items} />}
+        sidebar={{ displayMode: 'compact' }}
+      />,
+    )
+
+    const shell = container.querySelector<HTMLElement>('.app-shell')!
+    expect(shell.style.getPropertyValue('--app-sidebar-width')).toBe(
+      'var(--app-sidebar-compact-effective-width)',
+    )
+    expect(
+      shell.style.getPropertyValue('--app-sidebar-compact-effective-width'),
+    ).toBe(
+      'calc(var(--app-sidebar-compact-width) - var(--app-sidebar-scrollbar-gutter-size))',
+    )
+
+    scrollHeight = 180
+    act(() => window.dispatchEvent(new Event('resize')))
+
+    expect(
+      shell.style.getPropertyValue('--app-sidebar-compact-effective-width'),
+    ).toBe('var(--app-sidebar-compact-width)')
+  })
+
   it('applies the fade initially when more content is below', () => {
     scrollHeight = 180
     render(<AppRail items={items} />)

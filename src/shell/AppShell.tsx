@@ -1,6 +1,7 @@
 import {
   cloneElement,
   isValidElement,
+  useCallback,
   useMemo,
   useRef,
   useState,
@@ -33,6 +34,7 @@ import {
   ShellTitleBarApp,
 } from './ShellPaneLayer'
 import { ShellOverlayLayer } from './ShellOverlayLayer'
+import { SidebarLayoutContext } from './SidebarLayoutContext'
 import { usePaneController } from './usePaneController'
 
 function isAppTitleBarType(type: unknown) {
@@ -78,6 +80,23 @@ export function AppShell({
     }
   }, [resolvedLocale])
   const [overlayHost, setOverlayHost] = useState<HTMLDivElement | null>(null)
+  const [sidebarNavigationOverflow, setSidebarNavigationOverflow] =
+    useState<boolean | null>(null)
+  const registerNavigationOverflow = useCallback(() => {
+    setSidebarNavigationOverflow(false)
+
+    return () => setSidebarNavigationOverflow(null)
+  }, [])
+  const reportNavigationOverflow = useCallback((overflow: boolean) => {
+    setSidebarNavigationOverflow(overflow)
+  }, [])
+  const sidebarLayoutContextValue = useMemo(
+    () => ({
+      registerNavigationOverflow,
+      reportNavigationOverflow,
+    }),
+    [registerNavigationOverflow, reportNavigationOverflow],
+  )
   const pane = usePaneController({ sidebar, containerRef: rootRef })
   const sidebarCollapsible = pane.collapsible
   const sidebarCollapsed = pane.collapsed
@@ -135,22 +154,30 @@ export function AppShell({
   ])
 
   const shellStyle = useMemo(
-    () =>
-      ({
+    () => {
+      const compactEffectiveWidth =
+        sidebarNavigationOverflow === false
+          ? 'calc(var(--app-sidebar-compact-width) - var(--app-sidebar-scrollbar-gutter-size))'
+          : 'var(--app-sidebar-compact-width)'
+
+      return {
         '--app-sidebar-expanded-width': `${sidebarExpandedWidth}px`,
         '--app-sidebar-compact-width': `${sidebarCompactWidth}px`,
+        '--app-sidebar-compact-effective-width': compactEffectiveWidth,
         '--app-sidebar-width': sidebarCollapsed
-          ? `${sidebarCompactWidth}px`
+          ? 'var(--app-sidebar-compact-effective-width)'
           : isMinimal
             ? '0px'
             : `${sidebarExpandedWidth}px`,
         ...style,
-      }) as CSSProperties,
+      } as CSSProperties
+    },
     [
       isMinimal,
       sidebarCollapsed,
       sidebarCompactWidth,
       sidebarExpandedWidth,
+      sidebarNavigationOverflow,
       style,
     ],
   )
@@ -194,16 +221,16 @@ export function AppShell({
           <AppDialogContext.Provider value={dialogController.registry}>
             <AppContextMenuContext.Provider value={contextMenuController.contextValue}>
               <AppOverlayHostContext.Provider value={overlayHost}>
-              <div
-                ref={rootRef}
-                className={rootClassName}
-                data-pane-mode={resolvedDisplayMode}
-                data-theme={theme}
-                style={shellStyle}
-                onMouseDownCapture={contextMenuController.handleMouseDown}
-                onContextMenuCapture={contextMenuController.handleContextMenu}
-                onKeyDownCapture={contextMenuController.handleKeyDown}
-              >
+                <div
+                  ref={rootRef}
+                  className={rootClassName}
+                  data-pane-mode={resolvedDisplayMode}
+                  data-theme={theme}
+                  style={shellStyle}
+                  onMouseDownCapture={contextMenuController.handleMouseDown}
+                  onContextMenuCapture={contextMenuController.handleContextMenu}
+                  onKeyDownCapture={contextMenuController.handleKeyDown}
+                >
               <div className="app-shell__titlebar">
                 {hasSidebar && !appTitleBar && (
                   <div className="app-shell__titlebar-leading">
@@ -215,11 +242,13 @@ export function AppShell({
                 </div>
               </div>
               {hasSidebar && !isMinimal && (
-                <ShellInlinePane
-                  pane={pane}
-                  rail={rail}
-                  onCollapsedChange={sidebar?.onCollapsedChange}
-                />
+                <SidebarLayoutContext.Provider value={sidebarLayoutContextValue}>
+                  <ShellInlinePane
+                    pane={pane}
+                    rail={rail}
+                    onCollapsedChange={sidebar?.onCollapsedChange}
+                  />
+                </SidebarLayoutContext.Provider>
               )}
               <div
                 className="app-shell__body"
@@ -235,12 +264,14 @@ export function AppShell({
                 </AppScrollArea>
               </div>
               {hasSidebar && (
-                <ShellPaneLayer
-                  pane={pane}
-                  rail={rail}
-                  interactionModeRef={paneInteractionModeRef}
-                  toggleButtonRef={paneToggleRef}
-                />
+                <SidebarLayoutContext.Provider value={sidebarLayoutContextValue}>
+                  <ShellPaneLayer
+                    pane={pane}
+                    rail={rail}
+                    interactionModeRef={paneInteractionModeRef}
+                    toggleButtonRef={paneToggleRef}
+                  />
+                </SidebarLayoutContext.Provider>
               )}
               <ShellOverlayLayer
                   dialogs={dialogController.dialogs}
@@ -250,7 +281,7 @@ export function AppShell({
                   toastStore={toastStore}
                   hasModalDialog={dialogController.hasModalDialog}
               />
-              </div>
+                </div>
               </AppOverlayHostContext.Provider>
             </AppContextMenuContext.Provider>
           </AppDialogContext.Provider>
