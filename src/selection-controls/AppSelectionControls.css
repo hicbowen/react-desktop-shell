@@ -101,6 +101,7 @@
 .app-radio-group__option--disabled .app-radio-group__indicator { opacity: .55; }
 
 .app-segmented-control {
+  position: relative;
   width: fit-content;
   max-width: 100%;
   box-sizing: border-box;
@@ -114,16 +115,18 @@
   background: var(--app-shell-hover-bg, rgb(0 0 0 / 5%));
   border: 1px solid var(--app-shell-border-color, rgb(0 0 0 / 8%));
   border-radius: 7px;
+  isolation: isolate;
 }
 .app-segmented-control--full-width { display: flex; width: 100%; }
-.app-segmented-control__option { position: relative; min-width: 0; display: flex; flex: 0 0 auto; cursor: default; }
+.app-segmented-control__indicator { position: absolute; z-index: 0; top: 3px; left: 0; width: 0; height: calc(100% - 6px); opacity: 0; pointer-events: none; background: var(--app-shell-card-bg, #fff); border-radius: 4px; box-shadow: 0 1px 2px rgb(0 0 0 / 12%); transform: translateX(0); transition: transform var(--rds-motion-normal, 180ms) var(--rds-ease-enter, cubic-bezier(.1, .9, .2, 1)), width var(--rds-motion-normal, 180ms) var(--rds-ease-enter, cubic-bezier(.1, .9, .2, 1)), opacity var(--rds-motion-fast, 120ms) ease-out; will-change: transform, width; }
+.app-segmented-control__option { position: relative; z-index: 1; min-width: 0; display: flex; flex: 0 0 auto; cursor: default; }
 .app-segmented-control--full-width .app-segmented-control__option { flex: 1 1 0; }
 .app-segmented-control__option input { position: absolute; width: 1px; height: 1px; opacity: 0; }
-.app-segmented-control__content { min-width: 0; box-sizing: border-box; display: inline-flex; flex: 1; align-items: center; justify-content: center; gap: 6px; padding: 0 12px; white-space: nowrap; border-radius: 4px; transition: background-color 100ms ease-out, box-shadow 100ms ease-out; }
+.app-segmented-control__content { position: relative; z-index: 1; min-width: 0; box-sizing: border-box; display: inline-flex; flex: 1; align-items: center; justify-content: center; gap: 6px; padding: 0 12px; white-space: nowrap; border-radius: 4px; transition: background-color var(--rds-motion-fast, 120ms) ease-out, color var(--rds-motion-fast, 120ms) ease-out; }
 .app-segmented-control--standard .app-segmented-control__content { height: 30px; font-size: 13px; }
 .app-segmented-control--compact .app-segmented-control__content { height: 24px; padding-right: 9px; padding-left: 9px; font-size: 12px; }
 .app-segmented-control__option:hover:not(.app-segmented-control__option--disabled) input:not(:checked) + .app-segmented-control__content { background: var(--app-shell-hover-bg, rgb(0 0 0 / 5%)); }
-.app-segmented-control__option input:checked + .app-segmented-control__content { background: var(--app-shell-card-bg, #fff); box-shadow: 0 1px 2px rgb(0 0 0 / 12%); }
+.app-segmented-control__option input:checked + .app-segmented-control__content { background: transparent; box-shadow: none; }
 .app-segmented-control__option input:focus-visible + .app-segmented-control__content { outline: 2px solid var(--app-shell-accent-color, #005fb8); outline-offset: -2px; }
 .app-segmented-control__icon { width: 16px; height: 16px; display: inline-flex; flex: 0 0 16px; align-items: center; justify-content: center; }
 .app-segmented-control__icon > svg { width: 16px; height: 16px; display: block; }
@@ -152,7 +155,8 @@
   .app-check-box__indeterminate,
   .app-radio-group__indicator,
   .app-radio-group__indicator::after,
-  .app-segmented-control__content {
+  .app-segmented-control__content,
+  .app-segmented-control__indicator {
     transition: none;
     animation: none;
   }
