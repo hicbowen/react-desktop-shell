@@ -64,6 +64,7 @@ export function ExampleApp() {
     <DemoShellContext.Provider value={shellContext}>
       <DemoI18nContext.Provider value={{ locale: resolvedLocale, messages: demoMessages[resolvedLocale] }}>
         <AppShell
+        className="example-shell"
         contextMenu="app"
         locale={locale}
         title="React Desktop Shell"

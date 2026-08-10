@@ -20,7 +20,7 @@ export function DemoSearch({ pages, fallbackPages, onNavigate }: { pages: DemoPa
   }
 
   return <div className="demo-search" onBlur={handleBlur} onFocus={() => setFocused(true)}>
-    <AppSearchBox aria-label={text.label} onSearch={() => results[0] && select(results[0])} onValueChange={setQuery} placeholder={text.placeholder} size="compact" value={query} />
+    <AppSearchBox aria-label={text.label} onSearch={() => results[0] && select(results[0])} onValueChange={setQuery} placeholder={text.placeholder} value={query} />
     {focused && query ? <div className="demo-search__results" aria-label={text.results}>
       {results.length ? results.map((page) => <button key={page.key} onClick={() => select(page)} type="button"><span><strong>{page.label}</strong><small>{page.apiNames.join(' · ')}</small></span><em>{page.subgroupLabel}</em></button>) : <p>{text.empty}</p>}
     </div> : null}
