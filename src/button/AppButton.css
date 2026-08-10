@@ -10,7 +10,7 @@
   color: var(--app-shell-text-color, #1f1f1f);
   background: var(--app-shell-card-bg, #fff);
   border: 1px solid var(--app-shell-border-color, rgb(0 0 0 / 12%));
-  border-radius: 6px;
+  border-radius: 4px;
   font: inherit;
   font-size: 13px;
   line-height: 1;
@@ -26,9 +26,10 @@
 .app-button--primary:active:not(:disabled) { background: var(--app-shell-accent-pressed-color, #0c4f87); }
 .app-button--primary:disabled { background: var(--app-shell-disabled-bg, rgb(0 0 0 / 6%)); border-color: transparent; }
 .app-button--subtle { background: transparent; border-color: transparent; }
-.app-button--danger { color: var(--app-shell-danger-color, #c42b1c); background: transparent; border-color: var(--app-shell-danger-border-color, rgb(196 43 28 / 35%)); }
+.app-button--danger { color: var(--app-shell-danger-color, #c42b1c); background: transparent; border-color: transparent; }
 .app-button--danger:hover:not(:disabled) { background: var(--app-shell-danger-subtle-bg, rgb(196 43 28 / 8%)); }
-.app-button--compact { min-height: 26px; padding-inline: 9px; }
+.app-button--danger:active:not(:disabled) { background: var(--app-shell-danger-pressed-bg, rgb(196 43 28 / 14%)); }
+.app-button--compact { min-height: 28px; padding-inline: 10px; }
 .app-button--block { width: 100%; }
 .app-button__content { min-width: 0; display: inline-flex; align-items: center; justify-content: center; gap: 7px; }
 .app-button__label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
