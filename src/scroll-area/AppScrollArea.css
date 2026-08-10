@@ -8,6 +8,10 @@
   overscroll-behavior: auto;
 }
 
+.app-scroll-area--fill {
+  flex: 1 1 auto;
+}
+
 .app-scroll-area__viewport {
   min-width: 0;
   min-height: 0;

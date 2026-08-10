@@ -8,6 +8,7 @@ export interface AppScrollAreaProps extends HTMLAttributes<HTMLDivElement> {
   orientation?: AppScrollAreaOrientation
   scrollbar?: AppScrollAreaScrollbar
   gutter?: AppScrollAreaGutter
+  fill?: boolean
   viewportClassName?: string
   viewportStyle?: CSSProperties
 }

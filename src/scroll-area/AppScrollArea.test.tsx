@@ -65,6 +65,12 @@ describe('AppScrollArea', () => {
     expect(area().dataset.gutter).toBe('auto')
   })
 
+  it('maps fill layout to a class state', () => {
+    render(<AppScrollArea fill />)
+
+    expect(area().classList).toContain('app-scroll-area--fill')
+  })
+
   it.each(['vertical', 'horizontal', 'both'] as const)(
     'maps %s orientation to data and class states',
     (orientation) => {

@@ -812,13 +812,25 @@ wide and morphs to a 6px traditional thumb with arrow buttons when hovered.
 Thumb position, dragging, track paging, and overflow changes are synchronized
 with the native viewport; application scroll state remains native.
 
-The component does not assign its own width, height, or external flex sizing.
-Its parent or the supplied style must create a constrained scrolling region:
+The component does not assign its own width or height. Its parent or the
+supplied style must create a constrained scrolling region:
 
 ```tsx
 <AppScrollArea style={{ height: 320 }}>
   <LongSettingsList />
 </AppScrollArea>
+```
+
+When the scroll area is a flex child that should consume the remaining height,
+use `fill` and constrain the parent:
+
+```tsx
+<div style={{ display: 'flex', flexDirection: 'column', height: 320, minHeight: 0 }}>
+  <Toolbar />
+  <AppScrollArea fill>
+    <LongSettingsList />
+  </AppScrollArea>
+</div>
 ```
 
 `orientation` controls viewport overflow and which overlay axes are available:

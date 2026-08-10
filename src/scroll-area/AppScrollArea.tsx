@@ -10,6 +10,7 @@ export const AppScrollArea = forwardRef<HTMLDivElement, AppScrollAreaProps>(
       orientation = 'vertical',
       scrollbar = 'auto',
       gutter = 'auto',
+      fill = false,
       className,
       children,
       style,
@@ -49,6 +50,10 @@ export const AppScrollArea = forwardRef<HTMLDivElement, AppScrollAreaProps>(
       `app-scroll-area--scrollbar-${scrollbar}`,
       `app-scroll-area--gutter-${gutter}`,
     ]
+
+    if (fill) {
+      classNames.push('app-scroll-area--fill')
+    }
 
     if (className) {
       classNames.push(className)
