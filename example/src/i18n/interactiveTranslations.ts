@@ -55,7 +55,7 @@ export const zhCNInteractiveText: Record<string, string> = {
   All: '全部', Open: '进行中', Completed: '已完成', Recent: '最近', Favorites: '收藏', History: '历史',
   Preview: '预览', Today: '今天', 'All tasks': '全部任务',
   'Task status': '任务状态', 'Collection view': '集合视图', 'Release channel': '发布通道',
-  'Panel strategy': '面板策略', Unmounted: '卸载', 'State-preserving': '保留状态', 'Panel view': '面板视图',
+  'Panel strategy': '面板策略', Unmounted: '卸载', 'State-preserving': '保留状态', 'Panel view': '面板视图', Animation: '动画', Entrance: '进入', Directional: '方向',
   'Quick task view': '快捷任务视图', 'Task data view': '任务数据视图',
   'Unmounted panel example': '卸载面板示例', 'State-preserving panel example': '保留状态面板示例',
   '12 tasks across all dates': '所有日期共 12 项任务', '3 tasks due today': '今天有 3 项任务到期',

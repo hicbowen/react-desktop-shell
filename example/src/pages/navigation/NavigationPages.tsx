@@ -88,8 +88,10 @@ export function AppSelectorBarPage() {
   const t = useDemoCopy()
   const [basicView, setBasicView] = useState('all')
   const [taskView, setTaskView] = useState('all-tasks')
-  const [panelView, setPanelView] = useState('recent')
+  const [lifecycleView, setLifecycleView] = useState('recent')
   const [panelStrategy, setPanelStrategy] = useState<'unmount' | 'hidden'>('unmount')
+  const [animationView, setAnimationView] = useState('recent')
+  const [panelMotion, setPanelMotion] = useState<'none' | 'entrance' | 'directional'>('entrance')
   const taskSummary: Record<string, string> = {
     'all-tasks': t('12 tasks across all dates'),
     today: t('3 tasks due today'),
@@ -194,7 +196,7 @@ export function AppSelectorBarPage() {
             ]}
             size="compact"
             value={panelStrategy}
-          />
+            />
         </DemoControls>
         <DemoPreview>
           <div className="demo-selector-panel-view">
@@ -208,18 +210,65 @@ export function AppSelectorBarPage() {
                   panelId: 'selector-favorites',
                 },
               ]}
-              value={panelView}
-              onValueChange={setPanelView}
+              value={lifecycleView}
+              onValueChange={setLifecycleView}
             />
             <AppSelectorPanels
-              motion={panelStrategy === 'hidden' ? 'directional' : 'entrance'}
+              motion="none"
               mountStrategy={panelStrategy}
-              value={panelView}
+              value={lifecycleView}
             >
               <AppSelectorPanel id="selector-recent" value="recent">
                 <SelectorPanelStateDemo label={t('Recent')} />
               </AppSelectorPanel>
               <AppSelectorPanel id="selector-favorites" value="favorites">
+                <SelectorPanelStateDemo label={t('Favorites')} />
+              </AppSelectorPanel>
+            </AppSelectorPanels>
+          </div>
+        </DemoPreview>
+      </DemoSection>
+
+      <DemoSection
+        title="Panel animation"
+        description="Compare panel motion independently while inactive panels remain mounted."
+      >
+        <DemoControls>
+          <span>{t('Animation')}</span>
+          <AppSegmentedControl
+            ariaLabel={t('Animation')}
+            onValueChange={(value) => {
+              if (value === 'none' || value === 'entrance' || value === 'directional') setPanelMotion(value)
+            }}
+            options={[
+              { value: 'none', label: t('None') },
+              { value: 'entrance', label: t('Entrance') },
+              { value: 'directional', label: t('Directional') },
+            ]}
+            size="compact"
+            value={panelMotion}
+          />
+        </DemoControls>
+        <DemoPreview>
+          <div className="demo-selector-panel-view">
+            <AppSelectorBar
+              ariaLabel={t('Panel view')}
+              items={[
+                { key: 'recent', label: t('Recent'), panelId: 'animation-recent' },
+                { key: 'favorites', label: t('Favorites'), panelId: 'animation-favorites' },
+              ]}
+              value={animationView}
+              onValueChange={setAnimationView}
+            />
+            <AppSelectorPanels
+              motion={panelMotion}
+              mountStrategy="hidden"
+              value={animationView}
+            >
+              <AppSelectorPanel id="animation-recent" value="recent">
+                <SelectorPanelStateDemo label={t('Recent')} />
+              </AppSelectorPanel>
+              <AppSelectorPanel id="animation-favorites" value="favorites">
                 <SelectorPanelStateDemo label={t('Favorites')} />
               </AppSelectorPanel>
             </AppSelectorPanels>
