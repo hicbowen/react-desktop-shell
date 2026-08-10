@@ -74,6 +74,10 @@
   display: block;
 }
 
+.app-settings-row__icon--placeholder {
+  visibility: hidden;
+}
+
 .app-settings-row__content {
   min-width: 0;
   display: grid;
@@ -122,7 +126,7 @@
     justify-content: flex-start;
   }
 
-  .app-settings-row:not(.app-settings-row--with-icon)
+  .app-settings-row:not(.app-settings-row--with-icon):not(.app-settings-row--icon-space)
     > .app-settings-row__control {
     padding-left: 0;
   }

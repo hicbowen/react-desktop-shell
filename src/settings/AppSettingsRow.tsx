@@ -5,6 +5,7 @@ export function AppSettingsRow({
   title,
   description,
   icon,
+  reserveIconSpace = false,
   control,
   disabled = false,
   className,
@@ -12,6 +13,7 @@ export function AppSettingsRow({
 }: AppSettingsRowProps) {
   const classNames = ['app-settings-row']
   const hasIcon = icon !== undefined && icon !== null
+  const hasIconColumn = hasIcon || reserveIconSpace
   const hasDescription = description !== undefined && description !== null
   const hasControl = control !== undefined && control !== null
 
@@ -23,8 +25,17 @@ export function AppSettingsRow({
     classNames.push('app-settings-row--with-icon')
   }
 
+  if (reserveIconSpace) {
+    classNames.push('app-settings-row--icon-space')
+  }
+
   if (className) {
     classNames.push(className)
+  }
+
+  const iconClassNames = ['app-settings-row__icon']
+  if (!hasIcon) {
+    iconClassNames.push('app-settings-row__icon--placeholder')
   }
 
   return (
@@ -33,8 +44,8 @@ export function AppSettingsRow({
       className={classNames.join(' ')}
       style={style}
     >
-      {hasIcon ? (
-        <div className="app-settings-row__icon" aria-hidden="true">
+      {hasIconColumn ? (
+        <div className={iconClassNames.join(' ')} aria-hidden="true">
           {icon}
         </div>
       ) : null}

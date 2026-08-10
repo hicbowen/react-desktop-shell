@@ -884,6 +884,14 @@
     max-width: 820px;
 }
 
+.demo-settings-expander-rows {
+    margin: -12px -14px -14px;
+}
+
+.demo-settings-expander-rows > .app-settings-row + .app-settings-row {
+    border-top: 1px solid var(--app-shell-border-color, rgb(0 0 0 / 8%));
+}
+
 @media (max-width: 720px) {
     .demo-preview {
         padding: 12px;

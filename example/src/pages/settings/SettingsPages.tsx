@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { BadgeInfo, Languages, ListFilter, Palette, Sparkles } from '../../components/fluentIcons'
-import { AppSelect, AppSettingsGroup, AppSettingsRow, AppToggleSwitch } from '../../../../src'
+import { AppExpander, AppSelect, AppSettingsGroup, AppSettingsRow, AppToggleSwitch } from '../../../../src'
 import { DemoPage, DemoSection } from '../../components/DemoPage'
 import { useDemoShell } from '../../components/DemoShellContext'
 import { useDemoI18n } from '../../i18n/DemoI18nContext'
@@ -62,38 +62,44 @@ export function SettingsPage() {
             />
           </AppSettingsGroup>
 
-          <AppSettingsGroup
-            title={text.preferences}
+          <AppExpander
+            appearance="settings"
+            defaultExpanded
             description={text.preferencesDescription}
+            icon={<Sparkles />}
+            title={text.preferences}
           >
-            <AppSettingsRow
-              control={
-                <AppToggleSwitch
-                  aria-label={text.enableFeature}
-                  checked={enabled}
-                  onCheckedChange={setEnabled}
-                />
-              }
-              description={text.enableFeatureDescription}
-              icon={<Sparkles />}
-              title={text.enableFeature}
-            />
-            <AppSettingsRow
-              control={
-                <AppSelect
-                  aria-label={text.detailLevel}
-                  disabled={!enabled}
-                  onValueChange={setDetail}
-                  options={detailOptions}
-                  value={detail}
-                />
-              }
-              description={text.detailLevelDescription}
-              disabled={!enabled}
-              icon={<ListFilter />}
-              title={text.detailLevel}
-            />
-          </AppSettingsGroup>
+            <div className="demo-settings-expander-rows">
+              <AppSettingsRow
+                control={
+                  <AppToggleSwitch
+                    aria-label={text.enableFeature}
+                    checked={enabled}
+                    onCheckedChange={setEnabled}
+                  />
+                }
+                description={text.enableFeatureDescription}
+                reserveIconSpace
+                title={text.enableFeature}
+              />
+              <AppSettingsRow
+                control={
+                  <AppSelect
+                    aria-label={text.detailLevel}
+                    disabled={!enabled}
+                    onValueChange={setDetail}
+                    options={detailOptions}
+                    value={detail}
+                  />
+                }
+                description={text.detailLevelDescription}
+                disabled={!enabled}
+                icon={<ListFilter />}
+                reserveIconSpace
+                title={text.detailLevel}
+              />
+            </div>
+          </AppExpander>
 
           <AppSettingsGroup title={text.about}>
             <AppSettingsRow

@@ -58,6 +58,16 @@ describe('SettingsPage', () => {
     const detail = host.querySelector<HTMLSelectElement>(
       'select[aria-label="Detail level"]',
     )!
+    const preferencesExpander = host.querySelector<HTMLButtonElement>(
+      '.demo-settings > .app-expander .app-expander__trigger',
+    )!
+
+    expect(preferencesExpander.getAttribute('aria-expanded')).toBe('true')
+    expect(
+      preferencesExpander.closest('.app-expander')?.classList.contains(
+        'app-expander--settings',
+      ),
+    ).toBe(true)
 
     act(() => {
       theme.value = 'dark'

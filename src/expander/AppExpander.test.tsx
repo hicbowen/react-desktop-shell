@@ -75,6 +75,13 @@ describe('AppExpander', () => {
     expect(svg?.querySelector('path')).not.toBeNull()
   })
 
+  it('supports the settings appearance', () => {
+    act(() => root.render(
+      <AppExpander appearance="settings" title="Preferences">Content</AppExpander>,
+    ))
+    expect(expander().classList.contains('app-expander--settings')).toBe(true)
+  })
+
   it('reveals uncontrolled content before the expansion animation', () => {
     act(() => root.render(
       <AppExpander title="Advanced"><button type="button">Inside</button></AppExpander>,

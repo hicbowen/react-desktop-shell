@@ -12,6 +12,7 @@ export interface AppSettingsRowProps {
   title: ReactNode
   description?: ReactNode
   icon?: ReactNode
+  reserveIconSpace?: boolean
   control?: ReactNode
   disabled?: boolean
   className?: string

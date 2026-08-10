@@ -11,6 +11,8 @@ export type AppExpanderGroupExpansionMode =
 
 export type AppExpanderGroupValue = string | readonly string[] | null
 
+export type AppExpanderAppearance = 'default' | 'subtle' | 'settings'
+
 export interface AppExpanderGroupProps
   extends Omit<HTMLAttributes<HTMLDivElement>, 'defaultValue'> {
   expansionMode?: AppExpanderGroupExpansionMode
@@ -30,7 +32,7 @@ export interface AppExpanderProps {
   onExpandedChange?: (expanded: boolean) => void
   disabled?: boolean
   actions?: ReactNode
-  appearance?: 'default' | 'subtle'
+  appearance?: AppExpanderAppearance
   children: ReactNode
   className?: string
   style?: CSSProperties

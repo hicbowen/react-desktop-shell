@@ -32,6 +32,7 @@ export type { AppSelectOption, AppSelectProps } from './select/types'
 export type { AppCompactGroupProps, AppControlAddonProps } from './compact-group/types'
 export type { AppListViewItemProps, AppListViewProps } from './list-view/types'
 export type {
+  AppExpanderAppearance,
   AppExpanderGroupExpansionMode,
   AppExpanderGroupProps,
   AppExpanderGroupValue,

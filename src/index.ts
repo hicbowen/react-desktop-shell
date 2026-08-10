@@ -176,6 +176,7 @@ export type {
   AppExpanderGroupExpansionMode,
   AppExpanderGroupProps,
   AppExpanderGroupValue,
+  AppExpanderAppearance,
   AppExpanderProps,
   AppHoverCardProps,
   AppPopoverProps,
