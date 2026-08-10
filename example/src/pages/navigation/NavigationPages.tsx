@@ -14,6 +14,7 @@ import {
 import {
   AppButton,
   AppRail,
+  AppSegmentedControl,
   AppSelectorBar,
   AppSelectorPanel,
   AppSelectorPanels,
@@ -87,8 +88,8 @@ export function AppSelectorBarPage() {
   const t = useDemoCopy()
   const [basicView, setBasicView] = useState('all')
   const [taskView, setTaskView] = useState('all-tasks')
-  const [unmountView, setUnmountView] = useState('recent')
-  const [hiddenView, setHiddenView] = useState('recent')
+  const [panelView, setPanelView] = useState('recent')
+  const [panelStrategy, setPanelStrategy] = useState<'unmount' | 'hidden'>('unmount')
   const taskSummary: Record<string, string> = {
     'all-tasks': t('12 tasks across all dates'),
     today: t('3 tasks due today'),
@@ -177,64 +178,48 @@ export function AppSelectorBarPage() {
       </DemoSection>
 
       <DemoSection
-        title="Unmounted panels"
-        description="The default strategy releases inactive panels and uses a subtle entrance motion, so local input and counter state reset when selected again."
+        title="Panel lifecycle"
+        description="Compare unmounting inactive panels with keeping them mounted while the selector and panel content stay the same."
       >
+        <DemoControls>
+          <span>{t('Panel strategy')}</span>
+          <AppSegmentedControl
+            ariaLabel={t('Panel strategy')}
+            onValueChange={(value) => {
+              if (value === 'unmount' || value === 'hidden') setPanelStrategy(value)
+            }}
+            options={[
+              { value: 'unmount', label: t('Unmounted') },
+              { value: 'hidden', label: t('State-preserving') },
+            ]}
+            size="compact"
+            value={panelStrategy}
+          />
+        </DemoControls>
         <DemoPreview>
           <div className="demo-selector-panel-view">
             <AppSelectorBar
-              ariaLabel={t('Unmounted panel example')}
+              ariaLabel={t('Panel view')}
               items={[
-                { key: 'recent', label: t('Recent'), panelId: 'unmount-recent' },
+                { key: 'recent', label: t('Recent'), panelId: 'selector-recent' },
                 {
                   key: 'favorites',
                   label: t('Favorites'),
-                  panelId: 'unmount-favorites',
+                  panelId: 'selector-favorites',
                 },
               ]}
-              value={unmountView}
-              onValueChange={setUnmountView}
-            />
-            <AppSelectorPanels motion="entrance" value={unmountView}>
-              <AppSelectorPanel id="unmount-recent" value="recent">
-                <SelectorPanelStateDemo label={t('Recent')} />
-              </AppSelectorPanel>
-              <AppSelectorPanel id="unmount-favorites" value="favorites">
-                <SelectorPanelStateDemo label={t('Favorites')} />
-              </AppSelectorPanel>
-            </AppSelectorPanels>
-          </div>
-        </DemoPreview>
-      </DemoSection>
-
-      <DemoSection
-        title="State-preserving panels"
-        description="The hidden strategy keeps every panel mounted while directional motion follows the selector order."
-      >
-        <DemoPreview>
-          <div className="demo-selector-panel-view">
-            <AppSelectorBar
-              ariaLabel={t('State-preserving panel example')}
-              items={[
-                { key: 'recent', label: t('Recent'), panelId: 'hidden-recent' },
-                {
-                  key: 'favorites',
-                  label: t('Favorites'),
-                  panelId: 'hidden-favorites',
-                },
-              ]}
-              value={hiddenView}
-              onValueChange={setHiddenView}
+              value={panelView}
+              onValueChange={setPanelView}
             />
             <AppSelectorPanels
-              motion="directional"
-              mountStrategy="hidden"
-              value={hiddenView}
+              motion={panelStrategy === 'hidden' ? 'directional' : 'entrance'}
+              mountStrategy={panelStrategy}
+              value={panelView}
             >
-              <AppSelectorPanel id="hidden-recent" value="recent">
+              <AppSelectorPanel id="selector-recent" value="recent">
                 <SelectorPanelStateDemo label={t('Recent')} />
               </AppSelectorPanel>
-              <AppSelectorPanel id="hidden-favorites" value="favorites">
+              <AppSelectorPanel id="selector-favorites" value="favorites">
                 <SelectorPanelStateDemo label={t('Favorites')} />
               </AppSelectorPanel>
             </AppSelectorPanels>
