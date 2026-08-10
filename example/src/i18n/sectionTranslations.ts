@@ -76,6 +76,7 @@ const zhCNSectionText: Record<string, string> = {
   'Number boxes': '数字输入框',
   'Value behaviors': '数值行为',
   'Object properties': '对象属性',
+  Orientation: '方向',
   'Page composition': '页面组合',
   'Password input': '密码输入',
   'Placement and viewport behavior': '位置与视口行为',

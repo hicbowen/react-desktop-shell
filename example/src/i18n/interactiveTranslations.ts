@@ -34,6 +34,7 @@ export const zhCNInteractiveText: Record<string, string> = {
   Connected: '已连接',
   'Ln 24, Col 8': '第 24 行，第 8 列',
   Record: '记录', Phase: '阶段',
+  'Scroll direction': '滚动方向', Vertical: '垂直', Horizontal: '水平', 'Both directions': '双向',
   auto: '自动', always: '始终显示', hidden: '隐藏', stable: '稳定',
   'Reduce content': '减少内容', 'Add content': '增加内容', gutter: '边槽',
   'Release notes': '发行说明', 'Recently installed versions': '最近安装的版本',
