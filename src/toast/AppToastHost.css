@@ -39,6 +39,58 @@
     forwards;
 }
 
+.app-toast--success {
+  background: color-mix(
+    in srgb,
+    var(--app-shell-success-fg) 5%,
+    var(--app-shell-toast-bg)
+  );
+  border-color: color-mix(
+    in srgb,
+    var(--app-shell-success-fg) 18%,
+    var(--app-shell-toast-border-color)
+  );
+}
+
+.app-toast--info {
+  background: color-mix(
+    in srgb,
+    var(--app-shell-info-fg) 5%,
+    var(--app-shell-toast-bg)
+  );
+  border-color: color-mix(
+    in srgb,
+    var(--app-shell-info-fg) 18%,
+    var(--app-shell-toast-border-color)
+  );
+}
+
+.app-toast--warning {
+  background: color-mix(
+    in srgb,
+    var(--app-shell-warning-fg) 7%,
+    var(--app-shell-toast-bg)
+  );
+  border-color: color-mix(
+    in srgb,
+    var(--app-shell-warning-fg) 24%,
+    var(--app-shell-toast-border-color)
+  );
+}
+
+.app-toast--error {
+  background: color-mix(
+    in srgb,
+    var(--app-shell-danger-fg) 7%,
+    var(--app-shell-toast-bg)
+  );
+  border-color: color-mix(
+    in srgb,
+    var(--app-shell-danger-fg) 24%,
+    var(--app-shell-toast-border-color)
+  );
+}
+
 .app-toast__icon {
   width: 18px;
   height: 18px;
