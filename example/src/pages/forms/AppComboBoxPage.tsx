@@ -1,6 +1,6 @@
 import { useState } from 'react'
-import { AppComboBox, AppField } from '../../../../src'
-import { DemoPage, DemoPreview, DemoSection } from '../../components/DemoPage'
+import { AppCheckBox, AppComboBox, AppField } from '../../../../src'
+import { DemoControls, DemoPage, DemoPreview, DemoSection } from '../../components/DemoPage'
 import { useDemoCopy } from '../../i18n/interactiveTranslations'
 
 const courses = [
@@ -12,9 +12,14 @@ const courses = [
 export function AppComboBoxPage() {
   const t = useDemoCopy()
   const [course, setCourse] = useState('python')
+  const [compact, setCompact] = useState(false)
+  const size = compact ? 'compact' : 'standard'
 
   return (
     <DemoPage>
+      <DemoControls>
+        <AppCheckBox checked={compact} label={t('Compact controls')} onCheckedChange={setCompact} />
+      </DemoControls>
       <DemoSection
         title="Filter and select"
         description="Type to filter the option list, then choose a matching option with the pointer or keyboard."
@@ -25,12 +30,14 @@ export function AppComboBoxPage() {
             onValueChange={setCourse}
             options={courses}
             placeholder={t('Choose a course')}
+            size={size}
             value={course}
           />
           <AppComboBox
             defaultValue="visual"
             options={courses}
             placeholder={t('Choose a course')}
+            size={size}
           />
         </DemoPreview>
       </DemoSection>
@@ -45,6 +52,7 @@ export function AppComboBoxPage() {
             defaultValue="python"
             options={courses}
             placeholder={t('Choose a course')}
+            size={size}
           />
         </DemoPreview>
       </DemoSection>
@@ -56,10 +64,11 @@ export function AppComboBoxPage() {
               invalid
               options={courses}
               placeholder={t('Choose a course')}
+              size={size}
             />
           </AppField>
-          <AppComboBox disabled options={courses} value="python" />
-          <AppComboBox options={courses} readOnly value="visual" />
+          <AppComboBox disabled options={courses} size={size} value="python" />
+          <AppComboBox options={courses} readOnly size={size} value="visual" />
         </DemoPreview>
       </DemoSection>
 

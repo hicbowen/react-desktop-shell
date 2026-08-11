@@ -15,11 +15,13 @@ export function AppSplitButton({
   onClick,
   onSelect,
   placement = 'bottom-end',
+  size = 'standard',
 }: AppSplitButtonProps) {
   const { messages } = useAppLocale()
   const menuAriaLabel = messages.splitButton.openMore
   const rootClassName = [
     'app-split-button',
+    `app-split-button--${size}`,
     disabled ? 'app-split-button--disabled' : '',
     className,
   ]

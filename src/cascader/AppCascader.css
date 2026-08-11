@@ -1,5 +1,5 @@
-.app-cascader { min-height: 32px; min-width: 180px; display: inline-flex; align-items: center; }
-.app-cascader--compact { min-height: 27px; }
+.app-cascader { min-height: var(--rds-control-height-standard, 32px); min-width: 180px; display: inline-flex; align-items: center; }
+.app-cascader--compact { min-height: var(--rds-control-height-compact, 28px); }
 .app-cascader__trigger { min-width: 0; min-height: inherit; display: flex; align-items: center; flex: 1; padding: 0 52px 0 9px; overflow: hidden; color: inherit; background: transparent; border: 0; outline: 0; font: inherit; font-size: 13px; text-align: left; }
 .app-cascader__value, .app-cascader__placeholder { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .app-cascader__placeholder { color: var(--app-shell-secondary-text-color, rgb(0 0 0 / 62%)); }

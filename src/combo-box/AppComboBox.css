@@ -1,5 +1,5 @@
-.app-combo-box { min-height: 32px; display: inline-flex; align-items: center; }
-.app-combo-box--compact { min-height: 27px; }
+.app-combo-box { min-height: var(--rds-control-height-standard, 32px); display: inline-flex; align-items: center; }
+.app-combo-box--compact { min-height: var(--rds-control-height-compact, 28px); }
 .app-combo-box__input { width: 100%; min-width: 140px; padding: 0 52px 0 9px; color: inherit; background: transparent; border: 0; outline: 0; font: inherit; font-size: 13px; }
 .app-combo-box__clear { position: absolute; right: 26px; width: 22px; height: 22px; display: grid; place-items: center; padding: 0; color: inherit; background: transparent; border: 0; border-radius: 4px; font: inherit; font-size: 18px; }
 .app-combo-box__clear:hover { background: var(--app-shell-card-hover-bg, rgb(0 0 0 / 5%)); }

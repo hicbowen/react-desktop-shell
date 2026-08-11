@@ -8,8 +8,10 @@ import {
   AppTextBox,
 } from '../../../../src'
 import { DemoPage, DemoPreview, DemoSection } from '../../components/DemoPage'
+import { useDemoCopy } from '../../i18n/interactiveTranslations'
 
 export function AppCompactGroupPage() {
+  const t = useDemoCopy()
   const [count, setCount] = useState<number | null>(10)
 
   return (
@@ -24,6 +26,7 @@ export function AppCompactGroupPage() {
             <AppNumberBox min={1} onValueChange={setCount} value={count} />
             <AppControlAddon>times</AppControlAddon>
           </AppCompactGroup>
+          <span className="demo-note">{t('Standard')}</span>
           <AppCompactGroup>
             <AppSelect
               defaultValue="https"
@@ -31,10 +34,26 @@ export function AppCompactGroupPage() {
                 { value: 'https', label: 'HTTPS' },
                 { value: 'http', label: 'HTTP' },
               ]}
+              size="standard"
             />
-            <AppTextBox aria-label="Server address" placeholder="example.com" />
-            <AppButton>Connect</AppButton>
+            <AppTextBox aria-label="Server address" placeholder="example.com" size="standard" />
+            <AppButton size="standard">Connect</AppButton>
           </AppCompactGroup>
+          <div style={{ display: 'grid', gap: 6 }}>
+            <span className="demo-note">{t('Compact')}</span>
+            <AppCompactGroup>
+              <AppSelect
+                defaultValue="https"
+                options={[
+                  { value: 'https', label: 'HTTPS' },
+                  { value: 'http', label: 'HTTP' },
+                ]}
+                size="compact"
+              />
+              <AppTextBox aria-label="Server address" placeholder="example.com" size="compact" />
+              <AppButton size="compact">Connect</AppButton>
+            </AppCompactGroup>
+          </div>
         </DemoPreview>
       </DemoSection>
       <DemoSection

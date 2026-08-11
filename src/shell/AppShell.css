@@ -84,6 +84,12 @@
   --rds-ease-enter: cubic-bezier(0.1, 0.9, 0.2, 1);
   --rds-ease-exit: cubic-bezier(0.7, 0, 1, 0.5);
   --rds-radius-medium: 8px;
+  --rds-control-height-standard: 32px;
+  --rds-control-height-compact: 28px;
+  --rds-control-padding-inline-standard: 12px;
+  --rds-control-padding-inline-compact: 10px;
+  --rds-control-font-size: 13px;
+  --rds-control-icon-size: 16px;
   --rds-space-card-compact: 12px;
   --rds-space-card-regular: 16px;
   --rds-space-card-gap: 12px;

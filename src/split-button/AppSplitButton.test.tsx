@@ -145,6 +145,11 @@ describe('AppSplitButton', () => {
     expect(menu()?.getAttribute('aria-label')).toBe('Open more options')
   })
 
+  it('applies the compact control size to both sides', () => {
+    renderSplitButton({ size: 'compact' })
+    expect(container.querySelector('.app-split-button')?.classList.contains('app-split-button--compact')).toBe(true)
+  })
+
   it('renders an optional icon and keeps both buttons in the tab order', () => {
     renderSplitButton({ icon: <span data-testid="export-icon" /> })
     expect(primary().querySelector('[data-testid="export-icon"]')).not.toBeNull()

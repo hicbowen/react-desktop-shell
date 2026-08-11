@@ -17,6 +17,8 @@ export function TagPage() {
     </DemoSection>
     <DemoSection title="Appearances and shapes">
       <DemoPreview className="demo-component-row">
+        <AppTag color="blue">Standard</AppTag>
+        <AppTag color="blue" size="small">Small</AppTag>
         <AppTag color="brand">Subtle</AppTag>
         <AppTag appearance="filled" color="purple">Filled</AppTag>
         <AppTag appearance="outline" color="teal">Outline</AppTag>

@@ -317,7 +317,7 @@ keys and horizontal keyboard focus, while flyouts support standard menu keys.
 supports arrow-key selection and Enter execution, and reports its open state to
 the application. It does not discover or invoke host APIs itself.
 
-`AppButton` provides standard, primary, subtle, and danger desktop commands in compact or standard sizes. It supports leading or trailing icons, stable loading states, native button attributes, and ref forwarding. Use `AppIconButton` for icon-only commands and always supply `ariaLabel` or `aria-label`; compose tooltips with `AppTooltip`.
+`AppButton` provides standard, primary, subtle, and danger desktop commands in compact or standard sizes. Standard controls are 32px high; compact controls are 28px high. It supports leading or trailing icons, stable loading states, native button attributes, and ref forwarding. Use `AppIconButton` for icon-only commands and always supply `ariaLabel` or `aria-label`; compose tooltips with `AppTooltip`.
 
 ```tsx
 <AppButton appearance="primary" icon={<Save />} loading={saving}>Save</AppButton>
@@ -335,7 +335,8 @@ must accept and forward `className`.
 
 `AppControlAddon` provides non-interactive leading, trailing, or intermediate
 content such as units and short labels. Match its `size` to compact child
-controls when necessary.
+controls when necessary; `AppCompactGroup` does not infer or propagate a size
+to its children, so pass `size="compact"` to each child explicitly.
 
 ```tsx
 <AppCompactGroup>
@@ -1755,7 +1756,9 @@ preventing normal browser focus navigation.
 ## Split Button
 
 `AppSplitButton` combines a primary command with an `AppMenuFlyout` containing
-alternate commands. The left and right sides remain separate Tab stops.
+alternate commands. The left and right sides remain separate Tab stops. It
+supports the same `size` values as `AppButton`; compact split buttons use the
+shared 28px compact control height.
 
 ```tsx
 <AppSplitButton
@@ -1977,6 +1980,12 @@ Override variables on `.app-shell`, `.app-page`, `.app-rail`, and `.app-title-ba
 | `--app-shell-border-color`         | `rgb(0 0 0 / 8%)`     |
 | `--app-shell-accent-color`         | `#115ea3`             |
 | `--app-shell-danger-bg`            | `#ef4444`             |
+| `--rds-control-height-standard`    | `32px`                |
+| `--rds-control-height-compact`     | `28px`                |
+| `--rds-control-padding-inline-standard` | `12px`          |
+| `--rds-control-padding-inline-compact`  | `10px`          |
+| `--rds-control-font-size`          | `13px`                |
+| `--rds-control-icon-size`          | `16px`                |
 | `--app-shell-pane-scrim-bg`        | `rgb(0 0 0 / 18%)`    |
 | `--app-shell-pane-shadow`          | Layered right shadow  |
 | `--app-shell-pane-content-reveal`  | `56px`                |

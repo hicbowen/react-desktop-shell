@@ -67,7 +67,7 @@
 
 .app-control-addon {
   box-sizing: border-box;
-  min-height: 32px;
+  min-height: var(--rds-control-height-standard, 32px);
   display: inline-flex;
   flex: 0 0 auto;
   align-items: center;
@@ -82,7 +82,7 @@
 }
 
 .app-control-addon--compact {
-  min-height: 27px;
+  min-height: var(--rds-control-height-compact, 28px);
   padding-inline: 7px;
   font-size: 12px;
 }

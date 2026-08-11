@@ -18,6 +18,7 @@ export function AppSplitButtonPage() {
       <DemoSection title="Split actions" description="The primary side runs the default command; the arrow opens alternate commands.">
         <DemoPreview className="demo-split-button-row">
           <AppSplitButton label={t('Export')} items={exportItems} onClick={() => setLastAction('default export')} onSelect={setLastAction} />
+          <AppSplitButton label={t('Compact')} items={exportItems} onClick={() => setLastAction('default export')} onSelect={setLastAction} size="compact" />
           <AppSplitButton icon={<Download />} label={t('Download')} items={exportItems} onClick={() => setLastAction('download')} onSelect={setLastAction} />
           <AppSplitButton disabled label={t('Disabled')} items={exportItems} />
           <AppSplitButton menuDisabled label={t('Menu disabled')} items={exportItems} onClick={() => setLastAction('primary still available')} />

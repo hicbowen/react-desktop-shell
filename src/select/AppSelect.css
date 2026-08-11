@@ -1,5 +1,5 @@
-.app-select { min-height: 32px; display: inline-flex; }
-.app-select--compact { min-height: 27px; }
+.app-select { min-height: var(--rds-control-height-standard, 32px); display: inline-flex; }
+.app-select--compact { min-height: var(--rds-control-height-compact, 28px); }
 .app-select select { min-width: 140px; flex: 1 1 auto; align-self: stretch; padding: 0 30px 0 9px; color: inherit; background: transparent; border: 0; outline: 0; appearance: none; font: inherit; font-size: 13px; }
 .app-select select:disabled { color: var(--app-shell-disabled-text-color, rgb(0 0 0 / 36%)); }
 .app-select__placeholder { position: absolute; left: 9px; right: 30px; top: 50%; overflow: hidden; color: var(--app-shell-secondary-text-color, rgb(0 0 0 / 62%)); font-size: 13px; text-overflow: ellipsis; white-space: nowrap; transform: translateY(-50%); pointer-events: none; }

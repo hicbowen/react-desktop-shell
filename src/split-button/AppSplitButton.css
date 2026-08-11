@@ -1,13 +1,13 @@
 .app-split-button {
   display: inline-flex;
   max-width: 100%;
-  min-height: 32px;
+  min-height: var(--rds-control-height-standard, 32px);
   vertical-align: middle;
 }
 
 .app-split-button__primary,
 .app-split-button__menu {
-  min-height: 32px;
+  min-height: var(--rds-control-height-standard, 32px);
   box-sizing: border-box;
   display: inline-flex;
   align-items: center;
@@ -17,7 +17,7 @@
   border: 1px solid var(--app-shell-border-color, rgb(0 0 0 / 12%));
   border-radius: 0;
   font: inherit;
-  font-size: 13px;
+  font-size: var(--rds-control-font-size, 13px);
   line-height: 1;
   cursor: default;
   transition: background-color var(--rds-motion-fast, 120ms) ease;
@@ -31,8 +31,8 @@
 }
 
 .app-split-button__menu {
-  width: 32px;
-  flex: 0 0 32px;
+  width: var(--rds-control-height-standard, 32px);
+  flex: 0 0 var(--rds-control-height-standard, 32px);
   padding: 0;
   margin-left: -1px;
   border-radius: 0 6px 6px 0;
@@ -64,18 +64,18 @@
 }
 
 .app-split-button__icon {
-  width: 16px;
-  height: 16px;
+  width: var(--rds-control-icon-size, 16px);
+  height: var(--rds-control-icon-size, 16px);
   display: inline-flex;
-  flex: 0 0 16px;
+  flex: 0 0 var(--rds-control-icon-size, 16px);
   align-items: center;
   justify-content: center;
 }
 
 .app-split-button__icon > svg,
 .app-split-button__menu > svg {
-  width: 16px;
-  height: 16px;
+  width: var(--rds-control-icon-size, 16px);
+  height: var(--rds-control-icon-size, 16px);
   display: block;
   fill: currentColor;
 }
@@ -85,6 +85,24 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.app-split-button--compact {
+  min-height: var(--rds-control-height-compact, 28px);
+}
+
+.app-split-button--compact .app-split-button__primary,
+.app-split-button--compact .app-split-button__menu {
+  min-height: var(--rds-control-height-compact, 28px);
+}
+
+.app-split-button--compact .app-split-button__primary {
+  padding-inline: var(--rds-control-padding-inline-compact, 10px);
+}
+
+.app-split-button--compact .app-split-button__menu {
+  width: var(--rds-control-height-compact, 28px);
+  flex-basis: var(--rds-control-height-compact, 28px);
 }
 
 @media (prefers-reduced-motion: reduce) {
