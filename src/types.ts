@@ -63,6 +63,7 @@ export type {
   AppCardPadding,
   AppCardProps,
 } from './card'
+export type { AppCarouselProps, AppCarouselSlide } from './carousel'
 export type {
   AppClipboardAdapter,
   AppContextMenuActionItem,

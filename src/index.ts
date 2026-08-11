@@ -112,6 +112,7 @@ export {
   parseAppTimeISO,
 } from './time-picker'
 export { AppCard, AppCardFooter, AppCardGroup, AppCardHeader } from './card'
+export { AppCarousel } from './carousel'
 export { AppContextMenu } from './context-menu/AppContextMenu'
 export { AppDialog } from './dialog/AppDialog'
 export { AppInfoBar } from './info-bar/AppInfoBar'
@@ -200,6 +201,8 @@ export type {
   AppCardOrientation,
   AppCardPadding,
   AppCardProps,
+  AppCarouselProps,
+  AppCarouselSlide,
   AppContextMenuActionItem,
   AppContextMenuApi,
   AppContextMenuItem,

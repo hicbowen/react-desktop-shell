@@ -86,6 +86,13 @@ export const enUSMessages = {
     next: 'Next',
     finish: 'Finish',
   },
+  carousel: {
+    label: 'Carousel',
+    previous: 'Previous item',
+    next: 'Next item',
+    position: (current: number, total: number) =>
+      `Slide ${current} of ${total}`,
+  },
   contextMenu: {
     undo: 'Undo',
     cut: 'Cut',

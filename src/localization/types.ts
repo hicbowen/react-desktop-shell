@@ -76,6 +76,12 @@ export interface AppLocaleMessages {
     next: string
     finish: string
   }
+  carousel: {
+    label: string
+    previous: string
+    next: string
+    position: (current: number, total: number) => string
+  }
   contextMenu: {
     undo: string
     cut: string

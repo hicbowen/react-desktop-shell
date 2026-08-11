@@ -1,14 +1,17 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import { resolve } from 'node:path'
-import { demoSectionSourcesPlugin } from './example/demoSectionSourcesPlugin'
+import { fileURLToPath } from 'node:url'
+import { demoSectionSourcesPlugin } from './example/demoSectionSourcesPlugin.ts'
+
+const projectRoot = fileURLToPath(new URL('.', import.meta.url))
 
 export default defineConfig({
   build: {
     lib: {
       entry: {
-        index: resolve(__dirname, 'src/index.ts'),
-        'data/index': resolve(__dirname, 'src/data/index.ts'),
+        index: resolve(projectRoot, 'src/index.ts'),
+        'data/index': resolve(projectRoot, 'src/data/index.ts'),
       },
       formats: ['es'],
       fileName: (_format, entryName) => `${entryName}.js`,

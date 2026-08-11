@@ -14,6 +14,7 @@ export const zhCNRegistry: Record<string, DemoPageTranslation> = {
   'breadcrumb-bar': { label: 'AppBreadcrumbBar', description: '显示紧凑资源路径，并收纳更早层级的导航。' },
   'navigation-modes': { label: '导航模式', description: '演示展开、紧凑、极简和响应式导航行为。' },
   'app-card': { label: 'AppCard', description: '支持组合、交互状态和连续分组的 Fluent 内容表面。' },
+  'app-carousel': { label: 'AppCarousel', description: '宽幅首页 Banner，支持手动切换和聚焦操作。' },
   'app-divider': { label: 'AppDivider', description: '支持可选标签和缩进对齐的水平或垂直分隔线。' },
   'app-link': { label: 'AppLink', description: '支持禁用、弱化和外部提示的原生应用链接。' },
   'app-avatar-persona': { label: 'AppAvatar / AppPersona', description: '展示身份、首字母、图像、在线状态和人员信息。' },

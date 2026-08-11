@@ -1,7 +1,7 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import packageJson from './package.json' with { type: 'json' }
-import { demoSectionSourcesPlugin } from './example/demoSectionSourcesPlugin'
+import { demoSectionSourcesPlugin } from './example/demoSectionSourcesPlugin.ts'
 
 export default defineConfig({
   root: 'example',

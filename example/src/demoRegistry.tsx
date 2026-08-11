@@ -94,6 +94,7 @@ import { AppDataTablePage, AppSelectionBarPage } from './pages/data/DataPages'
 import { AppPaginationPage } from './pages/data/PaginationPage'
 import { SettingsPage } from './pages/settings/SettingsPages'
 import { AppCardPage } from './pages/content/CardPages'
+import { AppCarouselPage } from './pages/content/CarouselPage'
 import { AppEmptyStatePage } from './pages/content/AppEmptyStatePage'
 import { AppFieldPage } from './pages/content/AppFieldPage'
 import { ListViewPage } from './pages/content/ListViewPage'
@@ -171,6 +172,7 @@ const demoPageSources = [
   { key: 'breadcrumb-bar', label: 'AppBreadcrumbBar', description: 'Compact resource paths with collapsed ancestor navigation.', icon: <ChevronRight size={16} />, component: AppBreadcrumbBarPage },
   { key: 'navigation-modes', label: 'Navigation Modes', description: 'Expanded, compact, minimal, and responsive rail behavior.', icon: <Sidebar size={16} />, component: NavigationModesPage },
   { key: 'app-card', label: 'AppCard', description: 'Fluent content surfaces, composition, interaction states, and continuous groups.', icon: <CreditCard size={16} />, component: AppCardPage },
+  { key: 'app-carousel', label: 'AppCarousel', description: 'Wide homepage banners with manual navigation and focused actions.', icon: <PanelsTopLeft size={16} />, component: AppCarouselPage },
   { key: 'app-divider', label: 'AppDivider', description: 'Horizontal and vertical separators with optional labels and inset alignment.', icon: <SeparatorHorizontal size={16} />, component: AppDividerPage },
   { key: 'app-link', label: 'AppLink', description: 'Native application links with disabled, subtle, and external appearances.', icon: <Link size={16} />, component: AppLinkPage },
   { key: 'app-avatar-persona', label: 'AppAvatar / AppPersona', description: 'Identity, initials, imagery, presence, and descriptive person information.', icon: <UserRound size={16} />, component: AppAvatarPersonaPage },
@@ -304,6 +306,7 @@ const taxonomy: Record<DemoPageKey, DemoTaxonomy> = {
   'app-selection-bar': { category: 'data', subgroup: 'interactions', apiNames: ['AppSelectionBar'], status: 'stable' },
   'property-grid': { category: 'data', subgroup: 'interactions', apiNames: ['AppPropertyGrid'], status: 'stable' },
   'app-card': { category: 'content', subgroup: 'containers', apiNames: ['AppCard', 'AppCardHeader', 'AppCardFooter', 'AppCardGroup'], status: 'stable' },
+  'app-carousel': { category: 'content', subgroup: 'containers', apiNames: ['AppCarousel'], status: 'stable', related: ['app-card'] },
   'app-divider': { category: 'content', subgroup: 'primitives', apiNames: ['AppDivider', 'AppSeparator'], status: 'stable' },
   'app-link': { category: 'content', subgroup: 'identity', apiNames: ['AppLink'], status: 'stable' },
   'app-avatar-persona': { category: 'content', subgroup: 'identity', apiNames: ['AppAvatar', 'AppPersona'], status: 'stable' },

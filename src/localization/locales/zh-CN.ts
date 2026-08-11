@@ -81,6 +81,13 @@ export const zhCNMessages = {
     next: '下一步',
     finish: '完成',
   },
+  carousel: {
+    label: '轮播内容',
+    previous: '上一张',
+    next: '下一张',
+    position: (current: number, total: number) =>
+      `第 ${current} 张，共 ${total} 张`,
+  },
   contextMenu: {
     undo: '撤销',
     cut: '剪切',
