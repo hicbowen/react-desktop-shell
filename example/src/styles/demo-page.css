@@ -916,6 +916,12 @@
   gap: 10px;
 }
 .demo-form-stack { display: grid; gap: 18px; }
+.demo-wizard-preview { padding: 0; }
+.demo-wizard-form { max-width: 480px; display: grid; gap: 16px; }
+.demo-wizard-summary { max-width: 480px; margin: 0; display: grid; gap: 12px; }
+.demo-wizard-summary > div { padding-bottom: 12px; display: grid; grid-template-columns: 140px minmax(0, 1fr); gap: 12px; border-bottom: 1px solid var(--app-shell-border-color, rgb(0 0 0 / 8%)); }
+.demo-wizard-summary dt { color: var(--app-shell-muted-text-color, #707070); }
+.demo-wizard-summary dd { margin: 0; font-weight: 500; }
 .demo-progress-stack { display: grid; gap: 20px; }
 .demo-status-list { display: grid; gap: 8px; margin-top: 14px; }
 .demo-list-placeholder { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 9px 10px; border-bottom: 1px solid var(--app-shell-border-color, rgb(0 0 0 / 12%)); }

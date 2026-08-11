@@ -10,6 +10,7 @@ export const zhCNRegistry: Record<string, DemoPageTranslation> = {
   'app-rail': { label: 'AppRail', description: '带分组、子菜单、徽标和页脚入口的导航栏。' },
   'app-selector-bar': { label: 'AppSelectorBar', description: '在当前页面的少量互斥视图之间切换。' },
   'app-tab-view': { label: 'AppTabView', description: '支持关闭、排序和明确面板生命周期的文档标签页。' },
+  'app-wizard': { label: 'AppWizard', description: '支持验证和宿主持有表单状态的线性步骤引导流程。' },
   'breadcrumb-bar': { label: 'AppBreadcrumbBar', description: '显示紧凑资源路径，并收纳更早层级的导航。' },
   'navigation-modes': { label: '导航模式', description: '演示展开、紧凑、极简和响应式导航行为。' },
   'app-card': { label: 'AppCard', description: '支持组合、交互状态和连续分组的 Fluent 内容表面。' },

@@ -73,6 +73,14 @@ export const zhCNMessages = {
     unsaved: '未保存',
     allTabs: '所有标签页',
   },
+  wizard: {
+    steps: '步骤引导',
+    step: (current: number, total: number) => `第 ${current} 步，共 ${total} 步`,
+    optional: '可选',
+    back: '上一步',
+    next: '下一步',
+    finish: '完成',
+  },
   contextMenu: {
     undo: '撤销',
     cut: '剪切',

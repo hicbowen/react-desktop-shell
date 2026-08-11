@@ -139,6 +139,7 @@ export type {
 } from './toast/types'
 export type { AppToolbarAction, AppToolbarAppearance, AppToolbarProps } from './toolbar/types'
 export type { AppTooltipPlacement, AppTooltipProps } from './tooltip/types'
+export type { AppWizardProps, AppWizardStep } from './wizard/types'
 
 export type AppPageLayout = 'flow' | 'fill'
 

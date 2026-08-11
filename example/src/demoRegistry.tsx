@@ -83,6 +83,7 @@ import { AppResizablePanePage } from './pages/shell/ResizablePanePage'
 import { AppRailPage, AppSelectorBarPage, NavigationModesPage } from './pages/navigation/NavigationPages'
 import { AppTabViewPage } from './pages/navigation/TabViewPage'
 import { AppBreadcrumbBarPage } from './pages/navigation/BreadcrumbBarPage'
+import { AppWizardPage } from './pages/navigation/WizardPage'
 import { AppDialogPage, AppInfoBarPage, AppToastPage, MessageBoxPage } from './pages/feedback/FeedbackPages'
 import { AppCommandPage, AppToolbarPage, ContextMenuPage } from './pages/actions/ActionPages'
 import { AppMenuBarPage } from './pages/actions/MenuBarPage'
@@ -166,6 +167,7 @@ const demoPageSources = [
   { key: 'app-rail', label: 'AppRail', description: 'Grouped navigation items, submenus, badges, and footer links.', icon: <PanelLeft size={16} />, component: AppRailPage },
   { key: 'app-selector-bar', label: 'AppSelectorBar', description: 'Switch between a few mutually exclusive views within the current page.', icon: <Rows3 size={16} />, component: AppSelectorBarPage },
   { key: 'app-tab-view', label: 'AppTabView', description: 'Closable, reorderable document tabs with explicit panel lifecycle.', icon: <PanelsTopLeft size={16} />, component: AppTabViewPage },
+  { key: 'app-wizard', label: 'AppWizard', description: 'Guide a short linear setup flow with validation and host-owned form state.', icon: <ListTodo size={16} />, component: AppWizardPage },
   { key: 'breadcrumb-bar', label: 'AppBreadcrumbBar', description: 'Compact resource paths with collapsed ancestor navigation.', icon: <ChevronRight size={16} />, component: AppBreadcrumbBarPage },
   { key: 'navigation-modes', label: 'Navigation Modes', description: 'Expanded, compact, minimal, and responsive rail behavior.', icon: <Sidebar size={16} />, component: NavigationModesPage },
   { key: 'app-card', label: 'AppCard', description: 'Fluent content surfaces, composition, interaction states, and continuous groups.', icon: <CreditCard size={16} />, component: AppCardPage },
@@ -257,6 +259,7 @@ const taxonomy: Record<DemoPageKey, DemoTaxonomy> = {
   'navigation-modes': { category: 'navigation', subgroup: 'application', apiNames: ['AppRail'], status: 'stable', related: ['app-rail'] },
   'app-selector-bar': { category: 'navigation', subgroup: 'controls', apiNames: ['AppSelectorBar', 'AppSelectorPanel', 'AppSelectorPanels'], status: 'stable' },
   'app-tab-view': { category: 'navigation', subgroup: 'controls', apiNames: ['AppTabView'], status: 'stable' },
+  'app-wizard': { category: 'navigation', subgroup: 'controls', apiNames: ['AppWizard'], status: 'stable' },
   'breadcrumb-bar': { category: 'navigation', subgroup: 'controls', apiNames: ['AppBreadcrumbBar'], status: 'stable' },
   'app-pagination': { category: 'navigation', subgroup: 'controls', apiNames: ['AppPagination'], status: 'stable', related: ['app-data-table'] },
   buttons: { category: 'actions', subgroup: 'basic', apiNames: ['AppButton', 'AppIconButton'], status: 'stable' },

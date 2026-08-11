@@ -129,6 +129,7 @@ export { AppTeachingTip } from './teaching-tip'
 export { AppTitleBar } from './AppTitleBar'
 export { AppToolbar } from './toolbar/AppToolbar'
 export { AppTooltip } from './tooltip'
+export { AppWizard } from './wizard'
 export { useAppMessageBox } from './dialog/AppMessageBoxContext'
 export { useAppContextMenu } from './context-menu/AppContextMenuContext'
 export { useAppToast } from './toast/AppToastContext'
@@ -255,6 +256,8 @@ export type {
   AppToolbarProps,
   AppTooltipPlacement,
   AppTooltipProps,
+  AppWizardProps,
+  AppWizardStep,
   PaneDisplayMode,
   RailEntry,
   RailGroup,

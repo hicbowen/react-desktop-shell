@@ -68,6 +68,14 @@ export interface AppLocaleMessages {
     unsaved: string
     allTabs: string
   }
+  wizard: {
+    steps: string
+    step: (current: number, total: number) => string
+    optional: string
+    back: string
+    next: string
+    finish: string
+  }
   contextMenu: {
     undo: string
     cut: string

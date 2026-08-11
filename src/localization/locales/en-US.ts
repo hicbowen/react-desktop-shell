@@ -78,6 +78,14 @@ export const enUSMessages = {
     unsaved: 'Unsaved',
     allTabs: 'All tabs',
   },
+  wizard: {
+    steps: 'Steps',
+    step: (current: number, total: number) => `Step ${current} of ${total}`,
+    optional: 'Optional',
+    back: 'Back',
+    next: 'Next',
+    finish: 'Finish',
+  },
   contextMenu: {
     undo: 'Undo',
     cut: 'Cut',

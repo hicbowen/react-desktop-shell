@@ -1,0 +1,235 @@
+.app-wizard {
+  --app-wizard-border-color: var(--app-shell-border-color, rgb(0 0 0 / 8%));
+  --app-wizard-muted-color: var(--app-shell-muted-text-color, #707070);
+  --app-wizard-accent-color: var(--app-shell-accent-color, #115ea3);
+
+  min-width: 0;
+  container-type: inline-size;
+  color: var(--app-shell-text-color, #1f1f1f);
+}
+
+.app-wizard__layout {
+  min-width: 0;
+  grid-template-columns: 188px minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr) auto;
+  display: grid;
+}
+
+.app-wizard__steps {
+  min-width: 0;
+  grid-row: 1 / span 2;
+  padding: 20px 16px 20px 0;
+  background: var(--app-shell-chrome-bg, #f3f3f3);
+  border-right: 1px solid var(--app-wizard-border-color);
+}
+
+.app-wizard__step-list {
+  margin: 0;
+  padding: 0 0 0 12px;
+  display: grid;
+  gap: 4px;
+  list-style: none;
+}
+
+.app-wizard__step {
+  position: relative;
+  min-width: 0;
+  min-height: 40px;
+  padding: 8px 8px 8px 36px;
+  display: flex;
+  align-items: center;
+  color: var(--app-wizard-muted-color);
+  font-size: 13px;
+  line-height: 1.3;
+}
+
+.app-wizard__step:not(:last-child)::after {
+  position: absolute;
+  top: 32px;
+  bottom: -12px;
+  left: 15px;
+  width: 1px;
+  content: '';
+  background: var(--app-wizard-border-color);
+}
+
+.app-wizard__step-marker {
+  position: absolute;
+  top: 8px;
+  left: 3px;
+  width: 24px;
+  height: 24px;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--app-wizard-muted-color);
+  font-size: 12px;
+  font-weight: 600;
+  background: var(--app-shell-content-bg, #f7f8fa);
+  border: 1px solid var(--app-wizard-border-color);
+  border-radius: 50%;
+}
+
+.app-wizard__step--current {
+  color: var(--app-shell-text-color, #1f1f1f);
+  font-weight: 600;
+}
+
+.app-wizard__step--current .app-wizard__step-marker {
+  color: var(--app-shell-dialog-primary-fg, #fff);
+  background: var(--app-wizard-accent-color);
+  border-color: var(--app-wizard-accent-color);
+}
+
+.app-wizard__step--complete {
+  color: var(--app-wizard-accent-color);
+}
+
+.app-wizard__step--complete .app-wizard__step-marker {
+  color: var(--app-wizard-accent-color);
+  border-color: var(--app-wizard-accent-color);
+}
+
+.app-wizard__step-label {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.app-wizard__step-title {
+  display: inline;
+}
+
+.app-wizard__step-optional {
+  margin-left: 6px;
+  color: var(--app-wizard-muted-color);
+  font-size: 12px;
+  font-weight: 400;
+}
+
+.app-wizard__compact-progress {
+  display: none;
+}
+
+.app-wizard__main {
+  min-width: 0;
+  min-height: 220px;
+  padding: 20px 24px 24px;
+  display: flex;
+  flex-direction: column;
+}
+
+.app-wizard__header {
+  min-width: 0;
+}
+
+.app-wizard__header h2 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 1.3;
+  overflow-wrap: anywhere;
+}
+
+.app-wizard__header h2:focus {
+  outline: none;
+}
+
+.app-wizard__header p {
+  margin: 6px 0 0;
+  color: var(--app-wizard-muted-color);
+  font-size: 13px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.app-wizard__content {
+  min-width: 0;
+  padding-top: 20px;
+}
+
+.app-wizard__footer {
+  min-width: 0;
+  grid-column: 2;
+  padding: 12px 24px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  border-top: 1px solid var(--app-wizard-border-color);
+}
+
+.app-wizard__actions {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+@container (max-width: 600px) {
+  .app-wizard__layout {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .app-wizard__steps {
+    display: none;
+  }
+
+  .app-wizard__compact-progress {
+    padding: 16px 20px 0;
+    display: grid;
+    gap: 8px;
+  }
+
+  .app-wizard__compact-meta {
+    min-width: 0;
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    color: var(--app-wizard-muted-color);
+    font-size: 12px;
+  }
+
+  .app-wizard__compact-meta > span:first-child {
+    flex: 0 0 auto;
+    white-space: nowrap;
+  }
+
+  .app-wizard__compact-track {
+    position: relative;
+    height: 4px;
+    overflow: hidden;
+    background: var(--app-wizard-border-color);
+    border-radius: 999px;
+  }
+
+  .app-wizard__compact-indicator {
+    position: absolute;
+    inset: 0 auto 0 0;
+    display: block;
+    background: var(--app-wizard-accent-color);
+    border-radius: inherit;
+  }
+
+  .app-wizard__main {
+    min-height: 200px;
+    padding: 16px 20px 20px;
+  }
+
+  .app-wizard__footer {
+    padding: 12px 20px 16px;
+  }
+}
+
+@media (forced-colors: active) {
+  .app-wizard__step--current .app-wizard__step-marker {
+    color: ButtonText;
+    background: Highlight;
+    border-color: Highlight;
+  }
+
+  .app-wizard__compact-indicator {
+    background: Highlight;
+  }
+}
