@@ -1,8 +1,11 @@
 import { useEffect, useId, useRef, useState } from 'react'
 import { AppButton } from '../button/AppButton'
 import { useAppLocale } from '../localization/useAppLocale'
+import { AppScrollArea } from '../scroll-area/AppScrollArea'
 import type { AppWizardProps, AppWizardStep } from './types'
 import './AppWizard.css'
+
+const stepScrollMargin = 8
 
 function resolveStep(
   steps: readonly AppWizardStep[],
@@ -39,6 +42,8 @@ export function AppWizard({
     : -1
   const [pending, setPending] = useState<'next' | 'complete' | null>(null)
   const headingRef = useRef<HTMLHeadingElement>(null)
+  const stepRefs = useRef(new Map<string, HTMLLIElement>())
+  const stepsScrollRef = useRef<HTMLDivElement>(null)
   const previousKeyRef = useRef(currentKey)
 
   useEffect(() => {
@@ -48,6 +53,41 @@ export function AppWizard({
 
     previousKeyRef.current = currentKey
     headingRef.current?.focus()
+
+    const stepNode = stepRefs.current.get(currentKey)
+    const viewport = stepsScrollRef.current
+    if (!stepNode || !viewport || typeof viewport.scrollBy !== 'function') {
+      return
+    }
+
+    const viewportRect = viewport.getBoundingClientRect()
+    const stepRect = stepNode.getBoundingClientRect()
+    if (viewportRect.height <= 0 || stepRect.height <= 0) {
+      return
+    }
+
+    const visibleTop = viewportRect.top + stepScrollMargin
+    const visibleBottom = viewportRect.bottom - stepScrollMargin
+    const scrollDelta =
+      stepRect.top < visibleTop
+        ? stepRect.top - visibleTop
+        : stepRect.bottom > visibleBottom
+          ? stepRect.bottom - visibleBottom
+          : 0
+
+    if (scrollDelta === 0) {
+      return
+    }
+
+    const prefersReducedMotion =
+      typeof window !== 'undefined' &&
+      typeof window.matchMedia === 'function' &&
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
+    viewport.scrollBy({
+      behavior: prefersReducedMotion ? 'auto' : 'smooth',
+      top: scrollDelta,
+    })
   }, [currentKey])
 
   if (!currentStep || currentIndex < 0) {
@@ -122,39 +162,52 @@ export function AppWizard({
           aria-label={ariaLabel ?? text.steps}
           className="app-wizard__steps"
         >
-          <ol className="app-wizard__step-list">
-            {steps.map((step, index) => {
-              const current = index === currentIndex
-              const complete = index < currentIndex
-              const stepClassName = [
-                'app-wizard__step',
-                current ? 'app-wizard__step--current' : '',
-                complete ? 'app-wizard__step--complete' : '',
-              ]
-                .filter(Boolean)
-                .join(' ')
+          <AppScrollArea
+            className="app-wizard__steps-scroll"
+            gutter="stable"
+            ref={stepsScrollRef}
+          >
+            <ol className="app-wizard__step-list">
+              {steps.map((step, index) => {
+                const current = index === currentIndex
+                const complete = index < currentIndex
+                const stepClassName = [
+                  'app-wizard__step',
+                  current ? 'app-wizard__step--current' : '',
+                  complete ? 'app-wizard__step--complete' : '',
+                ]
+                  .filter(Boolean)
+                  .join(' ')
 
-              return (
-                <li
-                  aria-current={current ? 'step' : undefined}
-                  className={stepClassName}
-                  key={step.key}
-                >
-                  <span aria-hidden="true" className="app-wizard__step-marker">
-                    {complete ? '✓' : index + 1}
-                  </span>
-                  <span className="app-wizard__step-label">
-                    <span className="app-wizard__step-title">{step.title}</span>
-                    {step.optional ? (
-                      <span className="app-wizard__step-optional">
-                        {text.optional}
-                      </span>
-                    ) : null}
-                  </span>
-                </li>
-              )
-            })}
-          </ol>
+                return (
+                  <li
+                    aria-current={current ? 'step' : undefined}
+                    className={stepClassName}
+                    key={step.key}
+                    ref={(node) => {
+                      if (node) {
+                        stepRefs.current.set(step.key, node)
+                      } else {
+                        stepRefs.current.delete(step.key)
+                      }
+                    }}
+                  >
+                    <span aria-hidden="true" className="app-wizard__step-marker">
+                      {complete ? '✓' : index + 1}
+                    </span>
+                    <span className="app-wizard__step-label">
+                      <span className="app-wizard__step-title">{step.title}</span>
+                      {step.optional ? (
+                        <span className="app-wizard__step-optional">
+                          {text.optional}
+                        </span>
+                      ) : null}
+                    </span>
+                  </li>
+                )
+              })}
+            </ol>
+          </AppScrollArea>
         </nav>
 
         <div className="app-wizard__compact-progress">

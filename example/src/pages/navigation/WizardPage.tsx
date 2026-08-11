@@ -62,6 +62,100 @@ export function AppWizardPage() {
       ),
     },
     {
+      key: 'template',
+      title: t('Choose a workspace template'),
+      description: t('Start with a template that matches the way your team works.'),
+      content: (
+        <div className="demo-wizard-note">
+          <p>{t('A standard workspace template is selected for this preview.')}</p>
+        </div>
+      ),
+    },
+    {
+      key: 'permissions',
+      title: t('Configure member access'),
+      description: t('Decide who can view and edit this workspace.'),
+      content: (
+        <div className="demo-wizard-note">
+          <p>{t('Member access can be refined after the workspace is created.')}</p>
+        </div>
+      ),
+    },
+    {
+      key: 'appearance',
+      title: t('Set workspace appearance'),
+      description: t('Choose a visual style before the workspace opens.'),
+      optional: true,
+      content: (
+        <div className="demo-wizard-note">
+          <p>{t('Appearance settings can be changed later from Settings.')}</p>
+        </div>
+      ),
+    },
+    {
+      key: 'notifications',
+      title: t('Choose notification preferences'),
+      description: t('Choose which updates should appear in the workspace.'),
+      optional: true,
+      content: (
+        <div className="demo-wizard-note">
+          <p>{t('Notification preferences can be changed later without restarting the setup.')}</p>
+        </div>
+      ),
+    },
+    {
+      key: 'connections',
+      title: t('Check connected services'),
+      description: t('Confirm that the services needed for this setup are available.'),
+      content: (
+        <div className="demo-wizard-note">
+          <p>{t('All connected services are ready for the final step.')}</p>
+        </div>
+      ),
+    },
+    {
+      key: 'mapping',
+      title: t('Map imported fields'),
+      description: t('Match imported fields with workspace properties.'),
+      content: (
+        <div className="demo-wizard-note">
+          <p>{t('Imported fields are ready to be matched with workspace properties.')}</p>
+        </div>
+      ),
+    },
+    {
+      key: 'schedule',
+      title: t('Set synchronization schedule'),
+      description: t('Choose when connected data should be refreshed.'),
+      optional: true,
+      content: (
+        <div className="demo-wizard-note">
+          <p>{t('This preview uses a daily synchronization schedule.')}</p>
+        </div>
+      ),
+    },
+    {
+      key: 'security',
+      title: t('Configure security options'),
+      description: t('Review sign-in and data protection settings.'),
+      optional: true,
+      content: (
+        <div className="demo-wizard-note">
+          <p>{t('Security settings remain available from the workspace settings.')}</p>
+        </div>
+      ),
+    },
+    {
+      key: 'resources',
+      title: t('Prepare workspace resources'),
+      description: t('Confirm the resources to create before the final review.'),
+      content: (
+        <div className="demo-wizard-note">
+          <p>{t('Workspace resources will be prepared during creation.')}</p>
+        </div>
+      ),
+    },
+    {
       key: 'review',
       title: t('Review and create'),
       description: t('Check the choices before creating the workspace.'),
@@ -83,7 +177,7 @@ export function AppWizardPage() {
   return (
     <DemoPage>
       <DemoSection
-        description={t('Guide users through a short setup flow while the host keeps the form and business state.')}
+        description={t('Guide users through a setup flow while the host keeps the form and business state.')}
         title={t('Quick setup')}
       >
         <DemoPreview className="demo-wizard-preview">

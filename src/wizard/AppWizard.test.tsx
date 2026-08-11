@@ -47,6 +47,58 @@ describe('AppWizard', () => {
     expect(container.textContent).toContain('First content')
   })
 
+  it('uses AppScrollArea for the desktop step list', () => {
+    render()
+
+    const scrollArea = container.querySelector('.app-wizard__steps-scroll')
+    expect(scrollArea?.classList).toContain('app-scroll-area')
+    expect(scrollArea?.getAttribute('data-orientation')).toBe('vertical')
+    expect(scrollArea?.querySelector('.app-wizard__step-list')).toBeTruthy()
+  })
+
+  it('scrolls the active step only when it leaves the visible area', () => {
+    const scrollBy = vi.fn()
+    const originalScrollBy = HTMLElement.prototype.scrollBy
+    Object.defineProperty(HTMLElement.prototype, 'scrollBy', {
+      configurable: true,
+      value: scrollBy,
+    })
+
+    try {
+      render()
+
+      const viewport = container.querySelector<HTMLElement>(
+        '.app-wizard__steps-scroll .app-scroll-area__viewport',
+      )!
+      const secondStep = container.querySelectorAll<HTMLLIElement>(
+        '.app-wizard__step',
+      )[1]
+      vi.spyOn(viewport, 'getBoundingClientRect').mockReturnValue({
+        bottom: 100,
+        height: 100,
+        top: 0,
+      } as DOMRect)
+      vi.spyOn(secondStep, 'getBoundingClientRect').mockReturnValue({
+        bottom: 120,
+        height: 40,
+        top: 80,
+      } as DOMRect)
+
+      expect(scrollBy).not.toHaveBeenCalled()
+      act(() => button('Next', '下一步').click())
+
+      expect(scrollBy).toHaveBeenCalledWith({
+        behavior: 'smooth',
+        top: 28,
+      })
+    } finally {
+      Object.defineProperty(HTMLElement.prototype, 'scrollBy', {
+        configurable: true,
+        value: originalScrollBy,
+      })
+    }
+  })
+
   it('moves through steps and back in uncontrolled mode', () => {
     render()
 
