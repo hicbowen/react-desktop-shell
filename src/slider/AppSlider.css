@@ -2,7 +2,7 @@
 .app-slider--compact { --app-slider-track-size: 3px; --app-slider-thumb-size: 14px; gap: 8px; }
 .app-slider__control { position: relative; width: 180px; min-height: 36px; display: flex; align-items: center; padding-bottom: 0; }
 .app-slider:has(.app-slider__mark-label) .app-slider__control { padding-bottom: 20px; }
-.app-slider__input { width: 100%; height: var(--app-slider-thumb-size); position: relative; z-index: 2; margin: 0; padding: 0; -webkit-appearance: none; appearance: none; background: transparent; outline: 0; cursor: default; }
+.app-slider__input { position: absolute; top: 50%; left: 0; width: 100%; height: var(--app-slider-thumb-size); z-index: 2; margin: 0; padding: 0; transform: translateY(-50%); -webkit-appearance: none; appearance: none; background: transparent; outline: 0; cursor: default; }
 .app-slider__input::-webkit-slider-runnable-track { height: var(--app-slider-track-size); -webkit-appearance: none; appearance: none; background: linear-gradient(to right, var(--app-slider-accent) 0 var(--app-slider-percent), var(--app-shell-border-color, rgb(0 0 0 / 20%)) var(--app-slider-percent) 100%); border-radius: 999px; }
 .app-slider__input::-webkit-slider-thumb { width: var(--app-slider-thumb-size); height: var(--app-slider-thumb-size); margin-top: calc((var(--app-slider-track-size) - var(--app-slider-thumb-size)) / 2); -webkit-appearance: none; appearance: none; box-sizing: border-box; background: transparent; border: 0; border-radius: 50%; box-shadow: none; }
 .app-slider__input::-moz-range-track { height: var(--app-slider-track-size); background: var(--app-shell-border-color, rgb(0 0 0 / 20%)); border-radius: 999px; }
