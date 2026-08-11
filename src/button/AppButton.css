@@ -26,9 +26,24 @@
 .app-button--primary:active:not(:disabled) { background: var(--app-shell-accent-pressed-color, #0c4f87); }
 .app-button--primary:disabled { background: var(--app-shell-disabled-bg, rgb(0 0 0 / 6%)); border-color: transparent; }
 .app-button--subtle { background: transparent; border-color: transparent; }
-.app-button--danger { color: var(--app-shell-danger-color, #c42b1c); background: transparent; border-color: transparent; }
-.app-button--danger:hover:not(:disabled) { background: var(--app-shell-danger-subtle-bg, rgb(196 43 28 / 8%)); }
-.app-button--danger:active:not(:disabled) { background: var(--app-shell-danger-pressed-bg, rgb(196 43 28 / 14%)); }
+.app-button--danger {
+  color: var(--app-shell-danger-fg, #c42b1c);
+  background: var(--app-shell-card-bg, #fff);
+  border-color: color-mix(in srgb, currentColor 30%, transparent);
+}
+.app-button--danger:hover:not(:disabled) {
+  background: color-mix(in srgb, currentColor 16%, transparent);
+  border-color: color-mix(in srgb, currentColor 42%, transparent);
+}
+.app-button--danger:active:not(:disabled) {
+  background: color-mix(in srgb, currentColor 22%, transparent);
+  border-color: color-mix(in srgb, currentColor 50%, transparent);
+}
+.app-button--danger:disabled {
+  color: var(--app-shell-disabled-text-color, rgb(0 0 0 / 36%));
+  background: var(--app-shell-disabled-bg, rgb(0 0 0 / 6%));
+  border-color: transparent;
+}
 .app-button--compact { min-height: 28px; padding-inline: 10px; }
 .app-button--block { width: 100%; }
 .app-button__content { min-width: 0; display: inline-flex; align-items: center; justify-content: center; gap: 7px; }
