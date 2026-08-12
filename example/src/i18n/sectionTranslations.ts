@@ -97,6 +97,8 @@ const zhCNSectionText: Record<string, string> = {
   'Use AppQuickAskThread when the surface should keep several user and AI turns. The host owns the message list.': '当浮层需要保留多轮用户和 AI 消息时使用 AppQuickAskThread，消息列表由宿主持有。',
   'Tool approval: explicit confirmation': 'Tool 授权：明确确认',
   'Render AppToolApprovalCard as a tool message when an operation needs user approval. The host decides whether to run or reject it.': '当操作需要用户确认时，将 AppToolApprovalCard 作为 Tool 消息渲染；是否执行或拒绝由宿主决定。',
+  'Change review: apply or reject': '变更审阅：应用或拒绝',
+  'Review proposed file changes before applying them. The host owns the final write operation.': '在应用前审阅建议的文件变更，最终写入操作由宿主持有。',
   'Radio groups': '单选组',
   'Range slider': '范围滑块',
   'Region paths': '区域路径',

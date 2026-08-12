@@ -79,6 +79,42 @@ export interface AppAiActivityProps
   style?: CSSProperties
 }
 
+export type AppChangeReviewStatus =
+  | 'pending'
+  | 'applying'
+  | 'applied'
+  | 'rejected'
+  | 'error'
+
+export interface AppChangeReviewFile {
+  id: string
+  path: ReactNode
+  summary?: ReactNode
+  additions?: number
+  deletions?: number
+  diff?: ReactNode
+}
+
+export interface AppChangeReviewCardProps
+  extends Omit<HTMLAttributes<HTMLElement>, 'title'> {
+  files: readonly AppChangeReviewFile[]
+  title?: ReactNode
+  description?: ReactNode
+  status?: AppChangeReviewStatus
+  danger?: boolean
+  expanded?: boolean
+  defaultExpanded?: boolean
+  onExpandedChange?: (expanded: boolean) => void
+  onApply?: () => void
+  onReject?: () => void
+  applyText?: ReactNode
+  rejectText?: ReactNode
+  ariaLabel?: string
+  size?: 'compact' | 'standard'
+  className?: string
+  style?: CSSProperties
+}
+
 export type AppToolApprovalStatus =
   'pending' | 'approved' | 'denied' | 'running' | 'completed' | 'error'
 

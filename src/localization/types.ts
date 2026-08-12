@@ -72,6 +72,19 @@ export interface AppLocaleMessages {
     completed: string
     toolFailed: string
   }
+  changeReview: {
+    label: string
+    pending: string
+    applying: string
+    applied: string
+    rejected: string
+    failed: string
+    apply: string
+    reject: string
+    showDetails: string
+    hideDetails: string
+    noChanges: string
+  }
   autoComplete: {
     empty: string
     loading: string

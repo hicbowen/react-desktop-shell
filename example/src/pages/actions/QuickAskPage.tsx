@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import {
   AppAiActivity,
   AppButton,
+  AppChangeReviewCard,
   AppCommandProvider,
   AppPromptSuggestions,
   AppQuickAsk,
@@ -10,6 +11,8 @@ import {
   formatAppShortcut,
   type AppAiActivityStatus,
   type AppAiActivityStep,
+  type AppChangeReviewFile,
+  type AppChangeReviewStatus,
   type AppCommand,
   type AppPromptSuggestion,
   type AppQuickAskMessage,
@@ -78,6 +81,9 @@ export function AppQuickAskPage() {
     useState<AppQuickAskStatus>('awaiting-approval')
   const approvalTimerRef = useRef<number | null>(null)
   const approvalMessageIdRef = useRef(2)
+  const reviewTimerRef = useRef<number | null>(null)
+  const [reviewStatus, setReviewStatus] =
+    useState<AppChangeReviewStatus>('pending')
 
   useEffect(
     () => () => {
@@ -89,6 +95,9 @@ export function AppQuickAskPage() {
       }
       if (approvalTimerRef.current !== null) {
         window.clearTimeout(approvalTimerRef.current)
+      }
+      if (reviewTimerRef.current !== null) {
+        window.clearTimeout(reviewTimerRef.current)
       }
     },
     [],
@@ -333,6 +342,55 @@ export function AppQuickAskPage() {
     setApprovalDraft('')
   }
 
+  const reviewFiles = useMemo<AppChangeReviewFile[]>(
+    () => [
+      {
+        id: 'meeting-summary',
+        path: 'Documents/meeting-summary.md',
+        summary: t('Add the decisions and next steps from the meeting.'),
+        additions: 8,
+        deletions: 0,
+        diff: '@@ -0,0 +1,8 @@\n+# Meeting summary\n+\n+## Decisions\n+- Confirm the launch checklist\n+\n+## Next steps\n+- Share the checklist with the team',
+      },
+      {
+        id: 'readme',
+        path: 'Documents/README.md',
+        summary: t('Link to the generated meeting summary.'),
+        additions: 1,
+        deletions: 1,
+        diff: '@@ -4,1 +4,1 @@\n-See the meeting notes.\n+See the [meeting summary](meeting-summary.md).',
+      },
+    ],
+    [t],
+  )
+
+  const applyReview = () => {
+    if (reviewTimerRef.current !== null) {
+      window.clearTimeout(reviewTimerRef.current)
+    }
+    setReviewStatus('applying')
+    reviewTimerRef.current = window.setTimeout(() => {
+      reviewTimerRef.current = null
+      setReviewStatus('applied')
+    }, 520)
+  }
+
+  const rejectReview = () => {
+    if (reviewTimerRef.current !== null) {
+      window.clearTimeout(reviewTimerRef.current)
+      reviewTimerRef.current = null
+    }
+    setReviewStatus('rejected')
+  }
+
+  const resetReview = () => {
+    if (reviewTimerRef.current !== null) {
+      window.clearTimeout(reviewTimerRef.current)
+      reviewTimerRef.current = null
+    }
+    setReviewStatus('pending')
+  }
+
   const approvalThreadMessages: AppQuickAskMessage[] = approvalMessages.map(
     (message) => {
       if (message.role !== 'tool') {
@@ -523,6 +581,28 @@ export function AppQuickAskPage() {
         <p className="demo-note">
           {t(
             'Approval state is host-owned: awaiting-approval blocks submit, and only the explicit approval callback runs the simulated tool.',
+          )}
+        </p>
+      </DemoSection>
+
+      <DemoSection
+        title="Change review: apply or reject"
+        description="Review proposed file changes before applying them. The host owns the final write operation."
+      >
+        <DemoPreview className="demo-component-row">
+          <AppChangeReviewCard
+            files={reviewFiles}
+            onApply={applyReview}
+            onReject={rejectReview}
+            status={reviewStatus}
+            style={{ flex: '1 1 480px', maxWidth: 560 }}
+            title={t('Review generated file changes')}
+          />
+          <AppButton onClick={resetReview}>{t('Reset review')}</AppButton>
+        </DemoPreview>
+        <p className="demo-note">
+          {t(
+            'Approval answers whether a tool may run; change review shows the concrete result before it is applied.',
           )}
         </p>
       </DemoSection>

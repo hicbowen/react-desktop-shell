@@ -366,6 +366,19 @@ it does not expose model reasoning or run the request itself:
 />
 ```
 
+Use `AppChangeReviewCard` after a tool has prepared concrete file or code
+changes. Keep the final write operation in the host and let the card handle
+review details, Diff visibility, and the apply/reject decision:
+
+```tsx
+<AppChangeReviewCard
+  files={files}
+  status={review.status}
+  onApply={() => applyChanges(review.id)}
+  onReject={() => rejectChanges(review.id)}
+/>
+```
+
 ```tsx
 <AppQuickAsk
   answer={<AppQuickAskThread messages={messages} />}

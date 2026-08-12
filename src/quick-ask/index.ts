@@ -1,4 +1,5 @@
 export { AppAiActivity } from './AppAiActivity'
+export { AppChangeReviewCard } from './AppChangeReviewCard'
 export { AppQuickAsk } from './AppQuickAsk'
 export { AppQuickAskThread } from './AppQuickAskThread'
 export { AppPromptSuggestions } from './AppPromptSuggestions'
@@ -8,6 +9,9 @@ export type {
   AppAiActivityStatus,
   AppAiActivityStep,
   AppAiActivityStepStatus,
+  AppChangeReviewCardProps,
+  AppChangeReviewFile,
+  AppChangeReviewStatus,
   AppQuickAskMessage,
   AppQuickAskMessageRole,
   AppQuickAskProps,
