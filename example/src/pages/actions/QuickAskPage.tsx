@@ -12,7 +12,7 @@ import {
   type AppQuickAskStatus,
   type AppToolApprovalStatus,
 } from '../../../../src'
-import { Sparkles } from '../../components/fluentIcons'
+import { CheckCircle2, MessageSquare, Sparkles } from '../../components/fluentIcons'
 import { DemoPage, DemoPreview, DemoSection } from '../../components/DemoPage'
 import { useDemoCopy } from '../../i18n/interactiveTranslations'
 
@@ -34,199 +34,383 @@ type DemoMessage = DemoTextMessage | DemoToolMessage
 
 export function AppQuickAskPage() {
   const t = useDemoCopy()
-  const [open, setOpen] = useState(false)
-  const [draft, setDraft] = useState('')
-  const [messages, setMessages] = useState<DemoMessage[]>([])
-  const [status, setStatus] = useState<AppQuickAskStatus>('idle')
-  const timerRef = useRef<number | null>(null)
-  const messageIdRef = useRef(0)
+
+  const [oneShotOpen, setOneShotOpen] = useState(false)
+  const [oneShotDraft, setOneShotDraft] = useState('')
+  const [oneShotAnswer, setOneShotAnswer] = useState<string | null>(null)
+  const [oneShotStatus, setOneShotStatus] = useState<AppQuickAskStatus>('idle')
+  const oneShotTimerRef = useRef<number | null>(null)
+
+  const [chatOpen, setChatOpen] = useState(false)
+  const [chatDraft, setChatDraft] = useState('')
+  const [chatMessages, setChatMessages] = useState<DemoTextMessage[]>([
+    {
+      id: 'chat-user-1',
+      role: 'user',
+      text: 'What should we review in this thread?',
+    },
+    {
+      id: 'chat-assistant-1',
+      role: 'assistant',
+      text: 'The current thread is ready. Ask a follow-up and the host will append the next turn.',
+    },
+  ])
+  const [chatStatus, setChatStatus] = useState<AppQuickAskStatus>('idle')
+  const chatTimerRef = useRef<number | null>(null)
+  const chatMessageIdRef = useRef(2)
+
+  const [approvalOpen, setApprovalOpen] = useState(false)
+  const [approvalDraft, setApprovalDraft] = useState('')
+  const [approvalMessages, setApprovalMessages] = useState<DemoMessage[]>([
+    {
+      id: 'approval-assistant-1',
+      role: 'assistant',
+      text: 'The assistant needs confirmation before it can save the meeting summary.',
+    },
+    { id: 'approval-tool-1', role: 'tool', status: 'pending' },
+  ])
+  const [approvalStatus, setApprovalStatus] =
+    useState<AppQuickAskStatus>('awaiting-approval')
+  const approvalTimerRef = useRef<number | null>(null)
+  const approvalMessageIdRef = useRef(2)
 
   useEffect(
     () => () => {
-      if (timerRef.current !== null) window.clearTimeout(timerRef.current)
+      if (oneShotTimerRef.current !== null) {
+        window.clearTimeout(oneShotTimerRef.current)
+      }
+      if (chatTimerRef.current !== null) {
+        window.clearTimeout(chatTimerRef.current)
+      }
+      if (approvalTimerRef.current !== null) {
+        window.clearTimeout(approvalTimerRef.current)
+      }
     },
     [],
   )
 
-  const nextMessageId = (prefix: string) => {
-    messageIdRef.current += 1
-    return `${prefix}-${messageIdRef.current}`
+  const stopOneShotTimer = () => {
+    if (oneShotTimerRef.current === null) return
+    window.clearTimeout(oneShotTimerRef.current)
+    oneShotTimerRef.current = null
   }
-  const stopTimer = () => {
-    if (timerRef.current === null) return
-    window.clearTimeout(timerRef.current)
-    timerRef.current = null
-  }
-  const appendAssistantMessage = (text: string) => {
-    setMessages((current) => [
-      ...current,
-      { id: nextMessageId('assistant'), role: 'assistant', text },
-    ])
-  }
-  const submit = (prompt: string) => {
-    stopTimer()
-    setMessages((current) => [
-      ...current,
-      { id: nextMessageId('user'), role: 'user', text: prompt },
-    ])
-    setStatus('submitting')
 
-    timerRef.current = window.setTimeout(() => {
-      timerRef.current = null
-      setMessages((current) => [
-        ...current,
-        {
-          id: nextMessageId('assistant'),
-          role: 'assistant',
-          text: t(
-            'I prepared the summary. Allow the file tool to save it to your Documents folder.',
-          ),
-        },
-        {
-          id: nextMessageId('tool'),
-          role: 'tool',
-          status: 'pending',
-        },
-      ])
-      setStatus('awaiting-approval')
+  const submitOneShot = (prompt: string) => {
+    stopOneShotTimer()
+    void prompt
+    setOneShotAnswer(null)
+    setOneShotStatus('submitting')
+    oneShotTimerRef.current = window.setTimeout(() => {
+      oneShotTimerRef.current = null
+      setOneShotAnswer(
+        'This is a one-shot response. The host can keep or discard it after the surface closes.',
+      )
+      setOneShotStatus('completed')
     }, 520)
   }
+
+  const cancelOneShot = () => {
+    stopOneShotTimer()
+    setOneShotAnswer('Generation stopped.')
+    setOneShotStatus('completed')
+  }
+
+  const oneShotCommands = useMemo<AppCommand[]>(
+    () => [
+      {
+        id: 'ai.quickAsk.oneShot',
+        label: t('Open one-shot ask'),
+        icon: <Sparkles />,
+        shortcut,
+        allowInEditable: true,
+        execute: () => setOneShotOpen((current) => !current),
+      },
+    ],
+    [t],
+  )
+
+  const stopChatTimer = () => {
+    if (chatTimerRef.current === null) return
+    window.clearTimeout(chatTimerRef.current)
+    chatTimerRef.current = null
+  }
+
+  const nextChatMessageId = (role: DemoTextMessage['role']) => {
+    chatMessageIdRef.current += 1
+    return `chat-${role}-${chatMessageIdRef.current}`
+  }
+
+  const submitChat = (prompt: string) => {
+    stopChatTimer()
+    setChatMessages((current) => [
+      ...current,
+      { id: nextChatMessageId('user'), role: 'user', text: prompt },
+    ])
+    setChatStatus('submitting')
+    chatTimerRef.current = window.setTimeout(() => {
+      chatTimerRef.current = null
+      setChatMessages((current) => [
+        ...current,
+        {
+          id: nextChatMessageId('assistant'),
+          role: 'assistant',
+          text: 'The follow-up was added to the current thread. The host can continue from this history.',
+        },
+      ])
+      setChatStatus('completed')
+    }, 520)
+  }
+
+  const cancelChat = () => {
+    stopChatTimer()
+    setChatMessages((current) => [
+      ...current,
+      {
+        id: nextChatMessageId('assistant'),
+        role: 'assistant',
+        text: 'Generation stopped.',
+      },
+    ])
+    setChatStatus('completed')
+  }
+
+  const chatThreadMessages: AppQuickAskMessage[] = chatMessages.map((message) => ({
+    id: message.id,
+    role: message.role,
+    content: <p>{t(message.text)}</p>,
+  }))
+
+  const stopApprovalTimer = () => {
+    if (approvalTimerRef.current === null) return
+    window.clearTimeout(approvalTimerRef.current)
+    approvalTimerRef.current = null
+  }
+
+  const nextApprovalMessageId = (role: DemoTextMessage['role']) => {
+    approvalMessageIdRef.current += 1
+    return `approval-${role}-${approvalMessageIdRef.current}`
+  }
+
+  const appendApprovalAssistant = (text: string) => {
+    setApprovalMessages((current) => [
+      ...current,
+      {
+        id: nextApprovalMessageId('assistant'),
+        role: 'assistant',
+        text,
+      },
+    ])
+  }
+
   const approveTool = () => {
-    setMessages((current) =>
+    stopApprovalTimer()
+    setApprovalMessages((current) =>
       current.map((message) =>
         message.role === 'tool' && message.status === 'pending'
           ? { ...message, status: 'running' }
           : message,
       ),
     )
-    setStatus('streaming')
-    timerRef.current = window.setTimeout(() => {
-      timerRef.current = null
-      setMessages((current) =>
+    setApprovalStatus('streaming')
+    approvalTimerRef.current = window.setTimeout(() => {
+      approvalTimerRef.current = null
+      setApprovalMessages((current) =>
         current.map((message) =>
           message.role === 'tool' && message.status === 'running'
             ? { ...message, status: 'completed' }
             : message,
         ),
       )
-      appendAssistantMessage(
-        t('The summary was saved successfully. You can continue asking here.'),
+      appendApprovalAssistant(
+        'The summary was saved after confirmation. You can inspect the completed tool result in the same thread.',
       )
-      setStatus('completed')
+      setApprovalStatus('completed')
     }, 720)
   }
+
   const rejectTool = () => {
-    setMessages((current) =>
+    stopApprovalTimer()
+    setApprovalMessages((current) =>
       current.map((message) =>
         message.role === 'tool' && message.status === 'pending'
           ? { ...message, status: 'denied' }
           : message,
       ),
     )
-    appendAssistantMessage(
-      t(
-        'No file was written. The prepared summary remains in this conversation.',
-      ),
+    appendApprovalAssistant(
+      'The request was rejected. The assistant keeps the result in the conversation.',
     )
-    setStatus('completed')
+    setApprovalStatus('completed')
   }
-  const cancel = () => {
-    stopTimer()
-    setMessages((current) =>
+
+  const cancelApproval = () => {
+    stopApprovalTimer()
+    setApprovalMessages((current) =>
       current.map((message) =>
         message.role === 'tool' && message.status === 'running'
           ? { ...message, status: 'error' }
           : message,
       ),
     )
-    appendAssistantMessage(t('Generation stopped.'))
-    setStatus('completed')
+    appendApprovalAssistant('The approval flow was cancelled. No file was written.')
+    setApprovalStatus('completed')
   }
 
-  const threadMessages: AppQuickAskMessage[] = messages.map((message) => {
-    if (message.role !== 'tool') {
+  const submitApprovalFollowUp = (prompt: string) => {
+    setApprovalMessages((current) => [
+      ...current,
+      { id: nextApprovalMessageId('user'), role: 'user', text: prompt },
+    ])
+    setApprovalStatus('submitting')
+    approvalTimerRef.current = window.setTimeout(() => {
+      approvalTimerRef.current = null
+      appendApprovalAssistant(
+        'The follow-up was added after the approval result. The host still owns this conversation history.',
+      )
+      setApprovalStatus('completed')
+    }, 420)
+  }
+
+  const resetApproval = () => {
+    stopApprovalTimer()
+    approvalMessageIdRef.current = 2
+    setApprovalMessages([
+      {
+        id: 'approval-assistant-1',
+        role: 'assistant',
+        text: 'The assistant needs confirmation before it can save the meeting summary.',
+      },
+      { id: 'approval-tool-1', role: 'tool', status: 'pending' },
+    ])
+    setApprovalStatus('awaiting-approval')
+    setApprovalDraft('')
+  }
+
+  const approvalThreadMessages: AppQuickAskMessage[] = approvalMessages.map(
+    (message) => {
+      if (message.role !== 'tool') {
+        return {
+          id: message.id,
+          role: message.role,
+          content: <p>{t(message.text)}</p>,
+        }
+      }
+
       return {
         id: message.id,
-        role: message.role,
-        content: <p>{message.text}</p>,
+        role: 'tool',
+        content: (
+          <AppToolApprovalCard
+            description={t(
+              'This writes one new Markdown file. Existing files are not changed.',
+            )}
+            details={t('Target: Documents/meeting-summary.md')}
+            onApprove={approveTool}
+            onReject={rejectTool}
+            status={message.status}
+            title={t('Save meeting summary')}
+          />
+        ),
       }
-    }
+    },
+  )
 
-    return {
-      id: message.id,
-      role: 'tool',
-      content: (
-        <AppToolApprovalCard
-          description={t(
-            'This writes one new Markdown file. Existing files are not changed.',
-          )}
-          details={t('Target: Documents/meeting-summary.md')}
-          onApprove={approveTool}
-          onReject={rejectTool}
-          status={message.status}
-          title={t('Save meeting summary')}
-        />
-      ),
-    }
-  })
-
-  const commands = useMemo<AppCommand[]>(
-    () => [
-      {
-        id: 'ai.quickAsk',
-        label: t('Open quick ask'),
-        icon: <Sparkles />,
-        shortcut,
-        allowInEditable: true,
-        execute: () => setOpen((current) => !current),
-      },
-    ],
-    [t],
+  const footer = (
+    <>
+      <span>
+        <kbd>Enter</kbd> {t('to send')}
+      </span>
+      <span>
+        <kbd>Shift+Enter</kbd> {t('for a new line')}
+      </span>
+      <span>
+        <kbd>Esc</kbd> {t('to hide')}
+      </span>
+    </>
   )
 
   return (
     <DemoPage>
       <DemoSection
-        title="Quick AI conversation"
-        description="Keep the current conversation in a compact prompt surface and ask before a tool changes external state."
+        title="Quick ask: one prompt"
+        description="Use AppQuickAsk as a transient one-shot prompt. The host owns the request and response state."
       >
         <DemoPreview className="demo-component-row">
-          <AppCommandProvider commands={commands}>
-            <AppButton icon={<Sparkles />} onClick={() => setOpen(true)}>
-              {t('Open quick ask')} · {formatAppShortcut(shortcut)}
+          <AppCommandProvider commands={oneShotCommands}>
+            <AppButton icon={<Sparkles />} onClick={() => setOneShotOpen(true)}>
+              {t('Open one-shot ask')} · {formatAppShortcut(shortcut)}
             </AppButton>
             <AppQuickAsk
-              answer={
-                threadMessages.length ? (
-                  <AppQuickAskThread messages={threadMessages} />
-                ) : undefined
-              }
-              footer={
-                <>
-                  <span>
-                    <kbd>Enter</kbd> {t('to send')}
-                  </span>
-                  <span>
-                    <kbd>Shift+Enter</kbd> {t('for a new line')}
-                  </span>
-                  <span>
-                    <kbd>Esc</kbd> {t('to hide')}
-                  </span>
-                </>
-              }
-              onCancel={cancel}
-              onOpenChange={setOpen}
-              onSubmit={submit}
-              onValueChange={setDraft}
-              open={open}
-              status={status}
-              value={draft}
+              answer={oneShotAnswer ? <p>{t(oneShotAnswer)}</p> : undefined}
+              footer={footer}
+              onCancel={cancelOneShot}
+              onOpenChange={setOneShotOpen}
+              onSubmit={submitOneShot}
+              onValueChange={setOneShotDraft}
+              open={oneShotOpen}
+              status={oneShotStatus}
+              value={oneShotDraft}
             />
           </AppCommandProvider>
         </DemoPreview>
         <p className="demo-note">
           {t(
-            'Hide and reopen the surface without losing the conversation or pending approval. Only an explicit Allow once action runs the simulated tool.',
+            'The one-shot example keeps only the latest answer in page state. Use it when each shortcut invocation is an independent request.',
+          )}
+        </p>
+      </DemoSection>
+
+      <DemoSection
+        title="Chat: current thread"
+        description="Use AppQuickAskThread when the surface should keep several user and AI turns. The host owns the message list."
+      >
+        <DemoPreview className="demo-component-row">
+          <AppButton icon={<MessageSquare />} onClick={() => setChatOpen(true)}>
+            {t('Open chat')}
+          </AppButton>
+          <AppQuickAsk
+            answer={<AppQuickAskThread messages={chatThreadMessages} />}
+            footer={footer}
+            onCancel={cancelChat}
+            onOpenChange={setChatOpen}
+            onSubmit={submitChat}
+            onValueChange={setChatDraft}
+            open={chatOpen}
+            status={chatStatus}
+            value={chatDraft}
+          />
+        </DemoPreview>
+        <p className="demo-note">
+          {t(
+            'This thread keeps the user and AI turns together. Submit another prompt to append a new turn.',
+          )}
+        </p>
+      </DemoSection>
+
+      <DemoSection
+        title="Tool approval: explicit confirmation"
+        description="Render AppToolApprovalCard as a tool message when an operation needs user approval. The host decides whether to run or reject it."
+      >
+        <DemoPreview className="demo-component-row">
+          <AppButton icon={<CheckCircle2 />} onClick={() => setApprovalOpen(true)}>
+            {t('Open approval example')}
+          </AppButton>
+          <AppButton onClick={resetApproval}>{t('Reset approval')}</AppButton>
+          <AppQuickAsk
+            answer={<AppQuickAskThread messages={approvalThreadMessages} />}
+            footer={footer}
+            onCancel={cancelApproval}
+            onOpenChange={setApprovalOpen}
+            onSubmit={submitApprovalFollowUp}
+            onValueChange={setApprovalDraft}
+            open={approvalOpen}
+            status={approvalStatus}
+            value={approvalDraft}
+          />
+        </DemoPreview>
+        <p className="demo-note">
+          {t(
+            'Approval state is host-owned: awaiting-approval blocks submit, and only the explicit approval callback runs the simulated tool.',
           )}
         </p>
       </DemoSection>
