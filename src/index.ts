@@ -201,6 +201,7 @@ export type {
   AppCardOrientation,
   AppCardPadding,
   AppCardProps,
+  AppCarouselLayout,
   AppCarouselProps,
   AppCarouselSlide,
   AppContextMenuActionItem,

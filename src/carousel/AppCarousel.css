@@ -40,6 +40,83 @@
   grid-template-columns: minmax(0, 1fr);
 }
 
+.app-carousel__slide--media {
+  min-height: 360px;
+  padding: 0;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: end;
+  color: #fff;
+  background: #111;
+}
+
+.app-carousel__slide--media::after {
+  content: '';
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(180deg, transparent 32%, rgb(0 0 0 / 72%) 100%);
+}
+
+.app-carousel__slide--media .app-carousel__copy {
+  position: relative;
+  z-index: 1;
+  max-width: 720px;
+  padding: 72px 32px 64px;
+  text-shadow: 0 1px 2px rgb(0 0 0 / 44%);
+}
+
+.app-carousel__slide--media .app-carousel__eyebrow,
+.app-carousel__slide--media .app-carousel__description {
+  color: rgb(255 255 255 / 84%);
+}
+
+.app-carousel__slide--media .app-carousel__visual {
+  position: absolute;
+  inset: 0;
+  min-height: 0;
+  display: block;
+}
+
+.app-carousel__slide--media .app-carousel__visual > img,
+.app-carousel__slide--media .app-carousel__visual > picture,
+.app-carousel__slide--media .app-carousel__visual > picture > img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+}
+
+.app-carousel__slide--stacked {
+  min-height: 420px;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: minmax(132px, 1fr) auto;
+  grid-template-areas:
+    'visual'
+    'copy';
+  align-items: center;
+  gap: 18px;
+  text-align: center;
+}
+
+.app-carousel__slide--stacked .app-carousel__copy {
+  grid-area: copy;
+}
+
+.app-carousel__slide--stacked .app-carousel__title,
+.app-carousel__slide--stacked .app-carousel__description {
+  margin-inline: auto;
+}
+
+.app-carousel__slide--stacked .app-carousel__action {
+  justify-content: center;
+}
+
+.app-carousel__slide--stacked .app-carousel__visual {
+  min-height: 132px;
+  grid-area: visual;
+}
+
 .app-carousel__copy {
   min-width: 0;
 }
@@ -83,6 +160,7 @@
 
 .app-carousel__controls {
   position: absolute;
+  z-index: 2;
   right: 24px;
   bottom: 12px;
   left: 32px;
@@ -148,6 +226,36 @@
   gap: 2px;
 }
 
+.app-carousel--media .app-carousel__position {
+  color: rgb(255 255 255 / 82%);
+}
+
+.app-carousel--media .app-carousel__dot {
+  background: rgb(255 255 255 / 42%);
+}
+
+.app-carousel--media .app-carousel__dot:hover,
+.app-carousel--media .app-carousel__dot--active {
+  background: #fff;
+}
+
+.app-carousel--media .app-carousel__actions .app-button {
+  color: #fff;
+  background: rgb(0 0 0 / 28%);
+  border-color: rgb(255 255 255 / 36%);
+  backdrop-filter: blur(8px);
+}
+
+.app-carousel--media .app-carousel__actions .app-button:hover:not(:disabled) {
+  background: rgb(0 0 0 / 44%);
+}
+
+.app-carousel--media .app-carousel__actions .app-button:disabled {
+  color: rgb(255 255 255 / 44%);
+  background: rgb(0 0 0 / 18%);
+  border-color: rgb(255 255 255 / 18%);
+}
+
 @container (max-width: 640px) {
   .app-carousel__slide {
     min-height: 360px;
@@ -163,6 +271,20 @@
 
   .app-carousel__visual {
     min-height: 124px;
+  }
+
+  .app-carousel__slide--media {
+    min-height: 320px;
+    padding: 0;
+    align-content: end;
+  }
+
+  .app-carousel__slide--media .app-carousel__copy {
+    padding: 64px 20px 60px;
+  }
+
+  .app-carousel__slide--media .app-carousel__visual {
+    min-height: 0;
   }
 
   .app-carousel__controls {

@@ -100,6 +100,33 @@ describe('AppCarousel', () => {
     expect(container.textContent).toContain('First slide')
   })
 
+  it('supports full-bleed media and stacked presentation layouts', () => {
+    const visualSlides: AppCarouselSlide[] = [
+      {
+        key: 'visual',
+        title: 'Visual slide',
+        visual: <img alt="" src="visual.png" />,
+        visualAriaLabel: 'Mountain lake',
+      },
+    ]
+
+    render({ layout: 'media', slides: visualSlides })
+
+    expect(container.querySelector('.app-carousel--media')).not.toBeNull()
+    expect(container.querySelector('.app-carousel__slide--media')).not.toBeNull()
+    expect(
+      container.querySelector('.app-carousel__visual')?.getAttribute('role'),
+    ).toBe('img')
+    expect(
+      container.querySelector('.app-carousel__visual')?.getAttribute('aria-label'),
+    ).toBe('Mountain lake')
+
+    render({ layout: 'stacked', slides: visualSlides })
+
+    expect(container.querySelector('.app-carousel--stacked')).not.toBeNull()
+    expect(container.querySelector('.app-carousel__slide--stacked')).not.toBeNull()
+  })
+
   it('renders nothing when there are no slides', () => {
     render({ slides: [] })
     expect(container.querySelector('.app-carousel')).toBeNull()

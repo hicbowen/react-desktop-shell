@@ -17,6 +17,7 @@ export function AppCarousel({
   ariaLabel,
   className,
   defaultValue,
+  layout = 'split',
   onValueChange,
   slides,
   style,
@@ -63,15 +64,27 @@ export function AppCarousel({
     }
   }
 
-  const classNames = ['app-carousel', className].filter(Boolean).join(' ')
   const position = text.position(currentIndex + 1, slides.length)
   const hasNavigation = slides.length > 1
   const hasVisual = currentSlide.visual !== undefined && currentSlide.visual !== null
+  const resolvedLayout = hasVisual ? layout : 'split'
+  const rootClassNames = [
+    'app-carousel',
+    `app-carousel--${resolvedLayout}`,
+    className,
+  ].filter(Boolean).join(' ')
+  const slideLayoutClass = resolvedLayout === 'media'
+    ? 'app-carousel__slide--media'
+    : resolvedLayout === 'stacked'
+      ? 'app-carousel__slide--stacked'
+      : hasVisual
+        ? 'app-carousel__slide--with-visual'
+        : 'app-carousel__slide--text-only'
 
   return (
     <section
       aria-label={ariaLabel ?? text.label}
-      className={classNames}
+      className={rootClassNames}
       onKeyDown={handleKeyDown}
       style={style}
       tabIndex={0}
@@ -80,7 +93,7 @@ export function AppCarousel({
         aria-label={position}
         className={[
           'app-carousel__slide',
-          hasVisual ? 'app-carousel__slide--with-visual' : 'app-carousel__slide--text-only',
+          slideLayoutClass,
         ].join(' ')}
         data-key={currentSlide.key}
         role="group"
@@ -99,7 +112,12 @@ export function AppCarousel({
         </div>
 
         {hasVisual ? (
-          <div aria-hidden="true" className="app-carousel__visual">
+          <div
+            aria-hidden={currentSlide.visualAriaLabel ? undefined : true}
+            aria-label={currentSlide.visualAriaLabel}
+            className="app-carousel__visual"
+            role={currentSlide.visualAriaLabel ? 'img' : undefined}
+          >
             {currentSlide.visual}
           </div>
         ) : null}
