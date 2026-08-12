@@ -89,7 +89,9 @@ import { AppDialogPage, AppInfoBarPage, AppToastPage, MessageBoxPage } from './p
 import { AppCommandPage, AppToolbarPage, ContextMenuPage } from './pages/actions/ActionPages'
 import { AppMenuBarPage } from './pages/actions/MenuBarPage'
 import { AppCommandPalettePage } from './pages/actions/CommandPalettePage'
-import { AppQuickAskPage } from './pages/actions/QuickAskPage'
+import { AiInteractionPage } from './pages/actions/AiInteractionPage'
+import { ConversationPage } from './pages/actions/ConversationPage'
+import { QuickAskPage } from './pages/actions/QuickAskPage'
 import { AppShortcutRecorderPage } from './pages/actions/ShortcutRecorderPage'
 import { AppToggleButtonPage } from './pages/actions/ToggleButtonPage'
 import { AppDataTablePage, AppSelectionBarPage } from './pages/data/DataPages'
@@ -208,7 +210,9 @@ const demoPageSources = [
   { key: 'app-command', label: 'AppCommand', description: 'Shared command definitions, execution state, and keyboard accelerators.', icon: <Command size={16} />, component: AppCommandPage },
   { key: 'menu-bar', label: 'AppMenuBar', description: 'Traditional application menus backed by platform-neutral commands.', icon: <Menu size={16} />, component: AppMenuBarPage },
   { key: 'command-palette', label: 'AppCommandPalette', description: 'Keyboard-first fuzzy command discovery and execution.', icon: <SearchCode size={16} />, component: AppCommandPalettePage },
-  { key: 'quick-ask', label: 'AI conversation surfaces', description: 'Shortcut-first AI prompts alongside reusable page conversation components.', icon: <Sparkles size={16} />, component: AppQuickAskPage },
+  { key: 'quick-ask', label: 'Quick ask', description: 'Shortcut-first AI prompts in a transient surface.', icon: <Sparkles size={16} />, component: QuickAskPage },
+  { key: 'conversation', label: 'AI conversation', description: 'A normal page composition with a thread, viewport, and inline composer.', icon: <MessagesSquare size={16} />, component: ConversationPage },
+  { key: 'ai-interactions', label: 'AI interactions', description: 'Prompt suggestions, activity states, approvals, and change review.', icon: <Activity size={16} />, component: AiInteractionPage },
   { key: 'shortcut-recorder', label: 'AppShortcutRecorder', description: 'Capture and validate shortcuts compatible with application commands.', icon: <Keyboard size={16} />, component: AppShortcutRecorderPage },
   { key: 'toggle-button', label: 'AppToggleButton', description: 'Persistent command states and single or multiple toggle groups.', icon: <ToggleRight size={16} />, component: AppToggleButtonPage },
   { key: 'buttons', label: 'Buttons', description: 'Desktop command buttons, icon buttons, states, and composition.', icon: <SquareMousePointer size={16} />, component: ButtonsPage },
@@ -274,7 +278,9 @@ const taxonomy: Record<DemoPageKey, DemoTaxonomy> = {
   'app-toolbar': { category: 'actions', subgroup: 'commands', apiNames: ['AppToolbar'], status: 'stable' },
   'app-command': { category: 'actions', subgroup: 'commands', apiNames: ['AppCommandProvider'], status: 'stable' },
   'command-palette': { category: 'actions', subgroup: 'commands', apiNames: ['AppCommandPalette'], status: 'stable' },
-  'quick-ask': { category: 'actions', subgroup: 'commands', apiNames: ['AppQuickAsk', 'AppAiComposer', 'AppConversationThread', 'AppConversationViewport', 'AppAiActivity', 'AppToolApprovalCard', 'AppChangeReviewCard'], status: 'preview', related: ['command-palette', 'app-command'] },
+  'quick-ask': { category: 'actions', subgroup: 'ai', apiNames: ['AppQuickAsk'], status: 'preview', related: ['command-palette', 'app-command'] },
+  conversation: { category: 'actions', subgroup: 'ai', apiNames: ['AppAiComposer', 'AppConversationThread', 'AppConversationViewport'], status: 'preview', related: ['quick-ask'] },
+  'ai-interactions': { category: 'actions', subgroup: 'ai', apiNames: ['AppPromptSuggestions', 'AppAiActivity', 'AppToolApprovalCard', 'AppChangeReviewCard'], status: 'preview', related: ['conversation'] },
   'shortcut-recorder': { category: 'actions', subgroup: 'commands', apiNames: ['AppShortcutRecorder'], status: 'stable' },
   'menu-bar': { category: 'actions', subgroup: 'menus', apiNames: ['AppMenuBar'], status: 'stable' },
   'app-menu-flyout': { category: 'actions', subgroup: 'menus', apiNames: ['AppMenuFlyout'], status: 'stable' },
@@ -343,7 +349,7 @@ const categoryOrder: DemoCategoryKey[] = ['shell', 'navigation', 'actions', 'inp
 const subgroupOrder: Partial<Record<DemoCategoryKey, string[]>> = {
   shell: ['window', 'page', 'layout'],
   navigation: ['application', 'controls'],
-  actions: ['basic', 'commands', 'menus'],
+  actions: ['basic', 'commands', 'ai', 'menus'],
   input: ['text', 'numeric', 'selection', 'date-time', 'specialized', 'form'],
   data: ['collections', 'interactions'],
   content: ['containers', 'identity', 'states', 'primitives'],
@@ -363,7 +369,7 @@ const categoryLabels: Record<Exclude<DemoCategoryKey, 'getting-started' | 'setti
 const subgroupLabels: Record<string, { en: string; zh: string }> = {
   window: { en: 'Window structure', zh: '窗口结构' }, page: { en: 'Page structure', zh: '页面结构' }, layout: { en: 'Layout containers', zh: '布局容器' },
   application: { en: 'Application navigation', zh: '应用导航' }, controls: { en: 'Navigation controls', zh: '导航控件' },
-  basic: { en: 'Basic actions', zh: '基础操作' }, commands: { en: 'Command system', zh: '命令系统' }, menus: { en: 'Menus', zh: '菜单' },
+  basic: { en: 'Basic actions', zh: '基础操作' }, commands: { en: 'Command system', zh: '命令系统' }, ai: { en: 'AI interaction', zh: 'AI 交互' }, menus: { en: 'Menus', zh: '菜单' },
   text: { en: 'Text input', zh: '文本输入' }, numeric: { en: 'Numeric input', zh: '数值输入' }, selection: { en: 'Selection controls', zh: '选择控件' }, 'date-time': { en: 'Date & time', zh: '日期与时间' }, specialized: { en: 'Specialized input', zh: '专用输入' }, form: { en: 'Form structure', zh: '表单结构' },
   collections: { en: 'Collection views', zh: '集合视图' }, interactions: { en: 'Data interactions', zh: '数据交互' },
   containers: { en: 'Content containers', zh: '内容容器' }, identity: { en: 'Labels & identity', zh: '标签与身份' }, states: { en: 'Content states', zh: '内容状态' }, primitives: { en: 'Content primitives', zh: '内容基础结构' },
@@ -379,6 +385,7 @@ const subgroupIcons: Record<string, ReactNode> = {
   controls: <Navigation size={16} />,
   basic: <SquareMousePointer size={16} />,
   commands: <Command size={16} />,
+  ai: <Sparkles size={16} />,
   menus: <Menu size={16} />,
   text: <TextCursorInput size={16} />,
   numeric: <SlidersHorizontal size={16} />,
