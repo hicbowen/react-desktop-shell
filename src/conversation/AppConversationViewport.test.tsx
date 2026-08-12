@@ -29,7 +29,9 @@ describe('AppConversationViewport', () => {
   ) => {
     act(() =>
       root.render(
-        <AppConversationViewport {...props}>{children}</AppConversationViewport>,
+        <AppConversationViewport {...props}>
+          {children}
+        </AppConversationViewport>,
       ),
     )
     return document.body.querySelector<HTMLDivElement>(
@@ -75,9 +77,9 @@ describe('AppConversationViewport', () => {
     metrics.scrollHeight = 600
     renderViewport('Third message')
     expect(getScrollTop()).toBe(100)
-    expect(
-      document.body.querySelector('button')?.textContent,
-    ).toContain('Jump to latest')
+    expect(document.body.querySelector('button')?.textContent).toContain(
+      'Jump to latest',
+    )
 
     metrics.scrollHeight = 700
     act(() => document.body.querySelector('button')?.click())
@@ -95,20 +97,14 @@ describe('AppConversationViewport', () => {
     const getScrollTop = defineScrollMetrics(viewport, metrics)
     act(() => viewport.dispatchEvent(new Event('scroll')))
 
-    const load = document.body.querySelector<HTMLButtonElement>(
-      'button',
-    )!
+    const load = document.body.querySelector<HTMLButtonElement>('button')!
     expect(load.textContent).toContain('Load earlier messages')
     act(() => load.click())
     expect(onLoadOlder).toHaveBeenCalledOnce()
 
     act(() =>
       root.render(
-        <AppConversationViewport
-          hasMore
-          loadingOlder
-          onLoadOlder={onLoadOlder}
-        >
+        <AppConversationViewport hasMore loadingOlder onLoadOlder={onLoadOlder}>
           Older and current messages
         </AppConversationViewport>,
       ),

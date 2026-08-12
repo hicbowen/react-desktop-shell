@@ -3,15 +3,15 @@
 import { act } from 'react'
 import { createRoot } from 'react-dom/client'
 import { describe, expect, it } from 'vitest'
-import { AppQuickAskThread } from './AppQuickAskThread'
+import { AppConversationThread } from './AppConversationThread'
 
-describe('AppQuickAskThread', () => {
+describe('AppConversationThread', () => {
   it('renders a controlled current conversation with role labels', () => {
     const host = document.createElement('div')
     const root = createRoot(host)
     act(() =>
       root.render(
-        <AppQuickAskThread
+        <AppConversationThread
           messages={[
             { id: 'user-1', role: 'user', content: 'Summarize this' },
             { id: 'assistant-1', role: 'assistant', content: 'Ready' },

@@ -24,7 +24,7 @@ export function AppConversationViewport({
   ...rest
 }: AppConversationViewportProps) {
   const { messages } = useAppLocale()
-  const text = messages.quickAsk
+  const text = messages.conversation
   const viewportRef = useRef<HTMLDivElement | null>(null)
   const shouldFollowOutputRef = useRef(followOutput)
   const previousFollowOutputRef = useRef(followOutput)
@@ -89,11 +89,8 @@ export function AppConversationViewport({
   return (
     <div
       {...rest}
-      aria-label={ariaLabel ?? text.conversation}
-      className={[
-        'app-conversation-viewport',
-        className,
-      ]
+      aria-label={ariaLabel ?? text.label}
+      className={['app-conversation-viewport', className]
         .filter(Boolean)
         .join(' ')}
       role="region"

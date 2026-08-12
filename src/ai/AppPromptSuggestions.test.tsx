@@ -3,14 +3,19 @@
 import { act } from 'react'
 import { createRoot, type Root } from 'react-dom/client'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { AppPromptSuggestions, type AppPromptSuggestion } from './AppPromptSuggestions'
+import {
+  AppPromptSuggestions,
+  type AppPromptSuggestion,
+} from './AppPromptSuggestions'
 
 describe('AppPromptSuggestions', () => {
   let host: HTMLDivElement
   let root: Root
 
   beforeEach(() => {
-    ;(globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true
+    ;(
+      globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }
+    ).IS_REACT_ACT_ENVIRONMENT = true
     host = document.createElement('div')
     document.body.append(host)
     root = createRoot(host)
@@ -38,7 +43,9 @@ describe('AppPromptSuggestions', () => {
 
   it('renders an accessible suggestion list with labels and descriptions', () => {
     act(() =>
-      root.render(<AppPromptSuggestions items={items} onSelect={() => undefined} />),
+      root.render(
+        <AppPromptSuggestions items={items} onSelect={() => undefined} />,
+      ),
     )
 
     const list = host.querySelector('[role="list"]')
@@ -46,7 +53,10 @@ describe('AppPromptSuggestions', () => {
     expect(host.querySelectorAll('[role="listitem"]')).toHaveLength(2)
     expect(host.textContent).toContain('Summarize this page')
     expect(host.textContent).toContain('Get the key points.')
-    expect(host.querySelector<HTMLButtonElement>('[data-suggestion-id="disabled"]')?.disabled).toBe(true)
+    expect(
+      host.querySelector<HTMLButtonElement>('[data-suggestion-id="disabled"]')
+        ?.disabled,
+    ).toBe(true)
   })
 
   it('reports the selected item and ignores disabled suggestions', () => {
@@ -56,10 +66,14 @@ describe('AppPromptSuggestions', () => {
     )
 
     act(() =>
-      host.querySelector<HTMLButtonElement>('[data-suggestion-id="summarize"]')?.click(),
+      host
+        .querySelector<HTMLButtonElement>('[data-suggestion-id="summarize"]')
+        ?.click(),
     )
     act(() =>
-      host.querySelector<HTMLButtonElement>('[data-suggestion-id="disabled"]')?.click(),
+      host
+        .querySelector<HTMLButtonElement>('[data-suggestion-id="disabled"]')
+        ?.click(),
     )
 
     expect(onSelect).toHaveBeenCalledTimes(1)
@@ -79,8 +93,12 @@ describe('AppPromptSuggestions', () => {
       ),
     )
 
-    expect(host.querySelector('[aria-label="Suggested prompts"]')).not.toBeNull()
-    expect(host.querySelector('.app-prompt-suggestions--compact')).not.toBeNull()
+    expect(
+      host.querySelector('[aria-label="Suggested prompts"]'),
+    ).not.toBeNull()
+    expect(
+      host.querySelector('.app-prompt-suggestions--compact'),
+    ).not.toBeNull()
     expect(host.querySelectorAll('button:disabled')).toHaveLength(2)
   })
 })

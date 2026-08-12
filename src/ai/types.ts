@@ -1,0 +1,132 @@
+import type { CSSProperties, HTMLAttributes, ReactNode } from 'react'
+
+export type AppAiRequestStatus =
+  | 'idle'
+  | 'submitting'
+  | 'streaming'
+  | 'awaiting-approval'
+  | 'completed'
+  | 'error'
+
+export interface AppAiComposerProps {
+  onSubmit: (prompt: string) => void
+  value?: string
+  defaultValue?: string
+  onValueChange?: (value: string) => void
+  status?: AppAiRequestStatus
+  onCancel?: () => void
+  clearOnSubmit?: boolean
+  disabled?: boolean
+  placeholder?: string
+  leadingIcon?: ReactNode
+  inputAriaLabel?: string
+  className?: string
+  style?: CSSProperties
+}
+
+export interface AppPromptSuggestion {
+  id: string
+  label: ReactNode
+  prompt: string
+  description?: ReactNode
+  icon?: ReactNode
+  disabled?: boolean
+}
+
+export interface AppPromptSuggestionsProps extends Omit<
+  HTMLAttributes<HTMLDivElement>,
+  'onSelect'
+> {
+  items: readonly AppPromptSuggestion[]
+  onSelect: (item: AppPromptSuggestion) => void
+  ariaLabel?: string
+  disabled?: boolean
+  size?: 'compact' | 'standard'
+  className?: string
+  style?: CSSProperties
+}
+
+export type AppAiActivityStatus =
+  | 'thinking'
+  | 'streaming'
+  | 'searching'
+  | 'tool'
+  | 'awaiting-approval'
+  | 'completed'
+  | 'error'
+
+export type AppAiActivityStepStatus =
+  'pending' | 'active' | 'completed' | 'error'
+
+export interface AppAiActivityStep {
+  id: string
+  label: ReactNode
+  detail?: ReactNode
+  status: AppAiActivityStepStatus
+}
+
+export interface AppAiActivityProps extends Omit<
+  HTMLAttributes<HTMLElement>,
+  'title'
+> {
+  status: AppAiActivityStatus
+  label?: ReactNode
+  detail?: ReactNode
+  steps?: readonly AppAiActivityStep[]
+  action?: ReactNode
+  ariaLabel?: string
+  size?: 'compact' | 'standard'
+  className?: string
+  style?: CSSProperties
+}
+
+export type AppToolApprovalStatus =
+  'pending' | 'approved' | 'denied' | 'running' | 'completed' | 'error'
+
+export interface AppToolApprovalCardProps {
+  title: ReactNode
+  description?: ReactNode
+  details?: ReactNode
+  status?: AppToolApprovalStatus
+  danger?: boolean
+  approveText?: ReactNode
+  rejectText?: ReactNode
+  onApprove?: () => void
+  onReject?: () => void
+  className?: string
+  style?: CSSProperties
+}
+
+export type AppChangeReviewStatus =
+  'pending' | 'applying' | 'applied' | 'rejected' | 'error'
+
+export interface AppChangeReviewFile {
+  id: string
+  path: ReactNode
+  summary?: ReactNode
+  additions?: number
+  deletions?: number
+  diff?: ReactNode
+}
+
+export interface AppChangeReviewCardProps extends Omit<
+  HTMLAttributes<HTMLElement>,
+  'title'
+> {
+  files: readonly AppChangeReviewFile[]
+  title?: ReactNode
+  description?: ReactNode
+  status?: AppChangeReviewStatus
+  danger?: boolean
+  expanded?: boolean
+  defaultExpanded?: boolean
+  onExpandedChange?: (expanded: boolean) => void
+  onApply?: () => void
+  onReject?: () => void
+  applyText?: ReactNode
+  rejectText?: ReactNode
+  ariaLabel?: string
+  size?: 'compact' | 'standard'
+  className?: string
+  style?: CSSProperties
+}

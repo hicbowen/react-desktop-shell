@@ -10,7 +10,9 @@ describe('AppChangeReviewCard', () => {
   let root: Root
 
   beforeEach(() => {
-    ;(globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true
+    ;(
+      globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }
+    ).IS_REACT_ACT_ENVIRONMENT = true
     host = document.createElement('div')
     document.body.append(host)
     root = createRoot(host)
@@ -54,15 +56,15 @@ describe('AppChangeReviewCard', () => {
     expect(host.textContent).toContain('Add the meeting decisions.')
 
     act(() =>
-      Array.from(host.querySelectorAll('button')).find((button) =>
-        button.textContent?.includes('Apply changes'),
-      )?.click(),
+      Array.from(host.querySelectorAll('button'))
+        .find((button) => button.textContent?.includes('Apply changes'))
+        ?.click(),
     )
     expect(onApply).toHaveBeenCalledOnce()
     act(() =>
-      Array.from(host.querySelectorAll('button')).find((button) =>
-        button.textContent?.includes('Reject changes'),
-      )?.click(),
+      Array.from(host.querySelectorAll('button'))
+        .find((button) => button.textContent?.includes('Reject changes'))
+        ?.click(),
     )
     expect(onReject).toHaveBeenCalledOnce()
   })
@@ -81,9 +83,9 @@ describe('AppChangeReviewCard', () => {
 
     expect(host.textContent).not.toContain('# Meeting summary')
     act(() =>
-      Array.from(host.querySelectorAll('button')).find((button) =>
-        button.textContent?.includes('Show diff'),
-      )?.click(),
+      Array.from(host.querySelectorAll('button'))
+        .find((button) => button.textContent?.includes('Show diff'))
+        ?.click(),
     )
     expect(onExpandedChange).toHaveBeenCalledWith(true)
     expect(host.textContent).not.toContain('# Meeting summary')

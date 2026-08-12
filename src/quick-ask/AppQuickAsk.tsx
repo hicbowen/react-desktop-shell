@@ -4,7 +4,7 @@ import { useAppLocale } from '../localization/useAppLocale'
 import { AppProgressRing } from '../progress'
 import { AppScrollArea } from '../scroll-area'
 import { AppSpotlightSurface } from '../spotlight-surface'
-import { AppAiComposer } from './AppAiComposer'
+import { AppAiComposer } from '../ai/AppAiComposer'
 import type { AppQuickAskProps } from './types'
 import './AppQuickAsk.css'
 
@@ -42,7 +42,7 @@ export const AppQuickAsk = forwardRef<HTMLTextAreaElement, AppQuickAskProps>(
     forwardedRef,
   ) {
     const { messages } = useAppLocale()
-    const text = messages.quickAsk
+    const text = messages.ai
     const inputRef = useRef<HTMLTextAreaElement | null>(null)
     const responseViewportRef = useRef<HTMLDivElement | null>(null)
     const shouldFollowOutputRef = useRef(true)

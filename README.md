@@ -318,7 +318,38 @@ supports arrow-key selection and Enter execution, and reports its open state to
 the application. Its transient layout and dismissal behavior are provided by
 `AppSpotlightSurface`; it does not discover or invoke host APIs itself.
 
-## Quick ask and spotlight surfaces
+## AI, conversation, and quick-ask surfaces
+
+The AI components are independent of any visual surface. Compose them inside a
+full chat page, a document context panel, or a transient shortcut surface
+according to the host workflow.
+
+### AI building blocks
+
+`AppAiComposer`, `AppAiActivity`, `AppPromptSuggestions`,
+`AppToolApprovalCard`, and `AppChangeReviewCard` are host-controlled AI
+building blocks. They can be placed in any page or conversation and do not
+depend on `AppQuickAsk`.
+
+### Conversation building blocks
+
+`AppConversationThread` renders a host-owned list of user, AI, and tool
+messages. `AppConversationViewport` wraps that content with follow-output,
+pause-while-reading, jump-to-latest, and load-earlier behavior. Neither
+component knows where the conversation is displayed.
+
+```tsx
+<AppConversationViewport hasMore={hasMore} onLoadOlder={loadEarlier}>
+  <AppConversationThread messages={messages} />
+</AppConversationViewport>
+```
+
+Use `AppConversationThread` for the current session transcript. Place
+`AppToolApprovalCard` entries in the thread when a tool needs explicit user
+approval; the host remains responsible for storing messages and resuming or
+rejecting the pending tool call.
+
+### Quick ask
 
 `AppSpotlightSurface` is a top-centered transient dialog primitive with focus
 management, focus restoration, nested overlay coordination, and configurable
@@ -326,14 +357,12 @@ Escape, outside-click, and window-blur dismissal. Use it for shortcut-first
 surfaces that are not anchored to a visible trigger.
 
 `AppQuickAsk` builds an AI prompt and response surface on that primitive. It
-owns only the draft input; the application owns request state, streamed answer
-content, cancellation, and any native global-shortcut or window integration.
-Hiding the surface therefore does not imply cancelling the request.
+composes `AppAiComposer` for input, while the application owns request state,
+streamed answer content, cancellation, and any native global-shortcut or window
+integration. Hiding the surface therefore does not imply cancelling the request.
 
-`AppAiComposer` is the reusable prompt input from that surface. Use it directly
-inside a normal chat page when the page owns the transcript and request state;
-`AppQuickAsk` composes the same input with `AppSpotlightSurface` for shortcut-
-first flows:
+Use `AppAiComposer` directly inside a normal chat page when the page owns the
+transcript and request state:
 
 ```tsx
 <AppAiComposer
@@ -343,26 +372,6 @@ first flows:
   value={draft}
 />
 ```
-
-`AppConversationViewport` is the page-level message viewport for the same
-conversation state. It follows output near the bottom, pauses while the user
-reads older messages, exposes a jump-to-latest action, and can render a
-host-owned load-earlier action:
-
-```tsx
-<AppConversationViewport
-  hasMore={hasMore}
-  loadingOlder={loadingOlder}
-  onLoadOlder={loadEarlier}
->
-  <AppQuickAskThread messages={messages} />
-</AppConversationViewport>
-```
-
-Use `AppQuickAskThread` for the current session transcript and place controlled
-`AppToolApprovalCard` entries in the thread when a tool needs explicit user
-approval. The host remains responsible for storing messages, deciding which
-tools require approval, and resuming or rejecting the pending tool call.
 
 Use `AppPromptSuggestions` for controlled empty-state prompts. It only renders
 the suggestions and reports the selected item; the host decides whether to put
@@ -410,7 +419,7 @@ review details, Diff visibility, and the apply/reject decision:
 
 ```tsx
 <AppQuickAsk
-  answer={<AppQuickAskThread messages={messages} />}
+  answer={<AppConversationThread messages={messages} />}
   onCancel={cancelRequest}
   onOpenChange={setOpen}
   onSubmit={sendPrompt}

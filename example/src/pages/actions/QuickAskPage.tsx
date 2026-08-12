@@ -2,24 +2,24 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import {
   AppAiActivity,
   AppAiComposer,
+  AppConversationThread,
   AppConversationViewport,
   AppButton,
   AppChangeReviewCard,
   AppCommandProvider,
   AppPromptSuggestions,
   AppQuickAsk,
-  AppQuickAskThread,
   AppToolApprovalCard,
   formatAppShortcut,
   type AppAiActivityStatus,
   type AppAiActivityStep,
+  type AppAiRequestStatus,
+  type AppConversationMessage,
+  type AppConversationMessageRole,
   type AppChangeReviewFile,
   type AppChangeReviewStatus,
   type AppCommand,
   type AppPromptSuggestion,
-  type AppQuickAskMessage,
-  type AppQuickAskMessageRole,
-  type AppQuickAskStatus,
   type AppToolApprovalStatus,
 } from '../../../../src'
 import { CheckCircle2, MessageSquare, Sparkles } from '../../components/fluentIcons'
@@ -30,7 +30,7 @@ const shortcut = { ctrl: true, shift: true, key: 'k' } as const
 
 interface DemoTextMessage {
   id: string
-  role: Exclude<AppQuickAskMessageRole, 'tool'>
+  role: Exclude<AppConversationMessageRole, 'tool'>
   text: string
 }
 
@@ -48,7 +48,7 @@ export function AppQuickAskPage() {
   const [oneShotOpen, setOneShotOpen] = useState(false)
   const [oneShotDraft, setOneShotDraft] = useState('')
   const [oneShotAnswerText, setOneShotAnswer] = useState<string | null>(null)
-  const [oneShotStatus, setOneShotStatus] = useState<AppQuickAskStatus>('idle')
+  const [oneShotStatus, setOneShotStatus] = useState<AppAiRequestStatus>('idle')
   const oneShotTimerRef = useRef<number | null>(null)
 
   const [inlineDraft, setInlineDraft] = useState('')
@@ -87,7 +87,7 @@ export function AppQuickAskPage() {
       text: 'The current thread is ready. Ask a follow-up and the host will append the next turn.',
     },
   ])
-  const [chatStatus, setChatStatus] = useState<AppQuickAskStatus>('idle')
+  const [chatStatus, setChatStatus] = useState<AppAiRequestStatus>('idle')
   const chatTimerRef = useRef<number | null>(null)
   const chatMessageIdRef = useRef(2)
 
@@ -102,7 +102,7 @@ export function AppQuickAskPage() {
     { id: 'approval-tool-1', role: 'tool', status: 'pending' },
   ])
   const [approvalStatus, setApprovalStatus] =
-    useState<AppQuickAskStatus>('awaiting-approval')
+    useState<AppAiRequestStatus>('awaiting-approval')
   const approvalTimerRef = useRef<number | null>(null)
   const approvalMessageIdRef = useRef(2)
   const reviewTimerRef = useRef<number | null>(null)
@@ -254,7 +254,7 @@ export function AppQuickAskPage() {
     setChatStatus('completed')
   }
 
-  const chatThreadMessages: AppQuickAskMessage[] = chatMessages.map((message) => ({
+  const chatThreadMessages: AppConversationMessage[] = chatMessages.map((message) => ({
     id: message.id,
     role: message.role,
     content: <p>{t(message.text)}</p>,
@@ -415,7 +415,7 @@ export function AppQuickAskPage() {
     setReviewStatus('pending')
   }
 
-  const approvalThreadMessages: AppQuickAskMessage[] = approvalMessages.map(
+  const approvalThreadMessages: AppConversationMessage[] = approvalMessages.map(
     (message) => {
       if (message.role !== 'tool') {
         return {
@@ -530,7 +530,7 @@ export function AppQuickAskPage() {
     ])
   }
 
-  const viewportThreadMessages: AppQuickAskMessage[] = viewportMessages.map(
+  const viewportThreadMessages: AppConversationMessage[] = viewportMessages.map(
     (message) => ({
       id: message.id,
       role: message.role,
@@ -598,7 +598,7 @@ export function AppQuickAskPage() {
             onLoadOlder={loadEarlierViewportMessages}
             style={{ height: 240, width: '100%' }}
           >
-            <AppQuickAskThread messages={viewportThreadMessages} />
+            <AppConversationThread messages={viewportThreadMessages} />
           </AppConversationViewport>
           <AppButton onClick={addViewportMessage}>
             {t('Add new response')}
@@ -608,14 +608,14 @@ export function AppQuickAskPage() {
 
       <DemoSection
         title="Chat: current thread"
-        description="Use AppQuickAskThread when the surface should keep several user and AI turns. The host owns the message list."
+        description="Use AppConversationThread when the surface should keep several user and AI turns. The host owns the message list."
       >
         <DemoPreview className="demo-component-row">
           <AppButton icon={<MessageSquare />} onClick={() => setChatOpen(true)}>
             {t('Open chat')}
           </AppButton>
           <AppQuickAsk
-            answer={<AppQuickAskThread messages={chatThreadMessages} />}
+            answer={<AppConversationThread messages={chatThreadMessages} />}
             footer={footer}
             onCancel={cancelChat}
             onOpenChange={setChatOpen}
@@ -660,7 +660,7 @@ export function AppQuickAskPage() {
           </AppButton>
           <AppButton onClick={resetApproval}>{t('Reset approval')}</AppButton>
           <AppQuickAsk
-            answer={<AppQuickAskThread messages={approvalThreadMessages} />}
+            answer={<AppConversationThread messages={approvalThreadMessages} />}
             footer={footer}
             onCancel={cancelApproval}
             onOpenChange={setApprovalOpen}

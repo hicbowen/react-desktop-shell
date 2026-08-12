@@ -1,0 +1,45 @@
+.app-conversation-thread {
+  display: grid;
+  gap: 14px;
+}
+
+.app-conversation-thread__message {
+  min-width: 0;
+  display: grid;
+  gap: 4px;
+}
+
+.app-conversation-thread__message--user {
+  justify-items: end;
+}
+
+.app-conversation-thread__label {
+  color: var(--app-shell-muted-text-color, #707070);
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.app-conversation-thread__content {
+  max-width: min(88%, 560px);
+  overflow-wrap: anywhere;
+}
+
+.app-conversation-thread__message--user .app-conversation-thread__content {
+  padding: 7px 10px;
+  background: var(--app-shell-active-bg, rgb(17 94 163 / 8%));
+  border-radius: 8px 8px 2px 8px;
+}
+
+.app-conversation-thread__message--assistant .app-conversation-thread__content,
+.app-conversation-thread__message--tool .app-conversation-thread__content {
+  width: 100%;
+  max-width: none;
+}
+
+.app-conversation-thread__content > :first-child {
+  margin-top: 0;
+}
+
+.app-conversation-thread__content > :last-child {
+  margin-bottom: 0;
+}

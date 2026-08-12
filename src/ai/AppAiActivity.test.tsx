@@ -10,7 +10,9 @@ describe('AppAiActivity', () => {
   let root: Root
 
   beforeEach(() => {
-    ;(globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true
+    ;(
+      globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }
+    ).IS_REACT_ACT_ENVIRONMENT = true
     host = document.createElement('div')
     document.body.append(host)
     root = createRoot(host)
@@ -40,7 +42,9 @@ describe('AppAiActivity', () => {
     expect(host.querySelector('.app-ai-activity--searching')).not.toBeNull()
     expect(host.querySelector('.app-progress-ring')).not.toBeNull()
     expect(host.querySelectorAll('[data-step-id]')).toHaveLength(3)
-    expect(host.querySelector('[aria-current="step"]')?.textContent).toContain('Search')
+    expect(host.querySelector('[aria-current="step"]')?.textContent).toContain(
+      'Search',
+    )
     expect(host.textContent).toContain('Searching the current workspace.')
   })
 

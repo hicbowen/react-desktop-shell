@@ -30,7 +30,7 @@ const badgeStatuses: Record<
 
 function getDefaultLabel(
   status: AppAiActivityStatus,
-  text: ReturnType<typeof useAppLocale>['messages']['quickAsk'],
+  text: ReturnType<typeof useAppLocale>['messages']['ai'],
 ) {
   const labels: Record<AppAiActivityStatus, string> = {
     thinking: text.thinking,
@@ -69,7 +69,7 @@ export function AppAiActivity({
   ...rest
 }: AppAiActivityProps) {
   const { messages } = useAppLocale()
-  const resolvedLabel = label ?? getDefaultLabel(status, messages.quickAsk)
+  const resolvedLabel = label ?? getDefaultLabel(status, messages.ai)
   const isActive = activeStatuses.has(status)
   const classes = [
     'app-ai-activity',
@@ -83,7 +83,10 @@ export function AppAiActivity({
   return (
     <section
       {...rest}
-      aria-label={ariaLabel ?? (typeof resolvedLabel === 'string' ? resolvedLabel : undefined)}
+      aria-label={
+        ariaLabel ??
+        (typeof resolvedLabel === 'string' ? resolvedLabel : undefined)
+      }
       aria-live="polite"
       className={classes}
       style={style}
@@ -92,7 +95,11 @@ export function AppAiActivity({
         <div className="app-ai-activity__indicator">
           {isActive ? (
             <AppProgressRing
-              ariaLabel={typeof resolvedLabel === 'string' ? resolvedLabel : messages.common.loading}
+              ariaLabel={
+                typeof resolvedLabel === 'string'
+                  ? resolvedLabel
+                  : messages.common.loading
+              }
               labelPosition="hidden"
               size="small"
             />
@@ -107,9 +114,13 @@ export function AppAiActivity({
           )}
         </div>
         {isActive ? <strong>{resolvedLabel}</strong> : null}
-        {action ? <div className="app-ai-activity__action">{action}</div> : null}
+        {action ? (
+          <div className="app-ai-activity__action">{action}</div>
+        ) : null}
       </div>
-      {detail != null ? <div className="app-ai-activity__detail">{detail}</div> : null}
+      {detail != null ? (
+        <div className="app-ai-activity__detail">{detail}</div>
+      ) : null}
       {steps?.length ? (
         <ol className="app-ai-activity__steps">
           {steps.map((step) => (
@@ -121,9 +132,13 @@ export function AppAiActivity({
             >
               <StepMarker status={step.status} />
               <span className="app-ai-activity__step-copy">
-                <span className="app-ai-activity__step-label">{step.label}</span>
+                <span className="app-ai-activity__step-label">
+                  {step.label}
+                </span>
                 {step.detail != null ? (
-                  <span className="app-ai-activity__step-detail">{step.detail}</span>
+                  <span className="app-ai-activity__step-detail">
+                    {step.detail}
+                  </span>
                 ) : null}
               </span>
             </li>

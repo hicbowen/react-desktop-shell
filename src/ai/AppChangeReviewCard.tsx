@@ -80,7 +80,9 @@ export function AppChangeReviewCard({
         <div className="app-change-review-card__heading">
           <strong>{title ?? text.label}</strong>
           {description != null ? (
-            <span className="app-change-review-card__description">{description}</span>
+            <span className="app-change-review-card__description">
+              {description}
+            </span>
           ) : null}
         </div>
         {status === 'applying' ? (
@@ -91,7 +93,11 @@ export function AppChangeReviewCard({
             size="small"
           />
         ) : (
-          <AppStatusBadge marker="dot" size="small" status={badgeStatuses[status]}>
+          <AppStatusBadge
+            marker="dot"
+            size="small"
+            status={badgeStatuses[status]}
+          >
             {statusLabels[status]}
           </AppStatusBadge>
         )}
@@ -123,9 +129,14 @@ export function AppChangeReviewCard({
             <div className="app-change-review-card__diffs" id={detailsId}>
               {files.map((file) =>
                 file.diff == null ? null : (
-                  <section className="app-change-review-card__diff" key={file.id}>
+                  <section
+                    className="app-change-review-card__diff"
+                    key={file.id}
+                  >
                     <strong>{file.path}</strong>
-                    <div className="app-change-review-card__diff-content">{file.diff}</div>
+                    <div className="app-change-review-card__diff-content">
+                      {file.diff}
+                    </div>
                   </section>
                 ),
               )}
@@ -159,16 +170,22 @@ function ChangeFileRow({ file }: { file: AppChangeReviewFile }) {
       <div className="app-change-review-card__file-main">
         <code className="app-change-review-card__path">{file.path}</code>
         {file.summary != null ? (
-          <span className="app-change-review-card__summary">{file.summary}</span>
+          <span className="app-change-review-card__summary">
+            {file.summary}
+          </span>
         ) : null}
       </div>
       {file.additions !== undefined || file.deletions !== undefined ? (
         <span className="app-change-review-card__counts">
           {file.additions !== undefined ? (
-            <span className="app-change-review-card__additions">+{file.additions}</span>
+            <span className="app-change-review-card__additions">
+              +{file.additions}
+            </span>
           ) : null}
           {file.deletions !== undefined ? (
-            <span className="app-change-review-card__deletions">−{file.deletions}</span>
+            <span className="app-change-review-card__deletions">
+              −{file.deletions}
+            </span>
           ) : null}
         </span>
       ) : null}

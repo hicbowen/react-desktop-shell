@@ -1,12 +1,12 @@
-import { forwardRef, useRef, useState, type KeyboardEvent } from "react";
-import { Send16Regular } from "@fluentui/react-icons/svg/send";
-import { Sparkle16Regular } from "@fluentui/react-icons/svg/sparkle";
-import { Stop16Regular } from "@fluentui/react-icons/svg/stop";
-import { AppIconButton } from "../button";
-import { useAppLocale } from "../localization/useAppLocale";
-import { AppTextArea } from "../text-input";
-import type { AppAiComposerProps } from "./types";
-import "./AppAiComposer.css";
+import { forwardRef, useRef, useState, type KeyboardEvent } from 'react'
+import { Send16Regular } from '@fluentui/react-icons/svg/send'
+import { Sparkle16Regular } from '@fluentui/react-icons/svg/sparkle'
+import { Stop16Regular } from '@fluentui/react-icons/svg/stop'
+import { AppIconButton } from '../button'
+import { useAppLocale } from '../localization/useAppLocale'
+import { AppTextArea } from '../text-input'
+import type { AppAiComposerProps } from './types'
+import './AppAiComposer.css'
 
 export const AppAiComposer = forwardRef<
   HTMLTextAreaElement,
@@ -15,7 +15,7 @@ export const AppAiComposer = forwardRef<
   {
     className,
     clearOnSubmit = true,
-    defaultValue = "",
+    defaultValue = '',
     disabled = false,
     inputAriaLabel,
     leadingIcon,
@@ -23,74 +23,74 @@ export const AppAiComposer = forwardRef<
     onSubmit,
     onValueChange,
     placeholder,
-    status = "idle",
+    status = 'idle',
     style,
     value,
   },
   forwardedRef,
 ) {
-  const { messages } = useAppLocale();
-  const text = messages.quickAsk;
-  const controlled = value !== undefined;
-  const [internalValue, setInternalValue] = useState(defaultValue);
-  const inputRef = useRef<HTMLTextAreaElement | null>(null);
-  const composingRef = useRef(false);
-  const currentValue = value ?? internalValue;
-  const busy = status === "submitting" || status === "streaming";
-  const awaitingApproval = status === "awaiting-approval";
+  const { messages } = useAppLocale()
+  const text = messages.ai
+  const controlled = value !== undefined
+  const [internalValue, setInternalValue] = useState(defaultValue)
+  const inputRef = useRef<HTMLTextAreaElement | null>(null)
+  const composingRef = useRef(false)
+  const currentValue = value ?? internalValue
+  const busy = status === 'submitting' || status === 'streaming'
+  const awaitingApproval = status === 'awaiting-approval'
   const statusText =
-    status === "submitting"
+    status === 'submitting'
       ? text.thinking
-      : status === "streaming"
+      : status === 'streaming'
         ? text.responding
-        : status === "awaiting-approval"
+        : status === 'awaiting-approval'
           ? text.awaitingApproval
-          : status === "error"
+          : status === 'error'
             ? text.failed
-            : text.response;
+            : text.response
 
   const setInputRef = (node: HTMLTextAreaElement | null) => {
-    inputRef.current = node;
-    if (typeof forwardedRef === "function") forwardedRef(node);
-    else if (forwardedRef) forwardedRef.current = node;
-  };
+    inputRef.current = node
+    if (typeof forwardedRef === 'function') forwardedRef(node)
+    else if (forwardedRef) forwardedRef.current = node
+  }
 
   const change = (next: string) => {
-    if (!controlled) setInternalValue(next);
-    onValueChange?.(next);
-  };
+    if (!controlled) setInternalValue(next)
+    onValueChange?.(next)
+  }
 
   const submit = () => {
-    const prompt = currentValue.trim();
-    if (!prompt || disabled || busy || awaitingApproval) return;
-    onSubmit(prompt);
-    if (clearOnSubmit) change("");
-  };
+    const prompt = currentValue.trim()
+    if (!prompt || disabled || busy || awaitingApproval) return
+    onSubmit(prompt)
+    if (clearOnSubmit) change('')
+  }
 
   const handleCompositionStart = () => {
-    composingRef.current = true;
-  };
+    composingRef.current = true
+  }
 
   const handleCompositionEnd = () => {
-    composingRef.current = false;
-  };
+    composingRef.current = false
+  }
 
   const handleKeyDown = (event: KeyboardEvent<HTMLTextAreaElement>) => {
     if (
-      event.key !== "Enter" ||
+      event.key !== 'Enter' ||
       event.shiftKey ||
       composingRef.current ||
       event.nativeEvent.isComposing
     ) {
-      return;
+      return
     }
-    event.preventDefault();
-    submit();
-  };
+    event.preventDefault()
+    submit()
+  }
 
   return (
     <div
-      className={["app-ai-composer", className].filter(Boolean).join(" ")}
+      className={['app-ai-composer', className].filter(Boolean).join(' ')}
       style={style}
     >
       <span aria-hidden="true" className="app-ai-composer__leading">
@@ -113,7 +113,7 @@ export const AppAiComposer = forwardRef<
       />
       {busy ? (
         <AppIconButton
-          appearance={onCancel ? "standard" : "subtle"}
+          appearance={onCancel ? 'standard' : 'subtle'}
           ariaLabel={onCancel ? text.stop : statusText}
           className="app-ai-composer__submit"
           disabled={!onCancel}
@@ -134,5 +134,5 @@ export const AppAiComposer = forwardRef<
         />
       )}
     </div>
-  );
-});
+  )
+})

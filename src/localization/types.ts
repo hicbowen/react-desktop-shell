@@ -44,7 +44,7 @@ export interface AppLocaleMessages {
     empty: string
     placeholder: string
   }
-  quickAsk: {
+  ai: {
     label: string
     inputLabel: string
     placeholder: string
@@ -54,18 +54,11 @@ export interface AppLocaleMessages {
     responding: string
     awaitingApproval: string
     response: string
-    jumpToLatest: string
-    loadEarlier: string
-    loadingEarlier: string
     failed: string
     error: string
-    conversation: string
     suggestions: string
     searching: string
     usingTool: string
-    user: string
-    assistant: string
-    tool: string
     approvalRequired: string
     approveOnce: string
     reject: string
@@ -74,6 +67,15 @@ export interface AppLocaleMessages {
     running: string
     completed: string
     toolFailed: string
+  }
+  conversation: {
+    label: string
+    user: string
+    assistant: string
+    tool: string
+    jumpToLatest: string
+    loadEarlier: string
+    loadingEarlier: string
   }
   changeReview: {
     label: string

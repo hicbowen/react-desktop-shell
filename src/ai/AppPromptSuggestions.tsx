@@ -1,8 +1,5 @@
 import { useAppLocale } from '../localization/useAppLocale'
-import type {
-  AppPromptSuggestion,
-  AppPromptSuggestionsProps,
-} from './types'
+import type { AppPromptSuggestion, AppPromptSuggestionsProps } from './types'
 import './AppPromptSuggestions.css'
 
 export function AppPromptSuggestions({
@@ -27,7 +24,7 @@ export function AppPromptSuggestions({
   return (
     <div
       {...rest}
-      aria-label={ariaLabel ?? messages.quickAsk.suggestions}
+      aria-label={ariaLabel ?? messages.ai.suggestions}
       className={classes}
       role="list"
       style={style}
@@ -52,7 +49,9 @@ export function AppPromptSuggestions({
               </span>
             ) : null}
             <span className="app-prompt-suggestions__copy">
-              <span className="app-prompt-suggestions__label">{item.label}</span>
+              <span className="app-prompt-suggestions__label">
+                {item.label}
+              </span>
               {item.description ? (
                 <span
                   className="app-prompt-suggestions__description"

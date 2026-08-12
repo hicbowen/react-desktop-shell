@@ -31,7 +31,7 @@ export function AppToolApprovalCard({
   style,
 }: AppToolApprovalCardProps) {
   const { messages } = useAppLocale()
-  const text = messages.quickAsk
+  const text = messages.ai
   const titleId = useId()
   const statusLabels: Record<AppToolApprovalStatus, string> = {
     pending: text.approvalRequired,
