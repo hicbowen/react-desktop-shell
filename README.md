@@ -330,6 +330,20 @@ owns only the draft input; the application owns request state, streamed answer
 content, cancellation, and any native global-shortcut or window integration.
 Hiding the surface therefore does not imply cancelling the request.
 
+`AppAiComposer` is the reusable prompt input from that surface. Use it directly
+inside a normal chat page when the page owns the transcript and request state;
+`AppQuickAsk` composes the same input with `AppSpotlightSurface` for shortcut-
+first flows:
+
+```tsx
+<AppAiComposer
+  onSubmit={sendPrompt}
+  onValueChange={setDraft}
+  status={status}
+  value={draft}
+/>
+```
+
 Use `AppQuickAskThread` for the current session transcript and place controlled
 `AppToolApprovalCard` entries in the thread when a tool needs explicit user
 approval. The host remains responsible for storing messages, deciding which

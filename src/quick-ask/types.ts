@@ -10,6 +10,22 @@ export type AppQuickAskStatus =
 
 export type AppQuickAskMessageRole = 'user' | 'assistant' | 'tool'
 
+export interface AppAiComposerProps {
+  onSubmit: (prompt: string) => void
+  value?: string
+  defaultValue?: string
+  onValueChange?: (value: string) => void
+  status?: AppQuickAskStatus
+  onCancel?: () => void
+  clearOnSubmit?: boolean
+  disabled?: boolean
+  placeholder?: string
+  leadingIcon?: ReactNode
+  inputAriaLabel?: string
+  className?: string
+  style?: CSSProperties
+}
+
 export interface AppQuickAskMessage {
   id: string
   role: AppQuickAskMessageRole

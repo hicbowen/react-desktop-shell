@@ -79,6 +79,8 @@ export const zhCNInteractiveText: Record<string, string> = {
   'Save active file': '保存当前文件', 'Open command palette': '打开命令面板',
   'Open quick ask': '打开快速提问',
   'Open one-shot ask': '打开单轮提问',
+  'The inline composer sends a prompt to the host.': '普通页面输入区会将问题交给宿主处理。',
+  'Last inline prompt:': '最近提交的普通页面问题：',
   'Summarize this page': '总结当前页面',
   'Get the key points in a few bullets.': '用几个要点提炼关键信息。',
   'Explain the selected content': '解释选中的内容',

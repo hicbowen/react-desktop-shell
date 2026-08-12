@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import {
   AppAiActivity,
+  AppAiComposer,
   AppButton,
   AppChangeReviewCard,
   AppCommandProvider,
@@ -48,6 +49,9 @@ export function AppQuickAskPage() {
   const [oneShotAnswerText, setOneShotAnswer] = useState<string | null>(null)
   const [oneShotStatus, setOneShotStatus] = useState<AppQuickAskStatus>('idle')
   const oneShotTimerRef = useRef<number | null>(null)
+
+  const [inlineDraft, setInlineDraft] = useState('')
+  const [inlineSubmittedPrompt, setInlineSubmittedPrompt] = useState<string | null>(null)
 
   const [chatOpen, setChatOpen] = useState(false)
   const [chatDraft, setChatDraft] = useState('')
@@ -511,6 +515,25 @@ export function AppQuickAskPage() {
             'The one-shot example keeps only the latest answer in page state. Use it when each shortcut invocation is an independent request.',
           )}
         </p>
+      </DemoSection>
+
+      <DemoSection
+        title="Inline AI composer"
+        description="Use AppAiComposer directly in a page without the spotlight surface. The host still owns the conversation state."
+      >
+        <DemoPreview>
+          <AppAiComposer
+            onSubmit={(prompt) => setInlineSubmittedPrompt(prompt)}
+            onValueChange={setInlineDraft}
+            style={{ width: '100%' }}
+            value={inlineDraft}
+          />
+          <p className="demo-note">
+            {inlineSubmittedPrompt
+              ? `${t('Last inline prompt:')} ${inlineSubmittedPrompt}`
+              : t('The inline composer sends a prompt to the host.')}
+          </p>
+        </DemoPreview>
       </DemoSection>
 
       <DemoSection

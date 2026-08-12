@@ -1,19 +1,10 @@
-import {
-  forwardRef,
-  useLayoutEffect,
-  useRef,
-  useState,
-  type KeyboardEvent,
-} from 'react'
-import { Send16Regular } from '@fluentui/react-icons/svg/send'
+import { forwardRef, useLayoutEffect, useRef } from 'react'
 import { Sparkle16Regular } from '@fluentui/react-icons/svg/sparkle'
-import { Stop16Regular } from '@fluentui/react-icons/svg/stop'
-import { AppIconButton } from '../button'
 import { useAppLocale } from '../localization/useAppLocale'
 import { AppProgressRing } from '../progress'
 import { AppScrollArea } from '../scroll-area'
 import { AppSpotlightSurface } from '../spotlight-surface'
-import { AppTextArea } from '../text-input'
+import { AppAiComposer } from './AppAiComposer'
 import type { AppQuickAskProps } from './types'
 import './AppQuickAsk.css'
 
@@ -52,16 +43,11 @@ export const AppQuickAsk = forwardRef<HTMLTextAreaElement, AppQuickAskProps>(
   ) {
     const { messages } = useAppLocale()
     const text = messages.quickAsk
-    const controlled = value !== undefined
-    const [internalValue, setInternalValue] = useState(defaultValue)
     const inputRef = useRef<HTMLTextAreaElement | null>(null)
     const responseViewportRef = useRef<HTMLDivElement | null>(null)
-    const composingRef = useRef(false)
     const shouldFollowOutputRef = useRef(true)
     const wasOpenRef = useRef(false)
-    const currentValue = value ?? internalValue
     const busy = status === 'submitting' || status === 'streaming'
-    const awaitingApproval = status === 'awaiting-approval'
     const hasAnswer = answer !== undefined && answer !== null && answer !== ''
     const showResponse = status !== 'idle' || hasAnswer || error != null
     const showResponseHeader =
@@ -88,36 +74,6 @@ export const AppQuickAsk = forwardRef<HTMLTextAreaElement, AppQuickAskProps>(
       if (typeof forwardedRef === 'function') forwardedRef(node)
       else if (forwardedRef) forwardedRef.current = node
     }
-    const change = (next: string) => {
-      if (!controlled) setInternalValue(next)
-      onValueChange?.(next)
-    }
-    const submit = () => {
-      const prompt = currentValue.trim()
-      if (!prompt || disabled || busy || awaitingApproval) return
-      shouldFollowOutputRef.current = true
-      onSubmit(prompt)
-      if (clearOnSubmit) change('')
-    }
-    const handleCompositionStart = () => {
-      composingRef.current = true
-    }
-    const handleCompositionEnd = () => {
-      composingRef.current = false
-    }
-    const handleKeyDown = (event: KeyboardEvent<HTMLTextAreaElement>) => {
-      if (
-        event.key !== 'Enter' ||
-        event.shiftKey ||
-        composingRef.current ||
-        event.nativeEvent.isComposing
-      ) {
-        return
-      }
-      event.preventDefault()
-      submit()
-    }
-
     const statusText =
       status === 'submitting'
         ? text.thinking
@@ -141,48 +97,27 @@ export const AppQuickAsk = forwardRef<HTMLTextAreaElement, AppQuickAskProps>(
         style={style}
         width={width}
       >
-        <div className="app-quick-ask__composer">
-          <span aria-hidden="true" className="app-quick-ask__leading">
-            {leadingIcon ?? <Sparkle16Regular />}
-          </span>
-          <AppTextArea
-            aria-label={inputAriaLabel ?? text.inputLabel}
-            autoResize
-            disabled={disabled}
-            fullWidth
-            maxRows={4}
-            minRows={1}
-            onChange={(event) => change(event.currentTarget.value)}
-            onCompositionEnd={handleCompositionEnd}
-            onCompositionStart={handleCompositionStart}
-            onKeyDown={handleKeyDown}
-            placeholder={placeholder ?? text.placeholder}
-            ref={setInputRef}
-            value={currentValue}
-          />
-          {busy ? (
-            <AppIconButton
-              appearance={onCancel ? 'standard' : 'subtle'}
-              ariaLabel={onCancel ? text.stop : statusText}
-              className="app-quick-ask__submit"
-              disabled={!onCancel}
-              icon={<Stop16Regular />}
-              loading={!onCancel}
-              onClick={onCancel}
-              shape="circular"
-            />
-          ) : (
-            <AppIconButton
-              appearance="primary"
-              ariaLabel={text.send}
-              className="app-quick-ask__submit"
-              disabled={disabled || awaitingApproval || !currentValue.trim()}
-              icon={<Send16Regular />}
-              onClick={submit}
-              shape="circular"
-            />
-          )}
-        </div>
+        <AppAiComposer
+          clearOnSubmit={clearOnSubmit}
+          defaultValue={defaultValue}
+          disabled={disabled}
+          inputAriaLabel={inputAriaLabel}
+          leadingIcon={leadingIcon}
+          onCancel={onCancel}
+          onSubmit={(prompt) => {
+            shouldFollowOutputRef.current = true
+            if (followOutput && responseViewportRef.current) {
+              responseViewportRef.current.scrollTop =
+                responseViewportRef.current.scrollHeight
+            }
+            onSubmit(prompt)
+          }}
+          onValueChange={onValueChange}
+          placeholder={placeholder}
+          ref={setInputRef}
+          status={status}
+          value={value}
+        />
 
         {showResponse ? (
           <div

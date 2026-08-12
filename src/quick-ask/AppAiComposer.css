@@ -1,0 +1,54 @@
+.app-ai-composer {
+  min-width: 0;
+  min-height: 60px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px 8px 14px;
+}
+
+.app-ai-composer__leading {
+  width: 20px;
+  height: 20px;
+  display: inline-flex;
+  flex: 0 0 20px;
+  align-items: center;
+  justify-content: center;
+  color: var(--app-shell-accent-color, #115ea3);
+}
+
+.app-ai-composer__leading > svg {
+  width: 18px;
+  height: 18px;
+}
+
+.app-ai-composer .app-text-area {
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.app-ai-composer .app-text-area__frame,
+.app-ai-composer .app-text-area__frame:hover,
+.app-ai-composer .app-text-area__frame:focus-within {
+  background: transparent;
+  border: 0;
+}
+
+.app-ai-composer .app-text-area__frame::after {
+  display: none;
+}
+
+.app-ai-composer .app-text-area__control {
+  max-height: 92px;
+  padding: 10px 2px;
+  font-size: 15px;
+  line-height: 22px;
+}
+
+.app-ai-composer .app-text-area__control::placeholder {
+  color: var(--app-shell-muted-text-color, #707070);
+}
+
+.app-ai-composer__submit {
+  flex: 0 0 auto;
+}
