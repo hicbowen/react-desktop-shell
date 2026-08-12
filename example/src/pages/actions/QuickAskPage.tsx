@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import {
+  AppAiActivity,
   AppButton,
   AppCommandProvider,
   AppPromptSuggestions,
@@ -7,6 +8,8 @@ import {
   AppQuickAskThread,
   AppToolApprovalCard,
   formatAppShortcut,
+  type AppAiActivityStatus,
+  type AppAiActivityStep,
   type AppCommand,
   type AppPromptSuggestion,
   type AppQuickAskMessage,
@@ -359,6 +362,54 @@ export function AppQuickAskPage() {
     },
   )
 
+  const approvalToolStatus =
+    approvalMessages.find((message) => message.role === 'tool')?.status ?? 'pending'
+  const activityStatus: AppAiActivityStatus =
+    approvalToolStatus === 'error'
+      ? 'error'
+      : approvalStatus === 'awaiting-approval'
+        ? 'awaiting-approval'
+        : approvalStatus === 'streaming'
+          ? 'tool'
+          : approvalStatus === 'submitting'
+            ? 'thinking'
+            : 'completed'
+  const activitySteps: AppAiActivityStep[] = [
+    {
+      id: 'prepare',
+      label: t('Prepare response'),
+      status: approvalStatus === 'submitting' ? 'active' : 'completed',
+    },
+    {
+      id: 'approval',
+      label: t('Ask for approval'),
+      detail: t('The assistant pauses before changing external state.'),
+      status:
+        approvalStatus === 'awaiting-approval'
+          ? 'active'
+          : approvalToolStatus === 'denied'
+            ? 'error'
+            : 'completed',
+    },
+    {
+      id: 'tool',
+      label: t('Run file tool'),
+      status:
+        approvalToolStatus === 'error'
+          ? 'error'
+          : approvalStatus === 'streaming'
+            ? 'active'
+            : approvalToolStatus === 'completed'
+              ? 'completed'
+              : 'pending',
+    },
+    {
+      id: 'finish',
+      label: t('Finish response'),
+      status: approvalStatus === 'completed' ? 'completed' : 'pending',
+    },
+  ]
+
   const footer = (
     <>
       <span>
@@ -436,6 +487,23 @@ export function AppQuickAskPage() {
         description="Render AppToolApprovalCard as a tool message when an operation needs user approval. The host decides whether to run or reject it."
       >
         <DemoPreview className="demo-component-row">
+          <AppAiActivity
+            detail={t(
+              activityStatus === 'awaiting-approval'
+                ? 'The assistant is waiting for your decision.'
+                : activityStatus === 'tool'
+                  ? 'The file tool is running.'
+                  : activityStatus === 'error'
+                    ? 'No file changes were made.'
+                    : activityStatus === 'completed'
+                      ? 'The activity is complete.'
+                      : 'The assistant is preparing the request.',
+            )}
+            size="compact"
+            status={activityStatus}
+            steps={activitySteps}
+            style={{ flex: '1 1 360px' }}
+          />
           <AppButton icon={<CheckCircle2 />} onClick={() => setApprovalOpen(true)}>
             {t('Open approval example')}
           </AppButton>

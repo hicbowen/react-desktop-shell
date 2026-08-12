@@ -63,6 +63,8 @@ export const zhCNMessages = {
     error: '出现问题，请重试。',
     conversation: '当前对话',
     suggestions: '提问建议',
+    searching: '正在搜索…',
+    usingTool: '正在使用工具…',
     user: '你',
     assistant: 'AI',
     tool: '工具',

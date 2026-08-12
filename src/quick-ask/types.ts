@@ -1,6 +1,4 @@
-import type { CSSProperties, ReactNode } from 'react'
-
-import type { HTMLAttributes } from 'react'
+import type { CSSProperties, HTMLAttributes, ReactNode } from 'react'
 
 export type AppQuickAskStatus =
   | 'idle'
@@ -41,6 +39,41 @@ export interface AppPromptSuggestionsProps
   onSelect: (item: AppPromptSuggestion) => void
   ariaLabel?: string
   disabled?: boolean
+  size?: 'compact' | 'standard'
+  className?: string
+  style?: CSSProperties
+}
+
+export type AppAiActivityStatus =
+  | 'thinking'
+  | 'streaming'
+  | 'searching'
+  | 'tool'
+  | 'awaiting-approval'
+  | 'completed'
+  | 'error'
+
+export type AppAiActivityStepStatus =
+  | 'pending'
+  | 'active'
+  | 'completed'
+  | 'error'
+
+export interface AppAiActivityStep {
+  id: string
+  label: ReactNode
+  detail?: ReactNode
+  status: AppAiActivityStepStatus
+}
+
+export interface AppAiActivityProps
+  extends Omit<HTMLAttributes<HTMLElement>, 'title'> {
+  status: AppAiActivityStatus
+  label?: ReactNode
+  detail?: ReactNode
+  steps?: readonly AppAiActivityStep[]
+  action?: ReactNode
+  ariaLabel?: string
   size?: 'compact' | 'standard'
   className?: string
   style?: CSSProperties

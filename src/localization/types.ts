@@ -58,6 +58,8 @@ export interface AppLocaleMessages {
     error: string
     conversation: string
     suggestions: string
+    searching: string
+    usingTool: string
     user: string
     assistant: string
     tool: string

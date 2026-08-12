@@ -68,6 +68,8 @@ export const enUSMessages = {
     error: 'Something went wrong. Try again.',
     conversation: 'Current conversation',
     suggestions: 'Prompt suggestions',
+    searching: 'Searching…',
+    usingTool: 'Using a tool…',
     user: 'You',
     assistant: 'AI',
     tool: 'Tool',

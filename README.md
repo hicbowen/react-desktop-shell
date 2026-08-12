@@ -353,6 +353,19 @@ the item's `prompt` into the draft or submit it immediately:
 />
 ```
 
+Use `AppAiActivity` when a request has a visible lifecycle beyond a single
+loading label. It can show a controlled phase and optional user-facing steps;
+it does not expose model reasoning or run the request itself:
+
+```tsx
+<AppAiActivity
+  status="awaiting-approval"
+  detail="The assistant is waiting for your decision."
+  steps={steps}
+  action={<AppButton onClick={openApproval}>Review</AppButton>}
+/>
+```
+
 ```tsx
 <AppQuickAsk
   answer={<AppQuickAskThread messages={messages} />}
