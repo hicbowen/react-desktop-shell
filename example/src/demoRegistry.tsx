@@ -274,7 +274,7 @@ const taxonomy: Record<DemoPageKey, DemoTaxonomy> = {
   'app-toolbar': { category: 'actions', subgroup: 'commands', apiNames: ['AppToolbar'], status: 'stable' },
   'app-command': { category: 'actions', subgroup: 'commands', apiNames: ['AppCommandProvider'], status: 'stable' },
   'command-palette': { category: 'actions', subgroup: 'commands', apiNames: ['AppCommandPalette'], status: 'stable' },
-  'quick-ask': { category: 'actions', subgroup: 'commands', apiNames: ['AppQuickAsk', 'AppSpotlightSurface'], status: 'preview', related: ['command-palette', 'app-command'] },
+  'quick-ask': { category: 'actions', subgroup: 'commands', apiNames: ['AppQuickAsk', 'AppQuickAskThread', 'AppToolApprovalCard', 'AppSpotlightSurface'], status: 'preview', related: ['command-palette', 'app-command'] },
   'shortcut-recorder': { category: 'actions', subgroup: 'commands', apiNames: ['AppShortcutRecorder'], status: 'stable' },
   'menu-bar': { category: 'actions', subgroup: 'menus', apiNames: ['AppMenuBar'], status: 'stable' },
   'app-menu-flyout': { category: 'actions', subgroup: 'menus', apiNames: ['AppMenuFlyout'], status: 'stable' },

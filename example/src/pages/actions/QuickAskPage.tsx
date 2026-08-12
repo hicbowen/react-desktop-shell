@@ -3,28 +3,43 @@ import {
   AppButton,
   AppCommandProvider,
   AppQuickAsk,
+  AppQuickAskThread,
+  AppToolApprovalCard,
   formatAppShortcut,
   type AppCommand,
+  type AppQuickAskMessage,
+  type AppQuickAskMessageRole,
   type AppQuickAskStatus,
+  type AppToolApprovalStatus,
 } from '../../../../src'
-import { Copy, Open16Regular, Sparkles } from '../../components/fluentIcons'
+import { Sparkles } from '../../components/fluentIcons'
 import { DemoPage, DemoPreview, DemoSection } from '../../components/DemoPage'
 import { useDemoCopy } from '../../i18n/interactiveTranslations'
 
 const shortcut = { ctrl: true, shift: true, key: 'k' } as const
 
+interface DemoTextMessage {
+  id: string
+  role: Exclude<AppQuickAskMessageRole, 'tool'>
+  text: string
+}
+
+interface DemoToolMessage {
+  id: string
+  role: 'tool'
+  status: AppToolApprovalStatus
+}
+
+type DemoMessage = DemoTextMessage | DemoToolMessage
+
 export function AppQuickAskPage() {
   const t = useDemoCopy()
   const [open, setOpen] = useState(false)
   const [draft, setDraft] = useState('')
-  const [answer, setAnswer] = useState('')
-  const [lastPrompt, setLastPrompt] = useState('')
+  const [messages, setMessages] = useState<DemoMessage[]>([])
   const [status, setStatus] = useState<AppQuickAskStatus>('idle')
-  const [copied, setCopied] = useState(false)
   const timerRef = useRef<number | null>(null)
-  const sampleAnswer = t(
-    'Use a top-level spotlight surface for focus and dismissal, keep AI state in the host, and hide rather than destroy the native window so generation can continue.',
-  )
+  const messageIdRef = useRef(0)
 
   useEffect(
     () => () => {
@@ -33,38 +48,128 @@ export function AppQuickAskPage() {
     [],
   )
 
+  const nextMessageId = (prefix: string) => {
+    messageIdRef.current += 1
+    return `${prefix}-${messageIdRef.current}`
+  }
   const stopTimer = () => {
     if (timerRef.current === null) return
     window.clearTimeout(timerRef.current)
     timerRef.current = null
   }
+  const appendAssistantMessage = (text: string) => {
+    setMessages((current) => [
+      ...current,
+      { id: nextMessageId('assistant'), role: 'assistant', text },
+    ])
+  }
   const submit = (prompt: string) => {
     stopTimer()
-    setLastPrompt(prompt)
-    setAnswer('')
-    setCopied(false)
+    setMessages((current) => [
+      ...current,
+      { id: nextMessageId('user'), role: 'user', text: prompt },
+    ])
     setStatus('submitting')
-    let cursor = 0
-    const stream = () => {
-      cursor = Math.min(sampleAnswer.length, cursor + 3)
-      setAnswer(sampleAnswer.slice(0, cursor))
-      if (cursor < sampleAnswer.length) {
-        timerRef.current = window.setTimeout(stream, 28)
-      } else {
-        timerRef.current = null
-        setStatus('completed')
-      }
-    }
+
     timerRef.current = window.setTimeout(() => {
-      setStatus('streaming')
-      stream()
-    }, 420)
+      timerRef.current = null
+      setMessages((current) => [
+        ...current,
+        {
+          id: nextMessageId('assistant'),
+          role: 'assistant',
+          text: t(
+            'I prepared the summary. Allow the file tool to save it to your Documents folder.',
+          ),
+        },
+        {
+          id: nextMessageId('tool'),
+          role: 'tool',
+          status: 'pending',
+        },
+      ])
+      setStatus('awaiting-approval')
+    }, 520)
+  }
+  const approveTool = () => {
+    setMessages((current) =>
+      current.map((message) =>
+        message.role === 'tool' && message.status === 'pending'
+          ? { ...message, status: 'running' }
+          : message,
+      ),
+    )
+    setStatus('streaming')
+    timerRef.current = window.setTimeout(() => {
+      timerRef.current = null
+      setMessages((current) =>
+        current.map((message) =>
+          message.role === 'tool' && message.status === 'running'
+            ? { ...message, status: 'completed' }
+            : message,
+        ),
+      )
+      appendAssistantMessage(
+        t('The summary was saved successfully. You can continue asking here.'),
+      )
+      setStatus('completed')
+    }, 720)
+  }
+  const rejectTool = () => {
+    setMessages((current) =>
+      current.map((message) =>
+        message.role === 'tool' && message.status === 'pending'
+          ? { ...message, status: 'denied' }
+          : message,
+      ),
+    )
+    appendAssistantMessage(
+      t(
+        'No file was written. The prepared summary remains in this conversation.',
+      ),
+    )
+    setStatus('completed')
   }
   const cancel = () => {
     stopTimer()
-    setAnswer((current) => current || t('Generation stopped.'))
+    setMessages((current) =>
+      current.map((message) =>
+        message.role === 'tool' && message.status === 'running'
+          ? { ...message, status: 'error' }
+          : message,
+      ),
+    )
+    appendAssistantMessage(t('Generation stopped.'))
     setStatus('completed')
   }
+
+  const threadMessages: AppQuickAskMessage[] = messages.map((message) => {
+    if (message.role !== 'tool') {
+      return {
+        id: message.id,
+        role: message.role,
+        content: <p>{message.text}</p>,
+      }
+    }
+
+    return {
+      id: message.id,
+      role: 'tool',
+      content: (
+        <AppToolApprovalCard
+          description={t(
+            'This writes one new Markdown file. Existing files are not changed.',
+          )}
+          details={t('Target: Documents/meeting-summary.md')}
+          onApprove={approveTool}
+          onReject={rejectTool}
+          status={message.status}
+          title={t('Save meeting summary')}
+        />
+      ),
+    }
+  })
+
   const commands = useMemo<AppCommand[]>(
     () => [
       {
@@ -72,6 +177,7 @@ export function AppQuickAskPage() {
         label: t('Open quick ask'),
         icon: <Sparkles />,
         shortcut,
+        allowInEditable: true,
         execute: () => setOpen((current) => !current),
       },
     ],
@@ -82,7 +188,7 @@ export function AppQuickAskPage() {
     <DemoPage>
       <DemoSection
         title="Quick AI conversation"
-        description="Open a focused prompt with a command, stream a host-owned response, and hide it without cancelling the work."
+        description="Keep the current conversation in a compact prompt surface and ask before a tool changes external state."
       >
         <DemoPreview className="demo-component-row">
           <AppCommandProvider commands={commands}>
@@ -90,35 +196,10 @@ export function AppQuickAskPage() {
               {t('Open quick ask')} · {formatAppShortcut(shortcut)}
             </AppButton>
             <AppQuickAsk
-              answer={answer ? <p>{answer}</p> : undefined}
-              answerActions={
-                <>
-                  <AppButton
-                    appearance="subtle"
-                    disabled={!answer}
-                    icon={<Copy />}
-                    onClick={() => {
-                      void navigator.clipboard?.writeText(answer)
-                      setCopied(true)
-                    }}
-                    size="compact"
-                  >
-                    {copied ? t('Copied') : t('Copy')}
-                  </AppButton>
-                  <AppButton
-                    appearance="subtle"
-                    disabled={
-                      !lastPrompt ||
-                      status === 'submitting' ||
-                      status === 'streaming'
-                    }
-                    icon={<Open16Regular />}
-                    onClick={() => submit(lastPrompt)}
-                    size="compact"
-                  >
-                    {t('Ask again')}
-                  </AppButton>
-                </>
+              answer={
+                threadMessages.length ? (
+                  <AppQuickAskThread messages={threadMessages} />
+                ) : undefined
               }
               footer={
                 <>
@@ -145,7 +226,7 @@ export function AppQuickAskPage() {
         </DemoPreview>
         <p className="demo-note">
           {t(
-            'The simulated request continues while the surface is hidden. Use the same shortcut to reopen the current response.',
+            'Hide and reopen the surface without losing the conversation or pending approval. Only an explicit Allow once action runs the simulated tool.',
           )}
         </p>
       </DemoSection>

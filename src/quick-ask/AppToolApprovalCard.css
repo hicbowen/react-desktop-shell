@@ -1,0 +1,56 @@
+.app-tool-approval-card {
+  overflow: hidden;
+  background: var(--app-shell-card-bg, #fff);
+  border: 1px solid var(--app-shell-border-color, rgb(0 0 0 / 10%));
+  border-radius: 7px;
+}
+
+.app-tool-approval-card--danger {
+  border-color: color-mix(
+    in srgb,
+    var(--app-shell-danger-bg, #ef4444) 38%,
+    transparent
+  );
+}
+
+.app-tool-approval-card__header {
+  min-height: 38px;
+  padding: 0 11px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 13px;
+}
+
+.app-tool-approval-card__header strong {
+  min-width: 0;
+}
+
+.app-tool-approval-card__description {
+  padding: 0 11px 9px;
+  color: var(--app-shell-muted-text-color, #707070);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.app-tool-approval-card__details {
+  margin: 0 11px 10px;
+  padding: 8px 9px;
+  overflow: auto;
+  color: var(--app-shell-secondary-text-color, #616161);
+  background: var(--app-shell-card-pressed-bg, rgb(0 0 0 / 5%));
+  border-radius: 5px;
+  font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+  font-size: 12px;
+}
+
+.app-tool-approval-card__actions {
+  min-height: 42px;
+  padding: 5px 8px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+  border-top: 1px solid var(--app-shell-border-color, rgb(0 0 0 / 8%));
+}

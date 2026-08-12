@@ -1,4 +1,10 @@
-import { forwardRef, useRef, useState, type KeyboardEvent } from 'react'
+import {
+  forwardRef,
+  useLayoutEffect,
+  useRef,
+  useState,
+  type KeyboardEvent,
+} from 'react'
 import { Send16Regular } from '@fluentui/react-icons/svg/send'
 import { Sparkle16Regular } from '@fluentui/react-icons/svg/sparkle'
 import { Stop16Regular } from '@fluentui/react-icons/svg/stop'
@@ -10,6 +16,8 @@ import { AppSpotlightSurface } from '../spotlight-surface'
 import { AppTextArea } from '../text-input'
 import type { AppQuickAskProps } from './types'
 import './AppQuickAsk.css'
+
+const FOLLOW_OUTPUT_THRESHOLD = 48
 
 export const AppQuickAsk = forwardRef<HTMLTextAreaElement, AppQuickAskProps>(
   function AppQuickAsk(
@@ -28,6 +36,7 @@ export const AppQuickAsk = forwardRef<HTMLTextAreaElement, AppQuickAskProps>(
       leadingIcon,
       onCancel,
       clearOnSubmit = true,
+      followOutput = true,
       disabled = false,
       placeholder,
       ariaLabel,
@@ -46,11 +55,33 @@ export const AppQuickAsk = forwardRef<HTMLTextAreaElement, AppQuickAskProps>(
     const controlled = value !== undefined
     const [internalValue, setInternalValue] = useState(defaultValue)
     const inputRef = useRef<HTMLTextAreaElement | null>(null)
+    const responseViewportRef = useRef<HTMLDivElement | null>(null)
     const composingRef = useRef(false)
+    const shouldFollowOutputRef = useRef(true)
+    const wasOpenRef = useRef(false)
     const currentValue = value ?? internalValue
     const busy = status === 'submitting' || status === 'streaming'
+    const awaitingApproval = status === 'awaiting-approval'
     const hasAnswer = answer !== undefined && answer !== null && answer !== ''
     const showResponse = status !== 'idle' || hasAnswer || error != null
+    const showResponseHeader =
+      status === 'submitting' ||
+      status === 'streaming' ||
+      status === 'awaiting-approval' ||
+      status === 'error'
+
+    useLayoutEffect(() => {
+      const opening = open && !wasOpenRef.current
+      wasOpenRef.current = open
+
+      if (!open || !followOutput) return
+      if (opening) shouldFollowOutputRef.current = true
+
+      const viewport = responseViewportRef.current
+      if (viewport && shouldFollowOutputRef.current) {
+        viewport.scrollTop = viewport.scrollHeight
+      }
+    })
 
     const setInputRef = (node: HTMLTextAreaElement | null) => {
       inputRef.current = node
@@ -63,7 +94,8 @@ export const AppQuickAsk = forwardRef<HTMLTextAreaElement, AppQuickAskProps>(
     }
     const submit = () => {
       const prompt = currentValue.trim()
-      if (!prompt || disabled || busy) return
+      if (!prompt || disabled || busy || awaitingApproval) return
+      shouldFollowOutputRef.current = true
       onSubmit(prompt)
       if (clearOnSubmit) change('')
     }
@@ -91,9 +123,11 @@ export const AppQuickAsk = forwardRef<HTMLTextAreaElement, AppQuickAskProps>(
         ? text.thinking
         : status === 'streaming'
           ? text.responding
-          : status === 'error'
-            ? text.failed
-            : text.response
+          : status === 'awaiting-approval'
+            ? text.awaitingApproval
+            : status === 'error'
+              ? text.failed
+              : text.response
 
     return (
       <AppSpotlightSurface
@@ -142,7 +176,7 @@ export const AppQuickAsk = forwardRef<HTMLTextAreaElement, AppQuickAskProps>(
               appearance="primary"
               ariaLabel={text.send}
               className="app-quick-ask__submit"
-              disabled={disabled || !currentValue.trim()}
+              disabled={disabled || awaitingApproval || !currentValue.trim()}
               icon={<Send16Regular />}
               onClick={submit}
               shape="circular"
@@ -151,26 +185,51 @@ export const AppQuickAsk = forwardRef<HTMLTextAreaElement, AppQuickAskProps>(
         </div>
 
         {showResponse ? (
-          <div className="app-quick-ask__response">
-            <div aria-live="polite" className="app-quick-ask__response-header">
-              {busy ? (
-                <AppProgressRing
-                  ariaLabel={statusText}
-                  labelPosition="hidden"
-                  size="small"
-                />
-              ) : (
-                <span
-                  aria-hidden="true"
-                  className="app-quick-ask__response-icon"
-                >
-                  <Sparkle16Regular />
-                </span>
-              )}
-              <span>{statusText}</span>
-            </div>
+          <div
+            className={[
+              'app-quick-ask__response',
+              showResponseHeader
+                ? ''
+                : 'app-quick-ask__response--without-header',
+            ]
+              .filter(Boolean)
+              .join(' ')}
+          >
+            {showResponseHeader ? (
+              <div
+                aria-live="polite"
+                className="app-quick-ask__response-header"
+              >
+                {busy ? (
+                  <AppProgressRing
+                    ariaLabel={statusText}
+                    labelPosition="hidden"
+                    size="small"
+                  />
+                ) : (
+                  <span
+                    aria-hidden="true"
+                    className="app-quick-ask__response-icon"
+                  >
+                    <Sparkle16Regular />
+                  </span>
+                )}
+                <span>{statusText}</span>
+              </div>
+            ) : null}
             <AppScrollArea
               className="app-quick-ask__response-scroll"
+              onScroll={() => {
+                const viewport = responseViewportRef.current
+                if (!viewport) return
+                const distanceFromBottom =
+                  viewport.scrollHeight -
+                  viewport.clientHeight -
+                  viewport.scrollTop
+                shouldFollowOutputRef.current =
+                  distanceFromBottom <= FOLLOW_OUTPUT_THRESHOLD
+              }}
+              ref={responseViewportRef}
               viewportClassName="app-quick-ask__response-viewport"
             >
               <div

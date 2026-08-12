@@ -330,10 +330,14 @@ owns only the draft input; the application owns request state, streamed answer
 content, cancellation, and any native global-shortcut or window integration.
 Hiding the surface therefore does not imply cancelling the request.
 
+Use `AppQuickAskThread` for the current session transcript and place controlled
+`AppToolApprovalCard` entries in the thread when a tool needs explicit user
+approval. The host remains responsible for storing messages, deciding which
+tools require approval, and resuming or rejecting the pending tool call.
+
 ```tsx
 <AppQuickAsk
-  answer={answer ? <Markdown>{answer}</Markdown> : undefined}
-  answerActions={<AppButton onClick={copyAnswer}>Copy</AppButton>}
+  answer={<AppQuickAskThread messages={messages} />}
   onCancel={cancelRequest}
   onOpenChange={setOpen}
   onSubmit={sendPrompt}
@@ -344,10 +348,29 @@ Hiding the surface therefore does not imply cancelling the request.
 />
 ```
 
+Tool approval is an ordinary controlled thread entry, so hiding and reopening
+the surface does not silently approve or reject it:
+
+```tsx
+<AppToolApprovalCard
+  title="Save meeting summary"
+  description="This writes one new file."
+  details="Documents/meeting-summary.md"
+  status={toolCall.status}
+  onApprove={() => approveToolCall(toolCall.id)}
+  onReject={() => rejectToolCall(toolCall.id)}
+/>
+```
+
 Enter submits, Shift+Enter inserts a line break, and IME composition is
 preserved. Register an `AppCommand` to open the component while the application
 is focused; register the equivalent shortcut in Electron, Tauri, Wails, or the
 host runtime when it must work system-wide.
+
+The response viewport follows new output while the user remains within 48px of
+the bottom. Scrolling up pauses following, returning to the bottom resumes it,
+and submitting a new prompt or reopening the surface returns to the latest
+message. Set `followOutput={false}` when the host needs full scroll control.
 
 `AppButton` provides standard, primary, subtle, and danger desktop commands in compact or standard sizes. Standard controls are 32px high; compact controls are 28px high. It supports leading or trailing icons, stable loading states, native button attributes, and ref forwarding. Use `AppIconButton` for icon-only commands and always supply `ariaLabel` or `aria-label`; compose tooltips with `AppTooltip`.
 

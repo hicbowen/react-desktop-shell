@@ -1,7 +1,45 @@
 import type { CSSProperties, ReactNode } from 'react'
 
 export type AppQuickAskStatus =
-  'idle' | 'submitting' | 'streaming' | 'completed' | 'error'
+  | 'idle'
+  | 'submitting'
+  | 'streaming'
+  | 'awaiting-approval'
+  | 'completed'
+  | 'error'
+
+export type AppQuickAskMessageRole = 'user' | 'assistant' | 'tool'
+
+export interface AppQuickAskMessage {
+  id: string
+  role: AppQuickAskMessageRole
+  content: ReactNode
+  label?: ReactNode
+}
+
+export interface AppQuickAskThreadProps {
+  messages: readonly AppQuickAskMessage[]
+  ariaLabel?: string
+  className?: string
+  style?: CSSProperties
+}
+
+export type AppToolApprovalStatus =
+  'pending' | 'approved' | 'denied' | 'running' | 'completed' | 'error'
+
+export interface AppToolApprovalCardProps {
+  title: ReactNode
+  description?: ReactNode
+  details?: ReactNode
+  status?: AppToolApprovalStatus
+  danger?: boolean
+  approveText?: ReactNode
+  rejectText?: ReactNode
+  onApprove?: () => void
+  onReject?: () => void
+  className?: string
+  style?: CSSProperties
+}
 
 export interface AppQuickAskProps {
   open: boolean
@@ -18,6 +56,7 @@ export interface AppQuickAskProps {
   leadingIcon?: ReactNode
   onCancel?: () => void
   clearOnSubmit?: boolean
+  followOutput?: boolean
   disabled?: boolean
   placeholder?: string
   ariaLabel?: string

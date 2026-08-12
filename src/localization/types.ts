@@ -52,9 +52,22 @@ export interface AppLocaleMessages {
     stop: string
     thinking: string
     responding: string
+    awaitingApproval: string
     response: string
     failed: string
     error: string
+    conversation: string
+    user: string
+    assistant: string
+    tool: string
+    approvalRequired: string
+    approveOnce: string
+    reject: string
+    approved: string
+    denied: string
+    running: string
+    completed: string
+    toolFailed: string
   }
   autoComplete: {
     empty: string
