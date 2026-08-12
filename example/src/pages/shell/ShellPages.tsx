@@ -5,15 +5,18 @@ import {
   AppIconButton,
   AppRail,
   AppPage,
-  AppRadioGroup,
   AppShell,
   AppSidePane,
   AppTextBox,
   AppTitleBar,
   AppToggleSwitch,
-  type PaneDisplayMode,
 } from '../../../../src'
-import { DemoControls, DemoPage, DemoPreview, DemoSection } from '../../components/DemoPage'
+import {
+  DemoControls,
+  DemoPage,
+  DemoPreview,
+  DemoSection,
+} from '../../components/DemoPage'
 import { useDemoShell } from '../../components/DemoShellContext'
 import { useDemoCopy } from '../../i18n/interactiveTranslations'
 
@@ -23,7 +26,6 @@ export function AppShellPage() {
   const [activeItem, setActiveItem] = useState('home')
   const [lastAction, setLastAction] = useState('No action yet')
   const [maximized, setMaximized] = useState(false)
-  const [displayMode, setDisplayMode] = useState<PaneDisplayMode>('expanded')
   const shellItems = [
     { key: 'home', label: t('Home'), icon: <Home /> },
     { key: 'files', label: t('Files'), icon: <FolderOpen /> },
@@ -51,25 +53,10 @@ export function AppShellPage() {
         title="Live application shell"
         description="A real AppShell composition with a title bar, navigation rail, and page content."
       >
-        <DemoControls>
-          <AppRadioGroup
-            ariaLabel={t('Navigation display mode')}
-            label={t('Navigation display mode')}
-            onValueChange={(value) => setDisplayMode(value as PaneDisplayMode)}
-            options={[
-              { value: 'expanded', label: t('Expanded') },
-              { value: 'compact', label: t('Compact') },
-              { value: 'minimal', label: t('Hidden') },
-              { value: 'auto', label: t('Automatic') },
-            ]}
-            orientation="horizontal"
-            value={displayMode}
-          />
-        </DemoControls>
         <DemoPreview className="demo-shell-live-preview">
           <AppShell
             locale={locale}
-            sidebar={{ displayMode, expandedWidth: 190 }}
+            sidebar={{ displayMode: 'expanded', expandedWidth: 190 }}
             theme={theme}
             title={t('Preview application')}
             titleBar={

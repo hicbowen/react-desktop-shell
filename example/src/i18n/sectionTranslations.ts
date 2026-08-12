@@ -184,7 +184,7 @@ const zhCNSectionText: Record<string, string> = {
   'Use sliders for relative adjustments; use a number box when exact entry is the primary task.': '相对调整使用滑块；需要精确输入时使用数字输入框。',
   'Use the same accessible calendar surface independently from date-picker inputs.': '脱离日期选择输入框，独立使用同一套无障碍日历界面。',
   'Value changes stay immediate while explicit and debounced search wait for IME composition to finish.': '输入值保持即时变化，显式搜索与防抖搜索则会等待输入法组词结束。',
-  'These controls update the gallery\'s real outer AppShell.': '这些控件会更新组件展廊真实的外层 AppShell。',
+  'Switch the display mode in a local AppShell preview without changing the surrounding gallery.': '在局部 AppShell 预览中切换显示模式，不影响外层组件展廊。',
   'The default strategy releases inactive panels and uses a subtle entrance motion, so local input and counter state reset when selected again.': '默认策略会释放非活动面板并使用轻微的进入动画，因此重新选中时本地输入和计数状态会重置。',
   'The hidden strategy keeps every panel mounted while directional motion follows the selector order.': '隐藏策略会保持所有面板挂载，同时让方向动画跟随选择项顺序。',
   'Compare unmounting inactive panels with keeping them mounted while the selector and panel content stay the same.': '在保持选择器和面板内容不变的情况下，对比卸载非活动面板与保持面板挂载。',

@@ -50,4 +50,16 @@ describe('demo source registry', () => {
       'const announcementSlides: AppCarouselSlide[]',
     )
   })
+
+  it('keeps interactive navigation-mode state with its local preview', () => {
+    const source = getDemoSource('navigation-modes')?.sections[0]?.source
+
+    expect(source).toContain(
+      "const [displayMode, setDisplayMode] = useState<PaneDisplayMode>('expanded')",
+    )
+    expect(source).toContain('const navigationItems = [')
+    expect(source).toContain('<AppRadioGroup')
+    expect(source).toContain('<AppShell')
+    expect(source).toContain('items={navigationItems}')
+  })
 })

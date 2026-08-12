@@ -250,7 +250,7 @@ type DemoTaxonomy = Pick<DemoPageDefinition, 'category' | 'subgroup' | 'apiNames
 
 const taxonomy: Record<DemoPageKey, DemoTaxonomy> = {
   overview: { category: 'getting-started', subgroup: 'overview', apiNames: [], status: 'stable' },
-  'app-shell': { category: 'shell', subgroup: 'window', apiNames: ['AppShell'], status: 'stable', related: ['app-title-bar', 'app-page'] },
+  'app-shell': { category: 'shell', subgroup: 'window', apiNames: ['AppShell'], status: 'stable', related: ['app-title-bar', 'app-page', 'navigation-modes'] },
   'app-title-bar': { category: 'shell', subgroup: 'window', apiNames: ['AppTitleBar'], status: 'stable', related: ['app-shell'] },
   'app-page': { category: 'shell', subgroup: 'page', apiNames: ['AppPage'], status: 'stable', related: ['app-side-pane'] },
   'app-side-pane': { category: 'shell', subgroup: 'page', apiNames: ['AppSidePane'], status: 'stable', related: ['app-page', 'resizable-panes'] },
@@ -258,7 +258,7 @@ const taxonomy: Record<DemoPageKey, DemoTaxonomy> = {
   'app-scroll-area': { category: 'shell', subgroup: 'layout', apiNames: ['AppScrollArea'], status: 'stable' },
   'status-bar': { category: 'shell', subgroup: 'window', apiNames: ['AppStatusBar', 'AppStatusBarItem'], status: 'stable' },
   'app-rail': { category: 'navigation', subgroup: 'application', apiNames: ['AppRail'], status: 'stable', related: ['navigation-modes'] },
-  'navigation-modes': { category: 'navigation', subgroup: 'application', apiNames: ['AppRail'], status: 'stable', related: ['app-rail'] },
+  'navigation-modes': { category: 'navigation', subgroup: 'application', apiNames: ['AppShell', 'AppRail'], status: 'stable', related: ['app-shell', 'app-rail'] },
   'app-selector-bar': { category: 'navigation', subgroup: 'controls', apiNames: ['AppSelectorBar', 'AppSelectorPanel', 'AppSelectorPanels'], status: 'stable' },
   'app-tab-view': { category: 'navigation', subgroup: 'controls', apiNames: ['AppTabView'], status: 'stable' },
   'app-wizard': { category: 'navigation', subgroup: 'controls', apiNames: ['AppWizard'], status: 'stable' },

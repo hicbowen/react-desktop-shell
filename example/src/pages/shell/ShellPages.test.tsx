@@ -5,7 +5,7 @@ import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import { DemoShellContext } from '../../components/DemoShellContext'
 import { DemoI18nContext, demoMessages } from '../../i18n/DemoI18nContext'
 import { DemoSourceContext } from '../../components/DemoSourceContext'
-import { AppShellPage } from './ShellPages'
+import { AppShellPage, AppSidePanePage } from './ShellPages'
 
 describe('AppShellPage demo', () => {
   let host: HTMLDivElement
@@ -64,7 +64,10 @@ describe('AppShellPage demo', () => {
     expect(sections).toHaveLength(2)
     expect(sections[0]?.querySelector('.demo-source-panel')).toBeNull()
     expect(sections[1]?.querySelector('.demo-source-panel')).not.toBeNull()
-    expect(host.querySelector('[role="radiogroup"]')).not.toBeNull()
+    expect(host.querySelector('[role="radiogroup"]')).toBeNull()
+    expect(
+      host.querySelector('.demo-shell-live-preview .app-shell')?.dataset.paneMode,
+    ).toBe('expanded')
 
     const filesItem = Array.from(host.querySelectorAll('.app-rail button')).find(
       (button) => button.textContent?.includes('Files'),
@@ -77,13 +80,19 @@ describe('AppShellPage demo', () => {
     )
     act(() => actionButton?.click())
     expect(host.textContent).toContain('Page action completed')
+  })
 
-    const compactMode = host.querySelector<HTMLInputElement>(
-      'input[type="radio"][value="compact"]',
-    )
-    act(() => compactMode?.click())
-    expect(
-      host.querySelector('.demo-shell-live-preview .app-shell')?.dataset.paneMode,
-    ).toBe('compact')
+  it('renders the side-pane controls and preview', () => {
+    act(() => root.render(
+      <DemoI18nContext.Provider
+        value={{ locale: 'en-US', messages: demoMessages['en-US'] }}
+      >
+        <AppSidePanePage />
+      </DemoI18nContext.Provider>,
+    ))
+
+    expect(host.querySelector('.demo-controls')).not.toBeNull()
+    expect(host.querySelector('.demo-pane-stage .app-side-pane')).not.toBeNull()
+    expect(host.textContent).toContain('380px')
   })
 })

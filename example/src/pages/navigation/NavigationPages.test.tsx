@@ -1,11 +1,12 @@
 // @vitest-environment jsdom
 import { act } from 'react'
 import { createRoot, type Root } from 'react-dom/client'
-import { afterEach, beforeEach, describe, expect, it } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { DemoShellContext } from '../../components/DemoShellContext'
 import { DemoI18nContext, demoMessages } from '../../i18n/DemoI18nContext'
-import { AppSelectorBarPage } from './NavigationPages'
+import { AppSelectorBarPage, NavigationModesPage } from './NavigationPages'
 
-describe('AppSelectorBarPage', () => {
+describe('navigation page demos', () => {
   let container: HTMLDivElement
   let root: Root
 
@@ -50,5 +51,40 @@ describe('AppSelectorBarPage', () => {
     act(() => animationControl.querySelectorAll<HTMLInputElement>('input')[2]?.click())
 
     expect(animationPanels.getAttribute('data-motion')).toBe('directional')
+  })
+
+  it('previews navigation display modes inside a local AppShell', () => {
+    const setRailDisplayMode = vi.fn()
+
+    act(() => root.render(
+      <DemoI18nContext.Provider value={{ locale: 'en-US', messages: demoMessages['en-US'] }}>
+        <DemoShellContext.Provider
+          value={{
+            locale: 'en-US',
+            railDisplayMode: 'expanded',
+            setLocale: () => undefined,
+            setRailDisplayMode,
+            setTheme: () => undefined,
+            theme: 'light',
+          }}
+        >
+          <NavigationModesPage />
+        </DemoShellContext.Provider>
+      </DemoI18nContext.Provider>,
+    ))
+
+    const previewShell = container.querySelector(
+      '.demo-shell-live-preview .app-shell',
+    )
+    expect(container.querySelector('[role="radiogroup"]')).not.toBeNull()
+    expect(previewShell?.getAttribute('data-pane-mode')).toBe('expanded')
+
+    const compactMode = container.querySelector<HTMLInputElement>(
+      'input[type="radio"][value="compact"]',
+    )
+    act(() => compactMode?.click())
+
+    expect(previewShell?.getAttribute('data-pane-mode')).toBe('compact')
+    expect(setRailDisplayMode).not.toHaveBeenCalled()
   })
 })

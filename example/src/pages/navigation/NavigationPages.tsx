@@ -5,20 +5,28 @@ import {
   Clock3,
   FileText,
   FolderTree,
+  FolderOpen,
   Heart,
   History,
+  Home,
   Inbox,
   ListTodo,
   LockKeyhole,
+  Settings,
 } from '../../components/fluentIcons'
 import {
   AppButton,
+  AppPage,
   AppRail,
+  AppRadioGroup,
   AppSegmentedControl,
   AppSelectorBar,
   AppSelectorPanel,
   AppSelectorPanels,
+  AppShell,
   AppTextBox,
+  AppTitleBar,
+  type PaneDisplayMode,
 } from '../../../../src'
 import {
   DemoControls,
@@ -296,34 +304,72 @@ function SelectorPanelStateDemo({ label }: { label: string }) {
 
 export function NavigationModesPage() {
   const t = useDemoCopy()
-  const { railDisplayMode, setRailDisplayMode } = useDemoShell()
+  const { locale, theme } = useDemoShell()
+  const [displayMode, setDisplayMode] = useState<PaneDisplayMode>('expanded')
+  const [activeItem, setActiveItem] = useState('home')
+  const navigationItems = [
+    { key: 'home', label: t('Home'), icon: <Home /> },
+    { key: 'files', label: t('Files'), icon: <FolderOpen /> },
+    { key: 'settings', label: t('Settings'), icon: <Settings /> },
+  ]
+
   return (
     <DemoPage>
       <DemoSection
         title="Live navigation modes"
-        description="These controls update the gallery's real outer AppShell."
+        description="Switch the display mode in a local AppShell preview without changing the surrounding gallery."
       >
         <DemoControls>
-          {(['expanded', 'compact', 'minimal', 'auto'] as const).map((mode) => (
-            <button
-              className={
-                railDisplayMode === mode
-                  ? 'demo-choice demo-choice--active'
-                  : 'demo-choice'
-              }
-              key={mode}
-              type="button"
-              onClick={() => setRailDisplayMode(mode)}
-            >
-              <strong>{t(mode)}</strong>
-              <small>
-                {mode === 'auto'
-                  ? t('Responsive breakpoints')
-                  : `${t(mode)}${t('rail presentation')}`}
-              </small>
-            </button>
-          ))}
+          <AppRadioGroup
+            ariaLabel={t('Navigation display mode')}
+            label={t('Navigation display mode')}
+            onValueChange={(value) => setDisplayMode(value as PaneDisplayMode)}
+            options={[
+              { value: 'expanded', label: t('Expanded') },
+              { value: 'compact', label: t('Compact') },
+              { value: 'minimal', label: t('Hidden') },
+              { value: 'auto', label: t('Automatic') },
+            ]}
+            orientation="horizontal"
+            value={displayMode}
+          />
         </DemoControls>
+        <DemoPreview className="demo-shell-live-preview">
+          <AppShell
+            locale={locale}
+            sidebar={{ displayMode, expandedWidth: 190 }}
+            theme={theme}
+            title={t('Preview application')}
+            titleBar={
+              <AppTitleBar
+                center={
+                  <span className="demo-titlebar-center">
+                    {t('Editor workspace')}
+                  </span>
+                }
+              />
+            }
+            rail={
+              <AppRail
+                items={navigationItems}
+                onValueChange={setActiveItem}
+                value={activeItem}
+              />
+            }
+          >
+            <AppPage
+              layout="fill"
+              title={t('Preview application')}
+              description={t('Page content is rendered inside AppShell.')}
+            >
+              <div className="demo-shell-live-content">
+                <strong>
+                  {t('Navigation display mode')}: {t(displayMode)}
+                </strong>
+              </div>
+            </AppPage>
+          </AppShell>
+        </DemoPreview>
       </DemoSection>
     </DemoPage>
   )
