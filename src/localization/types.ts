@@ -57,6 +57,7 @@ export interface AppLocaleMessages {
     failed: string
     error: string
     conversation: string
+    suggestions: string
     user: string
     assistant: string
     tool: string

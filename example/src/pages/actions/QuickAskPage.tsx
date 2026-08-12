@@ -2,11 +2,13 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import {
   AppButton,
   AppCommandProvider,
+  AppPromptSuggestions,
   AppQuickAsk,
   AppQuickAskThread,
   AppToolApprovalCard,
   formatAppShortcut,
   type AppCommand,
+  type AppPromptSuggestion,
   type AppQuickAskMessage,
   type AppQuickAskMessageRole,
   type AppQuickAskStatus,
@@ -37,7 +39,7 @@ export function AppQuickAskPage() {
 
   const [oneShotOpen, setOneShotOpen] = useState(false)
   const [oneShotDraft, setOneShotDraft] = useState('')
-  const [oneShotAnswer, setOneShotAnswer] = useState<string | null>(null)
+  const [oneShotAnswerText, setOneShotAnswer] = useState<string | null>(null)
   const [oneShotStatus, setOneShotStatus] = useState<AppQuickAskStatus>('idle')
   const oneShotTimerRef = useRef<number | null>(null)
 
@@ -128,6 +130,48 @@ export function AppQuickAskPage() {
     ],
     [t],
   )
+
+  const promptSuggestions = useMemo<AppPromptSuggestion[]>(
+    () => [
+      {
+        id: 'summarize-page',
+        label: t('Summarize this page'),
+        description: t('Get the key points in a few bullets.'),
+        prompt: t('Summarize this page'),
+        icon: <Sparkles />,
+      },
+      {
+        id: 'explain-selection',
+        label: t('Explain the selected content'),
+        description: t('Make the current selection easier to understand.'),
+        prompt: t('Explain the selected content'),
+        icon: <MessageSquare />,
+      },
+      {
+        id: 'draft-reply',
+        label: t('Draft a reply'),
+        description: t('Turn the current context into a concise response.'),
+        prompt: t('Draft a reply'),
+        icon: <CheckCircle2 />,
+      },
+    ],
+    [t],
+  )
+
+  const oneShotAnswer = oneShotAnswerText
+    ? <p>{t(oneShotAnswerText)}</p>
+    : oneShotStatus === 'idle'
+      ? (
+          <div>
+            <p>{t('Start with a suggestion or type your own prompt.')}</p>
+            <AppPromptSuggestions
+              items={promptSuggestions}
+              onSelect={(item) => setOneShotDraft(item.prompt)}
+              size="compact"
+            />
+          </div>
+        )
+      : undefined
 
   const stopChatTimer = () => {
     if (chatTimerRef.current === null) return
@@ -341,7 +385,7 @@ export function AppQuickAskPage() {
               {t('Open one-shot ask')} · {formatAppShortcut(shortcut)}
             </AppButton>
             <AppQuickAsk
-              answer={oneShotAnswer ? <p>{t(oneShotAnswer)}</p> : undefined}
+              answer={oneShotAnswer}
               footer={footer}
               onCancel={cancelOneShot}
               onOpenChange={setOneShotOpen}

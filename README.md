@@ -335,6 +335,24 @@ Use `AppQuickAskThread` for the current session transcript and place controlled
 approval. The host remains responsible for storing messages, deciding which
 tools require approval, and resuming or rejecting the pending tool call.
 
+Use `AppPromptSuggestions` for controlled empty-state prompts. It only renders
+the suggestions and reports the selected item; the host decides whether to put
+the item's `prompt` into the draft or submit it immediately:
+
+```tsx
+<AppPromptSuggestions
+  items={[
+    {
+      id: 'summarize',
+      label: 'Summarize this page',
+      description: 'Get the key points in a few bullets.',
+      prompt: 'Summarize this page',
+    },
+  ]}
+  onSelect={(suggestion) => setDraft(suggestion.prompt)}
+/>
+```
+
 ```tsx
 <AppQuickAsk
   answer={<AppQuickAskThread messages={messages} />}

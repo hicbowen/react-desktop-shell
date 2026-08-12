@@ -67,6 +67,7 @@ export const enUSMessages = {
     failed: 'Unable to respond',
     error: 'Something went wrong. Try again.',
     conversation: 'Current conversation',
+    suggestions: 'Prompt suggestions',
     user: 'You',
     assistant: 'AI',
     tool: 'Tool',

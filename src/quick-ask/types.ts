@@ -1,5 +1,7 @@
 import type { CSSProperties, ReactNode } from 'react'
 
+import type { HTMLAttributes } from 'react'
+
 export type AppQuickAskStatus =
   | 'idle'
   | 'submitting'
@@ -20,6 +22,26 @@ export interface AppQuickAskMessage {
 export interface AppQuickAskThreadProps {
   messages: readonly AppQuickAskMessage[]
   ariaLabel?: string
+  className?: string
+  style?: CSSProperties
+}
+
+export interface AppPromptSuggestion {
+  id: string
+  label: ReactNode
+  prompt: string
+  description?: ReactNode
+  icon?: ReactNode
+  disabled?: boolean
+}
+
+export interface AppPromptSuggestionsProps
+  extends Omit<HTMLAttributes<HTMLDivElement>, 'onSelect'> {
+  items: readonly AppPromptSuggestion[]
+  onSelect: (item: AppPromptSuggestion) => void
+  ariaLabel?: string
+  disabled?: boolean
+  size?: 'compact' | 'standard'
   className?: string
   style?: CSSProperties
 }

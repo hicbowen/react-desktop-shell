@@ -62,6 +62,7 @@ export const zhCNMessages = {
     failed: '无法回复',
     error: '出现问题，请重试。',
     conversation: '当前对话',
+    suggestions: '提问建议',
     user: '你',
     assistant: 'AI',
     tool: '工具',
