@@ -48,6 +48,7 @@ export const zhCNRegistry: Record<string, DemoPageTranslation> = {
   'app-command': { label: 'AppCommand', description: '共享命令定义、执行状态和键盘快捷键。' },
   'menu-bar': { label: 'AppMenuBar', description: '由平台无关命令驱动的传统应用菜单。' },
   'command-palette': { label: 'AppCommandPalette', description: '以键盘为先的模糊命令查找与执行。' },
+  'quick-ask': { label: 'AppQuickAsk', description: '通过快捷键快速提问，支持流式回复、停止生成和恢复瞬时状态。' },
   'shortcut-recorder': { label: 'AppShortcutRecorder', description: '捕获并验证与应用命令兼容的快捷键。' },
   'toggle-button': { label: 'AppToggleButton', description: '持久化命令状态，以及单选或多选切换组。' },
   buttons: { label: '按钮', description: '桌面命令按钮、图标按钮、状态和组合方式。' },

@@ -66,6 +66,7 @@ import {
   SlidersHorizontal,
   SquareCheck,
   SquareMousePointer,
+  Sparkles,
   Table2,
   Tags,
   TextCursorInput,
@@ -88,6 +89,7 @@ import { AppDialogPage, AppInfoBarPage, AppToastPage, MessageBoxPage } from './p
 import { AppCommandPage, AppToolbarPage, ContextMenuPage } from './pages/actions/ActionPages'
 import { AppMenuBarPage } from './pages/actions/MenuBarPage'
 import { AppCommandPalettePage } from './pages/actions/CommandPalettePage'
+import { AppQuickAskPage } from './pages/actions/QuickAskPage'
 import { AppShortcutRecorderPage } from './pages/actions/ShortcutRecorderPage'
 import { AppToggleButtonPage } from './pages/actions/ToggleButtonPage'
 import { AppDataTablePage, AppSelectionBarPage } from './pages/data/DataPages'
@@ -206,6 +208,7 @@ const demoPageSources = [
   { key: 'app-command', label: 'AppCommand', description: 'Shared command definitions, execution state, and keyboard accelerators.', icon: <Command size={16} />, component: AppCommandPage },
   { key: 'menu-bar', label: 'AppMenuBar', description: 'Traditional application menus backed by platform-neutral commands.', icon: <Menu size={16} />, component: AppMenuBarPage },
   { key: 'command-palette', label: 'AppCommandPalette', description: 'Keyboard-first fuzzy command discovery and execution.', icon: <SearchCode size={16} />, component: AppCommandPalettePage },
+  { key: 'quick-ask', label: 'AppQuickAsk', description: 'Shortcut-first AI prompts with streaming, cancellation, and resumable transient state.', icon: <Sparkles size={16} />, component: AppQuickAskPage },
   { key: 'shortcut-recorder', label: 'AppShortcutRecorder', description: 'Capture and validate shortcuts compatible with application commands.', icon: <Keyboard size={16} />, component: AppShortcutRecorderPage },
   { key: 'toggle-button', label: 'AppToggleButton', description: 'Persistent command states and single or multiple toggle groups.', icon: <ToggleRight size={16} />, component: AppToggleButtonPage },
   { key: 'buttons', label: 'Buttons', description: 'Desktop command buttons, icon buttons, states, and composition.', icon: <SquareMousePointer size={16} />, component: ButtonsPage },
@@ -271,6 +274,7 @@ const taxonomy: Record<DemoPageKey, DemoTaxonomy> = {
   'app-toolbar': { category: 'actions', subgroup: 'commands', apiNames: ['AppToolbar'], status: 'stable' },
   'app-command': { category: 'actions', subgroup: 'commands', apiNames: ['AppCommandProvider'], status: 'stable' },
   'command-palette': { category: 'actions', subgroup: 'commands', apiNames: ['AppCommandPalette'], status: 'stable' },
+  'quick-ask': { category: 'actions', subgroup: 'commands', apiNames: ['AppQuickAsk', 'AppSpotlightSurface'], status: 'preview', related: ['command-palette', 'app-command'] },
   'shortcut-recorder': { category: 'actions', subgroup: 'commands', apiNames: ['AppShortcutRecorder'], status: 'stable' },
   'menu-bar': { category: 'actions', subgroup: 'menus', apiNames: ['AppMenuBar'], status: 'stable' },
   'app-menu-flyout': { category: 'actions', subgroup: 'menus', apiNames: ['AppMenuFlyout'], status: 'stable' },

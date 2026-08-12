@@ -40,6 +40,8 @@ export type {
 } from './expander/types'
 export type { AppHoverCardProps } from './hover-card/types'
 export type { AppConfirmPopoverProps, AppPopoverProps } from './popover/types'
+export type { AppSpotlightSurfaceProps } from './spotlight-surface/types'
+export type { AppQuickAskProps, AppQuickAskStatus } from './quick-ask/types'
 export type {
   AppDatePickerProps,
   AppCalendarProps,

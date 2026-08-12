@@ -317,6 +317,37 @@ keys and horizontal keyboard focus, while flyouts support standard menu keys.
 supports arrow-key selection and Enter execution, and reports its open state to
 the application. It does not discover or invoke host APIs itself.
 
+## Quick ask and spotlight surfaces
+
+`AppSpotlightSurface` is a top-centered transient dialog primitive with focus
+management, focus restoration, nested overlay coordination, and configurable
+Escape, outside-click, and window-blur dismissal. Use it for shortcut-first
+surfaces that are not anchored to a visible trigger.
+
+`AppQuickAsk` builds an AI prompt and response surface on that primitive. It
+owns only the draft input; the application owns request state, streamed answer
+content, cancellation, and any native global-shortcut or window integration.
+Hiding the surface therefore does not imply cancelling the request.
+
+```tsx
+<AppQuickAsk
+  answer={answer ? <Markdown>{answer}</Markdown> : undefined}
+  answerActions={<AppButton onClick={copyAnswer}>Copy</AppButton>}
+  onCancel={cancelRequest}
+  onOpenChange={setOpen}
+  onSubmit={sendPrompt}
+  onValueChange={setDraft}
+  open={open}
+  status={status}
+  value={draft}
+/>
+```
+
+Enter submits, Shift+Enter inserts a line break, and IME composition is
+preserved. Register an `AppCommand` to open the component while the application
+is focused; register the equivalent shortcut in Electron, Tauri, Wails, or the
+host runtime when it must work system-wide.
+
 `AppButton` provides standard, primary, subtle, and danger desktop commands in compact or standard sizes. Standard controls are 32px high; compact controls are 28px high. It supports leading or trailing icons, stable loading states, native button attributes, and ref forwarding. Use `AppIconButton` for icon-only commands and always supply `ariaLabel` or `aria-label`; compose tooltips with `AppTooltip`.
 
 ```tsx

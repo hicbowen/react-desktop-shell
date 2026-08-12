@@ -54,6 +54,18 @@ export const enUSMessages = {
     empty: 'No matching commands',
     placeholder: 'Type a command',
   },
+  quickAsk: {
+    label: 'Quick ask',
+    inputLabel: 'Ask AI',
+    placeholder: 'Ask AI anything',
+    send: 'Send',
+    stop: 'Stop generating',
+    thinking: 'Thinking…',
+    responding: 'Responding…',
+    response: 'AI response',
+    failed: 'Unable to respond',
+    error: 'Something went wrong. Try again.',
+  },
   autoComplete: {
     empty: 'No suggestions',
     loading: 'Loading suggestions…',

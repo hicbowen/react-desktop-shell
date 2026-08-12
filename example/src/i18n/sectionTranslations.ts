@@ -89,6 +89,8 @@ const zhCNSectionText: Record<string, string> = {
   'Panel animation': '面板动画',
   'Promise-based decisions': '基于 Promise 的决策',
   'Quick commands': '快捷命令',
+  'Quick AI conversation': '快速 AI 对话',
+  'Open a focused prompt with a command, stream a host-owned response, and hide it without cancelling the work.': '通过命令打开聚焦的提问框，流式显示由宿主管理的回复，并可在不中止任务的情况下隐藏。',
   'Radio groups': '单选组',
   'Range slider': '范围滑块',
   'Region paths': '区域路径',

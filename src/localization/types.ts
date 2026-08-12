@@ -44,6 +44,18 @@ export interface AppLocaleMessages {
     empty: string
     placeholder: string
   }
+  quickAsk: {
+    label: string
+    inputLabel: string
+    placeholder: string
+    send: string
+    stop: string
+    thinking: string
+    responding: string
+    response: string
+    failed: string
+    error: string
+  }
   autoComplete: {
     empty: string
     loading: string
