@@ -61,10 +61,59 @@ function indent(source: string) {
     .join('\n')
 }
 
+function collectBindingNames(name: ts.BindingName): string[] {
+  if (ts.isIdentifier(name)) return [name.text]
+
+  return name.elements.flatMap((element) =>
+    ts.isOmittedExpression(element) ? [] : collectBindingNames(element.name),
+  )
+}
+
+function collectLocalVariableStatements(declaration: ts.FunctionDeclaration) {
+  const statements =
+    declaration.body?.statements.filter(ts.isVariableStatement) ?? []
+  const statementsByName = new Map<string, ts.VariableStatement>()
+
+  for (const statement of statements) {
+    for (const variable of statement.declarationList.declarations) {
+      for (const name of collectBindingNames(variable.name)) {
+        statementsByName.set(name, statement)
+      }
+    }
+  }
+
+  return { statements, statementsByName }
+}
+
+function collectReferencedVariableStatements(
+  nodes: readonly ts.Node[],
+  statements: readonly ts.VariableStatement[],
+  statementsByName: ReadonlyMap<string, ts.VariableStatement>,
+) {
+  const referenced = new Set<ts.VariableStatement>()
+
+  const visit = (node: ts.Node) => {
+    if (
+      ts.isJsxExpression(node) &&
+      node.expression &&
+      ts.isIdentifier(node.expression)
+    ) {
+      const statement = statementsByName.get(node.expression.text)
+      if (statement) referenced.add(statement)
+    }
+    ts.forEachChild(node, visit)
+  }
+
+  nodes.forEach(visit)
+  return statements.filter((statement) => referenced.has(statement))
+}
+
 function printSectionSource(
   section: ts.JsxElement,
   sourceFile: ts.SourceFile,
   printer: ts.Printer,
+  localStatements: readonly ts.VariableStatement[],
+  localStatementsByName: ReadonlyMap<string, ts.VariableStatement>,
 ) {
   const nodes = meaningfulChildren(section.children).flatMap((child) =>
     unwrapPreview(child, sourceFile),
@@ -76,8 +125,22 @@ function printSectionSource(
     .filter(Boolean)
 
   if (printed.length === 0) return ''
-  if (printed.length === 1) return printed[0] ?? ''
-  return `<>\n${indent(printed.join('\n'))}\n</>`
+
+  const jsxSource =
+    printed.length === 1
+      ? (printed[0] ?? '')
+      : `<>\n${indent(printed.join('\n'))}\n</>`
+  const declarationSource = collectReferencedVariableStatements(
+    nodes,
+    localStatements,
+    localStatementsByName,
+  ).map((statement) =>
+    printer.printNode(ts.EmitHint.Unspecified, statement, sourceFile).trim(),
+  )
+
+  return declarationSource.length
+    ? `${declarationSource.join('\n')}\n\n${jsxSource}`
+    : jsxSource
 }
 
 async function collectFunctionSections(
@@ -86,10 +149,18 @@ async function collectFunctionSections(
   printer: ts.Printer,
 ) {
   const sections: string[] = []
+  const { statements, statementsByName } =
+    collectLocalVariableStatements(declaration)
 
   const visit = (node: ts.Node) => {
     if (isNamedJsxElement(node, sourceFile, 'DemoSection')) {
-      const source = printSectionSource(node, sourceFile, printer)
+      const source = printSectionSource(
+        node,
+        sourceFile,
+        printer,
+        statements,
+        statementsByName,
+      )
       if (source) sections.push(source)
       return
     }

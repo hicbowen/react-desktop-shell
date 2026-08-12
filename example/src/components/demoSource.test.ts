@@ -30,4 +30,24 @@ describe('demo source registry', () => {
       'class="shiki shiki-themes light-plus dark-plus"',
     )
   })
+
+  it('includes local data declarations referenced by a section', () => {
+    const result = getDemoSource('app-carousel')
+
+    expect(result?.sections).toHaveLength(4)
+    expect(result?.sections[0]?.source).toContain(
+      'const bannerSlides: AppCarouselSlide[]',
+    )
+    expect(result?.sections[0]?.source).toContain('slides={bannerSlides}')
+    expect(result?.sections[0]?.source).not.toContain('const gallerySlides')
+    expect(result?.sections[1]?.source).toContain(
+      'const gallerySlides: AppCarouselSlide[]',
+    )
+    expect(result?.sections[2]?.source).toContain(
+      'const walkthroughSlides: AppCarouselSlide[]',
+    )
+    expect(result?.sections[3]?.source).toContain(
+      'const announcementSlides: AppCarouselSlide[]',
+    )
+  })
 })
