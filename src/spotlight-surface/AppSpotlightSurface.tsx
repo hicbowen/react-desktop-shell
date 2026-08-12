@@ -47,6 +47,7 @@ export function AppSpotlightSurface({
   closeOnWindowBlur = true,
   restoreFocus = true,
   width = 680,
+  topOffset,
   className,
   style,
 }: AppSpotlightSurfaceProps) {
@@ -168,6 +169,9 @@ export function AppSpotlightSurface({
         .filter(Boolean)
         .join(' ')}
       inert={exiting ? true : undefined}
+      style={
+        topOffset === undefined ? undefined : { paddingBlockStart: topOffset }
+      }
     >
       <OverlayParentContext.Provider value={overlayTree.overlayId}>
         <div

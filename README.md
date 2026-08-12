@@ -315,7 +315,8 @@ keys and horizontal keyboard focus, while flyouts support standard menu keys.
 
 `AppCommandPalette` filters a supplied platform-neutral command collection,
 supports arrow-key selection and Enter execution, and reports its open state to
-the application. It does not discover or invoke host APIs itself.
+the application. Its transient layout and dismissal behavior are provided by
+`AppSpotlightSurface`; it does not discover or invoke host APIs itself.
 
 ## Quick ask and spotlight surfaces
 

@@ -11,6 +11,7 @@ export interface AppSpotlightSurfaceProps {
   closeOnWindowBlur?: boolean
   restoreFocus?: boolean
   width?: number | string
+  topOffset?: number | string
   className?: string
   style?: CSSProperties
 }
