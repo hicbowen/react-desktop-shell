@@ -95,6 +95,8 @@ const zhCNSectionText: Record<string, string> = {
   'Use AppQuickAsk as a transient one-shot prompt. The host owns the request and response state.': '将 AppQuickAsk 作为瞬时的一次性提问框使用，请求和回复状态由宿主持有。',
   'Inline AI composer': '普通页面 AI 输入区',
   'Use AppAiComposer directly in a page without the spotlight surface. The host still owns the conversation state.': '在普通页面中直接使用 AppAiComposer，不依赖 Spotlight 浮层；会话状态仍由宿主持有。',
+  'Conversation viewport': '会话消息视口',
+  'Use AppConversationViewport around a normal page thread. It owns follow and jump behavior, while the host owns messages and history loading.': '在普通页面会话外使用 AppConversationViewport。它负责跟随和回到底部，消息及历史加载仍由宿主持有。',
   'Chat: current thread': '聊天：当前会话',
   'Use AppQuickAskThread when the surface should keep several user and AI turns. The host owns the message list.': '当浮层需要保留多轮用户和 AI 消息时使用 AppQuickAskThread，消息列表由宿主持有。',
   'Tool approval: explicit confirmation': 'Tool 授权：明确确认',

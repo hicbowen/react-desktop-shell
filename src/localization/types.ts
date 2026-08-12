@@ -54,6 +54,9 @@ export interface AppLocaleMessages {
     responding: string
     awaitingApproval: string
     response: string
+    jumpToLatest: string
+    loadEarlier: string
+    loadingEarlier: string
     failed: string
     error: string
     conversation: string

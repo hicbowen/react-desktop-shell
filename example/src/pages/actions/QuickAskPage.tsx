@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import {
   AppAiActivity,
   AppAiComposer,
+  AppConversationViewport,
   AppButton,
   AppChangeReviewCard,
   AppCommandProvider,
@@ -52,6 +53,25 @@ export function AppQuickAskPage() {
 
   const [inlineDraft, setInlineDraft] = useState('')
   const [inlineSubmittedPrompt, setInlineSubmittedPrompt] = useState<string | null>(null)
+
+  const [viewportMessages, setViewportMessages] = useState<DemoTextMessage[]>([
+    {
+      id: 'viewport-user-1',
+      role: 'user',
+      text: 'Can we keep this conversation on the page?',
+    },
+    {
+      id: 'viewport-assistant-1',
+      role: 'assistant',
+      text: 'Yes. The page owns the thread, while the viewport handles follow and history navigation.',
+    },
+    {
+      id: 'viewport-assistant-2',
+      role: 'assistant',
+      text: 'Scroll up to pause follow mode, then use Jump to latest when you are ready to return.',
+    },
+  ])
+  const viewportMessageIdRef = useRef(2)
 
   const [chatOpen, setChatOpen] = useState(false)
   const [chatDraft, setChatDraft] = useState('')
@@ -486,6 +506,38 @@ export function AppQuickAskPage() {
     </>
   )
 
+  const addViewportMessage = () => {
+    viewportMessageIdRef.current += 1
+    setViewportMessages((current) => [
+      ...current,
+      {
+        id: `viewport-assistant-${viewportMessageIdRef.current}`,
+        role: 'assistant',
+        text: 'A new response was appended. If you were reading history, the viewport keeps your position and offers a jump action.',
+      },
+    ])
+  }
+
+  const loadEarlierViewportMessages = () => {
+    viewportMessageIdRef.current += 1
+    setViewportMessages((current) => [
+      {
+        id: `viewport-assistant-earlier-${viewportMessageIdRef.current}`,
+        role: 'assistant',
+        text: 'Earlier context was loaded by the host and prepended to this thread.',
+      },
+      ...current,
+    ])
+  }
+
+  const viewportThreadMessages: AppQuickAskMessage[] = viewportMessages.map(
+    (message) => ({
+      id: message.id,
+      role: message.role,
+      content: <p>{t(message.text)}</p>,
+    }),
+  )
+
   return (
     <DemoPage>
       <DemoSection
@@ -533,6 +585,24 @@ export function AppQuickAskPage() {
               ? `${t('Last inline prompt:')} ${inlineSubmittedPrompt}`
               : t('The inline composer sends a prompt to the host.')}
           </p>
+        </DemoPreview>
+      </DemoSection>
+
+      <DemoSection
+        title="Conversation viewport"
+        description="Use AppConversationViewport around a normal page thread. It owns follow and jump behavior, while the host owns messages and history loading."
+      >
+        <DemoPreview>
+          <AppConversationViewport
+            hasMore
+            onLoadOlder={loadEarlierViewportMessages}
+            style={{ height: 240, width: '100%' }}
+          >
+            <AppQuickAskThread messages={viewportThreadMessages} />
+          </AppConversationViewport>
+          <AppButton onClick={addViewportMessage}>
+            {t('Add new response')}
+          </AppButton>
         </DemoPreview>
       </DemoSection>
 

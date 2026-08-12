@@ -344,6 +344,21 @@ first flows:
 />
 ```
 
+`AppConversationViewport` is the page-level message viewport for the same
+conversation state. It follows output near the bottom, pauses while the user
+reads older messages, exposes a jump-to-latest action, and can render a
+host-owned load-earlier action:
+
+```tsx
+<AppConversationViewport
+  hasMore={hasMore}
+  loadingOlder={loadingOlder}
+  onLoadOlder={loadEarlier}
+>
+  <AppQuickAskThread messages={messages} />
+</AppConversationViewport>
+```
+
 Use `AppQuickAskThread` for the current session transcript and place controlled
 `AppToolApprovalCard` entries in the thread when a tool needs explicit user
 approval. The host remains responsible for storing messages, deciding which

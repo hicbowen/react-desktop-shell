@@ -1,5 +1,6 @@
 export { AppAiActivity } from './AppAiActivity'
 export { AppAiComposer } from './AppAiComposer'
+export { AppConversationViewport } from './AppConversationViewport'
 export { AppChangeReviewCard } from './AppChangeReviewCard'
 export { AppQuickAsk } from './AppQuickAsk'
 export { AppQuickAskThread } from './AppQuickAskThread'
@@ -8,6 +9,7 @@ export { AppToolApprovalCard } from './AppToolApprovalCard'
 export type {
   AppAiActivityProps,
   AppAiComposerProps,
+  AppConversationViewportProps,
   AppAiActivityStatus,
   AppAiActivityStep,
   AppAiActivityStepStatus,

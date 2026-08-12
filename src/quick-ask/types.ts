@@ -26,6 +26,21 @@ export interface AppAiComposerProps {
   style?: CSSProperties
 }
 
+export interface AppConversationViewportProps
+  extends Omit<HTMLAttributes<HTMLDivElement>, 'children' | 'onScroll'> {
+  children: ReactNode
+  followOutput?: boolean
+  hasMore?: boolean
+  loadingOlder?: boolean
+  onLoadOlder?: () => void
+  latestLabel?: ReactNode
+  loadEarlierLabel?: ReactNode
+  loadingEarlierLabel?: ReactNode
+  ariaLabel?: string
+  viewportClassName?: string
+  viewportStyle?: CSSProperties
+}
+
 export interface AppQuickAskMessage {
   id: string
   role: AppQuickAskMessageRole
