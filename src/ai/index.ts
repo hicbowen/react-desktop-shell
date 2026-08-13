@@ -1,5 +1,6 @@
 export { AppAiActivity } from './AppAiActivity'
 export { AppAiComposer } from './AppAiComposer'
+export { AppAiMessageActions } from './AppAiMessageActions'
 export { AppChangeReviewCard } from './AppChangeReviewCard'
 export { AppPromptSuggestions } from './AppPromptSuggestions'
 export { AppToolApprovalCard } from './AppToolApprovalCard'
@@ -9,6 +10,8 @@ export type {
   AppAiActivityStep,
   AppAiActivityStepStatus,
   AppAiComposerProps,
+  AppAiMessageActionsProps,
+  AppAiMessageFeedback,
   AppAiRequestStatus,
   AppChangeReviewCardProps,
   AppChangeReviewFile,

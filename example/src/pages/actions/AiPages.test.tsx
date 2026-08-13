@@ -50,6 +50,9 @@ describe('AI example pages', () => {
 
     expect(container.querySelector('.app-conversation-viewport')).not.toBeNull()
     expect(container.querySelector('.app-conversation-thread')).not.toBeNull()
+    expect(container.querySelector('.app-conversation-message')).not.toBeNull()
+    expect(container.querySelector('.app-ai-message-actions')).not.toBeNull()
+    expect(container.querySelector('time')?.textContent).toBe('10:30')
     expect(container.querySelector('.app-ai-composer')).not.toBeNull()
     expect(container.textContent).toContain('Add new response')
   })

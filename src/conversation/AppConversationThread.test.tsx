@@ -21,6 +21,11 @@ describe('AppConversationThread', () => {
               label: 'File tool',
               content: 'Approval required',
             },
+            {
+              id: 'system-1',
+              role: 'system',
+              content: 'Conversation resumed',
+            },
           ]}
         />,
       ),
@@ -31,7 +36,9 @@ describe('AppConversationThread', () => {
     expect(thread?.textContent).toContain('You')
     expect(thread?.textContent).toContain('AI')
     expect(thread?.textContent).toContain('File tool')
-    expect(host.querySelectorAll('article')).toHaveLength(3)
+    expect(thread?.textContent).toContain('System')
+    expect(host.querySelectorAll('article')).toHaveLength(4)
+    expect(host.querySelectorAll('.app-conversation-message')).toHaveLength(4)
 
     act(() => root.unmount())
   })

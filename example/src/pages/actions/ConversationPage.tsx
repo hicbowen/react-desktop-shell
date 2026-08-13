@@ -1,10 +1,12 @@
 import { useEffect, useRef, useState } from 'react'
 import {
   AppAiComposer,
+  AppAiMessageActions,
   AppButton,
   AppConversationThread,
   AppConversationViewport,
   type AppAiRequestStatus,
+  type AppAiMessageFeedback,
 } from '../../../../src'
 import { DemoPage, DemoPreview, DemoSection } from '../../components/DemoPage'
 import { useDemoCopy } from '../../i18n/interactiveTranslations'
@@ -19,6 +21,10 @@ export function ConversationPage() {
   const t = useDemoCopy()
   const [draft, setDraft] = useState('')
   const [status, setStatus] = useState<AppAiRequestStatus>('idle')
+  const [feedback, setFeedback] = useState<
+    Record<string, AppAiMessageFeedback>
+  >({})
+  const [lastAction, setLastAction] = useState<string | null>(null)
   const [messages, setMessages] = useState(() =>
     cloneTextMessages(initialConversationMessages),
   )
@@ -47,7 +53,12 @@ export function ConversationPage() {
     stopTimer()
     setMessages((current) => [
       ...current,
-      { id: nextMessageId('user'), role: 'user', text: prompt },
+      {
+        id: nextMessageId('user'),
+        role: 'user',
+        text: prompt,
+        timestamp: 'Just now',
+      },
     ])
     setStatus('submitting')
     timerRef.current = window.setTimeout(() => {
@@ -58,6 +69,7 @@ export function ConversationPage() {
           id: nextMessageId('assistant'),
           role: 'assistant',
           text: 'The follow-up was added to the current thread. The host can continue from this history.',
+          timestamp: 'Just now',
         },
       ])
       setStatus('completed')
@@ -72,6 +84,7 @@ export function ConversationPage() {
         id: nextMessageId('assistant'),
         role: 'assistant',
         text: 'Generation stopped.',
+        timestamp: 'Just now',
       },
     ])
     setStatus('completed')
@@ -84,6 +97,7 @@ export function ConversationPage() {
         id: nextMessageId('assistant'),
         role: 'assistant',
         text: 'A new response was appended. If you were reading history, the viewport keeps your position and offers a jump action.',
+        timestamp: 'Just now',
       },
     ])
   }
@@ -94,12 +108,42 @@ export function ConversationPage() {
         id: nextMessageId('assistant'),
         role: 'assistant',
         text: 'Earlier context was loaded by the host and prepended to this thread.',
+        timestamp: '10:22',
       },
       ...current,
     ])
   }
 
-  const threadMessages = toConversationMessages(messages, t)
+  const threadMessages = toConversationMessages(messages, t).map((message) => {
+    const source = messages.find((item) => item.id === message.id)
+    if (!source) return message
+
+    return {
+      ...message,
+      actions: source.role === 'assistant'
+        ? (
+            <AppAiMessageActions
+              feedback={feedback[source.id] ?? null}
+              onCopy={() => setLastAction(t('Copy response requested.'))}
+              onFeedbackChange={(next) =>
+                setFeedback((current) => ({ ...current, [source.id]: next }))
+              }
+              onRetry={() => {
+                setLastAction(t('Retry requested.'))
+                addResponse()
+              }}
+            />
+          )
+        : (
+            <AppAiMessageActions
+              onEdit={() => {
+                setDraft(source.text)
+                setLastAction(t('Message moved back to the composer.'))
+              }}
+            />
+          ),
+    }
+  })
 
   return (
     <DemoPage>
@@ -117,6 +161,7 @@ export function ConversationPage() {
           </AppConversationViewport>
           <div className="demo-component-row">
             <AppButton onClick={addResponse}>{t('Add new response')}</AppButton>
+            {lastAction ? <span className="demo-note">{lastAction}</span> : null}
           </div>
           <AppAiComposer
             onCancel={cancel}

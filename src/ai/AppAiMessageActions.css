@@ -1,0 +1,30 @@
+.app-ai-message-actions {
+  min-width: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  color: var(--app-shell-muted-text-color, #616161);
+}
+
+.app-ai-message-actions .app-icon-button {
+  width: 26px;
+  min-width: 26px;
+  height: 26px;
+  min-height: 26px;
+  padding: 0;
+  color: inherit;
+}
+
+.app-ai-message-actions .app-icon-button:hover:not(:disabled) {
+  color: var(--app-shell-text-color, #1f1f1f);
+}
+
+.app-ai-message-actions .app-icon-button[aria-pressed='true'] {
+  color: var(--app-shell-accent-color, #005fb8);
+  background: var(--app-shell-selection-bg, rgb(0 120 212 / 10%));
+}
+
+.app-ai-message-actions .app-icon-button svg {
+  width: 16px;
+  height: 16px;
+}

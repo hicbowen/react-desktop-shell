@@ -1,16 +1,36 @@
 import type { CSSProperties, HTMLAttributes, ReactNode } from 'react'
 
-export type AppConversationMessageRole = 'user' | 'assistant' | 'tool'
+export type AppConversationMessageRole =
+  | 'user'
+  | 'assistant'
+  | 'tool'
+  | 'system'
 
-export interface AppConversationMessage {
-  id: string
+export interface AppConversationMessageProps extends Omit<
+  HTMLAttributes<HTMLElement>,
+  'children' | 'role'
+> {
   role: AppConversationMessageRole
-  content: ReactNode
+  children: ReactNode
   label?: ReactNode
+  timestamp?: ReactNode
+  timestampDateTime?: string
+  avatar?: ReactNode
+  header?: ReactNode
+  footer?: ReactNode
+  actions?: ReactNode
+}
+
+export interface AppConversationMessageItem extends Omit<
+  AppConversationMessageProps,
+  'children'
+> {
+  id: string
+  content: ReactNode
 }
 
 export interface AppConversationThreadProps {
-  messages: readonly AppConversationMessage[]
+  messages: readonly AppConversationMessageItem[]
   ariaLabel?: string
   className?: string
   style?: CSSProperties

@@ -46,6 +46,22 @@ export interface AppPromptSuggestionsProps extends Omit<
   style?: CSSProperties
 }
 
+export type AppAiMessageFeedback = 'like' | 'dislike' | null
+
+export interface AppAiMessageActionsProps extends Omit<
+  HTMLAttributes<HTMLDivElement>,
+  'onChange'
+> {
+  onCopy?: () => void
+  onRetry?: () => void
+  onEdit?: () => void
+  feedback?: AppAiMessageFeedback
+  onFeedbackChange?: (feedback: AppAiMessageFeedback) => void
+  disabled?: boolean
+  ariaLabel?: string
+  children?: ReactNode
+}
+
 export type AppAiActivityStatus =
   | 'thinking'
   | 'streaming'

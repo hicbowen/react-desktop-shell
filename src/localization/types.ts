@@ -67,12 +67,19 @@ export interface AppLocaleMessages {
     running: string
     completed: string
     toolFailed: string
+    messageActions: string
+    copyResponse: string
+    retryResponse: string
+    editMessage: string
+    helpful: string
+    notHelpful: string
   }
   conversation: {
     label: string
     user: string
     assistant: string
     tool: string
+    system: string
     jumpToLatest: string
     loadEarlier: string
     loadingEarlier: string

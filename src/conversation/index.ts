@@ -1,7 +1,9 @@
+export { AppConversationMessage } from './AppConversationMessage'
 export { AppConversationThread } from './AppConversationThread'
 export { AppConversationViewport } from './AppConversationViewport'
 export type {
-  AppConversationMessage,
+  AppConversationMessageItem,
+  AppConversationMessageProps,
   AppConversationMessageRole,
   AppConversationThreadProps,
   AppConversationViewportProps,

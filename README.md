@@ -326,22 +326,50 @@ according to the host workflow.
 
 ### AI building blocks
 
-`AppAiComposer`, `AppAiActivity`, `AppPromptSuggestions`,
+`AppAiComposer`, `AppAiActivity`, `AppAiMessageActions`, `AppPromptSuggestions`,
 `AppToolApprovalCard`, and `AppChangeReviewCard` are host-controlled AI
 building blocks. They can be placed in any page or conversation and do not
 depend on `AppQuickAsk`.
 
 ### Conversation building blocks
 
-`AppConversationThread` renders a host-owned list of user, AI, and tool
-messages. `AppConversationViewport` wraps that content with follow-output,
-pause-while-reading, jump-to-latest, and load-earlier behavior. Neither
-component knows where the conversation is displayed.
+`AppConversationMessage` renders one user, AI, tool, or system message with
+optional avatar, header, timestamp, footer, and actions. The component owns the
+timestamp placement and `<time>` semantics; the host supplies the formatted
+label and optional machine-readable `timestampDateTime`, so locale, time zone,
+and relative-time policy stay in application control.
+
+`AppConversationThread` renders a host-owned list of those messages.
+`AppConversationViewport` wraps that content with follow-output,
+pause-while-reading, jump-to-latest, and load-earlier behavior. None of these
+components knows where the conversation is displayed.
 
 ```tsx
 <AppConversationViewport hasMore={hasMore} onLoadOlder={loadEarlier}>
   <AppConversationThread messages={messages} />
 </AppConversationViewport>
+```
+
+Use `AppAiMessageActions` in the message `actions` slot for common controlled
+copy, retry, edit, and feedback requests. It renders only the callbacks the host
+provides and does not mutate messages or access the clipboard itself:
+
+```tsx
+<AppConversationMessage
+  role="assistant"
+  timestamp="10:32"
+  timestampDateTime="2026-08-13T10:32:00+08:00"
+  actions={
+    <AppAiMessageActions
+      feedback={feedback}
+      onCopy={() => copyMessage(message.id)}
+      onRetry={() => retryMessage(message.id)}
+      onFeedbackChange={setFeedback}
+    />
+  }
+>
+  {content}
+</AppConversationMessage>
 ```
 
 Use `AppConversationThread` for the current session transcript. Place
