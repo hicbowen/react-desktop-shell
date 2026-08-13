@@ -4,6 +4,7 @@ import { act } from 'react'
 import { createRoot, type Root } from 'react-dom/client'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { AppAiMarkdown } from './AppAiMarkdown'
+import { highlightMarkdownCode } from './markdownHighlight'
 
 describe('AppAiMarkdown', () => {
   let host: HTMLDivElement
@@ -83,6 +84,38 @@ describe('AppAiMarkdown', () => {
     expect(
       host.querySelector('.app-ai-markdown__code-header')?.textContent,
     ).toContain('ts')
+  })
+
+  it('highlights supported fenced code asynchronously', async () => {
+    const highlighted = await highlightMarkdownCode(
+      'const answer = 42',
+      'typescript',
+    )
+
+    expect(highlighted).toContain('shiki')
+    expect(highlighted).toContain('--app-ai-markdown-shiki-light:')
+
+    renderMarkdown({
+      content: '```ts\nconst answer = 42\n```',
+    })
+
+    await act(async () => {
+      await new Promise((resolve) => setTimeout(resolve, 150))
+    })
+
+    expect(host.querySelector('.app-ai-markdown__highlighted-code .shiki'))
+      .not.toBeNull()
+    expect(host.querySelector('.app-ai-markdown__code-header')).not.toBeNull()
+  })
+
+  it('can disable syntax highlighting while keeping the plain code block', () => {
+    renderMarkdown({
+      content: '```ts\nconst answer = 42\n```',
+      highlightCode: false,
+    })
+
+    expect(host.querySelector('.app-ai-markdown__highlighted-code')).toBeNull()
+    expect(host.querySelector('pre')).not.toBeNull()
   })
 
   it('supports custom markdown elements and disabling code copy', () => {

@@ -18,6 +18,10 @@ import { Checkmark16Regular } from '@fluentui/react-icons/svg/checkmark'
 import { Copy16Regular } from '@fluentui/react-icons/svg/copy'
 import { AppIconButton } from '../button'
 import { useAppLocale } from '../localization/useAppLocale'
+import {
+  highlightMarkdownCode,
+  resolveMarkdownLanguage,
+} from './markdownHighlight'
 import type { AppAiMarkdownProps } from './types'
 import './AppAiMarkdown.css'
 
@@ -94,9 +98,13 @@ function MarkdownCodeBlock({
   className,
   node,
   onCopyCode,
+  highlightCode,
+  copyCode,
   ...rest
 }: MarkdownPreProps & {
   onCopyCode?: (code: string) => void | Promise<void>
+  highlightCode: boolean
+  copyCode: boolean
 }) {
   void node
   const { messages } = useAppLocale()
@@ -105,6 +113,37 @@ function MarkdownCodeBlock({
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const code = getCodeContent(children)
   const language = getCodeLanguage(children)
+  const resolvedLanguage = resolveMarkdownLanguage(language)
+  const highlightKey = `${resolvedLanguage ?? 'plain'}\u0000${code}`
+  const [highlightState, setHighlightState] = useState<{
+    key: string
+    html: string | null
+  }>({ key: '', html: null })
+  const highlightedHtml =
+    highlightCode && highlightState.key === highlightKey
+      ? highlightState.html
+      : null
+
+  useEffect(() => {
+    let active = true
+
+    if (!highlightCode || resolvedLanguage == null) {
+      return () => {
+        active = false
+      }
+    }
+
+    const timeout = setTimeout(() => {
+      void highlightMarkdownCode(code, resolvedLanguage).then((html) => {
+        if (active) setHighlightState({ key: highlightKey, html })
+      })
+    }, 120)
+
+    return () => {
+      active = false
+      clearTimeout(timeout)
+    }
+  }, [code, highlightCode, highlightKey, resolvedLanguage])
 
   useEffect(
     () => () => {
@@ -151,18 +190,27 @@ function MarkdownCodeBlock({
         .filter(Boolean)
         .join(' ')}
     >
-      <div className="app-ai-markdown__code-header">
-        <span>{language ?? text.code}</span>
-        <AppIconButton
-          appearance="subtle"
-          ariaLabel={buttonLabel}
-          icon={copied ? <Checkmark16Regular /> : <Copy16Regular />}
-          onClick={handleCopy}
-          shape="rounded"
-          size="compact"
+      {copyCode ? (
+        <div className="app-ai-markdown__code-header">
+          <span>{language ?? text.code}</span>
+          <AppIconButton
+            appearance="subtle"
+            ariaLabel={buttonLabel}
+            icon={copied ? <Checkmark16Regular /> : <Copy16Regular />}
+            onClick={handleCopy}
+            shape="rounded"
+            size="compact"
+          />
+        </div>
+      ) : null}
+      {highlightedHtml != null ? (
+        <div
+          className="app-ai-markdown__highlighted-code"
+          dangerouslySetInnerHTML={{ __html: highlightedHtml }}
         />
-      </div>
-      <pre {...rest}>{children}</pre>
+      ) : (
+        <pre {...rest}>{children}</pre>
+      )}
       <span aria-live="polite" className="app-ai-markdown__status">
         {statusText}
       </span>
@@ -175,6 +223,7 @@ export function AppAiMarkdown({
   components,
   content,
   copyCode = true,
+  highlightCode = true,
   onCopyCode,
   style,
   ...rest
@@ -183,10 +232,15 @@ export function AppAiMarkdown({
     a: MarkdownLink,
     code: MarkdownCode,
     table: MarkdownTable,
-    ...(copyCode
+    ...(copyCode || highlightCode
       ? {
           pre: (props) => (
-            <MarkdownCodeBlock {...props} onCopyCode={onCopyCode} />
+            <MarkdownCodeBlock
+              {...props}
+              copyCode={copyCode}
+              highlightCode={highlightCode}
+              onCopyCode={onCopyCode}
+            />
           ),
         }
       : {}),

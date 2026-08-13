@@ -282,8 +282,23 @@ export function ConversationPage() {
           <div style={{ maxWidth: 760, width: '100%' }}>
             <AppAiMarkdown
               content={t(
-                '## Current context\n\nThe assistant can return **structured content** while the host keeps message state.\n\n- Follow the latest response\n- Pause while reading history\n\n| State | Owner |\n| --- | --- |\n| Markdown | Component |\n| Conversation | Host |\n\n```ts\nconst followOutput = true\n```',
+                '## Current context\n\nThe assistant can return **structured content** while the host keeps message state.\n\n- Follow the latest response\n- Pause while reading history\n\n| State | Owner |\n| --- | --- |\n| Markdown | Component |\n| Conversation | Host |\n\n```ts\nconst followOutput = true\nconst maxRetries = 3\n\nconst messages = [\n  { role: \'user\', content: \'Summarize the thread\' },\n  { role: \'assistant\', content: \'Ready to continue\' },\n]\n\nconst latestMessage = messages.at(-1)\nconst canRetry = latestMessage?.role === \'assistant\' && maxRetries > 0\n```',
               )}
+              onCopyCode={() => setLastAction(t('Markdown code copied.'))}
+            />
+          </div>
+        </DemoPreview>
+      </DemoSection>
+
+      <DemoSection
+        title="AI message: Markdown without highlighting"
+        description="Disable AppAiMarkdown syntax highlighting when the host prefers a smaller plain-text code presentation. Code copying and Markdown layout remain available."
+      >
+        <DemoPreview>
+          <div style={{ maxWidth: 760, width: '100%' }}>
+            <AppAiMarkdown
+              content={'```ts\nconst plainOutput = true\n```'}
+              highlightCode={false}
               onCopyCode={() => setLastAction(t('Markdown code copied.'))}
             />
           </div>

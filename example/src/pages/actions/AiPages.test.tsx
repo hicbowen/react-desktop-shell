@@ -61,6 +61,7 @@ describe('AI example pages', () => {
     expect(container.querySelector('.app-ai-markdown')).not.toBeNull()
     expect(container.querySelector('.app-ai-markdown__code-header')).not.toBeNull()
     expect(container.textContent).toContain('AI message: Markdown')
+    expect(container.textContent).toContain('AI message: Markdown without highlighting')
     expect(container.textContent).not.toContain('Add new response')
   })
 

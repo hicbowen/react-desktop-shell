@@ -20,6 +20,7 @@ export interface AppAiMarkdownProps extends Omit<
   content: string
   components?: AppAiMarkdownComponents
   copyCode?: boolean
+  highlightCode?: boolean
   onCopyCode?: (code: string) => void | Promise<void>
 }
 

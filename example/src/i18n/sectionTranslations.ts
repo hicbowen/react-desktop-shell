@@ -99,6 +99,8 @@ const zhCNSectionText: Record<string, string> = {
   'Use embedded mode when another component already owns the border, elevation, and surrounding surface, such as AppQuickAsk, a side pane, or a compact contextual panel.': '当 AppQuickAsk、侧边窗格或紧凑上下文面板等父组件已经提供边框、层级和外部表面时，使用嵌入模式。',
   'AI message: Markdown': 'AI 消息：Markdown',
   'Render assistant content with AppAiMarkdown inside the message content slot. GFM lists, tables, links, code blocks, and code-copy feedback stay separate from message layout.': '在消息内容插槽中使用 AppAiMarkdown 渲染助手内容。GFM 列表、表格、链接、代码块和复制代码反馈与消息布局保持分离。',
+  'AI message: Markdown without highlighting': 'AI 消息：关闭语法高亮',
+  'Disable AppAiMarkdown syntax highlighting when the host prefers a smaller plain-text code presentation. Code copying and Markdown layout remain available.': '当宿主更偏好轻量的纯文本代码展示时，可以关闭 AppAiMarkdown 的语法高亮。代码复制和 Markdown 布局仍然可用。',
   'Use AppPromptSuggestions to offer host-defined prompts without coupling the suggestion list to a composer.': '使用 AppPromptSuggestions 提供由宿主定义的问题建议，不将建议列表与输入区绑定。',
   'AI interaction building blocks': 'AI 交互基础件',
   'Use AppAiActivity to expose lifecycle state while the host keeps the request and tool state.': '使用 AppAiActivity 暴露生命周期状态，同时由宿主持有请求和工具状态。',

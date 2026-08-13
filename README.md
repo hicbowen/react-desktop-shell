@@ -433,7 +433,9 @@ the item's `prompt` into the draft or submit it immediately:
 Use `AppAiMarkdown` for assistant-authored content. It renders CommonMark plus
 GFM tables, task lists, links, and fenced code blocks with the same theme as the
 conversation components. Raw HTML is skipped by default, external HTTP links
-open in a new tab, and fenced code blocks include an accessible copy action.
+open in a new tab, and fenced code blocks include asynchronous Shiki syntax
+highlighting plus an accessible copy action. Common languages are loaded on
+demand and unsupported language labels fall back to plain text.
 The message layout stays independent from Markdown rendering, so tool cards and
 other React content can still be passed directly to `AppConversationMessage`:
 
@@ -444,8 +446,8 @@ other React content can still be passed directly to `AppConversationMessage`:
 ```
 
 Pass `components` to replace selected Markdown elements, `copyCode={false}` to
-hide code-copy actions, or `onCopyCode` when the host wants to provide its own
-clipboard integration.
+hide code-copy actions, `highlightCode={false}` to use plain code blocks, or
+`onCopyCode` when the host wants to provide its own clipboard integration.
 
 Use `AppAiActivity` when a request has a visible lifecycle beyond a single
 loading label. It can show a controlled phase and optional user-facing steps;
