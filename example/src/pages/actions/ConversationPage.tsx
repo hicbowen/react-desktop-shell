@@ -6,10 +6,21 @@ import {
   AppButton,
   AppConversationThread,
   AppConversationViewport,
+  AppDropDownButton,
+  AppIconButton,
+  AppToggleButton,
   type AppAiRequestStatus,
   type AppAiMessageFeedback,
 } from '../../../../src'
-import { Sparkles, UserRound } from '../../components/fluentIcons'
+import {
+  ArrowUp,
+  CheckCircle2,
+  Mic,
+  Plus,
+  Sparkles,
+  UserRound,
+  WandSparkles,
+} from '../../components/fluentIcons'
 import { DemoPage, DemoPreview, DemoSection } from '../../components/DemoPage'
 import { useDemoCopy } from '../../i18n/interactiveTranslations'
 import {
@@ -27,6 +38,13 @@ export function ConversationPage() {
     Record<string, AppAiMessageFeedback>
   >({})
   const [lastAction, setLastAction] = useState<string | null>(null)
+  const [contextAttached, setContextAttached] = useState(false)
+  const [approvalMode, setApprovalMode] = useState(false)
+  const [model, setModel] = useState('Balanced')
+  const [embeddedDraft, setEmbeddedDraft] = useState('')
+  const [embeddedLastPrompt, setEmbeddedLastPrompt] = useState<string | null>(
+    null,
+  )
   const [messages, setMessages] = useState(() =>
     cloneTextMessages(initialConversationMessages),
   )
@@ -165,8 +183,8 @@ export function ConversationPage() {
   return (
     <DemoPage>
       <DemoSection
-        title="Conversation: normal page"
-        description="Compose a normal chat page from AppConversationThread, AppConversationViewport, and AppAiComposer. The host owns messages and request state."
+        title="Conversation composer: surface"
+        description="Use the self-contained surface mode on a normal chat page. The component owns the two-level input layout; the host supplies context, tools, model selection, voice behavior, messages, and request state."
       >
         <DemoPreview>
           <AppConversationViewport
@@ -181,11 +199,73 @@ export function ConversationPage() {
             {lastAction ? <span className="demo-note">{lastAction}</span> : null}
           </div>
           <AppAiComposer
+            appearance="surface"
+            header={
+              contextAttached ? (
+                <div className="demo-component-row">
+                  <span className="demo-note">{t('Current page attached')}</span>
+                  <AppButton
+                    appearance="subtle"
+                    onClick={() => setContextAttached(false)}
+                    size="compact"
+                  >
+                    {t('Remove')}
+                  </AppButton>
+                </div>
+              ) : undefined
+            }
             onCancel={cancel}
             onSubmit={submit}
             onValueChange={setDraft}
             status={status}
             style={{ width: '100%' }}
+            submitIcon={<ArrowUp />}
+            toolbarEnd={
+              <>
+                <AppDropDownButton
+                  appearance="subtle"
+                  icon={<WandSparkles />}
+                  items={[
+                    { key: 'Fast', label: t('Fast') },
+                    { key: 'Balanced', label: t('Balanced') },
+                    { key: 'Deep', label: t('Deep') },
+                  ]}
+                  menuAriaLabel={t('Choose response model')}
+                  onSelect={(key) => setModel(key)}
+                  size="compact"
+                >
+                  {t(model)}
+                </AppDropDownButton>
+                <AppIconButton
+                  appearance="subtle"
+                  ariaLabel={t('Start voice input')}
+                  icon={<Mic />}
+                  onClick={() => setLastAction(t('Voice input requested.'))}
+                  shape="circular"
+                  size="compact"
+                />
+              </>
+            }
+            toolbarStart={
+              <>
+                <AppIconButton
+                  appearance="subtle"
+                  ariaLabel={t('Attach context')}
+                  icon={<Plus />}
+                  onClick={() => setContextAttached(true)}
+                  shape="circular"
+                  size="compact"
+                />
+                <AppToggleButton
+                  icon={<CheckCircle2 />}
+                  onPressedChange={setApprovalMode}
+                  pressed={approvalMode}
+                  size="compact"
+                >
+                  {t('Ask before tools')}
+                </AppToggleButton>
+              </>
+            }
             value={draft}
           />
         </DemoPreview>
@@ -193,6 +273,32 @@ export function ConversationPage() {
           {t(
             'Scroll up to pause follow mode, then use Jump to latest when you are ready to return.',
           )}
+        </p>
+      </DemoSection>
+
+      <DemoSection
+        title="Conversation composer: embedded"
+        description="Use embedded mode when another component already owns the border, elevation, and surrounding surface, such as AppQuickAsk, a side pane, or a compact contextual panel."
+      >
+        <DemoPreview>
+          <AppAiComposer
+            appearance="embedded"
+            onSubmit={(prompt) => {
+              setEmbeddedLastPrompt(prompt)
+              setEmbeddedDraft('')
+            }}
+            onValueChange={setEmbeddedDraft}
+            placeholder={t('Ask about the current selection')}
+            style={{ width: '100%' }}
+            value={embeddedDraft}
+          />
+        </DemoPreview>
+        <p className="demo-note">
+          {embeddedLastPrompt
+            ? `${t('Last embedded prompt:')} ${embeddedLastPrompt}`
+            : t(
+                'Embedded mode keeps the compact one-row composition used by shortcut surfaces.',
+              )}
         </p>
       </DemoSection>
     </DemoPage>

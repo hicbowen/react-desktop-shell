@@ -390,16 +390,27 @@ streamed answer content, cancellation, and any native global-shortcut or window
 integration. Hiding the surface therefore does not imply cancelling the request.
 
 Use `AppAiComposer` directly inside a normal chat page when the page owns the
-transcript and request state:
+transcript and request state. Its default `surface` appearance provides a
+self-contained two-level composer; use `header`, `toolbarStart`, and
+`toolbarEnd` to add host-owned context, attachment, tool-mode, model, or voice
+controls:
 
 ```tsx
 <AppAiComposer
+  appearance="surface"
+  header={attachedFiles}
   onSubmit={sendPrompt}
   onValueChange={setDraft}
   status={status}
+  toolbarStart={attachmentActions}
+  toolbarEnd={modelAndVoiceActions}
   value={draft}
 />
 ```
+
+Use `appearance="embedded"` when the parent already owns the border, elevation,
+and surrounding surface. `AppQuickAsk` uses this mode internally so its input
+stays compact and does not render a second card inside the spotlight surface.
 
 Use `AppPromptSuggestions` for controlled empty-state prompts. It only renders
 the suggestions and reports the selected item; the host decides whether to put

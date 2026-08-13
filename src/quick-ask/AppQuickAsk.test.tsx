@@ -64,6 +64,9 @@ describe('AppQuickAsk', () => {
     expect(onSubmit).toHaveBeenCalledWith('Explain portals')
     expect(onValueChange).toHaveBeenCalledWith('')
     expect(textarea.value).toBe('')
+    expect(
+      document.body.querySelector('.app-ai-composer--embedded'),
+    ).not.toBeNull()
   })
 
   it('keeps Shift+Enter and IME composition available for text entry', () => {

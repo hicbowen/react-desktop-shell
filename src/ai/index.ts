@@ -10,6 +10,7 @@ export type {
   AppAiActivityStep,
   AppAiActivityStepStatus,
   AppAiComposerProps,
+  AppAiComposerAppearance,
   AppAiMessageActionsProps,
   AppAiMessageFeedback,
   AppAiRequestStatus,

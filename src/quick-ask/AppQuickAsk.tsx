@@ -98,6 +98,7 @@ export const AppQuickAsk = forwardRef<HTMLTextAreaElement, AppQuickAskProps>(
         width={width}
       >
         <AppAiComposer
+          appearance="embedded"
           clearOnSubmit={clearOnSubmit}
           defaultValue={defaultValue}
           disabled={disabled}

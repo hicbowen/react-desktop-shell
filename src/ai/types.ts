@@ -8,6 +8,8 @@ export type AppAiRequestStatus =
   | 'completed'
   | 'error'
 
+export type AppAiComposerAppearance = 'surface' | 'embedded'
+
 export interface AppAiComposerProps {
   onSubmit: (prompt: string) => void
   value?: string
@@ -18,8 +20,17 @@ export interface AppAiComposerProps {
   clearOnSubmit?: boolean
   disabled?: boolean
   placeholder?: string
+  appearance?: AppAiComposerAppearance
+  header?: ReactNode
+  toolbarStart?: ReactNode
+  toolbarEnd?: ReactNode
+  minRows?: number
+  maxRows?: number
   leadingIcon?: ReactNode
+  submitIcon?: ReactNode
+  cancelIcon?: ReactNode
   inputAriaLabel?: string
+  toolbarAriaLabel?: string
   className?: string
   style?: CSSProperties
 }

@@ -58,6 +58,7 @@ export const enUSMessages = {
     label: 'Quick ask',
     inputLabel: 'Ask AI',
     placeholder: 'Ask AI anything',
+    composerToolbar: 'Composer actions',
     send: 'Send',
     stop: 'Stop generating',
     thinking: 'Thinking…',

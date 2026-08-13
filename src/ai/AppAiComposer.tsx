@@ -13,18 +13,27 @@ export const AppAiComposer = forwardRef<
   AppAiComposerProps
 >(function AppAiComposer(
   {
+    appearance = 'surface',
+    cancelIcon,
     className,
     clearOnSubmit = true,
     defaultValue = '',
     disabled = false,
     inputAriaLabel,
+    header,
     leadingIcon,
+    maxRows,
+    minRows,
     onCancel,
     onSubmit,
     onValueChange,
     placeholder,
     status = 'idle',
     style,
+    submitIcon,
+    toolbarAriaLabel,
+    toolbarEnd,
+    toolbarStart,
     value,
   },
   forwardedRef,
@@ -38,6 +47,12 @@ export const AppAiComposer = forwardRef<
   const currentValue = value ?? internalValue
   const busy = status === 'submitting' || status === 'streaming'
   const awaitingApproval = status === 'awaiting-approval'
+  const resolvedLeadingIcon =
+    leadingIcon === undefined
+      ? appearance === 'embedded'
+        ? <Sparkle16Regular />
+        : null
+      : leadingIcon
   const statusText =
     status === 'submitting'
       ? text.thinking
@@ -90,49 +105,72 @@ export const AppAiComposer = forwardRef<
 
   return (
     <div
-      className={['app-ai-composer', className].filter(Boolean).join(' ')}
+      className={[
+        'app-ai-composer',
+        `app-ai-composer--${appearance}`,
+        className,
+      ]
+        .filter(Boolean)
+        .join(' ')}
       style={style}
     >
-      <span aria-hidden="true" className="app-ai-composer__leading">
-        {leadingIcon ?? <Sparkle16Regular />}
-      </span>
-      <AppTextArea
-        aria-label={inputAriaLabel ?? text.inputLabel}
-        autoResize
-        disabled={disabled}
-        fullWidth
-        maxRows={4}
-        minRows={1}
-        onChange={(event) => change(event.currentTarget.value)}
-        onCompositionEnd={handleCompositionEnd}
-        onCompositionStart={handleCompositionStart}
-        onKeyDown={handleKeyDown}
-        placeholder={placeholder ?? text.placeholder}
-        ref={setInputRef}
-        value={currentValue}
-      />
-      {busy ? (
-        <AppIconButton
-          appearance={onCancel ? 'standard' : 'subtle'}
-          ariaLabel={onCancel ? text.stop : statusText}
-          className="app-ai-composer__submit"
-          disabled={!onCancel}
-          icon={<Stop16Regular />}
-          loading={!onCancel}
-          onClick={onCancel}
-          shape="circular"
+      {header ? <div className="app-ai-composer__header">{header}</div> : null}
+      <div className="app-ai-composer__input">
+        {resolvedLeadingIcon ? (
+          <span aria-hidden="true" className="app-ai-composer__leading">
+            {resolvedLeadingIcon}
+          </span>
+        ) : null}
+        <AppTextArea
+          aria-label={inputAriaLabel ?? text.inputLabel}
+          autoResize
+          disabled={disabled}
+          fullWidth
+          maxRows={maxRows ?? (appearance === 'surface' ? 8 : 4)}
+          minRows={minRows ?? (appearance === 'surface' ? 2 : 1)}
+          onChange={(event) => change(event.currentTarget.value)}
+          onCompositionEnd={handleCompositionEnd}
+          onCompositionStart={handleCompositionStart}
+          onKeyDown={handleKeyDown}
+          placeholder={placeholder ?? text.placeholder}
+          ref={setInputRef}
+          value={currentValue}
         />
-      ) : (
-        <AppIconButton
-          appearance="primary"
-          ariaLabel={text.send}
-          className="app-ai-composer__submit"
-          disabled={disabled || awaitingApproval || !currentValue.trim()}
-          icon={<Send16Regular />}
-          onClick={submit}
-          shape="circular"
-        />
-      )}
+      </div>
+      <div
+        aria-label={toolbarAriaLabel ?? text.composerToolbar}
+        className="app-ai-composer__toolbar"
+        role="toolbar"
+      >
+        {toolbarStart ? (
+          <div className="app-ai-composer__toolbar-start">{toolbarStart}</div>
+        ) : null}
+        <div className="app-ai-composer__toolbar-end">
+          {toolbarEnd}
+          {busy ? (
+            <AppIconButton
+              appearance={onCancel ? 'standard' : 'subtle'}
+              ariaLabel={onCancel ? text.stop : statusText}
+              className="app-ai-composer__submit"
+              disabled={!onCancel}
+              icon={cancelIcon ?? <Stop16Regular />}
+              loading={!onCancel}
+              onClick={onCancel}
+              shape="circular"
+            />
+          ) : (
+            <AppIconButton
+              appearance="primary"
+              ariaLabel={text.send}
+              className="app-ai-composer__submit"
+              disabled={disabled || awaitingApproval || !currentValue.trim()}
+              icon={submitIcon ?? <Send16Regular />}
+              onClick={submit}
+              shape="circular"
+            />
+          )}
+        </div>
+      </div>
     </div>
   )
 })

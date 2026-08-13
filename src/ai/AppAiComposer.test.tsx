@@ -134,4 +134,40 @@ describe('AppAiComposer', () => {
 
     expect(onSubmit).not.toHaveBeenCalled()
   })
+
+  it('renders the surface layout, header, toolbar slots, and custom action icons', () => {
+    const textarea = renderComposer({
+      cancelIcon: <span data-testid="cancel-icon" />,
+      defaultValue: 'Draft',
+      header: <span>Attached context</span>,
+      maxRows: 6,
+      minRows: 3,
+      status: 'streaming',
+      submitIcon: <span data-testid="submit-icon" />,
+      toolbarEnd: <button type="button">Model</button>,
+      toolbarStart: <button type="button">Attach</button>,
+    })
+
+    expect(host.querySelector('.app-ai-composer--surface')).not.toBeNull()
+    expect(host.querySelector('.app-ai-composer__header')?.textContent).toBe(
+      'Attached context',
+    )
+    expect(host.querySelector('[role="toolbar"]')?.textContent).toContain(
+      'Attach',
+    )
+    expect(host.querySelector('[role="toolbar"]')?.textContent).toContain(
+      'Model',
+    )
+    expect(textarea.rows).toBe(3)
+    expect(host.querySelector('[data-testid="cancel-icon"]')).not.toBeNull()
+    expect(host.querySelector('[data-testid="submit-icon"]')).toBeNull()
+  })
+
+  it('renders the compact embedded layout with its default leading icon', () => {
+    const textarea = renderComposer({ appearance: 'embedded' })
+
+    expect(host.querySelector('.app-ai-composer--embedded')).not.toBeNull()
+    expect(host.querySelector('.app-ai-composer__leading svg')).not.toBeNull()
+    expect(textarea.rows).toBe(1)
+  })
 })

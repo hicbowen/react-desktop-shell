@@ -53,6 +53,7 @@ export const zhCNMessages = {
     label: '快速提问',
     inputLabel: '向 AI 提问',
     placeholder: '随时向 AI 提问',
+    composerToolbar: '输入操作',
     send: '发送',
     stop: '停止生成',
     thinking: '正在思考…',

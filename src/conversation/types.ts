@@ -23,7 +23,7 @@ export interface AppConversationMessageProps extends Omit<
 
 export interface AppConversationMessageItem extends Omit<
   AppConversationMessageProps,
-  'children'
+  'children' | 'content'
 > {
   id: string
   content: ReactNode

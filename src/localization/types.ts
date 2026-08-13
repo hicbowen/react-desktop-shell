@@ -48,6 +48,7 @@ export interface AppLocaleMessages {
     label: string
     inputLabel: string
     placeholder: string
+    composerToolbar: string
     send: string
     stop: string
     thinking: string
