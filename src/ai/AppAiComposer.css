@@ -23,9 +23,17 @@
 }
 
 .app-ai-composer--surface:focus-within {
-  border-color: var(--app-shell-accent-color, #115ea3);
+  border-color: color-mix(
+    in srgb,
+    var(--app-shell-accent-color, #115ea3) 72%,
+    var(--app-shell-border-color, #d1d1d1)
+  );
   box-shadow:
-    0 0 0 1px var(--app-shell-accent-color, #115ea3),
+    0 0 0 2px color-mix(
+      in srgb,
+      var(--app-shell-accent-color, #115ea3) 18%,
+      transparent
+    ),
     0 6px 18px rgb(0 0 0 / 10%);
 }
 
