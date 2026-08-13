@@ -54,7 +54,7 @@ export function AppConversationViewport({
     if (followOutput && shouldFollowOutputRef.current) {
       viewport.scrollTop = viewport.scrollHeight
     }
-  })
+  }, [children, loadingOlder, followOutput])
 
   const handleScroll = () => {
     const viewport = viewportRef.current
