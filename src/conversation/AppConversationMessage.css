@@ -2,7 +2,7 @@
   min-width: 0;
   display: flex;
   align-items: flex-start;
-  gap: 8px;
+  gap: 10px;
 }
 
 .app-conversation-message--user {
@@ -10,19 +10,10 @@
 }
 
 .app-conversation-message__avatar {
-  width: 28px;
-  min-width: 28px;
-  height: 28px;
-  display: grid;
-  place-items: center;
-  overflow: hidden;
-  border-radius: 50%;
-}
-
-.app-conversation-message__avatar > img,
-.app-conversation-message__avatar > svg {
-  width: 100%;
-  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
 }
 
 .app-conversation-message__body {

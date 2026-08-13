@@ -127,14 +127,14 @@ export function ConversationPage() {
             <AppAvatar
               icon={<Sparkles />}
               name={t('AI assistant')}
-              size="small"
+              size="medium"
             />
           )
         : (
             <AppAvatar
               icon={<UserRound />}
               name={t('Current user')}
-              size="small"
+              size="medium"
             />
           ),
       actions: source.role === 'assistant'

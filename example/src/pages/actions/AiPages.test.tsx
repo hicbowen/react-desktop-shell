@@ -53,6 +53,7 @@ describe('AI example pages', () => {
     expect(container.querySelector('.app-conversation-message')).not.toBeNull()
     expect(container.querySelector('.app-ai-message-actions')).not.toBeNull()
     expect(container.querySelectorAll('.app-conversation-message__avatar')).toHaveLength(3)
+    expect(container.querySelectorAll('.app-conversation-message__avatar .app-avatar--medium')).toHaveLength(3)
     expect(container.querySelector('[aria-label="AI assistant"]')).not.toBeNull()
     expect(container.querySelector('[aria-label="Current user"]')).not.toBeNull()
     expect(container.querySelector('time')?.textContent).toBe('10:30')
