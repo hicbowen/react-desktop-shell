@@ -85,6 +85,7 @@ describe('AppPromptSuggestions', () => {
       root.render(
         <AppPromptSuggestions
           ariaLabel="Suggested prompts"
+          columns={2}
           disabled
           items={items}
           onSelect={() => undefined}
@@ -98,6 +99,9 @@ describe('AppPromptSuggestions', () => {
     ).not.toBeNull()
     expect(
       host.querySelector('.app-prompt-suggestions--compact'),
+    ).not.toBeNull()
+    expect(
+      host.querySelector('.app-prompt-suggestions--columns-2'),
     ).not.toBeNull()
     expect(host.querySelectorAll('button:disabled')).toHaveLength(2)
   })

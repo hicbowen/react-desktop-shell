@@ -22,7 +22,8 @@
 
 .app-conversation-viewport__jump {
   position: absolute;
-  inset-inline-end: 16px;
+  inset-inline-start: 50%;
   inset-block-end: 16px;
+  transform: translateX(-50%);
   box-shadow: 0 2px 8px rgb(0 0 0 / 16%);
 }

@@ -65,6 +65,7 @@ export interface AppPromptSuggestionsProps extends Omit<
   items: readonly AppPromptSuggestion[]
   onSelect: (item: AppPromptSuggestion) => void
   ariaLabel?: string
+  columns?: 1 | 2 | 3 | 4
   disabled?: boolean
   size?: 'compact' | 'standard'
   className?: string

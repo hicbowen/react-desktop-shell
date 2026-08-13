@@ -1,5 +1,6 @@
 import { useLayoutEffect, useRef, useState } from 'react'
-import { AppButton } from '../button'
+import { ArrowDown16Regular } from '@fluentui/react-icons/svg/arrow-down'
+import { AppButton, AppIconButton } from '../button'
 import { useAppLocale } from '../localization/useAppLocale'
 import { AppScrollArea } from '../scroll-area'
 import type { AppConversationViewportProps } from './types'
@@ -86,6 +87,11 @@ export function AppConversationViewport({
     onLoadOlder()
   }
 
+  const jumpToLatestLabel =
+    typeof latestLabel === 'string' || typeof latestLabel === 'number'
+      ? String(latestLabel)
+      : text.jumpToLatest
+
   return (
     <div
       {...rest}
@@ -111,6 +117,7 @@ export function AppConversationViewport({
         {hasMore ? (
           <div className="app-conversation-viewport__load-earlier">
             <AppButton
+              appearance="subtle"
               disabled={!onLoadOlder || loadingOlder}
               loading={loadingOlder}
               onClick={loadEarlier}
@@ -125,13 +132,15 @@ export function AppConversationViewport({
         {children}
       </AppScrollArea>
       {followOutput && showJumpToLatest ? (
-        <AppButton
+        <AppIconButton
+          ariaLabel={jumpToLatestLabel}
           className="app-conversation-viewport__jump"
+          icon={<ArrowDown16Regular />}
           onClick={jumpToLatest}
+          shape="circular"
           size="compact"
-        >
-          {latestLabel ?? text.jumpToLatest}
-        </AppButton>
+          title={jumpToLatestLabel}
+        />
       ) : null}
     </div>
   )

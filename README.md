@@ -414,10 +414,13 @@ stays compact and does not render a second card inside the spotlight surface.
 
 Use `AppPromptSuggestions` for controlled empty-state prompts. It only renders
 the suggestions and reports the selected item; the host decides whether to put
-the item's `prompt` into the draft or submit it immediately:
+the item's `prompt` into the draft or submit it immediately. The layout uses
+responsive columns by default; pass `columns={1}`, `columns={2}`, `columns={3}`,
+or `columns={4}` when the host needs a fixed number of columns:
 
 ```tsx
 <AppPromptSuggestions
+  columns={2}
   items={[
     {
       id: 'summarize',
@@ -435,7 +438,12 @@ GFM tables, task lists, links, and fenced code blocks with the same theme as the
 conversation components. Raw HTML is skipped by default, external HTTP links
 open in a new tab, and fenced code blocks include asynchronous Shiki syntax
 highlighting plus an accessible copy action. Common languages are loaded on
-demand and unsupported language labels fall back to plain text.
+demand and unsupported language labels fall back to plain text. Supported labels
+include Bash, C/C++, C#, CSS, Dart, Dockerfile, Go, GraphQL, HTML, Java,
+JavaScript/JSX, JSON/JSONC, Kotlin, Lua, Markdown, PHP, PowerShell, Python,
+Ruby, Rust, SCSS, SQL, Swift, TOML, TypeScript/TSX, Vue, XML, YAML, and Zsh;
+common aliases such as `js`, `ts`, `py`, `rs`, `kt`, `ps1`, and `gql` are also
+accepted.
 The message layout stays independent from Markdown rendering, so tool cards and
 other React content can still be passed directly to `AppConversationMessage`:
 

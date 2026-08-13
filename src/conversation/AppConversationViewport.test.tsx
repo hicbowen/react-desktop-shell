@@ -77,12 +77,14 @@ describe('AppConversationViewport', () => {
     metrics.scrollHeight = 600
     renderViewport('Third message')
     expect(getScrollTop()).toBe(100)
-    expect(document.body.querySelector('button')?.textContent).toContain(
-      'Jump to latest',
-    )
+    const jump = document.body.querySelector<HTMLButtonElement>(
+      '.app-conversation-viewport__jump',
+    )!
+    expect(jump.getAttribute('aria-label')).toBe('Jump to latest')
+    expect(jump.querySelector('svg')).not.toBeNull()
 
     metrics.scrollHeight = 700
-    act(() => document.body.querySelector('button')?.click())
+    act(() => jump.click())
     expect(getScrollTop()).toBe(700)
     expect(document.body.querySelector('button')).toBeNull()
   })
@@ -99,6 +101,7 @@ describe('AppConversationViewport', () => {
 
     const load = document.body.querySelector<HTMLButtonElement>('button')!
     expect(load.textContent).toContain('Load earlier messages')
+    expect(load.classList).toContain('app-button--subtle')
     act(() => load.click())
     expect(onLoadOlder).toHaveBeenCalledOnce()
 

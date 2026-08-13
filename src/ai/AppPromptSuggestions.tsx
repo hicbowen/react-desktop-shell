@@ -5,6 +5,7 @@ import './AppPromptSuggestions.css'
 export function AppPromptSuggestions({
   ariaLabel,
   className,
+  columns,
   disabled = false,
   items,
   onSelect,
@@ -16,6 +17,7 @@ export function AppPromptSuggestions({
   const classes = [
     'app-prompt-suggestions',
     `app-prompt-suggestions--${size}`,
+    columns != null ? `app-prompt-suggestions--columns-${columns}` : '',
     className,
   ]
     .filter(Boolean)

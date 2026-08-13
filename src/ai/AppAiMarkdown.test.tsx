@@ -4,7 +4,10 @@ import { act } from 'react'
 import { createRoot, type Root } from 'react-dom/client'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { AppAiMarkdown } from './AppAiMarkdown'
-import { highlightMarkdownCode } from './markdownHighlight'
+import {
+  highlightMarkdownCode,
+  resolveMarkdownLanguage,
+} from './markdownHighlight'
 
 describe('AppAiMarkdown', () => {
   let host: HTMLDivElement
@@ -106,6 +109,24 @@ describe('AppAiMarkdown', () => {
     expect(host.querySelector('.app-ai-markdown__highlighted-code .shiki'))
       .not.toBeNull()
     expect(host.querySelector('.app-ai-markdown__code-header')).not.toBeNull()
+  })
+
+  it.each([
+    ['c#', 'csharp'],
+    ['cs', 'csharp'],
+    ['docker', 'dockerfile'],
+    ['dockerfile', 'dockerfile'],
+    ['gql', 'graphql'],
+    ['graphql', 'graphql'],
+    ['kt', 'kotlin'],
+    ['kts', 'kotlin'],
+    ['ps', 'powershell'],
+    ['ps1', 'powershell'],
+    ['pwsh', 'powershell'],
+    ['rb', 'ruby'],
+    ['rs', 'rust'],
+  ])('resolves the %s language alias', (alias, language) => {
+    expect(resolveMarkdownLanguage(alias)).toBe(language)
   })
 
   it('can disable syntax highlighting while keeping the plain code block', () => {
