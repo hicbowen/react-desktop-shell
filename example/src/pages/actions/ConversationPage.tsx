@@ -2,12 +2,14 @@ import { useEffect, useRef, useState } from 'react'
 import {
   AppAiComposer,
   AppAiMessageActions,
+  AppAvatar,
   AppButton,
   AppConversationThread,
   AppConversationViewport,
   type AppAiRequestStatus,
   type AppAiMessageFeedback,
 } from '../../../../src'
+import { Sparkles, UserRound } from '../../components/fluentIcons'
 import { DemoPage, DemoPreview, DemoSection } from '../../components/DemoPage'
 import { useDemoCopy } from '../../i18n/interactiveTranslations'
 import {
@@ -120,6 +122,21 @@ export function ConversationPage() {
 
     return {
       ...message,
+      avatar: source.role === 'assistant'
+        ? (
+            <AppAvatar
+              icon={<Sparkles />}
+              name={t('AI assistant')}
+              size="small"
+            />
+          )
+        : (
+            <AppAvatar
+              icon={<UserRound />}
+              name={t('Current user')}
+              size="small"
+            />
+          ),
       actions: source.role === 'assistant'
         ? (
             <AppAiMessageActions

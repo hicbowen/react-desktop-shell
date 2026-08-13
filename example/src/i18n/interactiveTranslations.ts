@@ -86,6 +86,8 @@ export const zhCNInteractiveText: Record<string, string> = {
   'Copy response requested.': '已请求复制回复。',
   'Retry requested.': '已请求重新生成。',
   'Message moved back to the composer.': '消息已放回输入区。',
+  'AI assistant': 'AI 助手',
+  'Current user': '当前用户',
   'Can we keep this conversation on the page?': '可以把这个会话保留在普通页面中吗？',
   'Yes. The page owns the thread, while the viewport handles follow and history navigation.': '可以。页面持有会话，消息视口负责跟随和历史导航。',
   'Scroll up to pause follow mode, then use Jump to latest when you are ready to return.': '向上滚动会暂停跟随，准备回来时可以点击“回到最新消息”。',
