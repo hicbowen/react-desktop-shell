@@ -28,9 +28,11 @@ export function formatAppShortcut(
   if (shortcut.shift) parts.push(isMac ? '⇧' : 'Shift')
   if (shortcut.meta) parts.push(isMac ? '⌘' : 'Meta')
 
-  const key = shortcut.key.length === 1
-    ? shortcut.key.toLocaleUpperCase()
-    : shortcut.key
+  const key = shortcut.key === ' '
+    ? 'Space'
+    : shortcut.key.length === 1
+      ? shortcut.key.toLocaleUpperCase()
+      : shortcut.key
   parts.push(key)
   return parts.join(isMac ? '' : '+')
 }
