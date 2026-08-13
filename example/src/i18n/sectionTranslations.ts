@@ -97,6 +97,8 @@ const zhCNSectionText: Record<string, string> = {
   'Use the self-contained surface mode on a normal chat page. The component owns the two-level input layout; the host supplies context, tools, model selection, voice behavior, messages, and request state.': '在普通聊天页面中使用自带表面的输入模式。组件负责上下两层输入布局，宿主提供上下文、工具、模型选择、语音行为、消息和请求状态。',
   'Conversation composer: embedded': '会话输入区：嵌入模式',
   'Use embedded mode when another component already owns the border, elevation, and surrounding surface, such as AppQuickAsk, a side pane, or a compact contextual panel.': '当 AppQuickAsk、侧边窗格或紧凑上下文面板等父组件已经提供边框、层级和外部表面时，使用嵌入模式。',
+  'AI message: Markdown': 'AI 消息：Markdown',
+  'Render assistant content with AppAiMarkdown inside the message content slot. GFM lists, tables, links, code blocks, and code-copy feedback stay separate from message layout.': '在消息内容插槽中使用 AppAiMarkdown 渲染助手内容。GFM 列表、表格、链接、代码块和复制代码反馈与消息布局保持分离。',
   'Use AppPromptSuggestions to offer host-defined prompts without coupling the suggestion list to a composer.': '使用 AppPromptSuggestions 提供由宿主定义的问题建议，不将建议列表与输入区绑定。',
   'AI interaction building blocks': 'AI 交互基础件',
   'Use AppAiActivity to expose lifecycle state while the host keeps the request and tool state.': '使用 AppAiActivity 暴露生命周期状态，同时由宿主持有请求和工具状态。',

@@ -1,4 +1,5 @@
 import type { CSSProperties, HTMLAttributes, ReactNode } from 'react'
+import type { Components } from 'react-markdown'
 
 export type AppAiRequestStatus =
   | 'idle'
@@ -9,6 +10,18 @@ export type AppAiRequestStatus =
   | 'error'
 
 export type AppAiComposerAppearance = 'surface' | 'embedded'
+
+export type AppAiMarkdownComponents = Components
+
+export interface AppAiMarkdownProps extends Omit<
+  HTMLAttributes<HTMLDivElement>,
+  'children'
+> {
+  content: string
+  components?: AppAiMarkdownComponents
+  copyCode?: boolean
+  onCopyCode?: (code: string) => void | Promise<void>
+}
 
 export interface AppAiComposerProps {
   onSubmit: (prompt: string) => void

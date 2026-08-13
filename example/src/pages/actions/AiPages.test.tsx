@@ -58,7 +58,10 @@ describe('AI example pages', () => {
     expect(container.querySelector('[aria-label="Current user"]')).not.toBeNull()
     expect(container.querySelector('time')?.textContent).toBe('10:30')
     expect(container.querySelector('.app-ai-composer')).not.toBeNull()
-    expect(container.textContent).toContain('Add new response')
+    expect(container.querySelector('.app-ai-markdown')).not.toBeNull()
+    expect(container.querySelector('.app-ai-markdown__code-header')).not.toBeNull()
+    expect(container.textContent).toContain('AI message: Markdown')
+    expect(container.textContent).not.toContain('Add new response')
   })
 
   it('shows AI interaction building blocks on their own page', () => {

@@ -326,8 +326,8 @@ according to the host workflow.
 
 ### AI building blocks
 
-`AppAiComposer`, `AppAiActivity`, `AppAiMessageActions`, `AppPromptSuggestions`,
-`AppToolApprovalCard`, and `AppChangeReviewCard` are host-controlled AI
+`AppAiComposer`, `AppAiMarkdown`, `AppAiActivity`, `AppAiMessageActions`,
+`AppPromptSuggestions`, `AppToolApprovalCard`, and `AppChangeReviewCard` are host-controlled AI
 building blocks. They can be placed in any page or conversation and do not
 depend on `AppQuickAsk`.
 
@@ -429,6 +429,23 @@ the item's `prompt` into the draft or submit it immediately:
   onSelect={(suggestion) => setDraft(suggestion.prompt)}
 />
 ```
+
+Use `AppAiMarkdown` for assistant-authored content. It renders CommonMark plus
+GFM tables, task lists, links, and fenced code blocks with the same theme as the
+conversation components. Raw HTML is skipped by default, external HTTP links
+open in a new tab, and fenced code blocks include an accessible copy action.
+The message layout stays independent from Markdown rendering, so tool cards and
+other React content can still be passed directly to `AppConversationMessage`:
+
+```tsx
+<AppConversationMessage role="assistant">
+  <AppAiMarkdown content={answer} />
+</AppConversationMessage>
+```
+
+Pass `components` to replace selected Markdown elements, `copyCode={false}` to
+hide code-copy actions, or `onCopyCode` when the host wants to provide its own
+clipboard integration.
 
 Use `AppAiActivity` when a request has a visible lifecycle beyond a single
 loading label. It can show a controlled phase and optional user-facing steps;

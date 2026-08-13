@@ -74,6 +74,10 @@ export interface AppLocaleMessages {
     editMessage: string
     helpful: string
     notHelpful: string
+    copyCode: string
+    codeCopied: string
+    codeCopyFailed: string
+    code: string
   }
   conversation: {
     label: string

@@ -79,6 +79,10 @@ export const zhCNMessages = {
     editMessage: '编辑消息',
     helpful: '有帮助',
     notHelpful: '没有帮助',
+    copyCode: '复制代码',
+    codeCopied: '代码已复制',
+    codeCopyFailed: '无法复制代码',
+    code: '代码',
   },
   conversation: {
     label: '当前对话',

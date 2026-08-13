@@ -1,3 +1,4 @@
+import { AppAiMarkdown } from '../../../../src'
 import type {
   AppConversationMessageItem,
   AppConversationMessageRole,
@@ -83,7 +84,12 @@ export function toConversationMessages(
   return messages.map((message) => ({
     id: message.id,
     role: message.role,
-    content: <p>{t(message.text)}</p>,
+    content:
+      message.role === 'assistant' ? (
+        <AppAiMarkdown content={t(message.text)} />
+      ) : (
+        <p>{t(message.text)}</p>
+      ),
     timestamp: message.timestamp ? t(message.timestamp) : undefined,
     timestampDateTime: message.timestampDateTime,
   }))

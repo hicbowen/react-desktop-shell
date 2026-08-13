@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import {
   AppAiComposer,
+  AppAiMarkdown,
   AppAiMessageActions,
   AppAvatar,
   AppButton,
@@ -194,10 +195,6 @@ export function ConversationPage() {
           >
             <AppConversationThread messages={threadMessages} />
           </AppConversationViewport>
-          <div className="demo-component-row">
-            <AppButton onClick={addResponse}>{t('Add new response')}</AppButton>
-            {lastAction ? <span className="demo-note">{lastAction}</span> : null}
-          </div>
           <AppAiComposer
             appearance="surface"
             header={
@@ -268,12 +265,29 @@ export function ConversationPage() {
             }
             value={draft}
           />
+          {lastAction ? <span className="demo-note">{lastAction}</span> : null}
         </DemoPreview>
         <p className="demo-note">
           {t(
             'Scroll up to pause follow mode, then use Jump to latest when you are ready to return.',
           )}
         </p>
+      </DemoSection>
+
+      <DemoSection
+        title="AI message: Markdown"
+        description="Render assistant content with AppAiMarkdown inside the message content slot. GFM lists, tables, links, code blocks, and code-copy feedback stay separate from message layout."
+      >
+        <DemoPreview>
+          <div style={{ maxWidth: 760, width: '100%' }}>
+            <AppAiMarkdown
+              content={t(
+                '## Current context\n\nThe assistant can return **structured content** while the host keeps message state.\n\n- Follow the latest response\n- Pause while reading history\n\n| State | Owner |\n| --- | --- |\n| Markdown | Component |\n| Conversation | Host |\n\n```ts\nconst followOutput = true\n```',
+              )}
+              onCopyCode={() => setLastAction(t('Markdown code copied.'))}
+            />
+          </div>
+        </DemoPreview>
       </DemoSection>
 
       <DemoSection

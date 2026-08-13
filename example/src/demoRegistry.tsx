@@ -279,7 +279,7 @@ const taxonomy: Record<DemoPageKey, DemoTaxonomy> = {
   'app-command': { category: 'actions', subgroup: 'commands', apiNames: ['AppCommandProvider'], status: 'stable' },
   'command-palette': { category: 'actions', subgroup: 'commands', apiNames: ['AppCommandPalette'], status: 'stable' },
   'quick-ask': { category: 'actions', subgroup: 'ai', apiNames: ['AppQuickAsk'], status: 'preview', related: ['command-palette', 'app-command'] },
-  conversation: { category: 'actions', subgroup: 'ai', apiNames: ['AppAiComposer', 'AppAiMessageActions', 'AppConversationMessage', 'AppConversationThread', 'AppConversationViewport'], status: 'preview', related: ['quick-ask'] },
+  conversation: { category: 'actions', subgroup: 'ai', apiNames: ['AppAiComposer', 'AppAiMarkdown', 'AppAiMessageActions', 'AppConversationMessage', 'AppConversationThread', 'AppConversationViewport'], status: 'preview', related: ['quick-ask'] },
   'ai-interactions': { category: 'actions', subgroup: 'ai', apiNames: ['AppPromptSuggestions', 'AppAiActivity', 'AppToolApprovalCard', 'AppChangeReviewCard'], status: 'preview', related: ['conversation'] },
   'shortcut-recorder': { category: 'actions', subgroup: 'commands', apiNames: ['AppShortcutRecorder'], status: 'stable' },
   'menu-bar': { category: 'actions', subgroup: 'menus', apiNames: ['AppMenuBar'], status: 'stable' },

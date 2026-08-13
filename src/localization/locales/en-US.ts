@@ -84,6 +84,10 @@ export const enUSMessages = {
     editMessage: 'Edit message',
     helpful: 'Helpful',
     notHelpful: 'Not helpful',
+    copyCode: 'Copy code',
+    codeCopied: 'Code copied',
+    codeCopyFailed: 'Could not copy code',
+    code: 'Code',
   },
   conversation: {
     label: 'Current conversation',
