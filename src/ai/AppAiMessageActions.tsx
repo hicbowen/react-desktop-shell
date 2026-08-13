@@ -22,6 +22,7 @@ export function AppAiMessageActions({
   onFeedbackChange,
   onRetry,
   style,
+  visibility = 'always',
   ...rest
 }: AppAiMessageActionsProps) {
   const { messages } = useAppLocale()
@@ -34,7 +35,11 @@ export function AppAiMessageActions({
     <div
       {...rest}
       aria-label={ariaLabel ?? text.messageActions}
-      className={['app-ai-message-actions', className]
+      className={[
+        'app-ai-message-actions',
+        `app-ai-message-actions--${visibility}`,
+        className,
+      ]
         .filter(Boolean)
         .join(' ')}
       role="toolbar"

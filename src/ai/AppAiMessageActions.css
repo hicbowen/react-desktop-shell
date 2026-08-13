@@ -6,6 +6,29 @@
   color: var(--app-shell-muted-text-color, #616161);
 }
 
+.app-ai-message-actions--hover {
+  opacity: 0;
+  transition: opacity var(--rds-motion-fast, 120ms) ease;
+}
+
+.app-ai-message-actions--hover > * {
+  pointer-events: none;
+}
+
+.app-ai-message-actions--hover:hover,
+.app-ai-message-actions--hover:focus-within,
+.app-conversation-message:hover .app-ai-message-actions--hover,
+.app-conversation-message:focus-within .app-ai-message-actions--hover {
+  opacity: 1;
+}
+
+.app-ai-message-actions--hover:hover > *,
+.app-ai-message-actions--hover:focus-within > *,
+.app-conversation-message:hover .app-ai-message-actions--hover > *,
+.app-conversation-message:focus-within .app-ai-message-actions--hover > * {
+  pointer-events: auto;
+}
+
 .app-ai-message-actions .app-icon-button {
   width: 26px;
   min-width: 26px;
@@ -27,4 +50,20 @@
 .app-ai-message-actions .app-icon-button svg {
   width: 16px;
   height: 16px;
+}
+
+@media (hover: none), (pointer: coarse) {
+  .app-ai-message-actions--hover {
+    opacity: 1;
+  }
+
+  .app-ai-message-actions--hover > * {
+    pointer-events: auto;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .app-ai-message-actions--hover {
+    transition: none;
+  }
 }

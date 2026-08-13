@@ -359,6 +359,7 @@ provides and does not mutate messages or access the clipboard itself:
   role="assistant"
   timestamp="10:32"
   timestampDateTime="2026-08-13T10:32:00+08:00"
+  metaVisibility="hover"
   actions={
     <AppAiMessageActions
       feedback={feedback}
@@ -371,6 +372,14 @@ provides and does not mutate messages or access the clipboard itself:
   {content}
 </AppConversationMessage>
 ```
+
+Conversation metadata visibility defaults to `always`. Set
+`metaVisibility="hover"` to reduce visual noise while keeping actions and
+timestamps in sync; they also appear while the message is focused and remain
+visible on touch or other devices without hover support. Assistant messages
+place the time after actions, while user messages place it before them.
+`AppAiMessageActions` still supports its own `visibility` prop when used
+outside a conversation message.
 
 Use `AppConversationThread` for the current session transcript. Place
 `AppToolApprovalCard` entries in the thread when a tool needs explicit user

@@ -15,6 +15,9 @@ export interface AppConversationMessageProps extends Omit<
   label?: ReactNode
   timestamp?: ReactNode
   timestampDateTime?: string
+  metaVisibility?: 'always' | 'hover'
+  /** @deprecated Use metaVisibility to keep timestamps and actions consistent. */
+  timestampVisibility?: 'always' | 'hover'
   avatar?: ReactNode
   header?: ReactNode
   footer?: ReactNode

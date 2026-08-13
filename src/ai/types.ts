@@ -85,6 +85,7 @@ export interface AppAiMessageActionsProps extends Omit<
   onFeedbackChange?: (feedback: AppAiMessageFeedback) => void
   disabled?: boolean
   ariaLabel?: string
+  visibility?: 'always' | 'hover'
   children?: ReactNode
 }
 

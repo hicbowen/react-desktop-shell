@@ -6,7 +6,7 @@ import { describe, expect, it } from 'vitest'
 import { AppConversationMessage } from './AppConversationMessage'
 
 describe('AppConversationMessage', () => {
-  it('places a host-formatted timestamp beside the role label', () => {
+  it('places a host-formatted timestamp in the message metadata row', () => {
     const host = document.createElement('div')
     const root = createRoot(host)
 
@@ -26,12 +26,79 @@ describe('AppConversationMessage', () => {
 
     expect(host.querySelector('article')?.dataset.messageRole).toBe('assistant')
     expect(host.querySelector('.app-conversation-message__label')?.textContent).toBe('AI')
-    expect(host.querySelector('time')?.textContent).toBe('10:32')
-    expect(host.querySelector('time')?.dateTime).toBe(
+    expect(host.querySelector('.app-conversation-message__header')?.textContent).toBe('AI')
+    const timestamp = host.querySelector<HTMLTimeElement>(
+      '.app-conversation-message__meta time',
+    )
+    expect(timestamp?.textContent).toBe('10:32')
+    expect(timestamp?.dateTime).toBe(
       '2026-08-13T10:32:00+08:00',
     )
+    expect(
+      host.querySelector('.app-conversation-message__meta')?.firstElementChild
+        ?.className,
+    ).toBe('app-conversation-message__actions')
+    expect(
+      host.querySelector('.app-conversation-message__meta')?.lastElementChild
+        ?.tagName,
+    ).toBe('TIME')
     expect(host.textContent).toContain('Source details')
     expect(host.textContent).toContain('Copy')
+
+    act(() => root.unmount())
+  })
+
+  it('mirrors timestamp and action order for user messages', () => {
+    const host = document.createElement('div')
+    const root = createRoot(host)
+
+    act(() =>
+      root.render(
+        <AppConversationMessage
+          actions={<button type="button">Edit</button>}
+          metaVisibility="hover"
+          role="user"
+          timestamp="10:33"
+          >
+          Message
+        </AppConversationMessage>,
+      ),
+    )
+
+    const meta = host.querySelector('.app-conversation-message__meta')!
+    expect(meta.classList).toContain('app-conversation-message__meta--hover')
+    expect(meta.querySelector('time')?.classList).toContain(
+      'app-conversation-message__timestamp--hover',
+    )
+    expect(meta.firstElementChild?.tagName).toBe('TIME')
+    expect(meta.lastElementChild?.className).toBe(
+      'app-conversation-message__actions',
+    )
+
+    act(() => root.unmount())
+  })
+
+  it('applies hover metadata visibility to tool timestamps without actions', () => {
+    const host = document.createElement('div')
+    const root = createRoot(host)
+
+    act(() =>
+      root.render(
+        <AppConversationMessage
+          metaVisibility="hover"
+          role="tool"
+          timestamp="10:34"
+        >
+          Tool result
+        </AppConversationMessage>,
+      ),
+    )
+
+    const meta = host.querySelector('.app-conversation-message__meta')!
+    expect(meta.classList).toContain('app-conversation-message__meta--hover')
+    expect(meta.querySelector('time')?.classList).toContain(
+      'app-conversation-message__timestamp--hover',
+    )
 
     act(() => root.unmount())
   })

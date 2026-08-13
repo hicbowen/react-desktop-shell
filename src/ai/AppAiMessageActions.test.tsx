@@ -61,4 +61,24 @@ describe('AppAiMessageActions', () => {
 
     act(() => root.unmount())
   })
+
+  it('supports opt-in hover visibility while keeping the default visible', () => {
+    const host = document.createElement('div')
+    const root = createRoot(host)
+
+    act(() =>
+      root.render(
+        <>
+          <AppAiMessageActions onCopy={() => undefined} />
+          <AppAiMessageActions onCopy={() => undefined} visibility="hover" />
+        </>,
+      ),
+    )
+
+    const actions = host.querySelectorAll('.app-ai-message-actions')
+    expect(actions[0]?.classList).toContain('app-ai-message-actions--always')
+    expect(actions[1]?.classList).toContain('app-ai-message-actions--hover')
+
+    act(() => root.unmount())
+  })
 })

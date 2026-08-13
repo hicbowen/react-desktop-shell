@@ -16,6 +16,11 @@
   flex: 0 0 auto;
 }
 
+.app-conversation-message__avatar .app-avatar--medium {
+  --app-avatar-size: 36px;
+  font-size: 13px;
+}
+
 .app-conversation-message__body {
   min-width: 0;
   max-width: min(88%, 640px);
@@ -39,24 +44,70 @@
   max-width: min(100%, 760px);
 }
 
+.app-conversation-message--tool .app-conversation-message__content {
+  width: 100%;
+}
+
 .app-conversation-message__header {
   min-width: 0;
   display: flex;
   align-items: baseline;
   gap: 7px;
   color: var(--app-shell-muted-text-color, #707070);
-  font-size: 11px;
-  line-height: 16px;
+  font-size: 12px;
+  line-height: 18px;
 }
 
 .app-conversation-message__label {
+  font-size: 13px;
   font-weight: 600;
+  line-height: 18px;
 }
 
 .app-conversation-message__timestamp {
   color: var(--app-shell-muted-text-color, #707070);
   font-variant-numeric: tabular-nums;
+  font-size: 11px;
   font-weight: 400;
+  line-height: 16px;
+}
+
+.app-conversation-message__meta {
+  min-width: 0;
+  max-width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.app-conversation-message--user .app-conversation-message__meta {
+  justify-content: flex-end;
+}
+
+.app-conversation-message__meta--hover {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--rds-motion-fast, 120ms) ease;
+}
+
+.app-conversation-message__meta--hover:hover,
+.app-conversation-message:hover .app-conversation-message__meta--hover,
+.app-conversation-message:focus-within
+  .app-conversation-message__meta--hover {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.app-conversation-message__timestamp--hover {
+  opacity: 0;
+  transition: opacity var(--rds-motion-fast, 120ms) ease;
+}
+
+.app-conversation-message__timestamp--hover:hover,
+.app-conversation-message:hover .app-conversation-message__timestamp--hover,
+.app-conversation-message:focus-within
+  .app-conversation-message__timestamp--hover {
+  opacity: 1;
 }
 
 .app-conversation-message__content {
@@ -91,4 +142,30 @@
 .app-conversation-message__actions {
   min-width: 0;
   max-width: 100%;
+}
+
+.app-conversation-message__actions {
+  display: flex;
+  align-items: center;
+}
+
+@media (hover: none), (pointer: coarse) {
+  .app-conversation-message__meta--hover {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .app-conversation-message__timestamp--hover {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .app-conversation-message__meta--hover {
+    transition: none;
+  }
+
+  .app-conversation-message__timestamp--hover {
+    transition: none;
+  }
 }

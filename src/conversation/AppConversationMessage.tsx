@@ -17,6 +17,8 @@ export function AppConversationMessage({
   style,
   timestamp,
   timestampDateTime,
+  metaVisibility,
+  timestampVisibility,
   ...rest
 }: AppConversationMessageProps) {
   const { messages } = useAppLocale()
@@ -28,26 +30,42 @@ export function AppConversationMessage({
     system: text.system,
   }
   const resolvedLabel = label ?? roleLabels[role]
-  const defaultHeader = label !== null || timestamp != null
-    ? (
-        <>
-          {resolvedLabel != null ? (
-            <span className="app-conversation-message__label">
-              {resolvedLabel}
-            </span>
-          ) : null}
-          {timestamp != null ? (
-            <time
-              className="app-conversation-message__timestamp"
-              dateTime={timestampDateTime}
-            >
-              {timestamp}
-            </time>
-          ) : null}
-        </>
-      )
-    : null
+  const defaultHeader =
+    (label !== null || timestamp != null) && resolvedLabel != null ? (
+      <span className="app-conversation-message__label">{resolvedLabel}</span>
+    ) : null
   const resolvedHeader = header ?? defaultHeader
+  const resolvedMetaVisibility = metaVisibility ?? timestampVisibility ?? 'always'
+  const showMetaOnHover = resolvedMetaVisibility === 'hover'
+  const timestampNode = timestamp != null ? (
+    <time
+      className={[
+        'app-conversation-message__timestamp',
+        showMetaOnHover ? 'app-conversation-message__timestamp--hover' : '',
+      ]
+        .filter(Boolean)
+        .join(' ')}
+      dateTime={timestampDateTime}
+    >
+      {timestamp}
+    </time>
+  ) : null
+  const meta = timestampNode || actions != null ? (
+    <div
+      className={[
+        'app-conversation-message__meta',
+        showMetaOnHover ? 'app-conversation-message__meta--hover' : '',
+      ]
+        .filter(Boolean)
+        .join(' ')}
+    >
+      {role === 'user' ? timestampNode : null}
+      {actions != null ? (
+        <div className="app-conversation-message__actions">{actions}</div>
+      ) : null}
+      {role !== 'user' ? timestampNode : null}
+    </div>
+  ) : null
 
   return (
     <article
@@ -75,9 +93,7 @@ export function AppConversationMessage({
         {footer != null ? (
           <footer className="app-conversation-message__footer">{footer}</footer>
         ) : null}
-        {actions != null ? (
-          <div className="app-conversation-message__actions">{actions}</div>
-        ) : null}
+        {meta}
       </div>
     </article>
   )
