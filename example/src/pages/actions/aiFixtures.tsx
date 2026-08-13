@@ -92,5 +92,6 @@ export function toConversationMessages(
       ),
     timestamp: message.timestamp ? t(message.timestamp) : undefined,
     timestampDateTime: message.timestampDateTime,
+    metaVisibility: 'hover',
   }))
 }

@@ -1,25 +1,28 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import {
   AppAiComposer,
   AppAiMarkdown,
   AppAiMessageActions,
-  AppAvatar,
   AppButton,
+  AppChangeReviewCard,
   AppConversationThread,
   AppConversationViewport,
   AppDropDownButton,
   AppIconButton,
+  AppToolApprovalCard,
   AppToggleButton,
   type AppAiRequestStatus,
   type AppAiMessageFeedback,
+  type AppChangeReviewFile,
+  type AppChangeReviewStatus,
+  type AppConversationMessageItem,
+  type AppToolApprovalStatus,
 } from '../../../../src'
 import {
   ArrowUp,
   CheckCircle2,
   Mic,
   Plus,
-  Sparkles,
-  UserRound,
   WandSparkles,
 } from '../../components/fluentIcons'
 import { DemoPage, DemoPreview, DemoSection } from '../../components/DemoPage'
@@ -49,12 +52,19 @@ export function ConversationPage() {
   const [messages, setMessages] = useState(() =>
     cloneTextMessages(initialConversationMessages),
   )
+  const [toolStatus, setToolStatus] = useState<AppToolApprovalStatus>('pending')
+  const [reviewStatus, setReviewStatus] =
+    useState<AppChangeReviewStatus>('pending')
   const messageIdRef = useRef(2)
   const timerRef = useRef<number | null>(null)
+  const workflowTimerRef = useRef<number | null>(null)
 
   useEffect(
     () => () => {
       if (timerRef.current !== null) window.clearTimeout(timerRef.current)
+      if (workflowTimerRef.current !== null) {
+        window.clearTimeout(workflowTimerRef.current)
+      }
     },
     [],
   )
@@ -135,27 +145,74 @@ export function ConversationPage() {
     ])
   }
 
-  const threadMessages = toConversationMessages(messages, t).map((message) => {
+  const stopWorkflowTimer = () => {
+    if (workflowTimerRef.current === null) return
+    window.clearTimeout(workflowTimerRef.current)
+    workflowTimerRef.current = null
+  }
+
+  const approveWorkflowTool = () => {
+    stopWorkflowTimer()
+    setToolStatus('running')
+    workflowTimerRef.current = window.setTimeout(() => {
+      workflowTimerRef.current = null
+      setToolStatus('completed')
+    }, 720)
+  }
+
+  const rejectWorkflowTool = () => {
+    stopWorkflowTimer()
+    setToolStatus('denied')
+  }
+
+  const applyWorkflowReview = () => {
+    stopWorkflowTimer()
+    setReviewStatus('applying')
+    workflowTimerRef.current = window.setTimeout(() => {
+      workflowTimerRef.current = null
+      setReviewStatus('applied')
+    }, 520)
+  }
+
+  const rejectWorkflowReview = () => {
+    stopWorkflowTimer()
+    setReviewStatus('rejected')
+  }
+
+  const resetWorkflow = () => {
+    stopWorkflowTimer()
+    setToolStatus('pending')
+    setReviewStatus('pending')
+  }
+
+  const workflowReviewFiles = useMemo<AppChangeReviewFile[]>(
+    () => [
+      {
+        id: 'meeting-summary',
+        path: 'Documents/meeting-summary.md',
+        summary: t('Add the decisions and next steps from the meeting.'),
+        additions: 8,
+        deletions: 0,
+        diff: '@@ -0,0 +1,8 @@\n+# Meeting summary\n+\n+## Decisions\n+- Confirm the launch checklist\n+\n+## Next steps\n+- Share the checklist with the team',
+      },
+      {
+        id: 'readme',
+        path: 'Documents/README.md',
+        summary: t('Link to the generated meeting summary.'),
+        additions: 1,
+        deletions: 1,
+        diff: '@@ -4,1 +4,1 @@\n-See the meeting notes.\n+See the [meeting summary](meeting-summary.md).',
+      },
+    ],
+    [t],
+  )
+
+  const textThreadMessages = toConversationMessages(messages, t).map((message) => {
     const source = messages.find((item) => item.id === message.id)
     if (!source) return message
 
     return {
       ...message,
-      avatar: source.role === 'assistant'
-        ? (
-            <AppAvatar
-              icon={<Sparkles />}
-              name={t('AI assistant')}
-              size="medium"
-            />
-          )
-        : (
-            <AppAvatar
-              icon={<UserRound />}
-              name={t('Current user')}
-              size="medium"
-            />
-          ),
       actions: source.role === 'assistant'
         ? (
             <AppAiMessageActions
@@ -177,9 +234,156 @@ export function ConversationPage() {
                 setLastAction(t('Message moved back to the composer.'))
               }}
             />
-          ),
+      ),
     }
   })
+
+  const workflowMessages: AppConversationMessageItem[] = [
+    {
+      id: 'conversation-workflow-user-1',
+      role: 'user',
+      content: <p>{t('Please prepare the meeting summary and update the project README.')}</p>,
+      actions: (
+        <AppAiMessageActions
+          onEdit={() => {
+            setDraft(t('Please prepare the meeting summary and update the project README.'))
+            setLastAction(t('Message moved back to the composer.'))
+          }}
+        />
+      ),
+      metaVisibility: 'hover',
+      timestamp: '10:32',
+      timestampDateTime: '2026-08-13T10:32:00+08:00',
+    },
+    {
+      id: 'conversation-workflow-assistant-1',
+      role: 'assistant',
+      content: (
+        <AppAiMarkdown
+          content={t(
+            'I can prepare the summary and update the README. I need your confirmation before the file tool runs.',
+          )}
+        />
+      ),
+      actions: (
+        <AppAiMessageActions
+          onCopy={() => setLastAction(t('Copy response requested.'))}
+        />
+      ),
+      metaVisibility: 'hover',
+      timestamp: '10:32',
+      timestampDateTime: '2026-08-13T10:32:08+08:00',
+    },
+    {
+      id: 'conversation-workflow-tool-approval',
+      role: 'tool',
+      content: (
+        <AppToolApprovalCard
+          description={t(
+            'This prepares a meeting summary and updates the project README. Existing files are not changed.',
+          )}
+          details={t(
+            'Targets: Documents/meeting-summary.md and Documents/README.md',
+          )}
+          onApprove={approveWorkflowTool}
+          onReject={rejectWorkflowTool}
+          status={toolStatus}
+          title={t('Save meeting summary')}
+        />
+      ),
+      metaVisibility: 'hover',
+      timestamp: '10:33',
+      timestampDateTime: '2026-08-13T10:33:00+08:00',
+    },
+  ]
+
+  if (toolStatus === 'completed') {
+    workflowMessages.push(
+      {
+        id: 'conversation-workflow-assistant-2',
+        role: 'assistant',
+        content: (
+          <AppAiMarkdown
+            content={t(
+              'The tool finished and prepared concrete changes. Review them before applying.',
+            )}
+          />
+        ),
+        actions: (
+          <AppAiMessageActions
+            onCopy={() => setLastAction(t('Copy response requested.'))}
+          />
+        ),
+        metaVisibility: 'hover',
+        timestamp: '10:34',
+        timestampDateTime: '2026-08-13T10:34:00+08:00',
+      },
+      {
+        id: 'conversation-workflow-change-review',
+        role: 'tool',
+        content: (
+          <AppChangeReviewCard
+            files={workflowReviewFiles}
+            onApply={applyWorkflowReview}
+            onReject={rejectWorkflowReview}
+            status={reviewStatus}
+            title={t('Review generated file changes')}
+          />
+        ),
+        metaVisibility: 'hover',
+        timestamp: '10:34',
+        timestampDateTime: '2026-08-13T10:34:08+08:00',
+      },
+    )
+
+    if (reviewStatus === 'applied' || reviewStatus === 'rejected') {
+      workflowMessages.push({
+        id: 'conversation-workflow-assistant-3',
+        role: 'assistant',
+        content: (
+          <AppAiMarkdown
+            content={t(
+              reviewStatus === 'applied'
+                ? 'The reviewed changes were applied successfully.'
+                : 'The change review was rejected. No files were updated.',
+            )}
+          />
+        ),
+        actions: (
+          <AppAiMessageActions
+            onCopy={() => setLastAction(t('Copy response requested.'))}
+          />
+        ),
+        metaVisibility: 'hover',
+        timestamp: '10:35',
+        timestampDateTime: '2026-08-13T10:35:00+08:00',
+      })
+    }
+  }
+
+  if (toolStatus === 'denied') {
+    workflowMessages.push({
+      id: 'conversation-workflow-assistant-denied',
+      role: 'assistant',
+      content: (
+        <AppAiMarkdown
+          content={t(
+            'No file was written. The prepared summary remains in this conversation.',
+          )}
+        />
+      ),
+      actions: (
+        <AppAiMessageActions
+          onCopy={() => setLastAction(t('Copy response requested.'))}
+        />
+      ),
+      metaVisibility: 'hover',
+      timestamp: '10:34',
+      timestampDateTime: '2026-08-13T10:34:00+08:00',
+    })
+  }
+
+  const threadMessages = [...textThreadMessages, ...workflowMessages]
 
   return (
     <DemoPage>
@@ -191,10 +395,15 @@ export function ConversationPage() {
           <AppConversationViewport
             hasMore
             onLoadOlder={loadEarlier}
-            style={{ height: 300, width: '100%' }}
+            style={{ height: 520, width: '100%' }}
           >
             <AppConversationThread messages={threadMessages} />
           </AppConversationViewport>
+          <div className="demo-component-row">
+            <AppButton appearance="subtle" onClick={resetWorkflow} size="compact">
+              {t('Reset workflow')}
+            </AppButton>
+          </div>
           <AppAiComposer
             appearance="surface"
             header={
