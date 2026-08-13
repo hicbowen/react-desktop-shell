@@ -377,6 +377,10 @@ Use `AppConversationThread` for the current session transcript. Place
 approval; the host remains responsible for storing messages and resuming or
 rejecting the pending tool call.
 
+Tool message content is capped at 760px by the conversation message layout on
+wide screens, while approval and change-review cards fill that content area.
+This keeps tool interactions readable without requiring per-card width styles.
+
 ### Quick ask
 
 `AppSpotlightSurface` is a top-centered transient dialog primitive with focus

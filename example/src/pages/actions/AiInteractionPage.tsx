@@ -253,7 +253,6 @@ export function AiInteractionPage() {
             onReject={rejectTool}
             status={toolStatus}
             title={t('Save meeting summary')}
-            style={{ width: '100%' }}
           />
           <AppButton onClick={resetTool}>{t('Reset approval')}</AppButton>
         </DemoPreview>
@@ -274,7 +273,6 @@ export function AiInteractionPage() {
             onApply={applyReview}
             onReject={rejectReview}
             status={reviewStatus}
-            style={{ flex: '1 1 480px', maxWidth: 560 }}
             title={t('Review generated file changes')}
           />
           <AppButton onClick={resetReview}>{t('Reset review')}</AppButton>

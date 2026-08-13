@@ -35,6 +35,10 @@
   max-width: none;
 }
 
+.app-conversation-message--tool .app-conversation-message__body {
+  max-width: min(100%, 760px);
+}
+
 .app-conversation-message__header {
   min-width: 0;
   display: flex;

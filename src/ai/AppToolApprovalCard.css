@@ -1,4 +1,7 @@
 .app-tool-approval-card {
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
   overflow: hidden;
   background: var(--app-shell-card-bg, #fff);
   border: 1px solid var(--app-shell-border-color, rgb(0 0 0 / 10%));
