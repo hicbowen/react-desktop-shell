@@ -54,6 +54,8 @@ export interface AppLocaleMessages {
     thinking: string
     responding: string
     awaitingApproval: string
+    awaitingReview: string
+    canceled: string
     response: string
     failed: string
     error: string
@@ -63,8 +65,7 @@ export interface AppLocaleMessages {
     approvalRequired: string
     approveOnce: string
     reject: string
-    approved: string
-    denied: string
+    rejected: string
     running: string
     completed: string
     toolFailed: string

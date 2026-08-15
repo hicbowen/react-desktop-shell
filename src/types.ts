@@ -41,7 +41,7 @@ export type {
 export type { AppHoverCardProps } from './hover-card/types'
 export type { AppConfirmPopoverProps, AppPopoverProps } from './popover/types'
 export type { AppSpotlightSurfaceProps } from './spotlight-surface/types'
-export type { AppAiActivityProps, AppAiActivityStatus, AppAiActivityStep, AppAiActivityStepStatus, AppAiComposerAppearance, AppAiComposerProps, AppAiMarkdownComponents, AppAiMarkdownProps, AppAiRequestStatus, AppChangeReviewCardProps, AppChangeReviewFile, AppChangeReviewStatus, AppPromptSuggestion, AppPromptSuggestionsProps, AppToolApprovalCardProps, AppToolApprovalStatus } from './ai/types'
+export type { AppAiRunStatus, AppAiStatusProps, AppAiComposerAppearance, AppAiComposerProps, AppAiMarkdownComponents, AppAiMarkdownProps, AppChangeReviewCardProps, AppChangeReviewFile, AppChangeReviewStatus, AppPromptSuggestion, AppPromptSuggestionsProps, AppToolApprovalCardProps, AppToolApprovalStatus } from './ai/types'
 export type { AppConversationMessageItem, AppConversationMessageProps, AppConversationMessageRole, AppConversationThreadProps, AppConversationViewportProps } from './conversation/types'
 export type { AppQuickAskProps } from './quick-ask/types'
 export type {

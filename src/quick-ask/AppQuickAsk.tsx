@@ -5,6 +5,7 @@ import { AppProgressRing } from '../progress'
 import { AppScrollArea } from '../scroll-area'
 import { AppSpotlightSurface } from '../spotlight-surface'
 import { AppAiComposer } from '../ai/AppAiComposer'
+import { isAppAiRunBusy } from '../ai/runStatus'
 import type { AppQuickAskProps } from './types'
 import './AppQuickAsk.css'
 
@@ -47,13 +48,13 @@ export const AppQuickAsk = forwardRef<HTMLTextAreaElement, AppQuickAskProps>(
     const responseViewportRef = useRef<HTMLDivElement | null>(null)
     const shouldFollowOutputRef = useRef(true)
     const wasOpenRef = useRef(false)
-    const busy = status === 'submitting' || status === 'streaming'
+    const busy = isAppAiRunBusy(status)
     const hasAnswer = answer !== undefined && answer !== null && answer !== ''
     const showResponse = status !== 'idle' || hasAnswer || error != null
     const showResponseHeader =
-      status === 'submitting' ||
-      status === 'streaming' ||
+      isAppAiRunBusy(status) ||
       status === 'awaiting-approval' ||
+      status === 'awaiting-review' ||
       status === 'error'
 
     useLayoutEffect(() => {
@@ -75,15 +76,21 @@ export const AppQuickAsk = forwardRef<HTMLTextAreaElement, AppQuickAskProps>(
       else if (forwardedRef) forwardedRef.current = node
     }
     const statusText =
-      status === 'submitting'
+      status === 'thinking'
         ? text.thinking
-        : status === 'streaming'
+        : status === 'responding'
           ? text.responding
-          : status === 'awaiting-approval'
-            ? text.awaitingApproval
-            : status === 'error'
-              ? text.failed
-              : text.response
+          : status === 'searching'
+            ? text.searching
+            : status === 'using-tool'
+              ? text.usingTool
+              : status === 'awaiting-approval'
+                ? text.awaitingApproval
+                : status === 'awaiting-review'
+                  ? text.awaitingReview
+                  : status === 'error'
+                    ? text.failed
+                    : text.response
 
     return (
       <AppSpotlightSurface
@@ -116,6 +123,7 @@ export const AppQuickAsk = forwardRef<HTMLTextAreaElement, AppQuickAskProps>(
           onValueChange={onValueChange}
           placeholder={placeholder}
           ref={setInputRef}
+          showStatus={false}
           status={status}
           value={value}
         />

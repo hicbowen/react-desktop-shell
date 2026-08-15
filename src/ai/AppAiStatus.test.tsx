@@ -3,9 +3,9 @@
 import { act } from 'react'
 import { createRoot, type Root } from 'react-dom/client'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
-import { AppAiActivity } from './AppAiActivity'
+import { AppAiStatus } from './AppAiStatus'
 
-describe('AppAiActivity', () => {
+describe('AppAiStatus', () => {
   let host: HTMLDivElement
   let root: Root
 
@@ -23,36 +23,28 @@ describe('AppAiActivity', () => {
     host.remove()
   })
 
-  it('renders a localized active phase with optional steps', () => {
+  it('renders a localized active status', () => {
     act(() =>
       root.render(
-        <AppAiActivity
+        <AppAiStatus
           detail="Searching the current workspace."
           status="searching"
-          steps={[
-            { id: 'prepare', label: 'Prepare', status: 'completed' },
-            { id: 'search', label: 'Search', status: 'active' },
-            { id: 'answer', label: 'Answer', status: 'pending' },
-          ]}
         />,
       ),
     )
 
     expect(host.querySelector('[aria-label="Searching…"]')).not.toBeNull()
-    expect(host.querySelector('.app-ai-activity--searching')).not.toBeNull()
+    expect(host.querySelector('.app-ai-status--searching')).not.toBeNull()
     expect(host.querySelector('.app-progress-ring')).not.toBeNull()
-    expect(host.querySelectorAll('[data-step-id]')).toHaveLength(3)
-    expect(host.querySelector('[aria-current="step"]')?.textContent).toContain(
-      'Search',
-    )
     expect(host.textContent).toContain('Searching the current workspace.')
   })
 
-  it('uses terminal status badges and renders a host action', () => {
+  it('renders a quiet terminal status and an optional action', () => {
     act(() =>
       root.render(
-        <AppAiActivity
+        <AppAiStatus
           action={<button type="button">Review</button>}
+          appearance="card"
           ariaLabel="AI run status"
           label="Waiting for confirmation"
           status="awaiting-approval"
@@ -63,24 +55,14 @@ describe('AppAiActivity', () => {
     expect(host.querySelector('[aria-label="AI run status"]')).not.toBeNull()
     expect(host.querySelector('.app-status-badge--warning')).not.toBeNull()
     expect(host.querySelector('.app-progress-ring')).toBeNull()
+    expect(host.querySelector('.app-ai-status--card')).not.toBeNull()
     expect(host.textContent).toContain('Waiting for confirmation')
     expect(host.textContent).toContain('Review')
   })
 
-  it('supports custom HTML attributes and compact styling', () => {
-    act(() =>
-      root.render(
-        <AppAiActivity
-          className="custom-activity"
-          data-testid="activity"
-          size="compact"
-          status="completed"
-        />,
-      ),
-    )
+  it('does not render an idle status', () => {
+    act(() => root.render(<AppAiStatus status="idle" />))
 
-    expect(host.querySelector('[data-testid="activity"]')).not.toBeNull()
-    expect(host.querySelector('.app-ai-activity--compact')).not.toBeNull()
-    expect(host.querySelector('.app-status-badge--success')).not.toBeNull()
+    expect(host.querySelector('.app-ai-status')).toBeNull()
   })
 })

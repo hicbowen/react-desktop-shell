@@ -5,6 +5,8 @@ import { Stop16Regular } from '@fluentui/react-icons/svg/stop'
 import { AppIconButton } from '../button'
 import { useAppLocale } from '../localization/useAppLocale'
 import { AppTextArea } from '../text-input'
+import { AppAiStatus } from './AppAiStatus'
+import { isAppAiRunBlocked, isAppAiRunBusy } from './runStatus'
 import type { AppAiComposerProps } from './types'
 import './AppAiComposer.css'
 
@@ -28,6 +30,7 @@ export const AppAiComposer = forwardRef<
     onSubmit,
     onValueChange,
     placeholder,
+    showStatus = true,
     status = 'idle',
     style,
     submitIcon,
@@ -45,8 +48,8 @@ export const AppAiComposer = forwardRef<
   const inputRef = useRef<HTMLTextAreaElement | null>(null)
   const composingRef = useRef(false)
   const currentValue = value ?? internalValue
-  const busy = status === 'submitting' || status === 'streaming'
-  const awaitingApproval = status === 'awaiting-approval'
+  const busy = isAppAiRunBusy(status)
+  const blocked = isAppAiRunBlocked(status)
   const resolvedLeadingIcon =
     leadingIcon === undefined
       ? appearance === 'embedded'
@@ -54,15 +57,21 @@ export const AppAiComposer = forwardRef<
         : null
       : leadingIcon
   const statusText =
-    status === 'submitting'
+    status === 'thinking'
       ? text.thinking
-      : status === 'streaming'
+      : status === 'responding'
         ? text.responding
-        : status === 'awaiting-approval'
-          ? text.awaitingApproval
-          : status === 'error'
-            ? text.failed
-            : text.response
+        : status === 'searching'
+          ? text.searching
+          : status === 'using-tool'
+            ? text.usingTool
+            : status === 'awaiting-approval'
+              ? text.awaitingApproval
+              : status === 'awaiting-review'
+                ? text.awaitingReview
+                : status === 'error'
+                  ? text.failed
+                  : text.response
 
   const setInputRef = (node: HTMLTextAreaElement | null) => {
     inputRef.current = node
@@ -77,7 +86,7 @@ export const AppAiComposer = forwardRef<
 
   const submit = () => {
     const prompt = currentValue.trim()
-    if (!prompt || disabled || busy || awaitingApproval) return
+    if (!prompt || disabled || busy || blocked) return
     onSubmit(prompt)
     if (clearOnSubmit) change('')
   }
@@ -142,8 +151,16 @@ export const AppAiComposer = forwardRef<
         className="app-ai-composer__toolbar"
         role="toolbar"
       >
-        {toolbarStart ? (
-          <div className="app-ai-composer__toolbar-start">{toolbarStart}</div>
+        {toolbarStart || (showStatus && status !== 'idle') ? (
+          <div className="app-ai-composer__toolbar-start">
+            {toolbarStart}
+            {showStatus && status !== 'idle' ? (
+              <AppAiStatus
+                className="app-ai-composer__status"
+                status={status}
+              />
+            ) : null}
+          </div>
         ) : null}
         <div className="app-ai-composer__toolbar-end">
           {toolbarEnd}
@@ -163,7 +180,7 @@ export const AppAiComposer = forwardRef<
               appearance="primary"
               ariaLabel={text.send}
               className="app-ai-composer__submit"
-              disabled={disabled || awaitingApproval || !currentValue.trim()}
+              disabled={disabled || blocked || !currentValue.trim()}
               icon={submitIcon ?? <Send16Regular />}
               onClick={submit}
               shape="circular"

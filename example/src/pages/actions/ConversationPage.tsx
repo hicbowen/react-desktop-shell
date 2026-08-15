@@ -11,7 +11,7 @@ import {
   AppIconButton,
   AppToolApprovalCard,
   AppToggleButton,
-  type AppAiRequestStatus,
+  type AppAiRunStatus,
   type AppAiMessageFeedback,
   type AppChangeReviewFile,
   type AppChangeReviewStatus,
@@ -37,7 +37,8 @@ import {
 export function ConversationPage() {
   const t = useDemoCopy()
   const [draft, setDraft] = useState('')
-  const [status, setStatus] = useState<AppAiRequestStatus>('idle')
+  const [runStatus, setRunStatus] =
+    useState<AppAiRunStatus>('awaiting-approval')
   const [feedback, setFeedback] = useState<
     Record<string, AppAiMessageFeedback>
   >({})
@@ -91,7 +92,7 @@ export function ConversationPage() {
         timestamp: 'Just now',
       },
     ])
-    setStatus('submitting')
+    setRunStatus('thinking')
     timerRef.current = window.setTimeout(() => {
       timerRef.current = null
       setMessages((current) => [
@@ -103,7 +104,7 @@ export function ConversationPage() {
           timestamp: 'Just now',
         },
       ])
-      setStatus('completed')
+      setRunStatus('completed')
     }, 520)
   }
 
@@ -118,7 +119,7 @@ export function ConversationPage() {
         timestamp: 'Just now',
       },
     ])
-    setStatus('completed')
+    setRunStatus('canceled')
   }
 
   const addResponse = () => {
@@ -154,35 +155,42 @@ export function ConversationPage() {
   const approveWorkflowTool = () => {
     stopWorkflowTimer()
     setToolStatus('running')
+    setRunStatus('using-tool')
     workflowTimerRef.current = window.setTimeout(() => {
       workflowTimerRef.current = null
       setToolStatus('completed')
+      setRunStatus('awaiting-review')
     }, 720)
   }
 
   const rejectWorkflowTool = () => {
     stopWorkflowTimer()
-    setToolStatus('denied')
+    setToolStatus('rejected')
+    setRunStatus('canceled')
   }
 
   const applyWorkflowReview = () => {
     stopWorkflowTimer()
     setReviewStatus('applying')
+    setRunStatus('using-tool')
     workflowTimerRef.current = window.setTimeout(() => {
       workflowTimerRef.current = null
       setReviewStatus('applied')
+      setRunStatus('completed')
     }, 520)
   }
 
   const rejectWorkflowReview = () => {
     stopWorkflowTimer()
     setReviewStatus('rejected')
+    setRunStatus('canceled')
   }
 
   const resetWorkflow = () => {
     stopWorkflowTimer()
     setToolStatus('pending')
     setReviewStatus('pending')
+    setRunStatus('awaiting-approval')
   }
 
   const workflowReviewFiles = useMemo<AppChangeReviewFile[]>(
@@ -361,9 +369,9 @@ export function ConversationPage() {
     }
   }
 
-  if (toolStatus === 'denied') {
+  if (toolStatus === 'rejected') {
     workflowMessages.push({
-      id: 'conversation-workflow-assistant-denied',
+      id: 'conversation-workflow-assistant-rejected',
       role: 'assistant',
       content: (
         <AppAiMarkdown
@@ -423,7 +431,7 @@ export function ConversationPage() {
             onCancel={cancel}
             onSubmit={submit}
             onValueChange={setDraft}
-            status={status}
+            status={runStatus}
             style={{ width: '100%' }}
             submitIcon={<ArrowUp />}
             toolbarEnd={

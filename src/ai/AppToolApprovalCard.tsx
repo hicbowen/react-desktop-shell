@@ -10,8 +10,7 @@ const badgeStatus: Record<
   'neutral' | 'info' | 'success' | 'warning' | 'danger'
 > = {
   pending: 'warning',
-  approved: 'info',
-  denied: 'neutral',
+  rejected: 'neutral',
   running: 'info',
   completed: 'success',
   error: 'danger',
@@ -35,8 +34,7 @@ export function AppToolApprovalCard({
   const titleId = useId()
   const statusLabels: Record<AppToolApprovalStatus, string> = {
     pending: text.approvalRequired,
-    approved: text.approved,
-    denied: text.denied,
+    rejected: text.rejected,
     running: text.running,
     completed: text.completed,
     error: text.toolFailed,

@@ -42,7 +42,7 @@ describe('AI example pages', () => {
     expect(titles).toEqual(['Quick ask: one prompt', 'Chat: current thread'])
     expect(container.querySelector('.app-conversation-viewport')).toBeNull()
     expect(container.querySelector('.app-ai-composer')).toBeNull()
-    expect(container.querySelector('.app-ai-activity')).toBeNull()
+    expect(container.querySelector('.app-ai-status')).toBeNull()
   })
 
   it('shows the normal page conversation composition', () => {
@@ -70,7 +70,7 @@ describe('AI example pages', () => {
     renderPage(<AiInteractionPage />)
 
     expect(container.querySelector('.app-prompt-suggestions')).not.toBeNull()
-    expect(container.querySelector('.app-ai-activity')).not.toBeNull()
+    expect(container.querySelector('.app-ai-status')).not.toBeNull()
     expect(container.querySelector('.app-tool-approval-card')).not.toBeNull()
     expect(container.querySelector('.app-change-review-card')).not.toBeNull()
   })

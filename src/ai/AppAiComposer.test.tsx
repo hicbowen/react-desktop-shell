@@ -98,9 +98,9 @@ describe('AppAiComposer', () => {
     expect(onSubmit).not.toHaveBeenCalled()
   })
 
-  it('exposes a stop action while streaming', () => {
+  it('exposes a stop action while responding', () => {
     const onCancel = vi.fn()
-    renderComposer({ onCancel, status: 'streaming' })
+    renderComposer({ onCancel, status: 'responding' })
     const stop = document.body.querySelector<HTMLButtonElement>(
       'button[aria-label="Stop generating"]',
     )!
@@ -122,6 +122,10 @@ describe('AppAiComposer', () => {
     )!
 
     expect(send.disabled).toBe(true)
+    const status = host.querySelector(
+      '.app-ai-composer__toolbar-start .app-ai-composer__status',
+    )
+    expect(status?.textContent).toContain('Waiting for your approval')
     act(() =>
       textarea.dispatchEvent(
         new KeyboardEvent('keydown', {
@@ -142,7 +146,7 @@ describe('AppAiComposer', () => {
       header: <span>Attached context</span>,
       maxRows: 6,
       minRows: 3,
-      status: 'streaming',
+      status: 'responding',
       submitIcon: <span data-testid="submit-icon" />,
       toolbarEnd: <button type="button">Model</button>,
       toolbarStart: <button type="button">Attach</button>,
@@ -169,5 +173,11 @@ describe('AppAiComposer', () => {
     expect(host.querySelector('.app-ai-composer--embedded')).not.toBeNull()
     expect(host.querySelector('.app-ai-composer__leading svg')).not.toBeNull()
     expect(textarea.rows).toBe(1)
+  })
+
+  it('can hide the internal status when the surrounding surface owns it', () => {
+    renderComposer({ showStatus: false, status: 'responding' })
+
+    expect(host.querySelector('.app-ai-composer__status')).toBeNull()
   })
 })

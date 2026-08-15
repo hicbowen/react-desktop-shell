@@ -1,5 +1,5 @@
 import type { CSSProperties, ReactNode } from 'react'
-import type { AppAiRequestStatus } from '../ai/types'
+import type { AppAiRunStatus } from '../ai/types'
 
 export interface AppQuickAskProps {
   open: boolean
@@ -8,7 +8,7 @@ export interface AppQuickAskProps {
   value?: string
   defaultValue?: string
   onValueChange?: (value: string) => void
-  status?: AppAiRequestStatus
+  status?: AppAiRunStatus
   answer?: ReactNode
   error?: ReactNode
   answerActions?: ReactNode

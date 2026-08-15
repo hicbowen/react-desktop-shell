@@ -326,7 +326,7 @@ according to the host workflow.
 
 ### AI building blocks
 
-`AppAiComposer`, `AppAiMarkdown`, `AppAiActivity`, `AppAiMessageActions`,
+`AppAiComposer`, `AppAiMarkdown`, `AppAiStatus`, `AppAiMessageActions`,
 `AppPromptSuggestions`, `AppToolApprovalCard`, and `AppChangeReviewCard` are host-controlled AI
 building blocks. They can be placed in any page or conversation and do not
 depend on `AppQuickAsk`.
@@ -421,6 +421,11 @@ controls:
 />
 ```
 
+When `status` is not `idle`, the composer renders a compact status item in the
+left side of its toolbar. Set `showStatus={false}` when a surrounding surface
+already owns the status presentation, as `AppQuickAsk` does in its response
+area.
+
 Use `appearance="embedded"` when the parent already owns the border, elevation,
 and surrounding surface. `AppQuickAsk` uses this mode internally so its input
 stays compact and does not render a second card inside the spotlight surface.
@@ -470,18 +475,29 @@ Pass `components` to replace selected Markdown elements, `copyCode={false}` to
 hide code-copy actions, `highlightCode={false}` to use plain code blocks, or
 `onCopyCode` when the host wants to provide its own clipboard integration.
 
-Use `AppAiActivity` when a request has a visible lifecycle beyond a single
-loading label. It can show a controlled phase and optional user-facing steps;
-it does not expose model reasoning or run the request itself:
+Use `AppAiStatus` to show the current run state without turning the conversation
+into a progress dashboard. The host owns the `AppAiRunStatus` value and updates
+it as the request, tool approval, and review flow changes; the component only
+renders the compact feedback:
 
 ```tsx
-<AppAiActivity
-  status="awaiting-approval"
-  detail="The assistant is waiting for your decision."
-  steps={steps}
-  action={<AppButton onClick={openApproval}>Review</AppButton>}
+<AppAiStatus
+  appearance="inline"
+  status={run.status}
+  detail={run.detail}
+  action={
+    run.status === 'awaiting-review' ? (
+      <AppButton onClick={openReview}>Review</AppButton>
+    ) : undefined
+  }
 />
 ```
+
+`AppAiComposer` accepts the same `AppAiRunStatus` and uses it to prevent a new
+prompt while the run is busy or waiting for approval/review. Keep detailed
+approval and change state in `AppToolApprovalCard` and
+`AppChangeReviewCard`; `completed` means the current run is finished, not that
+the conversation has been closed.
 
 Use `AppChangeReviewCard` after a tool has prepared concrete file or code
 changes. Keep the final write operation in the host and let the card handle

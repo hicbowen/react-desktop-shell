@@ -1,12 +1,11 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import {
-  AppAiActivity,
+  AppAiStatus,
   AppButton,
   AppChangeReviewCard,
   AppPromptSuggestions,
   AppToolApprovalCard,
-  type AppAiActivityStatus,
-  type AppAiActivityStep,
+  type AppAiRunStatus,
   type AppChangeReviewFile,
   type AppChangeReviewStatus,
   type AppPromptSuggestion,
@@ -20,8 +19,8 @@ import { initialApprovalMessages } from './aiFixtures'
 export function AiInteractionPage() {
   const t = useDemoCopy()
   const [selectedPrompt, setSelectedPrompt] = useState<string | null>(null)
-  const [activityStatus, setActivityStatus] =
-    useState<AppAiActivityStatus>('awaiting-approval')
+  const [runStatus, setRunStatus] =
+    useState<AppAiRunStatus>('awaiting-approval')
   const [toolStatus, setToolStatus] = useState<AppToolApprovalStatus>(
     initialApprovalMessages.find((message) => message.role === 'tool')?.status ??
       'pending',
@@ -68,61 +67,27 @@ export function AiInteractionPage() {
     [t],
   )
 
-  const activityDetails: Record<AppAiActivityStatus, string> = {
+  const runStatusDetails: Record<AppAiRunStatus, string> = {
+    idle: '',
     thinking: 'The assistant is preparing the request.',
-    streaming: 'The assistant is writing a response.',
+    responding: 'The assistant is writing a response.',
     searching: 'The assistant is searching connected context.',
-    tool: 'The file tool is running.',
+    'using-tool': 'The file tool is running.',
     'awaiting-approval': 'The assistant is waiting for your decision.',
+    'awaiting-review': 'The assistant is waiting for you to review the result.',
     completed: 'The activity is complete.',
     error: 'No file changes were made.',
+    canceled: 'No file changes were made.',
   }
-
-  const activitySteps: AppAiActivityStep[] = [
-    {
-      id: 'prepare',
-      label: t('Prepare response'),
-      status:
-        activityStatus === 'thinking' || activityStatus === 'searching'
-          ? 'active'
-          : 'completed',
-    },
-    {
-      id: 'approval',
-      label: t('Ask for approval'),
-      detail: t('The assistant pauses before changing external state.'),
-      status:
-        activityStatus === 'awaiting-approval'
-          ? 'active'
-          : activityStatus === 'error'
-            ? 'error'
-            : 'completed',
-    },
-    {
-      id: 'tool',
-      label: t('Run file tool'),
-      status:
-        activityStatus === 'tool'
-          ? 'active'
-          : activityStatus === 'error'
-            ? 'error'
-            : activityStatus === 'completed'
-              ? 'completed'
-              : 'pending',
-    },
-    {
-      id: 'finish',
-      label: t('Finish response'),
-      status: activityStatus === 'completed' ? 'completed' : 'pending',
-    },
-  ]
 
   const approveTool = () => {
     if (toolTimerRef.current !== null) window.clearTimeout(toolTimerRef.current)
     setToolStatus('running')
+    setRunStatus('using-tool')
     toolTimerRef.current = window.setTimeout(() => {
       toolTimerRef.current = null
       setToolStatus('completed')
+      setRunStatus('awaiting-review')
     }, 720)
   }
 
@@ -131,15 +96,22 @@ export function AiInteractionPage() {
       window.clearTimeout(toolTimerRef.current)
       toolTimerRef.current = null
     }
-    setToolStatus('denied')
+    setToolStatus('rejected')
+    setRunStatus('canceled')
   }
 
-  const resetTool = () => {
+  const resetWorkflow = () => {
     if (toolTimerRef.current !== null) {
       window.clearTimeout(toolTimerRef.current)
       toolTimerRef.current = null
     }
     setToolStatus('pending')
+    if (reviewTimerRef.current !== null) {
+      window.clearTimeout(reviewTimerRef.current)
+      reviewTimerRef.current = null
+    }
+    setReviewStatus('pending')
+    setRunStatus('awaiting-approval')
   }
 
   const reviewFiles = useMemo<AppChangeReviewFile[]>(
@@ -169,9 +141,11 @@ export function AiInteractionPage() {
       window.clearTimeout(reviewTimerRef.current)
     }
     setReviewStatus('applying')
+    setRunStatus('using-tool')
     reviewTimerRef.current = window.setTimeout(() => {
       reviewTimerRef.current = null
       setReviewStatus('applied')
+      setRunStatus('completed')
     }, 520)
   }
 
@@ -181,14 +155,7 @@ export function AiInteractionPage() {
       reviewTimerRef.current = null
     }
     setReviewStatus('rejected')
-  }
-
-  const resetReview = () => {
-    if (reviewTimerRef.current !== null) {
-      window.clearTimeout(reviewTimerRef.current)
-      reviewTimerRef.current = null
-    }
-    setReviewStatus('pending')
+    setRunStatus('canceled')
   }
 
   return (
@@ -211,28 +178,32 @@ export function AiInteractionPage() {
       </DemoSection>
 
       <DemoSection
-        title="Activity indicator"
-        description="Use AppAiActivity to expose lifecycle state while the host keeps the request and tool state."
+        title="Run status"
+        description="Use AppAiStatus for the current run state while the host keeps the request and tool state."
       >
         <DemoPreview>
-          <AppAiActivity
-            detail={t(activityDetails[activityStatus])}
-            size="compact"
-            status={activityStatus}
-            steps={activitySteps}
+          <AppAiStatus
+            appearance="card"
+            action={
+              <AppButton appearance="subtle" onClick={resetWorkflow} size="compact">
+                {t('Reset workflow')}
+              </AppButton>
+            }
+            detail={t(runStatusDetails[runStatus])}
+            status={runStatus}
             style={{ width: '100%' }}
           />
           <div className="demo-component-row">
-            <AppButton onClick={() => setActivityStatus('thinking')}>
+            <AppButton onClick={() => setRunStatus('thinking')}>
               {t('Show thinking')}
             </AppButton>
-            <AppButton onClick={() => setActivityStatus('awaiting-approval')}>
+            <AppButton onClick={() => setRunStatus('awaiting-approval')}>
               {t('Show waiting for approval')}
             </AppButton>
-            <AppButton onClick={() => setActivityStatus('completed')}>
+            <AppButton onClick={() => setRunStatus('completed')}>
               {t('Show completed')}
             </AppButton>
-            <AppButton onClick={() => setActivityStatus('error')}>
+            <AppButton onClick={() => setRunStatus('error')}>
               {t('Show error')}
             </AppButton>
           </div>
@@ -254,7 +225,6 @@ export function AiInteractionPage() {
             status={toolStatus}
             title={t('Save meeting summary')}
           />
-          <AppButton onClick={resetTool}>{t('Reset approval')}</AppButton>
         </DemoPreview>
         <p className="demo-note">
           {t(
@@ -275,7 +245,7 @@ export function AiInteractionPage() {
             status={reviewStatus}
             title={t('Review generated file changes')}
           />
-          <AppButton onClick={resetReview}>{t('Reset review')}</AppButton>
+          <AppButton onClick={resetWorkflow}>{t('Reset workflow')}</AppButton>
         </DemoPreview>
         <p className="demo-note">
           {t(

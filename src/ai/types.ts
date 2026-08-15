@@ -1,13 +1,17 @@
 import type { CSSProperties, HTMLAttributes, ReactNode } from 'react'
 import type { Components } from 'react-markdown'
 
-export type AppAiRequestStatus =
+export type AppAiRunStatus =
   | 'idle'
-  | 'submitting'
-  | 'streaming'
+  | 'thinking'
+  | 'responding'
+  | 'searching'
+  | 'using-tool'
   | 'awaiting-approval'
+  | 'awaiting-review'
   | 'completed'
   | 'error'
+  | 'canceled'
 
 export type AppAiComposerAppearance = 'surface' | 'embedded'
 
@@ -29,7 +33,8 @@ export interface AppAiComposerProps {
   value?: string
   defaultValue?: string
   onValueChange?: (value: string) => void
-  status?: AppAiRequestStatus
+  status?: AppAiRunStatus
+  showStatus?: boolean
   onCancel?: () => void
   clearOnSubmit?: boolean
   disabled?: boolean
@@ -89,42 +94,22 @@ export interface AppAiMessageActionsProps extends Omit<
   children?: ReactNode
 }
 
-export type AppAiActivityStatus =
-  | 'thinking'
-  | 'streaming'
-  | 'searching'
-  | 'tool'
-  | 'awaiting-approval'
-  | 'completed'
-  | 'error'
-
-export type AppAiActivityStepStatus =
-  'pending' | 'active' | 'completed' | 'error'
-
-export interface AppAiActivityStep {
-  id: string
-  label: ReactNode
-  detail?: ReactNode
-  status: AppAiActivityStepStatus
-}
-
-export interface AppAiActivityProps extends Omit<
+export interface AppAiStatusProps extends Omit<
   HTMLAttributes<HTMLElement>,
   'title'
 > {
-  status: AppAiActivityStatus
+  status: AppAiRunStatus
   label?: ReactNode
   detail?: ReactNode
-  steps?: readonly AppAiActivityStep[]
   action?: ReactNode
   ariaLabel?: string
-  size?: 'compact' | 'standard'
+  appearance?: 'inline' | 'card'
   className?: string
   style?: CSSProperties
 }
 
 export type AppToolApprovalStatus =
-  'pending' | 'approved' | 'denied' | 'running' | 'completed' | 'error'
+  'pending' | 'running' | 'completed' | 'rejected' | 'error'
 
 export interface AppToolApprovalCardProps {
   title: ReactNode

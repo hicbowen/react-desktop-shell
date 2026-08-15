@@ -114,7 +114,7 @@ describe('AppQuickAsk', () => {
     expect(onSubmit).not.toHaveBeenCalled()
   })
 
-  it('renders streaming content and exposes an explicit stop action', () => {
+  it('renders responding content and exposes an explicit stop action', () => {
     const onCancel = vi.fn()
     act(() =>
       root.render(
@@ -125,7 +125,7 @@ describe('AppQuickAsk', () => {
           onOpenChange={() => undefined}
           onSubmit={() => undefined}
           open
-          status="streaming"
+          status="responding"
         />,
       ),
     )
@@ -137,6 +137,9 @@ describe('AppQuickAsk', () => {
       document.body.querySelector('.app-quick-ask__response-header')
         ?.textContent,
     ).toContain('Responding')
+    expect(
+      document.body.querySelector('.app-ai-composer__status'),
+    ).toBeNull()
     expect(
       document.body.querySelector('.app-quick-ask__answer-actions')
         ?.textContent,

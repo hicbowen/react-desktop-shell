@@ -5,7 +5,7 @@ import {
   AppConversationThread,
   AppQuickAsk,
   formatAppShortcut,
-  type AppAiRequestStatus,
+  type AppAiRunStatus,
   type AppCommand,
 } from '../../../../src'
 import { MessageSquare, Sparkles } from '../../components/fluentIcons'
@@ -25,7 +25,7 @@ export function QuickAskPage() {
   const [oneShotDraft, setOneShotDraft] = useState('')
   const [oneShotAnswerText, setOneShotAnswer] = useState<string | null>(null)
   const [oneShotStatus, setOneShotStatus] =
-    useState<AppAiRequestStatus>('idle')
+    useState<AppAiRunStatus>('idle')
   const oneShotTimerRef = useRef<number | null>(null)
 
   const [chatOpen, setChatOpen] = useState(false)
@@ -33,7 +33,7 @@ export function QuickAskPage() {
   const [chatMessages, setChatMessages] = useState(() =>
     cloneTextMessages(initialChatMessages),
   )
-  const [chatStatus, setChatStatus] = useState<AppAiRequestStatus>('idle')
+  const [chatStatus, setChatStatus] = useState<AppAiRunStatus>('idle')
   const chatTimerRef = useRef<number | null>(null)
   const chatMessageIdRef = useRef(2)
 
@@ -59,7 +59,7 @@ export function QuickAskPage() {
     stopOneShotTimer()
     void prompt
     setOneShotAnswer(null)
-    setOneShotStatus('submitting')
+    setOneShotStatus('thinking')
     oneShotTimerRef.current = window.setTimeout(() => {
       oneShotTimerRef.current = null
       setOneShotAnswer(
@@ -106,7 +106,7 @@ export function QuickAskPage() {
       ...current,
       { id: nextChatMessageId('user'), role: 'user', text: prompt },
     ])
-    setChatStatus('submitting')
+    setChatStatus('thinking')
     chatTimerRef.current = window.setTimeout(() => {
       chatTimerRef.current = null
       setChatMessages((current) => [

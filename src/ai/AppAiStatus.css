@@ -1,0 +1,54 @@
+.app-ai-status {
+  min-width: 0;
+  color: var(--app-shell-text-color, #1f1f1f);
+}
+
+.app-ai-status__header {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.app-ai-status__indicator {
+  display: inline-flex;
+  flex: 0 0 auto;
+}
+
+.app-ai-status__indicator .app-status-badge {
+  max-width: 100%;
+}
+
+.app-ai-status__header strong {
+  min-width: 0;
+  overflow: hidden;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.35;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.app-ai-status__action {
+  margin-inline-start: auto;
+  flex: 0 0 auto;
+}
+
+.app-ai-status__detail {
+  color: var(--app-shell-muted-text-color, #707070);
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.app-ai-status--inline {
+  padding: 2px 0;
+}
+
+.app-ai-status--card {
+  display: grid;
+  gap: 7px;
+  padding: 10px 12px;
+  background: var(--app-shell-card-bg, #fff);
+  border: 1px solid var(--app-shell-border-color, rgb(0 0 0 / 10%));
+  border-radius: 7px;
+}
