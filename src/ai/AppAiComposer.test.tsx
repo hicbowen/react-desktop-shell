@@ -110,6 +110,15 @@ describe('AppAiComposer', () => {
     expect(onCancel).toHaveBeenCalledOnce()
   })
 
+  it('does not render a stop action when responding cannot be canceled', () => {
+    renderComposer({ status: 'responding' })
+
+    expect(
+      document.body.querySelector('button[aria-label="Stop generating"]'),
+    ).toBeNull()
+    expect(host.querySelector('.app-ai-composer__status')).not.toBeNull()
+  })
+
   it('disables submission while waiting for approval', () => {
     const onSubmit = vi.fn()
     const textarea = renderComposer({
@@ -146,6 +155,7 @@ describe('AppAiComposer', () => {
       header: <span>Attached context</span>,
       maxRows: 6,
       minRows: 3,
+      onCancel: () => undefined,
       status: 'responding',
       submitIcon: <span data-testid="submit-icon" />,
       toolbarEnd: <button type="button">Model</button>,

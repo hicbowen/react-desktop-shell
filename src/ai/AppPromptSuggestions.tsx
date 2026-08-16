@@ -1,3 +1,4 @@
+import { useId } from 'react'
 import { useAppLocale } from '../localization/useAppLocale'
 import type { AppPromptSuggestion, AppPromptSuggestionsProps } from './types'
 import './AppPromptSuggestions.css'
@@ -14,6 +15,7 @@ export function AppPromptSuggestions({
   ...rest
 }: AppPromptSuggestionsProps) {
   const { messages } = useAppLocale()
+  const instanceId = useId()
   const classes = [
     'app-prompt-suggestions',
     `app-prompt-suggestions--${size}`,
@@ -36,7 +38,7 @@ export function AppPromptSuggestions({
           <button
             aria-describedby={
               item.description
-                ? `prompt-suggestion-${item.id}-description`
+                ? `prompt-suggestion-${instanceId}-${item.id}-description`
                 : undefined
             }
             className="app-prompt-suggestions__item"
@@ -57,7 +59,7 @@ export function AppPromptSuggestions({
               {item.description ? (
                 <span
                   className="app-prompt-suggestions__description"
-                  id={`prompt-suggestion-${item.id}-description`}
+                  id={`prompt-suggestion-${instanceId}-${item.id}-description`}
                 >
                   {item.description}
                 </span>

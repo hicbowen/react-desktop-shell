@@ -56,23 +56,6 @@ export const AppAiComposer = forwardRef<
         ? <Sparkle16Regular />
         : null
       : leadingIcon
-  const statusText =
-    status === 'thinking'
-      ? text.thinking
-      : status === 'responding'
-        ? text.responding
-        : status === 'searching'
-          ? text.searching
-          : status === 'using-tool'
-            ? text.usingTool
-            : status === 'awaiting-approval'
-              ? text.awaitingApproval
-              : status === 'awaiting-review'
-                ? text.awaitingReview
-                : status === 'error'
-                  ? text.failed
-                  : text.response
-
   const setInputRef = (node: HTMLTextAreaElement | null) => {
     inputRef.current = node
     if (typeof forwardedRef === 'function') forwardedRef(node)
@@ -164,18 +147,16 @@ export const AppAiComposer = forwardRef<
         ) : null}
         <div className="app-ai-composer__toolbar-end">
           {toolbarEnd}
-          {busy ? (
+          {busy && onCancel ? (
             <AppIconButton
-              appearance={onCancel ? 'standard' : 'subtle'}
-              ariaLabel={onCancel ? text.stop : statusText}
+              appearance="standard"
+              ariaLabel={text.stop}
               className="app-ai-composer__submit"
-              disabled={!onCancel}
               icon={cancelIcon ?? <Stop16Regular />}
-              loading={!onCancel}
               onClick={onCancel}
               shape="circular"
             />
-          ) : (
+          ) : busy ? null : (
             <AppIconButton
               appearance="primary"
               ariaLabel={text.send}

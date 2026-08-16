@@ -105,4 +105,37 @@ describe('AppPromptSuggestions', () => {
     ).not.toBeNull()
     expect(host.querySelectorAll('button:disabled')).toHaveLength(2)
   })
+
+  it('uses unique description IDs for multiple suggestion groups', () => {
+    act(() =>
+      root.render(
+        <>
+          <AppPromptSuggestions
+            items={items.slice(0, 1)}
+            onSelect={() => undefined}
+          />
+          <AppPromptSuggestions
+            items={items.slice(0, 1)}
+            onSelect={() => undefined}
+          />
+        </>,
+      ),
+    )
+
+    const buttons = Array.from(
+      host.querySelectorAll<HTMLButtonElement>(
+        '[data-suggestion-id="summarize"]',
+      ),
+    )
+    const descriptionIds = buttons.map((button) =>
+      button.getAttribute('aria-describedby'),
+    )
+
+    expect(descriptionIds).toHaveLength(2)
+    expect(new Set(descriptionIds).size).toBe(2)
+    descriptionIds.forEach((descriptionId) => {
+      expect(descriptionId).not.toBeNull()
+      expect(document.getElementById(descriptionId!)).not.toBeNull()
+    })
+  })
 })
