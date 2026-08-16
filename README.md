@@ -326,8 +326,8 @@ according to the host workflow.
 
 ### AI building blocks
 
-`AppAiComposer`, `AppAiMarkdown`, `AppAiStatus`, `AppAiMessageActions`,
-`AppPromptSuggestions`, `AppToolApprovalCard`, and `AppChangeReviewCard` are host-controlled AI
+`AppAiComposer`, `AppAiMarkdown`, `AppAiRunIndicator`, `AppAiMessageActions`,
+`AppPromptSuggestions`, `AppToolCallCard`, and `AppChangeReviewCard` are host-controlled AI
 building blocks. They can be placed in any page or conversation and do not
 depend on `AppQuickAsk`.
 
@@ -382,7 +382,7 @@ place the time after actions, while user messages place it before them.
 outside a conversation message.
 
 Use `AppConversationThread` for the current session transcript. Place
-`AppToolApprovalCard` entries in the thread when a tool needs explicit user
+`AppToolCallCard` entries in the thread when a tool needs explicit user
 approval; the host remains responsible for storing messages and resuming or
 rejecting the pending tool call.
 
@@ -414,17 +414,17 @@ controls:
   header={attachedFiles}
   onSubmit={sendPrompt}
   onValueChange={setDraft}
-  status={status}
+  runStatus={runStatus}
   toolbarStart={attachmentActions}
   toolbarEnd={modelAndVoiceActions}
   value={draft}
 />
 ```
 
-When `status` is not `idle`, the composer renders a compact status item in the
-left side of its toolbar. Set `showStatus={false}` when a surrounding surface
-already owns the status presentation, as `AppQuickAsk` does in its response
-area.
+When `runStatus` is not `idle`, the composer renders a compact status item in
+the left side of its toolbar. Set `showRunStatus={false}` when a surrounding
+surface already owns the status presentation, as `AppQuickAsk` does in its
+response area.
 
 Use `appearance="embedded"` when the parent already owns the border, elevation,
 and surrounding surface. `AppQuickAsk` uses this mode internally so its input
@@ -475,13 +475,13 @@ Pass `components` to replace selected Markdown elements, `copyCode={false}` to
 hide code-copy actions, `highlightCode={false}` to use plain code blocks, or
 `onCopyCode` when the host wants to provide its own clipboard integration.
 
-Use `AppAiStatus` to show the current run state without turning the conversation
-into a progress dashboard. The host owns the `AppAiRunStatus` value and updates
-it as the request, tool approval, and review flow changes; the component only
-renders the compact feedback:
+Use `AppAiRunIndicator` to show the current run state without turning the
+conversation into a progress dashboard. `AppAiRunStatus` describes one run,
+not the conversation or an individual message. The indicator only renders that
+compact feedback:
 
 ```tsx
-<AppAiStatus
+<AppAiRunIndicator
   appearance="inline"
   status={run.status}
   detail={run.detail}
@@ -493,11 +493,14 @@ renders the compact feedback:
 />
 ```
 
-`AppAiComposer` accepts the same `AppAiRunStatus` and uses it to prevent a new
-prompt while the run is busy or waiting for approval/review. Keep detailed
-approval and change state in `AppToolApprovalCard` and
-`AppChangeReviewCard`; `completed` means the current run is finished, not that
-the conversation has been closed.
+`AppAiComposer` accepts the same value through `runStatus` and uses it to
+prevent a new prompt while the run is busy or waiting for approval/review.
+Keep the lifecycle of each tool call in `AppToolCallCard` and each proposed
+change in `AppChangeReviewCard`. In a workflow, keep one host-owned phase and
+derive these component statuses from it instead of synchronizing several
+independent state variables. `completed` means the current run is finished, not
+that the conversation has been closed. Conversation messages remain historical
+content and do not carry this transient run state.
 
 Use `AppChangeReviewCard` after a tool has prepared concrete file or code
 changes. Keep the final write operation in the host and let the card handle
@@ -520,16 +523,16 @@ review details, Diff visibility, and the apply/reject decision:
   onSubmit={sendPrompt}
   onValueChange={setDraft}
   open={open}
-  status={status}
+  runStatus={runStatus}
   value={draft}
 />
 ```
 
-Tool approval is an ordinary controlled thread entry, so hiding and reopening
-the surface does not silently approve or reject it:
+A tool call is an ordinary controlled thread entry, so hiding and reopening
+the surface does not silently approve or reject an awaiting call:
 
 ```tsx
-<AppToolApprovalCard
+<AppToolCallCard
   title="Save meeting summary"
   description="This writes one new file."
   details="Documents/meeting-summary.md"

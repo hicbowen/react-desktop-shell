@@ -9,14 +9,14 @@ import {
   AppConversationViewport,
   AppDropDownButton,
   AppIconButton,
-  AppToolApprovalCard,
+  AppToolCallCard,
   AppToggleButton,
   type AppAiRunStatus,
   type AppAiMessageFeedback,
   type AppChangeReviewFile,
   type AppChangeReviewStatus,
   type AppConversationMessageItem,
-  type AppToolApprovalStatus,
+  type AppToolCallStatus,
 } from '../../../../src'
 import {
   ArrowUp,
@@ -34,11 +34,44 @@ import {
   type DemoTextMessage,
 } from './aiFixtures'
 
+type WorkflowPhase =
+  | 'awaiting-tool-approval'
+  | 'running-tool'
+  | 'awaiting-review'
+  | 'applying-changes'
+  | 'completed'
+  | 'tool-rejected'
+  | 'review-rejected'
+
+const workflowRunStatuses: Record<WorkflowPhase, AppAiRunStatus> = {
+  'awaiting-tool-approval': 'awaiting-approval',
+  'running-tool': 'using-tool',
+  'awaiting-review': 'awaiting-review',
+  'applying-changes': 'using-tool',
+  completed: 'completed',
+  'tool-rejected': 'canceled',
+  'review-rejected': 'canceled',
+}
+
+function getToolCallStatus(phase: WorkflowPhase): AppToolCallStatus {
+  if (phase === 'awaiting-tool-approval') return 'awaiting-approval'
+  if (phase === 'running-tool') return 'running'
+  if (phase === 'tool-rejected') return 'rejected'
+  return 'completed'
+}
+
+function getReviewStatus(phase: WorkflowPhase): AppChangeReviewStatus | null {
+  if (phase === 'awaiting-review') return 'awaiting-review'
+  if (phase === 'applying-changes') return 'applying'
+  if (phase === 'completed') return 'applied'
+  if (phase === 'review-rejected') return 'rejected'
+  return null
+}
+
 export function ConversationPage() {
   const t = useDemoCopy()
   const [draft, setDraft] = useState('')
-  const [runStatus, setRunStatus] =
-    useState<AppAiRunStatus>('awaiting-approval')
+  const [chatRunStatus, setChatRunStatus] = useState<AppAiRunStatus>('idle')
   const [feedback, setFeedback] = useState<
     Record<string, AppAiMessageFeedback>
   >({})
@@ -53,9 +86,13 @@ export function ConversationPage() {
   const [messages, setMessages] = useState(() =>
     cloneTextMessages(initialConversationMessages),
   )
-  const [toolStatus, setToolStatus] = useState<AppToolApprovalStatus>('pending')
-  const [reviewStatus, setReviewStatus] =
-    useState<AppChangeReviewStatus>('pending')
+  const [workflowPhase, setWorkflowPhase] = useState<WorkflowPhase>(
+    'awaiting-tool-approval',
+  )
+  const workflowRunStatus = workflowRunStatuses[workflowPhase]
+  const runStatus = chatRunStatus === 'idle' ? workflowRunStatus : chatRunStatus
+  const toolCallStatus = getToolCallStatus(workflowPhase)
+  const reviewStatus = getReviewStatus(workflowPhase)
   const messageIdRef = useRef(2)
   const timerRef = useRef<number | null>(null)
   const workflowTimerRef = useRef<number | null>(null)
@@ -92,7 +129,7 @@ export function ConversationPage() {
         timestamp: 'Just now',
       },
     ])
-    setRunStatus('thinking')
+    setChatRunStatus('thinking')
     timerRef.current = window.setTimeout(() => {
       timerRef.current = null
       setMessages((current) => [
@@ -104,7 +141,7 @@ export function ConversationPage() {
           timestamp: 'Just now',
         },
       ])
-      setRunStatus('completed')
+      setChatRunStatus('completed')
     }, 520)
   }
 
@@ -119,7 +156,7 @@ export function ConversationPage() {
         timestamp: 'Just now',
       },
     ])
-    setRunStatus('canceled')
+    setChatRunStatus('canceled')
   }
 
   const addResponse = () => {
@@ -154,43 +191,37 @@ export function ConversationPage() {
 
   const approveWorkflowTool = () => {
     stopWorkflowTimer()
-    setToolStatus('running')
-    setRunStatus('using-tool')
+    setWorkflowPhase('running-tool')
     workflowTimerRef.current = window.setTimeout(() => {
       workflowTimerRef.current = null
-      setToolStatus('completed')
-      setRunStatus('awaiting-review')
+      setWorkflowPhase('awaiting-review')
     }, 720)
   }
 
   const rejectWorkflowTool = () => {
     stopWorkflowTimer()
-    setToolStatus('rejected')
-    setRunStatus('canceled')
+    setWorkflowPhase('tool-rejected')
   }
 
   const applyWorkflowReview = () => {
     stopWorkflowTimer()
-    setReviewStatus('applying')
-    setRunStatus('using-tool')
+    setWorkflowPhase('applying-changes')
     workflowTimerRef.current = window.setTimeout(() => {
       workflowTimerRef.current = null
-      setReviewStatus('applied')
-      setRunStatus('completed')
+      setWorkflowPhase('completed')
     }, 520)
   }
 
   const rejectWorkflowReview = () => {
     stopWorkflowTimer()
-    setReviewStatus('rejected')
-    setRunStatus('canceled')
+    setWorkflowPhase('review-rejected')
   }
 
   const resetWorkflow = () => {
+    stopTimer()
     stopWorkflowTimer()
-    setToolStatus('pending')
-    setReviewStatus('pending')
-    setRunStatus('awaiting-approval')
+    setChatRunStatus('idle')
+    setWorkflowPhase('awaiting-tool-approval')
   }
 
   const workflowReviewFiles = useMemo<AppChangeReviewFile[]>(
@@ -286,7 +317,7 @@ export function ConversationPage() {
       id: 'conversation-workflow-tool-approval',
       role: 'tool',
       content: (
-        <AppToolApprovalCard
+        <AppToolCallCard
           description={t(
             'This prepares a meeting summary and updates the project README. Existing files are not changed.',
           )}
@@ -295,7 +326,7 @@ export function ConversationPage() {
           )}
           onApprove={approveWorkflowTool}
           onReject={rejectWorkflowTool}
-          status={toolStatus}
+          status={toolCallStatus}
           title={t('Save meeting summary')}
         />
       ),
@@ -305,7 +336,7 @@ export function ConversationPage() {
     },
   ]
 
-  if (toolStatus === 'completed') {
+  if (reviewStatus !== null) {
     workflowMessages.push(
       {
         id: 'conversation-workflow-assistant-2',
@@ -369,7 +400,7 @@ export function ConversationPage() {
     }
   }
 
-  if (toolStatus === 'rejected') {
+  if (toolCallStatus === 'rejected') {
     workflowMessages.push({
       id: 'conversation-workflow-assistant-rejected',
       role: 'assistant',
@@ -431,7 +462,7 @@ export function ConversationPage() {
             onCancel={cancel}
             onSubmit={submit}
             onValueChange={setDraft}
-            status={runStatus}
+            runStatus={runStatus}
             style={{ width: '100%' }}
             submitIcon={<ArrowUp />}
             toolbarEnd={

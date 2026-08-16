@@ -125,7 +125,7 @@ describe('AppQuickAsk', () => {
           onOpenChange={() => undefined}
           onSubmit={() => undefined}
           open
-          status="responding"
+          runStatus="responding"
         />,
       ),
     )
@@ -134,12 +134,10 @@ describe('AppQuickAsk', () => {
       document.body.querySelector('.app-quick-ask__answer')?.textContent,
     ).toContain('Streaming answer')
     expect(
-      document.body.querySelector('.app-quick-ask__response-header')
+      document.body.querySelector('.app-quick-ask__response-status')
         ?.textContent,
     ).toContain('Responding')
-    expect(
-      document.body.querySelector('.app-ai-composer__status'),
-    ).toBeNull()
+    expect(document.body.querySelector('.app-ai-composer__status')).toBeNull()
     expect(
       document.body.querySelector('.app-quick-ask__answer-actions')
         ?.textContent,
@@ -161,7 +159,7 @@ describe('AppQuickAsk', () => {
           onOpenChange={() => undefined}
           onSubmit={onSubmit}
           open
-          status="awaiting-approval"
+          runStatus="awaiting-approval"
         />,
       ),
     )
@@ -194,13 +192,13 @@ describe('AppQuickAsk', () => {
           onOpenChange={() => undefined}
           onSubmit={() => undefined}
           open
-          status="completed"
+          runStatus="completed"
         />,
       ),
     )
 
     expect(
-      document.body.querySelector('.app-quick-ask__response-header'),
+      document.body.querySelector('.app-quick-ask__response-status'),
     ).toBeNull()
     expect(
       document.body
@@ -222,7 +220,7 @@ describe('AppQuickAsk', () => {
             onOpenChange={() => undefined}
             onSubmit={onSubmit}
             open
-            status="completed"
+            runStatus="completed"
           />,
         ),
       )
@@ -290,7 +288,7 @@ describe('AppQuickAsk', () => {
             onOpenChange={() => undefined}
             onSubmit={() => undefined}
             open
-            status="completed"
+            runStatus="completed"
           />,
         ),
       )

@@ -1,11 +1,10 @@
 import { forwardRef, useLayoutEffect, useRef } from 'react'
-import { Sparkle16Regular } from '@fluentui/react-icons/svg/sparkle'
 import { useAppLocale } from '../localization/useAppLocale'
-import { AppProgressRing } from '../progress'
 import { AppScrollArea } from '../scroll-area'
 import { AppSpotlightSurface } from '../spotlight-surface'
 import { AppAiComposer } from '../ai/AppAiComposer'
-import { isAppAiRunBusy } from '../ai/runStatus'
+import { AppAiRunIndicator } from '../ai/AppAiRunIndicator'
+import { isAppAiRunBlocked, isAppAiRunBusy } from '../ai/runStatus'
 import type { AppQuickAskProps } from './types'
 import './AppQuickAsk.css'
 
@@ -20,7 +19,7 @@ export const AppQuickAsk = forwardRef<HTMLTextAreaElement, AppQuickAskProps>(
       value,
       defaultValue = '',
       onValueChange,
-      status = 'idle',
+      runStatus = 'idle',
       answer,
       error,
       answerActions,
@@ -48,14 +47,11 @@ export const AppQuickAsk = forwardRef<HTMLTextAreaElement, AppQuickAskProps>(
     const responseViewportRef = useRef<HTMLDivElement | null>(null)
     const shouldFollowOutputRef = useRef(true)
     const wasOpenRef = useRef(false)
-    const busy = isAppAiRunBusy(status)
+    const busy = isAppAiRunBusy(runStatus)
+    const blocked = isAppAiRunBlocked(runStatus)
     const hasAnswer = answer !== undefined && answer !== null && answer !== ''
-    const showResponse = status !== 'idle' || hasAnswer || error != null
-    const showResponseHeader =
-      isAppAiRunBusy(status) ||
-      status === 'awaiting-approval' ||
-      status === 'awaiting-review' ||
-      status === 'error'
+    const showResponse = runStatus !== 'idle' || hasAnswer || error != null
+    const showResponseHeader = busy || blocked || runStatus === 'error'
 
     useLayoutEffect(() => {
       const opening = open && !wasOpenRef.current
@@ -75,23 +71,6 @@ export const AppQuickAsk = forwardRef<HTMLTextAreaElement, AppQuickAskProps>(
       if (typeof forwardedRef === 'function') forwardedRef(node)
       else if (forwardedRef) forwardedRef.current = node
     }
-    const statusText =
-      status === 'thinking'
-        ? text.thinking
-        : status === 'responding'
-          ? text.responding
-          : status === 'searching'
-            ? text.searching
-            : status === 'using-tool'
-              ? text.usingTool
-              : status === 'awaiting-approval'
-                ? text.awaitingApproval
-                : status === 'awaiting-review'
-                  ? text.awaitingReview
-                  : status === 'error'
-                    ? text.failed
-                    : text.response
-
     return (
       <AppSpotlightSurface
         ariaLabel={ariaLabel ?? text.label}
@@ -123,8 +102,8 @@ export const AppQuickAsk = forwardRef<HTMLTextAreaElement, AppQuickAskProps>(
           onValueChange={onValueChange}
           placeholder={placeholder}
           ref={setInputRef}
-          showStatus={false}
-          status={status}
+          runStatus={runStatus}
+          showRunStatus={false}
           value={value}
         />
 
@@ -140,26 +119,10 @@ export const AppQuickAsk = forwardRef<HTMLTextAreaElement, AppQuickAskProps>(
               .join(' ')}
           >
             {showResponseHeader ? (
-              <div
-                aria-live="polite"
-                className="app-quick-ask__response-header"
-              >
-                {busy ? (
-                  <AppProgressRing
-                    ariaLabel={statusText}
-                    labelPosition="hidden"
-                    size="small"
-                  />
-                ) : (
-                  <span
-                    aria-hidden="true"
-                    className="app-quick-ask__response-icon"
-                  >
-                    <Sparkle16Regular />
-                  </span>
-                )}
-                <span>{statusText}</span>
-              </div>
+              <AppAiRunIndicator
+                className="app-quick-ask__response-status"
+                status={runStatus}
+              />
             ) : null}
             <AppScrollArea
               className="app-quick-ask__response-scroll"
@@ -178,16 +141,16 @@ export const AppQuickAsk = forwardRef<HTMLTextAreaElement, AppQuickAskProps>(
             >
               <div
                 aria-label={responseAriaLabel ?? text.response}
-                aria-live={status === 'completed' ? 'polite' : 'off'}
+                aria-live={runStatus === 'completed' ? 'polite' : 'off'}
                 className={[
                   'app-quick-ask__answer',
-                  status === 'error' ? 'app-quick-ask__answer--error' : '',
+                  runStatus === 'error' ? 'app-quick-ask__answer--error' : '',
                 ]
                   .filter(Boolean)
                   .join(' ')}
-                role={status === 'error' ? 'alert' : 'region'}
+                role={runStatus === 'error' ? 'alert' : 'region'}
               >
-                {status === 'error' ? (
+                {runStatus === 'error' ? (
                   (error ?? text.error)
                 ) : hasAnswer ? (
                   answer
@@ -199,7 +162,7 @@ export const AppQuickAsk = forwardRef<HTMLTextAreaElement, AppQuickAskProps>(
                 ) : null}
               </div>
             </AppScrollArea>
-            {answerActions && (hasAnswer || status === 'error') ? (
+            {answerActions && (hasAnswer || runStatus === 'error') ? (
               <div className="app-quick-ask__answer-actions">
                 {answerActions}
               </div>

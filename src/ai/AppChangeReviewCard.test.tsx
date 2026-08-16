@@ -49,6 +49,9 @@ describe('AppChangeReviewCard', () => {
     )
 
     expect(host.querySelector('[aria-label="Review summary"]')).not.toBeNull()
+    expect(
+      host.querySelector('.app-change-review-card--awaiting-review'),
+    ).not.toBeNull()
     expect(host.querySelector('.app-status-badge--warning')).not.toBeNull()
     expect(host.textContent).toContain('Documents/meeting-summary.md')
     expect(host.textContent).toContain('+8')

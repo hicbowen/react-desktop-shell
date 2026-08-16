@@ -100,7 +100,7 @@ describe('AppAiComposer', () => {
 
   it('exposes a stop action while responding', () => {
     const onCancel = vi.fn()
-    renderComposer({ onCancel, status: 'responding' })
+    renderComposer({ onCancel, runStatus: 'responding' })
     const stop = document.body.querySelector<HTMLButtonElement>(
       'button[aria-label="Stop generating"]',
     )!
@@ -111,7 +111,7 @@ describe('AppAiComposer', () => {
   })
 
   it('does not render a stop action when responding cannot be canceled', () => {
-    renderComposer({ status: 'responding' })
+    renderComposer({ runStatus: 'responding' })
 
     expect(
       document.body.querySelector('button[aria-label="Stop generating"]'),
@@ -124,7 +124,7 @@ describe('AppAiComposer', () => {
     const textarea = renderComposer({
       defaultValue: 'Another prompt',
       onSubmit,
-      status: 'awaiting-approval',
+      runStatus: 'awaiting-approval',
     })
     const send = document.body.querySelector<HTMLButtonElement>(
       'button[aria-label="Send"]',
@@ -156,7 +156,7 @@ describe('AppAiComposer', () => {
       maxRows: 6,
       minRows: 3,
       onCancel: () => undefined,
-      status: 'responding',
+      runStatus: 'responding',
       submitIcon: <span data-testid="submit-icon" />,
       toolbarEnd: <button type="button">Model</button>,
       toolbarStart: <button type="button">Attach</button>,
@@ -186,7 +186,7 @@ describe('AppAiComposer', () => {
   })
 
   it('can hide the internal status when the surrounding surface owns it', () => {
-    renderComposer({ showStatus: false, status: 'responding' })
+    renderComposer({ runStatus: 'responding', showRunStatus: false })
 
     expect(host.querySelector('.app-ai-composer__status')).toBeNull()
   })

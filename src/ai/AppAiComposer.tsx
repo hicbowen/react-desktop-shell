@@ -5,7 +5,7 @@ import { Stop16Regular } from '@fluentui/react-icons/svg/stop'
 import { AppIconButton } from '../button'
 import { useAppLocale } from '../localization/useAppLocale'
 import { AppTextArea } from '../text-input'
-import { AppAiStatus } from './AppAiStatus'
+import { AppAiRunIndicator } from './AppAiRunIndicator'
 import { isAppAiRunBlocked, isAppAiRunBusy } from './runStatus'
 import type { AppAiComposerProps } from './types'
 import './AppAiComposer.css'
@@ -30,8 +30,8 @@ export const AppAiComposer = forwardRef<
     onSubmit,
     onValueChange,
     placeholder,
-    showStatus = true,
-    status = 'idle',
+    showRunStatus = true,
+    runStatus = 'idle',
     style,
     submitIcon,
     toolbarAriaLabel,
@@ -48,8 +48,8 @@ export const AppAiComposer = forwardRef<
   const inputRef = useRef<HTMLTextAreaElement | null>(null)
   const composingRef = useRef(false)
   const currentValue = value ?? internalValue
-  const busy = isAppAiRunBusy(status)
-  const blocked = isAppAiRunBlocked(status)
+  const busy = isAppAiRunBusy(runStatus)
+  const blocked = isAppAiRunBlocked(runStatus)
   const resolvedLeadingIcon =
     leadingIcon === undefined
       ? appearance === 'embedded'
@@ -134,13 +134,13 @@ export const AppAiComposer = forwardRef<
         className="app-ai-composer__toolbar"
         role="toolbar"
       >
-        {toolbarStart || (showStatus && status !== 'idle') ? (
+        {toolbarStart || (showRunStatus && runStatus !== 'idle') ? (
           <div className="app-ai-composer__toolbar-start">
             {toolbarStart}
-            {showStatus && status !== 'idle' ? (
-              <AppAiStatus
+            {showRunStatus && runStatus !== 'idle' ? (
+              <AppAiRunIndicator
                 className="app-ai-composer__status"
-                status={status}
+                status={runStatus}
               />
             ) : null}
           </div>

@@ -2,25 +2,25 @@ import { useId } from 'react'
 import { AppButton } from '../button'
 import { useAppLocale } from '../localization/useAppLocale'
 import { AppStatusBadge } from '../progress'
-import type { AppToolApprovalCardProps, AppToolApprovalStatus } from './types'
-import './AppToolApprovalCard.css'
+import type { AppToolCallCardProps, AppToolCallStatus } from './types'
+import './AppToolCallCard.css'
 
 const badgeStatus: Record<
-  AppToolApprovalStatus,
+  AppToolCallStatus,
   'neutral' | 'info' | 'success' | 'warning' | 'danger'
 > = {
-  pending: 'warning',
+  'awaiting-approval': 'warning',
   rejected: 'neutral',
   running: 'info',
   completed: 'success',
   error: 'danger',
 }
 
-export function AppToolApprovalCard({
+export function AppToolCallCard({
   title,
   description,
   details,
-  status = 'pending',
+  status = 'awaiting-approval',
   danger = false,
   approveText,
   rejectText,
@@ -28,49 +28,49 @@ export function AppToolApprovalCard({
   onReject,
   className,
   style,
-}: AppToolApprovalCardProps) {
+}: AppToolCallCardProps) {
   const { messages } = useAppLocale()
   const text = messages.ai
   const titleId = useId()
-  const statusLabels: Record<AppToolApprovalStatus, string> = {
-    pending: text.approvalRequired,
+  const statusLabels: Record<AppToolCallStatus, string> = {
+    'awaiting-approval': text.approvalRequired,
     rejected: text.rejected,
     running: text.running,
     completed: text.completed,
     error: text.toolFailed,
   }
-  const pending = status === 'pending'
+  const awaitingApproval = status === 'awaiting-approval'
 
   return (
     <section
       aria-labelledby={titleId}
       className={[
-        'app-tool-approval-card',
-        danger ? 'app-tool-approval-card--danger' : '',
+        'app-tool-call-card',
+        danger ? 'app-tool-call-card--danger' : '',
         className,
       ]
         .filter(Boolean)
         .join(' ')}
       style={style}
     >
-      <div className="app-tool-approval-card__header">
+      <div className="app-tool-call-card__header">
         <strong id={titleId}>{title}</strong>
         <AppStatusBadge
           marker="dot"
           size="small"
-          status={danger && pending ? 'danger' : badgeStatus[status]}
+          status={danger && awaitingApproval ? 'danger' : badgeStatus[status]}
         >
           {statusLabels[status]}
         </AppStatusBadge>
       </div>
       {description ? (
-        <div className="app-tool-approval-card__description">{description}</div>
+        <div className="app-tool-call-card__description">{description}</div>
       ) : null}
       {details ? (
-        <div className="app-tool-approval-card__details">{details}</div>
+        <div className="app-tool-call-card__details">{details}</div>
       ) : null}
-      {pending ? (
-        <div className="app-tool-approval-card__actions">
+      {awaitingApproval ? (
+        <div className="app-tool-call-card__actions">
           <AppButton disabled={!onReject} onClick={onReject} size="compact">
             {rejectText ?? text.reject}
           </AppButton>

@@ -2,7 +2,6 @@ import { AppAiMarkdown } from '../../../../src'
 import type {
   AppConversationMessageItem,
   AppConversationMessageRole,
-  AppToolApprovalStatus,
 } from '../../../../src'
 
 export interface DemoTextMessage {
@@ -12,14 +11,6 @@ export interface DemoTextMessage {
   timestamp?: string
   timestampDateTime?: string
 }
-
-export interface DemoToolMessage {
-  id: string
-  role: 'tool'
-  status: AppToolApprovalStatus
-}
-
-export type DemoMessage = DemoTextMessage | DemoToolMessage
 
 export const initialChatMessages: DemoTextMessage[] = [
   {
@@ -60,15 +51,6 @@ export const initialConversationMessages: DemoTextMessage[] = [
     timestamp: '10:31',
     timestampDateTime: '2026-08-13T10:31:00+08:00',
   },
-]
-
-export const initialApprovalMessages: DemoMessage[] = [
-  {
-    id: 'approval-assistant-1',
-    role: 'assistant',
-    text: 'The assistant needs confirmation before it can save the meeting summary.',
-  },
-  { id: 'approval-tool-1', role: 'tool', status: 'pending' },
 ]
 
 export function cloneTextMessages(

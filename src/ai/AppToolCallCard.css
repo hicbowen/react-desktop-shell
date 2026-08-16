@@ -1,4 +1,4 @@
-.app-tool-approval-card {
+.app-tool-call-card {
   width: 100%;
   min-width: 0;
   box-sizing: border-box;
@@ -8,7 +8,7 @@
   border-radius: 7px;
 }
 
-.app-tool-approval-card--danger {
+.app-tool-call-card--danger {
   border-color: color-mix(
     in srgb,
     var(--app-shell-danger-bg, #ef4444) 38%,
@@ -16,7 +16,7 @@
   );
 }
 
-.app-tool-approval-card__header {
+.app-tool-call-card__header {
   min-height: 38px;
   padding: 0 11px;
   display: flex;
@@ -26,18 +26,18 @@
   font-size: 13px;
 }
 
-.app-tool-approval-card__header strong {
+.app-tool-call-card__header strong {
   min-width: 0;
 }
 
-.app-tool-approval-card__description {
+.app-tool-call-card__description {
   padding: 0 11px 9px;
   color: var(--app-shell-muted-text-color, #707070);
   font-size: 12px;
   line-height: 1.5;
 }
 
-.app-tool-approval-card__details {
+.app-tool-call-card__details {
   margin: 0 11px 10px;
   padding: 8px 9px;
   overflow: auto;
@@ -48,7 +48,7 @@
   font-size: 12px;
 }
 
-.app-tool-approval-card__actions {
+.app-tool-call-card__actions {
   min-height: 42px;
   padding: 5px 8px;
   display: flex;

@@ -8,7 +8,7 @@ export interface AppQuickAskProps {
   value?: string
   defaultValue?: string
   onValueChange?: (value: string) => void
-  status?: AppAiRunStatus
+  runStatus?: AppAiRunStatus
   answer?: ReactNode
   error?: ReactNode
   answerActions?: ReactNode

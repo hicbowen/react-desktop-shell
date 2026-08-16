@@ -13,7 +13,7 @@ const badgeStatuses: Record<
   AppChangeReviewStatus,
   'neutral' | 'info' | 'success' | 'warning' | 'danger'
 > = {
-  pending: 'warning',
+  'awaiting-review': 'warning',
   applying: 'info',
   applied: 'success',
   rejected: 'neutral',
@@ -34,7 +34,7 @@ export function AppChangeReviewCard({
   onReject,
   rejectText,
   size = 'standard',
-  status = 'pending',
+  status = 'awaiting-review',
   style,
   title,
   ...rest
@@ -45,9 +45,9 @@ export function AppChangeReviewCard({
   const [internalExpanded, setInternalExpanded] = useState(defaultExpanded)
   const isExpanded = expanded ?? internalExpanded
   const hasDiff = files.some((file) => file.diff != null)
-  const canAct = status === 'pending' || status === 'error'
+  const canAct = status === 'awaiting-review' || status === 'error'
   const statusLabels: Record<AppChangeReviewStatus, string> = {
-    pending: text.pending,
+    'awaiting-review': text.pending,
     applying: text.applying,
     applied: text.applied,
     rejected: text.rejected,

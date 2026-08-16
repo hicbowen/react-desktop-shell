@@ -3,9 +3,9 @@
 import { act } from 'react'
 import { createRoot, type Root } from 'react-dom/client'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
-import { AppAiStatus } from './AppAiStatus'
+import { AppAiRunIndicator } from './AppAiRunIndicator'
 
-describe('AppAiStatus', () => {
+describe('AppAiRunIndicator', () => {
   let host: HTMLDivElement
   let root: Root
 
@@ -26,7 +26,7 @@ describe('AppAiStatus', () => {
   it('renders a localized active status', () => {
     act(() =>
       root.render(
-        <AppAiStatus
+        <AppAiRunIndicator
           detail="Searching the current workspace."
           status="searching"
         />,
@@ -34,7 +34,9 @@ describe('AppAiStatus', () => {
     )
 
     expect(host.querySelector('[aria-label="Searching…"]')).not.toBeNull()
-    expect(host.querySelector('.app-ai-status--searching')).not.toBeNull()
+    expect(
+      host.querySelector('.app-ai-run-indicator--searching'),
+    ).not.toBeNull()
     expect(host.querySelector('.app-progress-ring')).not.toBeNull()
     expect(host.textContent).toContain('Searching the current workspace.')
   })
@@ -42,7 +44,7 @@ describe('AppAiStatus', () => {
   it('renders a quiet terminal status and an optional action', () => {
     act(() =>
       root.render(
-        <AppAiStatus
+        <AppAiRunIndicator
           action={<button type="button">Review</button>}
           appearance="card"
           ariaLabel="AI run status"
@@ -55,14 +57,14 @@ describe('AppAiStatus', () => {
     expect(host.querySelector('[aria-label="AI run status"]')).not.toBeNull()
     expect(host.querySelector('.app-status-badge--warning')).not.toBeNull()
     expect(host.querySelector('.app-progress-ring')).toBeNull()
-    expect(host.querySelector('.app-ai-status--card')).not.toBeNull()
+    expect(host.querySelector('.app-ai-run-indicator--card')).not.toBeNull()
     expect(host.textContent).toContain('Waiting for confirmation')
     expect(host.textContent).toContain('Review')
   })
 
   it('does not render an idle status', () => {
-    act(() => root.render(<AppAiStatus status="idle" />))
+    act(() => root.render(<AppAiRunIndicator status="idle" />))
 
-    expect(host.querySelector('.app-ai-status')).toBeNull()
+    expect(host.querySelector('.app-ai-run-indicator')).toBeNull()
   })
 })

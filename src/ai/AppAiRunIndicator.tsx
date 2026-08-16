@@ -1,8 +1,8 @@
 import { AppProgressRing, AppStatusBadge } from '../progress'
 import { useAppLocale } from '../localization/useAppLocale'
 import { isAppAiRunBusy } from './runStatus'
-import type { AppAiRunStatus, AppAiStatusProps } from './types'
-import './AppAiStatus.css'
+import type { AppAiRunIndicatorProps, AppAiRunStatus } from './types'
+import './AppAiRunIndicator.css'
 
 const badgeStatuses: Record<
   AppAiRunStatus,
@@ -39,7 +39,7 @@ function getDefaultLabel(
   return labels[status]
 }
 
-export function AppAiStatus({
+export function AppAiRunIndicator({
   action,
   ariaLabel,
   appearance = 'inline',
@@ -49,16 +49,16 @@ export function AppAiStatus({
   status,
   style,
   ...rest
-}: AppAiStatusProps) {
+}: AppAiRunIndicatorProps) {
   const { messages } = useAppLocale()
   if (status === 'idle') return null
 
   const resolvedLabel = label ?? getDefaultLabel(status, messages.ai)
   const busy = isAppAiRunBusy(status)
   const classes = [
-    'app-ai-status',
-    `app-ai-status--${status}`,
-    `app-ai-status--${appearance}`,
+    'app-ai-run-indicator',
+    `app-ai-run-indicator--${status}`,
+    `app-ai-run-indicator--${appearance}`,
     className,
   ]
     .filter(Boolean)
@@ -76,8 +76,8 @@ export function AppAiStatus({
       role="status"
       style={style}
     >
-      <div className="app-ai-status__header">
-        <div className="app-ai-status__indicator">
+      <div className="app-ai-run-indicator__header">
+        <div className="app-ai-run-indicator__indicator">
           {busy ? (
             <AppProgressRing
               ariaLabel={
@@ -99,13 +99,15 @@ export function AppAiStatus({
           )}
         </div>
         {busy ? <strong>{resolvedLabel}</strong> : null}
-        {action ? <div className="app-ai-status__action">{action}</div> : null}
+        {action ? (
+          <div className="app-ai-run-indicator__action">{action}</div>
+        ) : null}
       </div>
       {detail != null ? (
-        <div className="app-ai-status__detail">{detail}</div>
+        <div className="app-ai-run-indicator__detail">{detail}</div>
       ) : null}
     </section>
   )
 }
 
-export type { AppAiRunStatus, AppAiStatusProps }
+export type { AppAiRunIndicatorProps, AppAiRunStatus }

@@ -1,6 +1,7 @@
 import type { CSSProperties, HTMLAttributes, ReactNode } from 'react'
 import type { Components } from 'react-markdown'
 
+/** The lifecycle of the current AI run, not the conversation or a message. */
 export type AppAiRunStatus =
   | 'idle'
   | 'thinking'
@@ -33,8 +34,8 @@ export interface AppAiComposerProps {
   value?: string
   defaultValue?: string
   onValueChange?: (value: string) => void
-  status?: AppAiRunStatus
-  showStatus?: boolean
+  runStatus?: AppAiRunStatus
+  showRunStatus?: boolean
   onCancel?: () => void
   clearOnSubmit?: boolean
   disabled?: boolean
@@ -94,7 +95,7 @@ export interface AppAiMessageActionsProps extends Omit<
   children?: ReactNode
 }
 
-export interface AppAiStatusProps extends Omit<
+export interface AppAiRunIndicatorProps extends Omit<
   HTMLAttributes<HTMLElement>,
   'title'
 > {
@@ -108,14 +109,15 @@ export interface AppAiStatusProps extends Omit<
   style?: CSSProperties
 }
 
-export type AppToolApprovalStatus =
-  'pending' | 'running' | 'completed' | 'rejected' | 'error'
+/** The lifecycle of one tool call, including its approval decision. */
+export type AppToolCallStatus =
+  'awaiting-approval' | 'running' | 'completed' | 'rejected' | 'error'
 
-export interface AppToolApprovalCardProps {
+export interface AppToolCallCardProps {
   title: ReactNode
   description?: ReactNode
   details?: ReactNode
-  status?: AppToolApprovalStatus
+  status?: AppToolCallStatus
   danger?: boolean
   approveText?: ReactNode
   rejectText?: ReactNode
@@ -125,8 +127,9 @@ export interface AppToolApprovalCardProps {
   style?: CSSProperties
 }
 
+/** The lifecycle of reviewing and applying one proposed change set. */
 export type AppChangeReviewStatus =
-  'pending' | 'applying' | 'applied' | 'rejected' | 'error'
+  'awaiting-review' | 'applying' | 'applied' | 'rejected' | 'error'
 
 export interface AppChangeReviewFile {
   id: string

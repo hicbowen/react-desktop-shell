@@ -24,8 +24,7 @@ export function QuickAskPage() {
   const [oneShotOpen, setOneShotOpen] = useState(false)
   const [oneShotDraft, setOneShotDraft] = useState('')
   const [oneShotAnswerText, setOneShotAnswer] = useState<string | null>(null)
-  const [oneShotStatus, setOneShotStatus] =
-    useState<AppAiRunStatus>('idle')
+  const [oneShotStatus, setOneShotStatus] = useState<AppAiRunStatus>('idle')
   const oneShotTimerRef = useRef<number | null>(null)
 
   const [chatOpen, setChatOpen] = useState(false)
@@ -174,7 +173,7 @@ export function QuickAskPage() {
               onSubmit={submitOneShot}
               onValueChange={setOneShotDraft}
               open={oneShotOpen}
-              status={oneShotStatus}
+              runStatus={oneShotStatus}
               value={oneShotDraft}
             />
           </AppCommandProvider>
@@ -202,7 +201,7 @@ export function QuickAskPage() {
             onSubmit={submitChat}
             onValueChange={setChatDraft}
             open={chatOpen}
-            status={chatStatus}
+            runStatus={chatStatus}
             value={chatDraft}
           />
         </DemoPreview>

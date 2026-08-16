@@ -65,15 +65,15 @@
   flex: 0 1 auto;
 }
 
-.app-ai-composer__status.app-ai-status--inline {
+.app-ai-composer__status.app-ai-run-indicator--inline {
   padding: 0;
 }
 
-.app-ai-composer__status .app-ai-status__header {
+.app-ai-composer__status .app-ai-run-indicator__header {
   gap: 6px;
 }
 
-.app-ai-composer__status .app-ai-status__header strong {
+.app-ai-composer__status .app-ai-run-indicator__header strong {
   font-size: 12px;
 }
 

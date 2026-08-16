@@ -1,13 +1,13 @@
-export { AppAiStatus } from './AppAiStatus'
+export { AppAiRunIndicator } from './AppAiRunIndicator'
 export { AppAiComposer } from './AppAiComposer'
 export { AppAiMarkdown } from './AppAiMarkdown'
 export { AppAiMessageActions } from './AppAiMessageActions'
 export { AppChangeReviewCard } from './AppChangeReviewCard'
 export { AppPromptSuggestions } from './AppPromptSuggestions'
-export { AppToolApprovalCard } from './AppToolApprovalCard'
+export { AppToolCallCard } from './AppToolCallCard'
 export type {
   AppAiRunStatus,
-  AppAiStatusProps,
+  AppAiRunIndicatorProps,
   AppAiComposerProps,
   AppAiComposerAppearance,
   AppAiMarkdownComponents,
@@ -19,6 +19,6 @@ export type {
   AppChangeReviewStatus,
   AppPromptSuggestion,
   AppPromptSuggestionsProps,
-  AppToolApprovalCardProps,
-  AppToolApprovalStatus,
+  AppToolCallCardProps,
+  AppToolCallStatus,
 } from './types'

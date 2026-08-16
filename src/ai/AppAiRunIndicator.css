@@ -1,25 +1,25 @@
-.app-ai-status {
+.app-ai-run-indicator {
   min-width: 0;
   color: var(--app-shell-text-color, #1f1f1f);
 }
 
-.app-ai-status__header {
+.app-ai-run-indicator__header {
   min-width: 0;
   display: flex;
   align-items: center;
   gap: 8px;
 }
 
-.app-ai-status__indicator {
+.app-ai-run-indicator__indicator {
   display: inline-flex;
   flex: 0 0 auto;
 }
 
-.app-ai-status__indicator .app-status-badge {
+.app-ai-run-indicator__indicator .app-status-badge {
   max-width: 100%;
 }
 
-.app-ai-status__header strong {
+.app-ai-run-indicator__header strong {
   min-width: 0;
   overflow: hidden;
   font-size: 13px;
@@ -29,22 +29,22 @@
   white-space: nowrap;
 }
 
-.app-ai-status__action {
+.app-ai-run-indicator__action {
   margin-inline-start: auto;
   flex: 0 0 auto;
 }
 
-.app-ai-status__detail {
+.app-ai-run-indicator__detail {
   color: var(--app-shell-muted-text-color, #707070);
   font-size: 12px;
   line-height: 1.45;
 }
 
-.app-ai-status--inline {
+.app-ai-run-indicator--inline {
   padding: 2px 0;
 }
 
-.app-ai-status--card {
+.app-ai-run-indicator--card {
   display: grid;
   gap: 7px;
   padding: 10px 12px;

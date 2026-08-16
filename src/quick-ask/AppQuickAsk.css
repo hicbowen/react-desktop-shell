@@ -2,21 +2,6 @@
   --app-quick-ask-response-max-height: min(48vh, 420px);
 }
 
-.app-quick-ask__response-icon {
-  width: 20px;
-  height: 20px;
-  display: inline-flex;
-  flex: 0 0 20px;
-  align-items: center;
-  justify-content: center;
-  color: var(--app-shell-accent-color, #115ea3);
-}
-
-.app-quick-ask__response-icon > svg {
-  width: 18px;
-  height: 18px;
-}
-
 .app-quick-ask__response {
   min-height: 0;
   display: flex;
@@ -24,18 +9,26 @@
   border-top: 1px solid var(--app-shell-border-color, rgb(0 0 0 / 8%));
 }
 
-.app-quick-ask__response-header {
+.app-quick-ask__response-status {
   min-height: 38px;
-  padding: 0 16px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
   color: var(--app-shell-muted-text-color, #707070);
   font-size: 12px;
   font-weight: 600;
 }
 
-.app-quick-ask__response-header .app-progress-ring {
+.app-quick-ask__response-status.app-ai-run-indicator--inline {
+  padding: 0 16px;
+}
+
+.app-quick-ask__response-status .app-ai-run-indicator__header {
+  min-height: 38px;
+}
+
+.app-quick-ask__response-status .app-ai-run-indicator__header strong {
+  font-size: 12px;
+}
+
+.app-quick-ask__response-status .app-progress-ring {
   width: 20px;
   flex: 0 0 20px;
 }

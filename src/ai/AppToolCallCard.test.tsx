@@ -3,17 +3,17 @@
 import { act } from 'react'
 import { createRoot } from 'react-dom/client'
 import { describe, expect, it, vi } from 'vitest'
-import { AppToolApprovalCard } from './AppToolApprovalCard'
+import { AppToolCallCard } from './AppToolCallCard'
 
-describe('AppToolApprovalCard', () => {
-  it('reports a pending tool request through explicit actions', () => {
+describe('AppToolCallCard', () => {
+  it('reports a tool call awaiting approval through explicit actions', () => {
     const host = document.createElement('div')
     const root = createRoot(host)
     const approve = vi.fn()
     const reject = vi.fn()
     act(() =>
       root.render(
-        <AppToolApprovalCard
+        <AppToolCallCard
           description="Creates one file"
           details="Documents/summary.md"
           onApprove={approve}
@@ -24,6 +24,8 @@ describe('AppToolApprovalCard', () => {
     )
 
     expect(host.textContent).toContain('Approval required')
+    expect(host.querySelector('.app-tool-call-card')).not.toBeNull()
+    expect(host.querySelector('.app-status-badge--warning')).not.toBeNull()
     expect(host.textContent).toContain('Documents/summary.md')
     const buttons = host.querySelectorAll('button')
     act(() => buttons[0].click())
@@ -38,9 +40,7 @@ describe('AppToolApprovalCard', () => {
     const host = document.createElement('div')
     const root = createRoot(host)
     act(() =>
-      root.render(
-        <AppToolApprovalCard status="completed" title="Save summary" />,
-      ),
+      root.render(<AppToolCallCard status="completed" title="Save summary" />),
     )
 
     expect(host.textContent).toContain('Completed')
