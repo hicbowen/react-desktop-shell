@@ -137,7 +137,11 @@ describe('AppQuickAsk', () => {
       document.body.querySelector('.app-quick-ask__response-status')
         ?.textContent,
     ).toContain('Responding')
-    expect(document.body.querySelector('.app-ai-composer__status')).toBeNull()
+    expect(
+      document.body.querySelector(
+        '.app-ai-composer .app-ai-run-indicator',
+      ),
+    ).toBeNull()
     expect(
       document.body.querySelector('.app-quick-ask__answer-actions')
         ?.textContent,

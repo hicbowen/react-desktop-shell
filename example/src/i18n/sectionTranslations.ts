@@ -112,6 +112,8 @@ const zhCNSectionText: Record<string, string> = {
   'Use AppConversationThread when the surface should keep several user and AI turns. The host owns the message list.': '当界面需要保留多轮用户和 AI 消息时使用 AppConversationThread，消息列表由宿主持有。',
   'Tool call: approval and execution': '工具调用：批准与执行',
   'Use AppToolCallCard for one tool call from approval through completion, rejection, or failure.': '使用 AppToolCallCard 展示一次工具调用从等待批准到完成、拒绝或失败的生命周期。',
+  'Tool activity: compact and parallel': '工具活动：紧凑与并行',
+  'Use AppToolActivity for one lightweight event and AppToolCallGroup when parallel tools need one aggregate progress indicator.': '使用 AppToolActivity 展示一条轻量事件；多个并行工具需要统一进度时，使用 AppToolCallGroup。',
   'Change review: apply or reject': '变更审阅：应用或拒绝',
   'Review proposed file changes before applying them. The host owns the final write operation.': '在应用前审阅建议的文件变更，最终写入操作由宿主持有。',
   'Radio groups': '单选组',

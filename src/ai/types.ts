@@ -35,7 +35,6 @@ export interface AppAiComposerProps {
   defaultValue?: string
   onValueChange?: (value: string) => void
   runStatus?: AppAiRunStatus
-  showRunStatus?: boolean
   onCancel?: () => void
   clearOnSubmit?: boolean
   disabled?: boolean
@@ -111,20 +110,71 @@ export interface AppAiRunIndicatorProps extends Omit<
 
 /** The lifecycle of one tool call, including its approval decision. */
 export type AppToolCallStatus =
-  'awaiting-approval' | 'running' | 'completed' | 'rejected' | 'error'
+  | 'awaiting-approval'
+  | 'running'
+  | 'completed'
+  | 'rejected'
+  | 'canceled'
+  | 'error'
 
-export interface AppToolCallCardProps {
+export interface AppToolCallCardProps extends Omit<
+  HTMLAttributes<HTMLElement>,
+  'children' | 'title'
+> {
   title: ReactNode
   description?: ReactNode
   details?: ReactNode
   status?: AppToolCallStatus
+  statusLabel?: ReactNode
   danger?: boolean
   approveText?: ReactNode
   rejectText?: ReactNode
+  cancelText?: ReactNode
   onApprove?: () => void
   onReject?: () => void
-  className?: string
-  style?: CSSProperties
+  onCancel?: () => void
+  expanded?: boolean
+  defaultExpanded?: boolean
+  onExpandedChange?: (expanded: boolean) => void
+  ariaLabel?: string
+}
+
+export interface AppToolActivityProps extends Omit<
+  HTMLAttributes<HTMLElement>,
+  'children' | 'title'
+> {
+  title: ReactNode
+  description?: ReactNode
+  status?: AppToolCallStatus
+  statusLabel?: ReactNode
+  onCancel?: () => void
+  cancelText?: ReactNode
+  ariaLabel?: string
+}
+
+export interface AppToolCallGroupItem {
+  id: string
+  title: ReactNode
+  description?: ReactNode
+  status: AppToolCallStatus
+  statusLabel?: ReactNode
+  ariaLabel?: string
+}
+
+export interface AppToolCallGroupProps extends Omit<
+  HTMLAttributes<HTMLElement>,
+  'children' | 'title'
+> {
+  items: readonly AppToolCallGroupItem[]
+  title?: ReactNode
+  description?: ReactNode
+  statusLabel?: ReactNode
+  expanded?: boolean
+  defaultExpanded?: boolean
+  onExpandedChange?: (expanded: boolean) => void
+  onCancel?: (item: AppToolCallGroupItem) => void
+  cancelText?: ReactNode
+  ariaLabel?: string
 }
 
 /** The lifecycle of reviewing and applying one proposed change set. */

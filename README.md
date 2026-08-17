@@ -327,9 +327,10 @@ according to the host workflow.
 ### AI building blocks
 
 `AppAiComposer`, `AppAiMarkdown`, `AppAiRunIndicator`, `AppAiMessageActions`,
-`AppPromptSuggestions`, `AppToolCallCard`, and `AppChangeReviewCard` are host-controlled AI
-building blocks. They can be placed in any page or conversation and do not
-depend on `AppQuickAsk`.
+`AppPromptSuggestions`, `AppToolActivity`, `AppToolCallCard`,
+`AppToolCallGroup`, and `AppChangeReviewCard` are host-controlled AI building
+blocks. They can be placed in any page or conversation and do not depend on
+`AppQuickAsk`.
 
 ### Conversation building blocks
 
@@ -421,10 +422,11 @@ controls:
 />
 ```
 
-When `runStatus` is not `idle`, the composer renders a compact status item in
-the left side of its toolbar. Set `showRunStatus={false}` when a surrounding
-surface already owns the status presentation, as `AppQuickAsk` does in its
-response area.
+`runStatus` is behavioral rather than visual inside the composer: it prevents
+duplicate submission while a run is busy or waiting for approval/review and
+switches Send to Stop when `onCancel` is available. Put progress, tool calls,
+and approval state in the response or conversation area instead of duplicating
+them in the input toolbar.
 
 Use `appearance="embedded"` when the parent already owns the border, elevation,
 and surrounding surface. `AppQuickAsk` uses this mode internally so its input
@@ -537,8 +539,51 @@ the surface does not silently approve or reject an awaiting call:
   description="This writes one new file."
   details="Documents/meeting-summary.md"
   status={toolCall.status}
+  statusLabel={
+    toolCall.status === 'running' ? 'Saving meeting summary…' : undefined
+  }
   onApprove={() => approveToolCall(toolCall.id)}
   onReject={() => rejectToolCall(toolCall.id)}
+  onCancel={() => cancelToolCall(toolCall.id)}
+/>
+```
+
+`awaiting-approval` uses a warning badge and explicit actions. `running` uses
+the shared small `AppProgressRing` with plain, action-specific text rather than
+combining a spinner and badge. The ring is 14px with a 2px stroke and inherits
+the library's 0.85s linear motion plus its static reduced-motion fallback.
+`completed`, `rejected`, and `canceled` are quiet historical states; their
+details are collapsed by default and can be controlled with `expanded`,
+`defaultExpanded`, and `onExpandedChange`. `rejected` means permission was
+denied before execution, while `canceled` means a started operation was stopped.
+
+Use `AppToolActivity` for a lightweight event that does not need approval or a
+full details card. Put the action in the title so the spinner communicates
+specific work instead of repeating a generic “using a tool” label:
+
+```tsx
+<AppToolActivity
+  title="Saving meeting summary…"
+  description="Documents/meeting-summary.md"
+  status="running"
+  onCancel={() => cancelToolCall(toolCall.id)}
+/>
+```
+
+Use `AppToolCallGroup` for parallel activity. It derives aggregate progress
+from `items`, renders one animated spinner in the group header, and uses static
+status icons for child rows so several simultaneous tools do not create a field
+of competing animations. Approval decisions still belong in individual
+`AppToolCallCard` entries.
+
+```tsx
+<AppToolCallGroup
+  items={[
+    { id: 'read', title: 'Read README', status: 'completed' },
+    { id: 'search', title: 'Search notes', status: 'running' },
+    { id: 'draft', title: 'Prepare summary', status: 'running' },
+  ]}
+  onCancel={(item) => cancelToolCall(item.id)}
 />
 ```
 

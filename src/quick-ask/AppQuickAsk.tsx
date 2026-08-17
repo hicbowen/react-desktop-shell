@@ -103,7 +103,6 @@ export const AppQuickAsk = forwardRef<HTMLTextAreaElement, AppQuickAskProps>(
           placeholder={placeholder}
           ref={setInputRef}
           runStatus={runStatus}
-          showRunStatus={false}
           value={value}
         />
 

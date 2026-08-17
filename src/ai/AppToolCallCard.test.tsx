@@ -48,4 +48,62 @@ describe('AppToolCallCard', () => {
 
     act(() => root.unmount())
   })
+
+  it('uses a plain spinner label and optional cancellation while running', () => {
+    const host = document.createElement('div')
+    const root = createRoot(host)
+    const cancel = vi.fn()
+    act(() =>
+      root.render(
+        <AppToolCallCard
+          onCancel={cancel}
+          status="running"
+          statusLabel="Saving meeting summary…"
+          title="Save summary"
+        />,
+      ),
+    )
+
+    expect(
+      host.querySelector('.app-tool-call-card')?.getAttribute('aria-busy'),
+    ).toBe('true')
+    expect(host.querySelector('.app-progress-ring')).not.toBeNull()
+    expect(host.querySelector('.app-status-badge')).toBeNull()
+    expect(host.textContent).toContain('Saving meeting summary…')
+    const stop = Array.from(host.querySelectorAll('button')).find(
+      (button) => button.textContent === 'Stop',
+    )
+    act(() => stop?.click())
+    expect(cancel).toHaveBeenCalledOnce()
+
+    act(() => root.unmount())
+  })
+
+  it('collapses historical details and distinguishes canceled from rejected', () => {
+    const host = document.createElement('div')
+    const root = createRoot(host)
+    const onExpandedChange = vi.fn()
+    act(() =>
+      root.render(
+        <AppToolCallCard
+          details="No files were changed"
+          onExpandedChange={onExpandedChange}
+          status="canceled"
+          title="Save summary"
+        />,
+      ),
+    )
+
+    expect(host.textContent).toContain('Canceled')
+    expect(host.textContent).not.toContain('Rejected')
+    expect(host.textContent).not.toContain('No files were changed')
+    const toggle = Array.from(host.querySelectorAll('button')).find(
+      (button) => button.textContent === 'Show details',
+    )
+    act(() => toggle?.click())
+    expect(onExpandedChange).toHaveBeenCalledWith(true)
+    expect(host.textContent).toContain('No files were changed')
+
+    act(() => root.unmount())
+  })
 })

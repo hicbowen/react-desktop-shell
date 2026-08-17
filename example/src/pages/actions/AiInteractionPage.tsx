@@ -4,11 +4,14 @@ import {
   AppButton,
   AppChangeReviewCard,
   AppPromptSuggestions,
+  AppToolActivity,
   AppToolCallCard,
+  AppToolCallGroup,
   type AppAiRunStatus,
   type AppChangeReviewFile,
   type AppChangeReviewStatus,
   type AppPromptSuggestion,
+  type AppToolCallGroupItem,
   type AppToolCallStatus,
 } from '../../../../src'
 import { CheckCircle2, MessageSquare, Sparkles } from '../../components/fluentIcons'
@@ -94,6 +97,14 @@ export function AiInteractionPage() {
     setToolCallStatus('rejected')
   }
 
+  const cancelTool = () => {
+    if (toolTimerRef.current !== null) {
+      window.clearTimeout(toolTimerRef.current)
+      toolTimerRef.current = null
+    }
+    setToolCallStatus('canceled')
+  }
+
   const resetToolCall = () => {
     if (toolTimerRef.current !== null) {
       window.clearTimeout(toolTimerRef.current)
@@ -127,6 +138,27 @@ export function AiInteractionPage() {
         additions: 1,
         deletions: 1,
         diff: '@@ -4,1 +4,1 @@\n-See the meeting notes.\n+See the [meeting summary](meeting-summary.md).',
+      },
+    ],
+    [t],
+  )
+
+  const parallelTools = useMemo<AppToolCallGroupItem[]>(
+    () => [
+      {
+        id: 'read-readme',
+        status: 'completed',
+        title: t('Read project README'),
+      },
+      {
+        id: 'search-notes',
+        status: 'running',
+        title: t('Search meeting notes'),
+      },
+      {
+        id: 'prepare-summary',
+        status: 'running',
+        title: t('Prepare meeting summary'),
       },
     ],
     [t],
@@ -218,8 +250,14 @@ export function AiInteractionPage() {
             )}
             details={t('Target: Documents/meeting-summary.md')}
             onApprove={approveTool}
+            onCancel={cancelTool}
             onReject={rejectTool}
             status={toolCallStatus}
+            statusLabel={
+              toolCallStatus === 'running'
+                ? t('Saving meeting summary…')
+                : undefined
+            }
             title={t('Save meeting summary')}
           />
           <AppButton onClick={resetToolCall}>{t('Reset approval')}</AppButton>
@@ -229,6 +267,23 @@ export function AiInteractionPage() {
             'The host owns this tool call. Only the approval callback starts the simulated operation.',
           )}
         </p>
+      </DemoSection>
+
+      <DemoSection
+        title="Tool activity: compact and parallel"
+        description="Use AppToolActivity for one lightweight event and AppToolCallGroup when parallel tools need one aggregate progress indicator."
+      >
+        <DemoPreview className="demo-component-row">
+          <AppToolActivity
+            description={t('Target: Documents/README.md')}
+            title={t('Reading project README…')}
+          />
+          <AppToolCallGroup
+            description={t('Parallel tools share one animated progress indicator.')}
+            items={parallelTools}
+            title={t('Preparing project context')}
+          />
+        </DemoPreview>
       </DemoSection>
 
       <DemoSection

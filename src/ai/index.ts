@@ -4,7 +4,9 @@ export { AppAiMarkdown } from './AppAiMarkdown'
 export { AppAiMessageActions } from './AppAiMessageActions'
 export { AppChangeReviewCard } from './AppChangeReviewCard'
 export { AppPromptSuggestions } from './AppPromptSuggestions'
+export { AppToolActivity } from './AppToolActivity'
 export { AppToolCallCard } from './AppToolCallCard'
+export { AppToolCallGroup } from './AppToolCallGroup'
 export type {
   AppAiRunStatus,
   AppAiRunIndicatorProps,
@@ -19,6 +21,9 @@ export type {
   AppChangeReviewStatus,
   AppPromptSuggestion,
   AppPromptSuggestionsProps,
+  AppToolActivityProps,
   AppToolCallCardProps,
+  AppToolCallGroupItem,
+  AppToolCallGroupProps,
   AppToolCallStatus,
 } from './types'

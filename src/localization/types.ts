@@ -69,6 +69,17 @@ export interface AppLocaleMessages {
     running: string
     completed: string
     toolFailed: string
+    cancelTool: string
+    showToolDetails: string
+    hideToolDetails: string
+    toolActivity: string
+    toolProgress: (completed: number, total: number) => string
+    toolApprovalCount: (count: number) => string
+    toolFailureCount: (count: number) => string
+    toolCompletedCount: (count: number) => string
+    expandToolActivity: string
+    collapseToolActivity: string
+    noToolActivity: string
     messageActions: string
     copyResponse: string
     retryResponse: string

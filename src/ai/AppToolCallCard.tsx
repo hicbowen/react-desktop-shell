@@ -1,51 +1,64 @@
-import { useId } from 'react'
+import { useId, useState } from 'react'
 import { AppButton } from '../button'
 import { useAppLocale } from '../localization/useAppLocale'
-import { AppStatusBadge } from '../progress'
-import type { AppToolCallCardProps, AppToolCallStatus } from './types'
+import { AppProgressRing, AppStatusBadge } from '../progress'
+import type { AppToolCallCardProps } from './types'
+import {
+  getAppToolCallBadgeStatus,
+  getAppToolCallStatusLabel,
+} from './toolCallStatus'
 import './AppToolCallCard.css'
-
-const badgeStatus: Record<
-  AppToolCallStatus,
-  'neutral' | 'info' | 'success' | 'warning' | 'danger'
-> = {
-  'awaiting-approval': 'warning',
-  rejected: 'neutral',
-  running: 'info',
-  completed: 'success',
-  error: 'danger',
-}
 
 export function AppToolCallCard({
   title,
   description,
   details,
   status = 'awaiting-approval',
+  statusLabel,
   danger = false,
   approveText,
   rejectText,
+  cancelText,
   onApprove,
   onReject,
+  onCancel,
+  expanded,
+  defaultExpanded = false,
+  onExpandedChange,
+  ariaLabel,
   className,
   style,
+  ...rest
 }: AppToolCallCardProps) {
   const { messages } = useAppLocale()
   const text = messages.ai
   const titleId = useId()
-  const statusLabels: Record<AppToolCallStatus, string> = {
-    'awaiting-approval': text.approvalRequired,
-    rejected: text.rejected,
-    running: text.running,
-    completed: text.completed,
-    error: text.toolFailed,
-  }
+  const detailsId = useId()
+  const [internalExpanded, setInternalExpanded] = useState(defaultExpanded)
+  const isExpanded = expanded ?? internalExpanded
+  const resolvedStatusLabel =
+    statusLabel ?? getAppToolCallStatusLabel(status, text)
   const awaitingApproval = status === 'awaiting-approval'
+  const running = status === 'running'
+  const detailsCollapsible =
+    details != null &&
+    (status === 'completed' || status === 'rejected' || status === 'canceled')
+
+  const toggleExpanded = () => {
+    const next = !isExpanded
+    if (expanded === undefined) setInternalExpanded(next)
+    onExpandedChange?.(next)
+  }
 
   return (
     <section
-      aria-labelledby={titleId}
+      {...rest}
+      aria-busy={running || undefined}
+      aria-label={ariaLabel}
+      aria-labelledby={ariaLabel ? undefined : titleId}
       className={[
         'app-tool-call-card',
+        `app-tool-call-card--${status}`,
         danger ? 'app-tool-call-card--danger' : '',
         className,
       ]
@@ -55,19 +68,47 @@ export function AppToolCallCard({
     >
       <div className="app-tool-call-card__header">
         <strong id={titleId}>{title}</strong>
-        <AppStatusBadge
-          marker="dot"
-          size="small"
-          status={danger && awaitingApproval ? 'danger' : badgeStatus[status]}
-        >
-          {statusLabels[status]}
-        </AppStatusBadge>
+        {running ? (
+          <AppProgressRing
+            ariaLabel={
+              typeof resolvedStatusLabel === 'string'
+                ? resolvedStatusLabel
+                : text.running
+            }
+            className="app-tool-call-card__running"
+            label={resolvedStatusLabel}
+            size="small"
+          />
+        ) : (
+          <AppStatusBadge
+            marker="dot"
+            size="small"
+            status={getAppToolCallBadgeStatus(status, danger)}
+          >
+            {resolvedStatusLabel}
+          </AppStatusBadge>
+        )}
       </div>
       {description ? (
         <div className="app-tool-call-card__description">{description}</div>
       ) : null}
-      {details ? (
-        <div className="app-tool-call-card__details">{details}</div>
+      {detailsCollapsible ? (
+        <div className="app-tool-call-card__details-toggle">
+          <AppButton
+            appearance="subtle"
+            aria-controls={detailsId}
+            aria-expanded={isExpanded}
+            onClick={toggleExpanded}
+            size="compact"
+          >
+            {isExpanded ? text.hideToolDetails : text.showToolDetails}
+          </AppButton>
+        </div>
+      ) : null}
+      {details != null && (!detailsCollapsible || isExpanded) ? (
+        <div className="app-tool-call-card__details" id={detailsId}>
+          {details}
+        </div>
       ) : null}
       {awaitingApproval ? (
         <div className="app-tool-call-card__actions">
@@ -81,6 +122,12 @@ export function AppToolCallCard({
             size="compact"
           >
             {approveText ?? text.approveOnce}
+          </AppButton>
+        </div>
+      ) : running && onCancel ? (
+        <div className="app-tool-call-card__actions">
+          <AppButton appearance="subtle" onClick={onCancel} size="compact">
+            {cancelText ?? text.cancelTool}
           </AppButton>
         </div>
       ) : null}

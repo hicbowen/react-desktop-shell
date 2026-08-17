@@ -5,7 +5,6 @@ import { Stop16Regular } from '@fluentui/react-icons/svg/stop'
 import { AppIconButton } from '../button'
 import { useAppLocale } from '../localization/useAppLocale'
 import { AppTextArea } from '../text-input'
-import { AppAiRunIndicator } from './AppAiRunIndicator'
 import { isAppAiRunBlocked, isAppAiRunBusy } from './runStatus'
 import type { AppAiComposerProps } from './types'
 import './AppAiComposer.css'
@@ -30,7 +29,6 @@ export const AppAiComposer = forwardRef<
     onSubmit,
     onValueChange,
     placeholder,
-    showRunStatus = true,
     runStatus = 'idle',
     style,
     submitIcon,
@@ -134,16 +132,8 @@ export const AppAiComposer = forwardRef<
         className="app-ai-composer__toolbar"
         role="toolbar"
       >
-        {toolbarStart || (showRunStatus && runStatus !== 'idle') ? (
-          <div className="app-ai-composer__toolbar-start">
-            {toolbarStart}
-            {showRunStatus && runStatus !== 'idle' ? (
-              <AppAiRunIndicator
-                className="app-ai-composer__status"
-                status={runStatus}
-              />
-            ) : null}
-          </div>
+        {toolbarStart ? (
+          <div className="app-ai-composer__toolbar-start">{toolbarStart}</div>
         ) : null}
         <div className="app-ai-composer__toolbar-end">
           {toolbarEnd}

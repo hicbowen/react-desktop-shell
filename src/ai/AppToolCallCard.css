@@ -3,6 +3,7 @@
   min-width: 0;
   box-sizing: border-box;
   overflow: hidden;
+  color: var(--app-shell-text-color, #1f1f1f);
   background: var(--app-shell-card-bg, #fff);
   border: 1px solid var(--app-shell-border-color, rgb(0 0 0 / 10%));
   border-radius: 7px;
@@ -28,6 +29,15 @@
 
 .app-tool-call-card__header strong {
   min-width: 0;
+  overflow-wrap: anywhere;
+  line-height: 1.35;
+}
+
+.app-tool-call-card__running {
+  flex: 0 0 auto;
+  color: var(--app-shell-muted-text-color, #707070);
+  font-size: 12px;
+  white-space: nowrap;
 }
 
 .app-tool-call-card__description {
@@ -46,6 +56,11 @@
   border-radius: 5px;
   font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
   font-size: 12px;
+}
+
+.app-tool-call-card__details-toggle {
+  display: flex;
+  padding: 0 8px 7px;
 }
 
 .app-tool-call-card__actions {

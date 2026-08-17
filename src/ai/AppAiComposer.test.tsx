@@ -116,7 +116,7 @@ describe('AppAiComposer', () => {
     expect(
       document.body.querySelector('button[aria-label="Stop generating"]'),
     ).toBeNull()
-    expect(host.querySelector('.app-ai-composer__status')).not.toBeNull()
+    expect(host.querySelector('.app-ai-run-indicator')).toBeNull()
   })
 
   it('disables submission while waiting for approval', () => {
@@ -131,10 +131,7 @@ describe('AppAiComposer', () => {
     )!
 
     expect(send.disabled).toBe(true)
-    const status = host.querySelector(
-      '.app-ai-composer__toolbar-start .app-ai-composer__status',
-    )
-    expect(status?.textContent).toContain('Waiting for your approval')
+    expect(host.querySelector('.app-ai-run-indicator')).toBeNull()
     act(() =>
       textarea.dispatchEvent(
         new KeyboardEvent('keydown', {
@@ -185,9 +182,10 @@ describe('AppAiComposer', () => {
     expect(textarea.rows).toBe(1)
   })
 
-  it('can hide the internal status when the surrounding surface owns it', () => {
-    renderComposer({ runStatus: 'responding', showRunStatus: false })
+  it('keeps run state behavioral and never renders it in the composer', () => {
+    renderComposer({ runStatus: 'completed' })
 
-    expect(host.querySelector('.app-ai-composer__status')).toBeNull()
+    expect(host.querySelector('.app-ai-run-indicator')).toBeNull()
+    expect(host.querySelector('.app-status-badge')).toBeNull()
   })
 })

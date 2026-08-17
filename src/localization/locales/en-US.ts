@@ -76,9 +76,24 @@ export const enUSMessages = {
     approveOnce: 'Allow once',
     reject: 'Reject',
     rejected: 'Rejected',
-    running: 'Running',
+    running: 'Running…',
     completed: 'Completed',
     toolFailed: 'Failed',
+    cancelTool: 'Stop',
+    showToolDetails: 'Show details',
+    hideToolDetails: 'Hide details',
+    toolActivity: 'Tool activity',
+    toolProgress: (completed: number, total: number) =>
+      `${completed} of ${total} completed`,
+    toolApprovalCount: (count: number) =>
+      `${count} ${count === 1 ? 'tool needs' : 'tools need'} approval`,
+    toolFailureCount: (count: number) =>
+      `${count} ${count === 1 ? 'tool' : 'tools'} failed`,
+    toolCompletedCount: (count: number) =>
+      `${count} ${count === 1 ? 'tool' : 'tools'} completed`,
+    expandToolActivity: 'Show tool activity',
+    collapseToolActivity: 'Hide tool activity',
+    noToolActivity: 'No tool activity',
     messageActions: 'Message actions',
     copyResponse: 'Copy response',
     retryResponse: 'Retry response',

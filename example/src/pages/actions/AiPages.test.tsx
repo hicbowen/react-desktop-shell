@@ -59,6 +59,9 @@ describe('AI example pages', () => {
     expect(container.querySelector('.app-change-review-card')).toBeNull()
     expect(container.querySelector('time')?.textContent).toBe('10:30')
     expect(container.querySelector('.app-ai-composer')).not.toBeNull()
+    expect(
+      container.querySelector('.app-ai-composer .app-ai-run-indicator'),
+    ).toBeNull()
     expect(container.querySelector('.app-ai-markdown')).not.toBeNull()
     expect(container.querySelector('.app-ai-markdown__code-header')).not.toBeNull()
     expect(container.textContent).toContain('AI message: Markdown')
@@ -77,11 +80,11 @@ describe('AI example pages', () => {
     act(() => approve?.click())
 
     expect(
-      container.querySelector('.app-tool-call-card .app-status-badge--info'),
+      container.querySelector('.app-tool-call-card .app-progress-ring'),
     ).not.toBeNull()
     expect(
-      container.querySelector('.app-ai-run-indicator--using-tool'),
-    ).not.toBeNull()
+      container.querySelector('.app-ai-composer .app-ai-run-indicator'),
+    ).toBeNull()
   })
 
   it('shows AI interaction building blocks on their own page', () => {
@@ -90,6 +93,8 @@ describe('AI example pages', () => {
     expect(container.querySelector('.app-prompt-suggestions')).not.toBeNull()
     expect(container.querySelector('.app-ai-run-indicator')).not.toBeNull()
     expect(container.querySelector('.app-tool-call-card')).not.toBeNull()
+    expect(container.querySelector('.app-tool-activity')).not.toBeNull()
+    expect(container.querySelector('.app-tool-call-group')).not.toBeNull()
     expect(container.querySelector('.app-change-review-card')).not.toBeNull()
   })
 })

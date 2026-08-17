@@ -327,6 +327,11 @@ export function ConversationPage() {
           onApprove={approveWorkflowTool}
           onReject={rejectWorkflowTool}
           status={toolCallStatus}
+          statusLabel={
+            toolCallStatus === 'running'
+              ? t('Saving meeting summary…')
+              : undefined
+          }
           title={t('Save meeting summary')}
         />
       ),
