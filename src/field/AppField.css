@@ -5,7 +5,9 @@
 .app-field__label { display: inline-flex; align-items: baseline; gap: 6px; font-weight: 500; }
 .app-field__required { color: var(--app-shell-secondary-text-color, rgb(0 0 0 / 58%)); font-size: 13px; font-weight: 500; }
 .app-field__sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
-.app-field__body, .app-field__control { min-width: 0; }
+.app-field__body { min-width: 0; width: var(--app-field-control-width, var(--app-form-control-width, auto)); max-width: 100%; }
+.app-field__control { min-width: 0; }
+.app-field--horizontal.app-field--label-end .app-field__label { justify-content: flex-end; width: 100%; text-align: right; }
 .app-field__message { margin-top: 5px; color: var(--app-shell-secondary-text-color, rgb(0 0 0 / 62%)); font-size: 12px; line-height: 1.35; }
 .app-field__message--error { color: var(--app-shell-danger-color, #c42b1c); }
 .app-field--disabled .app-field__label, .app-field--disabled .app-field__message { color: var(--app-shell-disabled-text-color, rgb(0 0 0 / 36%)); }

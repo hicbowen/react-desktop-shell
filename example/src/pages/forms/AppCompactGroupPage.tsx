@@ -1,18 +1,21 @@
-import { useState } from 'react'
 import {
   AppButton,
   AppCompactGroup,
   AppControlAddon,
+  AppForm,
+  AppFormField,
   AppNumberBox,
   AppSelect,
   AppTextBox,
+  useAppForm,
 } from '../../../../src'
 import { DemoPage, DemoPreview, DemoSection } from '../../components/DemoPage'
 import { useDemoCopy } from '../../i18n/interactiveTranslations'
 
 export function AppCompactGroupPage() {
   const t = useDemoCopy()
-  const [count, setCount] = useState<number | null>(10)
+  type CompactGroupForm = { count: number | null }
+  const form = useAppForm<CompactGroupForm>({ defaultValues: { count: 10 } })
 
   return (
     <DemoPage>
@@ -20,12 +23,8 @@ export function AppCompactGroupPage() {
         description="Attach explanatory content without moving it inside the input."
         title="Input addons"
       >
-        <DemoPreview className="demo-form-stack">
-          <AppCompactGroup>
-            <AppControlAddon>Last</AppControlAddon>
-            <AppNumberBox min={1} onValueChange={setCount} value={count} />
-            <AppControlAddon>times</AppControlAddon>
-          </AppCompactGroup>
+        <DemoPreview className="demo-form-stack"><AppForm form={form}>
+          <AppFormField<CompactGroupForm, number | null> label="Repeat count" name="count">{({ setValue, value }) => <AppCompactGroup><AppControlAddon>Last</AppControlAddon><AppNumberBox min={1} onValueChange={setValue} value={value} /><AppControlAddon>times</AppControlAddon></AppCompactGroup>}</AppFormField>
           <span className="demo-note">{t('Standard')}</span>
           <AppCompactGroup>
             <AppSelect
@@ -54,7 +53,7 @@ export function AppCompactGroupPage() {
               <AppButton size="compact">Connect</AppButton>
             </AppCompactGroup>
           </div>
-        </DemoPreview>
+        </AppForm></DemoPreview>
       </DemoSection>
       <DemoSection
         description="The group only joins the surfaces; every button keeps its own action."

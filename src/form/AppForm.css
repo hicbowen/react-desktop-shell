@@ -1,0 +1,153 @@
+.app-form {
+  display: grid;
+  gap: var(--app-form-gap, 16px);
+  min-width: 0;
+}
+
+.app-form--compact {
+  gap: var(--app-form-gap, 10px);
+}
+
+.app-form--grid {
+  grid-template-columns: repeat(var(--app-form-columns-base, 1), minmax(0, 1fr));
+  align-items: start;
+}
+
+.app-form--grid > .app-field,
+.app-form--grid .app-form-section__content > .app-field {
+  grid-column: span var(--app-form-field-span-base, 1);
+  min-width: 0;
+}
+
+.app-form--grid > .app-form-section,
+.app-form--grid > .app-form-error-summary,
+.app-form--grid > .app-form__actions,
+.app-form--grid > *:not(.app-field):not(.app-form-section):not(.app-form-error-summary):not(.app-form__actions) {
+  grid-column: 1 / -1;
+}
+
+.app-form--grid .app-form-section__content {
+  grid-template-columns: repeat(var(--app-form-columns-base, 1), minmax(0, 1fr));
+}
+
+.app-form--grid .app-form-section__content > *:not(.app-field) {
+  grid-column: 1 / -1;
+}
+
+.app-form--horizontal > .app-field,
+.app-form--responsive > .app-field {
+  align-items: start;
+}
+
+.app-form__actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.app-form-error-summary {
+  padding: 10px 12px;
+  color: var(--app-shell-danger-color, #c42b1c);
+  background: rgb(196 43 28 / 7%);
+  border: 1px solid currentColor;
+  border-radius: 6px;
+  font-size: 13px;
+}
+
+.app-form-error-summary ul {
+  margin: 6px 0 0;
+  padding-left: 20px;
+}
+
+.app-form-error-summary button {
+  padding: 0;
+  color: inherit;
+  background: transparent;
+  border: 0;
+  text-align: left;
+  text-decoration: underline;
+  font: inherit;
+  cursor: pointer;
+}
+
+.app-form-section {
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid var(--app-shell-border-color, rgb(0 0 0 / 8%));
+  border-radius: 8px;
+}
+
+.app-form-section__legend {
+  padding: 0 6px;
+  font-weight: 600;
+}
+
+.app-form-section__legend small {
+  display: block;
+  margin-top: 4px;
+  color: var(--app-shell-muted-text-color, #707070);
+  font-size: 12px;
+  font-weight: 400;
+}
+
+.app-form-section__content {
+  display: grid;
+  gap: 16px;
+  min-width: 0;
+}
+
+.app-form--compact .app-form-section__content {
+  gap: 10px;
+}
+
+@media (min-width: 640px) {
+  .app-form--grid {
+    grid-template-columns: repeat(var(--app-form-columns-sm, var(--app-form-columns-base, 1)), minmax(0, 1fr));
+  }
+
+  .app-form--grid > .app-field,
+  .app-form--grid .app-form-section__content > .app-field {
+    grid-column: span var(--app-form-field-span-sm, var(--app-form-field-span-base, 1));
+  }
+
+  .app-form--grid .app-form-section__content {
+    grid-template-columns: repeat(var(--app-form-columns-sm, var(--app-form-columns-base, 1)), minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 900px) {
+  .app-form--grid {
+    grid-template-columns: repeat(var(--app-form-columns-md, var(--app-form-columns-sm, var(--app-form-columns-base, 1))), minmax(0, 1fr));
+  }
+
+  .app-form--grid > .app-field,
+  .app-form--grid .app-form-section__content > .app-field {
+    grid-column: span var(--app-form-field-span-md, var(--app-form-field-span-sm, var(--app-form-field-span-base, 1)));
+  }
+
+  .app-form--grid .app-form-section__content {
+    grid-template-columns: repeat(var(--app-form-columns-md, var(--app-form-columns-sm, var(--app-form-columns-base, 1))), minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1200px) {
+  .app-form--grid {
+    grid-template-columns: repeat(var(--app-form-columns-lg, var(--app-form-columns-md, var(--app-form-columns-sm, var(--app-form-columns-base, 1)))), minmax(0, 1fr));
+  }
+
+  .app-form--grid > .app-field,
+  .app-form--grid .app-form-section__content > .app-field {
+    grid-column: span var(--app-form-field-span-lg, var(--app-form-field-span-md, var(--app-form-field-span-sm, var(--app-form-field-span-base, 1))));
+  }
+
+  .app-form--grid .app-form-section__content {
+    grid-template-columns: repeat(var(--app-form-columns-lg, var(--app-form-columns-md, var(--app-form-columns-sm, var(--app-form-columns-base, 1)))), minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .app-form--responsive > .app-field {
+    grid-template-columns: 1fr;
+  }
+}

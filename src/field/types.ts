@@ -9,6 +9,7 @@ export interface AppFieldProps {
   error?: ReactNode
   disabled?: boolean
   orientation?: 'vertical' | 'horizontal'
+  labelAlign?: 'start' | 'end'
   labelWidth?: number | string
   htmlFor?: string
   requiredIndicator?: ReactNode

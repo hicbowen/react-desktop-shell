@@ -2,9 +2,11 @@ import { useState } from 'react'
 import {
   AppButton,
   AppDialog,
-  AppField,
+  AppForm,
+  AppFormField,
   AppTimeRangePicker,
   formatAppTimeISO,
+  useAppForm,
   type AppTimeRangeValue,
 } from '../../../../src'
 import { DemoPage, DemoPreview, DemoSection } from '../../components/DemoPage'
@@ -29,36 +31,28 @@ function rangeDuration(value: AppTimeRangeValue | null) {
 }
 
 export function TimeRangePickerPage() {
-  const [controlled, setControlled] =
-    useState<AppTimeRangeValue | null>(defaultRange)
   const [dialogOpen, setDialogOpen] = useState(false)
-  const [dialogRange, setDialogRange] =
-    useState<AppTimeRangeValue | null>(null)
+  type TimeRangeForm = {
+    controlledRange: AppTimeRangeValue | null
+    meetingRange: AppTimeRangeValue | null
+    dialogRange: AppTimeRangeValue | null
+  }
+  const form = useAppForm<TimeRangeForm>({ defaultValues: { controlledRange: defaultRange, meetingRange: null, dialogRange: null } })
 
   return (
     <DemoPage>
+      <AppForm form={form}>
       <DemoSection title="Basic time range">
         <DemoPreview className="demo-form-stack">
           <AppTimeRangePicker />
           <AppTimeRangePicker allowClear defaultValue={defaultRange} />
-          <span className="demo-note">
-            Current range: {rangeText(controlled)} · Duration:{' '}
-            {rangeDuration(controlled)} minutes
-          </span>
+          <AppFormField<TimeRangeForm, AppTimeRangeValue | null> label="Current range" name="controlledRange">{({ value }) => <span className="demo-note">Current range: {rangeText(value)} · Duration: {rangeDuration(value)} minutes</span>}</AppFormField>
         </DemoPreview>
       </DemoSection>
 
       <DemoSection title="Controlled">
         <DemoPreview className="demo-form-stack">
-          <AppTimeRangePicker
-            allowClear
-            minuteStep={5}
-            onValueChange={setControlled}
-            value={controlled}
-          />
-          <span className="demo-note">
-            Applied range: {rangeText(controlled)}
-          </span>
+          <AppFormField<TimeRangeForm, AppTimeRangeValue | null> label="Applied range" name="controlledRange">{({ setValue, value }) => <><AppTimeRangePicker allowClear minuteStep={5} onValueChange={setValue} value={value} /><span className="demo-note">Applied range: {rangeText(value)}</span></>}</AppFormField>
         </DemoPreview>
       </DemoSection>
 
@@ -86,14 +80,7 @@ export function TimeRangePickerPage() {
         <DemoPreview className="demo-form-stack">
           <AppTimeRangePicker disabled value={defaultRange} />
           <AppTimeRangePicker readOnly value={defaultRange} />
-          <AppField error="Choose a valid meeting time" label="Meeting" required>
-            <AppTimeRangePicker
-              allowClear
-              endName="meetingEnd"
-              minuteStep={5}
-              startName="meetingStart"
-            />
-          </AppField>
+          <AppFormField<TimeRangeForm, AppTimeRangeValue | null> label="Meeting" name="meetingRange" required requiredMessage="Choose a valid meeting time">{({ setValue, value }) => <AppTimeRangePicker allowClear minuteStep={5} onValueChange={setValue} value={value} />}</AppFormField>
         </DemoPreview>
       </DemoSection>
 
@@ -116,14 +103,10 @@ export function TimeRangePickerPage() {
           open={dialogOpen}
           title="Meeting time"
         >
-          <AppTimeRangePicker
-            minuteStep={5}
-            onValueChange={setDialogRange}
-            value={dialogRange}
-          />
-          <p className="demo-note">Applied: {rangeText(dialogRange)}</p>
+          <AppFormField<TimeRangeForm, AppTimeRangeValue | null> label="Meeting range" name="dialogRange">{({ setValue, value }) => <><AppTimeRangePicker minuteStep={5} onValueChange={setValue} value={value} /><p className="demo-note">Applied: {rangeText(value)}</p></>}</AppFormField>
         </AppDialog>
       </DemoSection>
+      </AppForm>
     </DemoPage>
   )
 }

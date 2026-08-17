@@ -3,8 +3,10 @@ import {
   AppButton,
   AppDateRangePicker,
   AppDialog,
-  AppField,
+  AppForm,
+  AppFormField,
   formatAppDateISO,
+  useAppForm,
   type AppDateRangeValue,
 } from '../../../../src'
 import { DemoPage, DemoPreview, DemoSection } from '../../components/DemoPage'
@@ -21,16 +23,18 @@ function rangeLabel(value: AppDateRangeValue | null) {
 }
 
 export function DateRangePickerPage() {
-  const [controlled, setControlled] =
-    useState<AppDateRangeValue | null>(defaultRange)
-  const [automatic, setAutomatic] =
-    useState<AppDateRangeValue | null>(null)
   const [dialogOpen, setDialogOpen] = useState(false)
-  const [dialogRange, setDialogRange] =
-    useState<AppDateRangeValue | null>(null)
+  type DateRangeForm = {
+    controlledRange: AppDateRangeValue | null
+    automaticRange: AppDateRangeValue | null
+    reportPeriod: AppDateRangeValue | null
+    dialogRange: AppDateRangeValue | null
+  }
+  const form = useAppForm<DateRangeForm>({ defaultValues: { controlledRange: defaultRange, automaticRange: null, reportPeriod: null, dialogRange: null } })
 
   return (
     <DemoPage>
+      <AppForm form={form}>
       <DemoSection title="Basic range">
         <DemoPreview className="demo-form-stack">
           <AppDateRangePicker />
@@ -40,27 +44,13 @@ export function DateRangePickerPage() {
 
       <DemoSection title="Controlled Apply">
         <DemoPreview className="demo-form-stack">
-          <AppDateRangePicker
-            allowClear
-            onValueChange={setControlled}
-            value={controlled}
-          />
-          <span className="demo-note">
-            Applied range: {rangeLabel(controlled)}
-          </span>
+          <AppFormField<DateRangeForm, AppDateRangeValue | null> label="Applied range" name="controlledRange">{({ setValue, value }) => <><AppDateRangePicker allowClear onValueChange={setValue} value={value} /><span className="demo-note">Applied range: {rangeLabel(value)}</span></>}</AppFormField>
         </DemoPreview>
       </DemoSection>
 
       <DemoSection title="Automatic commit">
         <DemoPreview className="demo-form-stack">
-          <AppDateRangePicker
-            commitMode="auto"
-            onValueChange={setAutomatic}
-            value={automatic}
-          />
-          <span className="demo-note">
-            Selected range: {rangeLabel(automatic)}
-          </span>
+          <AppFormField<DateRangeForm, AppDateRangeValue | null> label="Selected range" name="automaticRange">{({ setValue, value }) => <><AppDateRangePicker commitMode="auto" onValueChange={setValue} value={value} /><span className="demo-note">Selected range: {rangeLabel(value)}</span></>}</AppFormField>
         </DemoPreview>
       </DemoSection>
 
@@ -96,13 +86,7 @@ export function DateRangePickerPage() {
         <DemoPreview className="demo-form-stack">
           <AppDateRangePicker disabled value={defaultRange} />
           <AppDateRangePicker readOnly value={defaultRange} />
-          <AppField error="Choose a reporting period" label="Report period" required>
-            <AppDateRangePicker
-              allowClear
-              endName="reportEnd"
-              startName="reportStart"
-            />
-          </AppField>
+          <AppFormField<DateRangeForm, AppDateRangeValue | null> label="Report period" name="reportPeriod" required requiredMessage="Choose a reporting period">{({ setValue, value }) => <AppDateRangePicker allowClear onValueChange={setValue} value={value} />}</AppFormField>
         </DemoPreview>
       </DemoSection>
 
@@ -125,14 +109,10 @@ export function DateRangePickerPage() {
           open={dialogOpen}
           title="Reporting period"
         >
-          <AppDateRangePicker
-            onValueChange={setDialogRange}
-            value={dialogRange}
-            visibleMonths="responsive"
-          />
-          <p className="demo-note">Applied: {rangeLabel(dialogRange)}</p>
+          <AppFormField<DateRangeForm, AppDateRangeValue | null> label="Dialog range" name="dialogRange">{({ setValue, value }) => <><AppDateRangePicker onValueChange={setValue} value={value} visibleMonths="responsive" /><p className="demo-note">Applied: {rangeLabel(value)}</p></>}</AppFormField>
         </AppDialog>
       </DemoSection>
+      </AppForm>
     </DemoPage>
   )
 }

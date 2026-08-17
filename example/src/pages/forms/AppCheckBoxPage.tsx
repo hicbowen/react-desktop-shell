@@ -1,9 +1,8 @@
-import { useState } from 'react'
-import { AppCheckBox, AppCheckBoxGroup } from '../../../../src'
+import { AppCheckBox, AppCheckBoxGroup, AppForm, AppFormField, useAppForm } from '../../../../src'
 import { DemoPage, DemoPreview, DemoSection } from '../../components/DemoPage'
 
 export function AppCheckBoxPage() {
-  const [selected, setSelected] = useState(true)
-  const [topics, setTopics] = useState(['news'])
-  return <DemoPage><DemoSection title="Check boxes"><DemoPreview className="demo-form-stack"><AppCheckBox label="Unchecked" /><AppCheckBox defaultChecked label="Checked" /><AppCheckBox indeterminate label="Partially selected" /><AppCheckBox description="Adds a recommendation section to generated feedback." label="Include learning suggestions" /><AppCheckBox defaultChecked disabled label="Disabled" /><AppCheckBox checked={selected} label="Controlled selection" onCheckedChange={setSelected} /><AppCheckBoxGroup label="Topics" onValueChange={setTopics} options={[{value:'news',label:'News'},{value:'events',label:'Events'},{value:'managed',label:'Managed',disabled:true}]} value={topics} /></DemoPreview></DemoSection></DemoPage>
+  type CheckBoxForm = { selected: boolean; topics: string[] }
+  const form = useAppForm<CheckBoxForm>({ defaultValues: { selected: true, topics: ['news'] } })
+  return <DemoPage><DemoSection title="Check boxes"><DemoPreview className="demo-form-stack"><AppForm className="demo-form-stack" form={form}><AppCheckBox label="Unchecked" /><AppCheckBox defaultChecked label="Checked" /><AppCheckBox indeterminate label="Partially selected" /><AppCheckBox description="Adds a recommendation section to generated feedback." label="Include learning suggestions" /><AppCheckBox defaultChecked disabled label="Disabled" /><AppFormField<CheckBoxForm, boolean> label="Controlled selection" name="selected">{({ value, setValue }) => <AppCheckBox checked={value} onCheckedChange={setValue} />}</AppFormField><AppFormField<CheckBoxForm, string[]> label="Topics" name="topics">{({ value, setValue }) => <AppCheckBoxGroup onValueChange={setValue} options={[{value:'news',label:'News'},{value:'events',label:'Events'},{value:'managed',label:'Managed',disabled:true}]} value={value} />}</AppFormField></AppForm></DemoPreview></DemoSection></DemoPage>
 }

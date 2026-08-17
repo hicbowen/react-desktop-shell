@@ -50,6 +50,7 @@ const zhCNSectionText: Record<string, string> = {
   'File selection': '文件选择',
   'Footer separation': '页脚分隔',
   'Form layout': '表单布局',
+  'A form owns nested values, validation, submission, and error focus while fields keep their control-specific change APIs.': '表单统一管理嵌套值、验证、提交和错误聚焦，同时保留各控件自身的变更 API。',
   'Guidance cards': '引导卡片',
   'Gutter stability': '边槽稳定性',
   'Header, content, and footer': '标题、内容与页脚',

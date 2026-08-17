@@ -31,23 +31,35 @@ describe('AppFormLayoutPage', () => {
     host.remove()
   })
 
-  it('updates required, malformed, and valid email states', () => {
+  it('validates and submits form-owned email state', async () => {
     act(() => root.render(<AppFormLayoutPage />))
 
-    const email = host.querySelector<HTMLInputElement>('#profile-email')!
-    expect(email.getAttribute('aria-invalid')).toBe('true')
+    const email = host.querySelector<HTMLInputElement>('#app-form-field-email')!
     expect(email.labels?.[0]?.textContent).toContain('Email')
+
+    await act(async () => {
+      host.querySelector<HTMLButtonElement>('button[type="submit"]')!.click()
+      await Promise.resolve()
+    })
+
+    expect(email.getAttribute('aria-invalid')).toBe('true')
     expect(host.textContent).toContain('Email is required')
 
-    act(() => enterValue(email, 'hello@example'))
+    await act(async () => {
+      enterValue(email, 'hello@example')
+      await Promise.resolve()
+    })
 
     expect(email.getAttribute('aria-invalid')).toBe('true')
     expect(host.textContent).toContain('Enter a valid email address')
 
-    act(() => enterValue(email, 'hicbowen@gmail.com'))
+    await act(async () => {
+      enterValue(email, 'hicbowen@gmail.com')
+      await Promise.resolve()
+    })
 
     expect(email.getAttribute('aria-invalid')).toBeNull()
-    expect(host.querySelector('.app-validation-summary')).toBeNull()
+    expect(host.querySelector('.app-form-error-summary')).toBeNull()
     expect(host.querySelector('.app-field__message--error')).toBeNull()
   })
 })

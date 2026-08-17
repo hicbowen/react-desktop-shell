@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { AppCheckBox, AppComboBox, AppField } from '../../../../src'
+import { AppCheckBox, AppComboBox, AppForm, AppFormField, useAppForm } from '../../../../src'
 import { DemoControls, DemoPage, DemoPreview, DemoSection } from '../../components/DemoPage'
 import { useDemoCopy } from '../../i18n/interactiveTranslations'
 
@@ -9,11 +9,16 @@ const courses = [
   { value: 'archived', label: 'Archived course', disabled: true },
 ]
 
+type ComboDemoForm = {
+  course: string
+  validationCourse: string
+}
+
 export function AppComboBoxPage() {
   const t = useDemoCopy()
-  const [course, setCourse] = useState('python')
   const [compact, setCompact] = useState(false)
   const size = compact ? 'compact' : 'standard'
+  const form = useAppForm<ComboDemoForm>({ defaultValues: { course: 'python', validationCourse: '' } })
 
   return (
     <DemoPage>
@@ -25,20 +30,12 @@ export function AppComboBoxPage() {
         description="Type to filter the option list, then choose a matching option with the pointer or keyboard."
       >
         <DemoPreview className="demo-form-stack">
-          <AppComboBox
-            clearable
-            onValueChange={setCourse}
-            options={courses}
-            placeholder={t('Choose a course')}
-            size={size}
-            value={course}
-          />
-          <AppComboBox
-            defaultValue="visual"
-            options={courses}
-            placeholder={t('Choose a course')}
-            size={size}
-          />
+          <AppForm className="demo-form-stack" form={form}>
+            <AppFormField<ComboDemoForm, string> label={t('Controlled course')} name="course">
+              {({ value, setValue }) => <AppComboBox clearable onValueChange={setValue} options={courses} placeholder={t('Choose a course')} size={size} value={value} />}
+            </AppFormField>
+            <AppComboBox defaultValue="visual" options={courses} placeholder={t('Choose a course')} size={size} />
+          </AppForm>
         </DemoPreview>
       </DemoSection>
 
@@ -59,14 +56,11 @@ export function AppComboBoxPage() {
 
       <DemoSection title="Disabled, read-only, and validation">
         <DemoPreview className="demo-form-stack">
-          <AppField error={t('Choose a course')} label={t('Course')} required>
-            <AppComboBox
-              invalid
-              options={courses}
-              placeholder={t('Choose a course')}
-              size={size}
-            />
-          </AppField>
+          <AppForm form={form}>
+            <AppFormField<ComboDemoForm, string> label={t('Course')} name="validationCourse" required>
+              {({ value, setValue }) => <AppComboBox invalid={value === ''} options={courses} placeholder={t('Choose a course')} size={size} value={value} onValueChange={setValue} />}
+            </AppFormField>
+          </AppForm>
           <AppComboBox disabled options={courses} size={size} value="python" />
           <AppComboBox options={courses} readOnly size={size} value="visual" />
         </DemoPreview>

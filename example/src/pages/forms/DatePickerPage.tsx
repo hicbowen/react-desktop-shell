@@ -3,8 +3,10 @@ import {
   AppButton,
   AppDatePicker,
   AppDialog,
-  AppField,
+  AppForm,
+  AppFormField,
   formatAppDateISO,
+  useAppForm,
   type AppDateValue,
 } from '../../../../src'
 import { DemoPage, DemoPreview, DemoSection } from '../../components/DemoPage'
@@ -17,12 +19,17 @@ function isWeekend(value: AppDateValue) {
 }
 
 export function DatePickerPage() {
-  const [controlled, setControlled] = useState<AppDateValue | null>(defaultDate)
   const [dialogOpen, setDialogOpen] = useState(false)
-  const [dialogDate, setDialogDate] = useState<AppDateValue | null>(null)
+  type DatePickerForm = {
+    controlledDate: AppDateValue | null
+    courseDate: AppDateValue | null
+    dialogDate: AppDateValue | null
+  }
+  const form = useAppForm<DatePickerForm>({ defaultValues: { controlledDate: defaultDate, courseDate: null, dialogDate: null } })
 
   return (
     <DemoPage>
+      <AppForm form={form}>
       <DemoSection title="Basic and default values">
         <DemoPreview className="demo-form-stack">
           <AppDatePicker />
@@ -33,14 +40,7 @@ export function DatePickerPage() {
 
       <DemoSection title="Controlled">
         <DemoPreview className="demo-form-stack">
-          <AppDatePicker
-            allowClear
-            onValueChange={setControlled}
-            value={controlled}
-          />
-          <span className="demo-note">
-            Current value: {controlled ? formatAppDateISO(controlled) : 'none'}
-          </span>
+          <AppFormField<DatePickerForm, AppDateValue | null> label="Selected date" name="controlledDate">{({ setValue, value }) => <><AppDatePicker allowClear onValueChange={setValue} value={value} /><span className="demo-note">Current value: {value ? formatAppDateISO(value) : 'none'}</span></>}</AppFormField>
         </DemoPreview>
       </DemoSection>
 
@@ -66,9 +66,7 @@ export function DatePickerPage() {
         <DemoPreview className="demo-form-stack">
           <AppDatePicker disabled value={defaultDate} />
           <AppDatePicker readOnly value={defaultDate} />
-          <AppField error="Choose a course date" label="Course date" required>
-            <AppDatePicker allowClear name="courseDate" />
-          </AppField>
+          <AppFormField<DatePickerForm, AppDateValue | null> label="Course date" name="courseDate" required requiredMessage="Choose a course date">{({ setValue, value }) => <AppDatePicker allowClear onValueChange={setValue} value={value} />}</AppFormField>
         </DemoPreview>
       </DemoSection>
 
@@ -80,7 +78,7 @@ export function DatePickerPage() {
               <AppButton onClick={() => setDialogOpen(false)}>Cancel</AppButton>
               <AppButton
                 appearance="primary"
-                onClick={() => setDialogOpen(false)}
+                onClick={() => void form.submit().then((success) => { if (success) setDialogOpen(false) })}
               >
                 Save
               </AppButton>
@@ -91,15 +89,10 @@ export function DatePickerPage() {
           open={dialogOpen}
           title="Course schedule"
         >
-          <AppField label="Start date">
-            <AppDatePicker
-              allowClear
-              onValueChange={setDialogDate}
-              value={dialogDate}
-            />
-          </AppField>
+          <AppFormField<DatePickerForm, AppDateValue | null> label="Start date" name="dialogDate">{({ setValue, value }) => <AppDatePicker allowClear onValueChange={setValue} value={value} />}</AppFormField>
         </AppDialog>
       </DemoSection>
+      </AppForm>
     </DemoPage>
   )
 }

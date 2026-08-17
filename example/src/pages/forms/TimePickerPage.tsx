@@ -2,9 +2,11 @@ import { useState } from 'react'
 import {
   AppButton,
   AppDialog,
-  AppField,
+  AppForm,
+  AppFormField,
   AppTimePicker,
   formatAppTimeISO,
+  useAppForm,
   type AppTimeValue,
 } from '../../../../src'
 import { DemoPage, DemoPreview, DemoSection } from '../../components/DemoPage'
@@ -12,13 +14,17 @@ import { DemoPage, DemoPreview, DemoSection } from '../../components/DemoPage'
 const defaultTime = { hour: 18, minute: 30 }
 
 export function TimePickerPage() {
-  const [controlled, setControlled] =
-    useState<AppTimeValue | null>(defaultTime)
   const [dialogOpen, setDialogOpen] = useState(false)
-  const [dialogTime, setDialogTime] = useState<AppTimeValue | null>(null)
+  type TimePickerForm = {
+    controlledTime: AppTimeValue | null
+    reminderTime: AppTimeValue | null
+    dialogTime: AppTimeValue | null
+  }
+  const form = useAppForm<TimePickerForm>({ defaultValues: { controlledTime: defaultTime, reminderTime: null, dialogTime: null } })
 
   return (
     <DemoPage>
+      <AppForm form={form}>
       <DemoSection title="Basic and default values">
         <DemoPreview className="demo-form-stack">
           <AppTimePicker />
@@ -29,15 +35,7 @@ export function TimePickerPage() {
 
       <DemoSection title="Controlled Apply and Cancel">
         <DemoPreview className="demo-form-stack">
-          <AppTimePicker
-            allowClear
-            minuteStep={5}
-            onValueChange={setControlled}
-            value={controlled}
-          />
-          <span className="demo-note">
-            Applied time: {controlled ? formatAppTimeISO(controlled) : 'none'}
-          </span>
+          <AppFormField<TimePickerForm, AppTimeValue | null> label="Applied time" name="controlledTime">{({ setValue, value }) => <><AppTimePicker allowClear minuteStep={5} onValueChange={setValue} value={value} /><span className="demo-note">Applied time: {value ? formatAppTimeISO(value) : 'none'}</span></>}</AppFormField>
         </DemoPreview>
       </DemoSection>
 
@@ -61,9 +59,7 @@ export function TimePickerPage() {
         <DemoPreview className="demo-form-stack">
           <AppTimePicker disabled value={defaultTime} />
           <AppTimePicker readOnly value={defaultTime} />
-          <AppField error="Choose a reminder time" label="Reminder" required>
-            <AppTimePicker allowClear minuteStep={5} name="reminderTime" />
-          </AppField>
+          <AppFormField<TimePickerForm, AppTimeValue | null> label="Reminder" name="reminderTime" required requiredMessage="Choose a reminder time">{({ setValue, value }) => <AppTimePicker allowClear minuteStep={5} onValueChange={setValue} value={value} />}</AppFormField>
         </DemoPreview>
       </DemoSection>
 
@@ -86,16 +82,10 @@ export function TimePickerPage() {
           open={dialogOpen}
           title="Reminder time"
         >
-          <AppField label="Time">
-            <AppTimePicker
-              allowClear
-              minuteStep={5}
-              onValueChange={setDialogTime}
-              value={dialogTime}
-            />
-          </AppField>
+          <AppFormField<TimePickerForm, AppTimeValue | null> label="Time" name="dialogTime">{({ setValue, value }) => <AppTimePicker allowClear minuteStep={5} onValueChange={setValue} value={value} />}</AppFormField>
         </AppDialog>
       </DemoSection>
+      </AppForm>
     </DemoPage>
   )
 }
