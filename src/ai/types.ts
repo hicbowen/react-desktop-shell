@@ -34,6 +34,7 @@ export interface AppAiComposerProps {
   value?: string
   defaultValue?: string
   onValueChange?: (value: string) => void
+  /** Response-generation state; tool lifecycle stays in the message stream. */
   runStatus?: AppAiRunStatus
   onCancel?: () => void
   clearOnSubmit?: boolean
@@ -117,6 +118,12 @@ export type AppToolCallStatus =
   | 'canceled'
   | 'error'
 
+/** Lightweight activity cannot represent an approval decision on its own. */
+export type AppToolActivityStatus = Exclude<
+  AppToolCallStatus,
+  'awaiting-approval' | 'rejected'
+>
+
 export interface AppToolCallCardProps extends Omit<
   HTMLAttributes<HTMLElement>,
   'children' | 'title'
@@ -145,7 +152,7 @@ export interface AppToolActivityProps extends Omit<
 > {
   title: ReactNode
   description?: ReactNode
-  status?: AppToolCallStatus
+  status?: AppToolActivityStatus
   statusLabel?: ReactNode
   onCancel?: () => void
   cancelText?: ReactNode
@@ -156,7 +163,7 @@ export interface AppToolCallGroupItem {
   id: string
   title: ReactNode
   description?: ReactNode
-  status: AppToolCallStatus
+  status: AppToolActivityStatus
   statusLabel?: ReactNode
   ariaLabel?: string
 }

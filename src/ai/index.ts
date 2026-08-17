@@ -21,6 +21,7 @@ export type {
   AppChangeReviewStatus,
   AppPromptSuggestion,
   AppPromptSuggestionsProps,
+  AppToolActivityStatus,
   AppToolActivityProps,
   AppToolCallCardProps,
   AppToolCallGroupItem,

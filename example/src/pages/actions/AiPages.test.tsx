@@ -72,6 +72,22 @@ describe('AI example pages', () => {
   it('derives the run and tool-call UI from one workflow phase', () => {
     renderPage(<ConversationPage />)
 
+    expect(
+      container.querySelector('.app-tool-call-card .app-progress-ring'),
+    ).not.toBeNull()
+
+    const askBeforeTools = Array.from(
+      container.querySelectorAll('button'),
+    ).find((button) => button.textContent?.includes('Ask before tools'))
+    const reset = Array.from(container.querySelectorAll('button')).find(
+      (button) => button.textContent?.includes('Reset workflow'),
+    )
+    expect(askBeforeTools).not.toBeUndefined()
+    expect(reset).not.toBeUndefined()
+
+    act(() => askBeforeTools?.click())
+    act(() => reset?.click())
+
     const approve = Array.from(container.querySelectorAll('button')).find(
       (button) => button.textContent?.includes('Allow once'),
     )

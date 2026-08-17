@@ -1,12 +1,11 @@
 import { CheckmarkCircle16Regular } from '@fluentui/react-icons/svg/checkmark-circle'
 import { DismissCircle16Regular } from '@fluentui/react-icons/svg/dismiss-circle'
 import { ErrorCircle16Regular } from '@fluentui/react-icons/svg/error-circle'
-import { Warning16Regular } from '@fluentui/react-icons/svg/warning'
 import { AppButton } from '../button'
 import { useAppLocale } from '../localization/useAppLocale'
 import { AppProgressRing } from '../progress'
 import { getAppToolCallStatusLabel } from './toolCallStatus'
-import type { AppToolActivityProps, AppToolCallStatus } from './types'
+import type { AppToolActivityProps, AppToolActivityStatus } from './types'
 import './AppToolActivity.css'
 
 interface ToolActivityRowProps extends AppToolActivityProps {
@@ -14,11 +13,10 @@ interface ToolActivityRowProps extends AppToolActivityProps {
   announceStatus?: boolean
 }
 
-function ToolStatusIcon({ status }: { status: AppToolCallStatus }) {
+function ToolStatusIcon({ status }: { status: AppToolActivityStatus }) {
   if (status === 'completed') return <CheckmarkCircle16Regular />
   if (status === 'error') return <ErrorCircle16Regular />
-  if (status === 'awaiting-approval') return <Warning16Regular />
-  if (status === 'rejected' || status === 'canceled') {
+  if (status === 'canceled') {
     return <DismissCircle16Regular />
   }
   return <span className="app-tool-activity__running-dot" />
@@ -56,6 +54,7 @@ export function ToolActivityRow({
       {...rest}
       aria-busy={running || undefined}
       aria-label={ariaLabel}
+      aria-live={running && animateRunning && announceStatus ? 'polite' : undefined}
       className={[
         'app-tool-activity',
         `app-tool-activity--${status}`,
@@ -63,11 +62,13 @@ export function ToolActivityRow({
       ]
         .filter(Boolean)
         .join(' ')}
+      role={running && animateRunning ? 'status' : undefined}
       style={style}
     >
       <span className="app-tool-activity__indicator">
         {running && animateRunning ? (
           <AppProgressRing
+            ariaHidden
             ariaLabel={accessibleRunningLabel}
             labelPosition="hidden"
             size="small"

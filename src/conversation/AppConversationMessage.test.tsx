@@ -126,4 +126,26 @@ describe('AppConversationMessage', () => {
 
     act(() => root.unmount())
   })
+
+  it('keeps a timestamp while suppressing the default role label', () => {
+    const host = document.createElement('div')
+    const root = createRoot(host)
+
+    act(() =>
+      root.render(
+        <AppConversationMessage
+          label={null}
+          role="tool"
+          timestamp="10:34"
+        >
+          Tool result
+        </AppConversationMessage>,
+      ),
+    )
+
+    expect(host.querySelector('.app-conversation-message__header')).toBeNull()
+    expect(host.querySelector('time')?.textContent).toBe('10:34')
+
+    act(() => root.unmount())
+  })
 })

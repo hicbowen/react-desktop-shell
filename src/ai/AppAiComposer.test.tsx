@@ -119,7 +119,7 @@ describe('AppAiComposer', () => {
     expect(host.querySelector('.app-ai-run-indicator')).toBeNull()
   })
 
-  it('disables submission while waiting for approval', () => {
+  it('keeps submission available while approval is owned by a message', () => {
     const onSubmit = vi.fn()
     const textarea = renderComposer({
       defaultValue: 'Another prompt',
@@ -130,7 +130,7 @@ describe('AppAiComposer', () => {
       'button[aria-label="Send"]',
     )!
 
-    expect(send.disabled).toBe(true)
+    expect(send.disabled).toBe(false)
     expect(host.querySelector('.app-ai-run-indicator')).toBeNull()
     act(() =>
       textarea.dispatchEvent(
@@ -142,7 +142,16 @@ describe('AppAiComposer', () => {
       ),
     )
 
-    expect(onSubmit).not.toHaveBeenCalled()
+    expect(onSubmit).toHaveBeenCalledWith('Another prompt')
+  })
+
+  it('does not expose a composer stop action for message-owned tool work', () => {
+    const onCancel = vi.fn()
+    renderComposer({ onCancel, runStatus: 'using-tool' })
+
+    expect(
+      document.body.querySelector('button[aria-label="Stop generating"]'),
+    ).toBeNull()
   })
 
   it('renders the surface layout, header, toolbar slots, and custom action icons', () => {

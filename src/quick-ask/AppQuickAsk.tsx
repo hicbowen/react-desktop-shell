@@ -49,6 +49,7 @@ export const AppQuickAsk = forwardRef<HTMLTextAreaElement, AppQuickAskProps>(
     const wasOpenRef = useRef(false)
     const busy = isAppAiRunBusy(runStatus)
     const blocked = isAppAiRunBlocked(runStatus)
+    const composerRunStatus = runStatus === 'using-tool' ? 'responding' : runStatus
     const hasAnswer = answer !== undefined && answer !== null && answer !== ''
     const showResponse = runStatus !== 'idle' || hasAnswer || error != null
     const showResponseHeader = busy || blocked || runStatus === 'error'
@@ -87,7 +88,7 @@ export const AppQuickAsk = forwardRef<HTMLTextAreaElement, AppQuickAskProps>(
           appearance="embedded"
           clearOnSubmit={clearOnSubmit}
           defaultValue={defaultValue}
-          disabled={disabled}
+          disabled={disabled || blocked}
           inputAriaLabel={inputAriaLabel}
           leadingIcon={leadingIcon}
           onCancel={onCancel}
@@ -102,7 +103,7 @@ export const AppQuickAsk = forwardRef<HTMLTextAreaElement, AppQuickAskProps>(
           onValueChange={onValueChange}
           placeholder={placeholder}
           ref={setInputRef}
-          runStatus={runStatus}
+          runStatus={composerRunStatus}
           value={value}
         />
 

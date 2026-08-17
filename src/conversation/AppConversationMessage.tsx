@@ -29,9 +29,9 @@ export function AppConversationMessage({
     tool: text.tool,
     system: text.system,
   }
-  const resolvedLabel = label ?? roleLabels[role]
+  const resolvedLabel = label === undefined ? roleLabels[role] : label
   const defaultHeader =
-    (label !== null || timestamp != null) && resolvedLabel != null ? (
+    label !== null && resolvedLabel != null ? (
       <span className="app-conversation-message__label">{resolvedLabel}</span>
     ) : null
   const resolvedHeader = header ?? defaultHeader

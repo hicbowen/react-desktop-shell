@@ -423,10 +423,12 @@ controls:
 ```
 
 `runStatus` is behavioral rather than visual inside the composer: it prevents
-duplicate submission while a run is busy or waiting for approval/review and
-switches Send to Stop when `onCancel` is available. Put progress, tool calls,
-and approval state in the response or conversation area instead of duplicating
-them in the input toolbar.
+duplicate submission while the current response is being generated and
+switches Send to Stop when `onCancel` is available. Tool execution, approval,
+and change review belong to the response or conversation area; they do not
+silently block or replace the composer's Send action. If a host needs to make
+the whole composer unavailable, pass `disabled` with an explicit host-owned
+reason elsewhere in the UI.
 
 Use `appearance="embedded"` when the parent already owns the border, elevation,
 and surrounding surface. `AppQuickAsk` uses this mode internally so its input
@@ -495,14 +497,15 @@ compact feedback:
 />
 ```
 
-`AppAiComposer` accepts the same value through `runStatus` and uses it to
-prevent a new prompt while the run is busy or waiting for approval/review.
-Keep the lifecycle of each tool call in `AppToolCallCard` and each proposed
-change in `AppChangeReviewCard`. In a workflow, keep one host-owned phase and
-derive these component statuses from it instead of synchronizing several
-independent state variables. `completed` means the current run is finished, not
-that the conversation has been closed. Conversation messages remain historical
-content and do not carry this transient run state.
+`AppAiComposer` accepts the same value through `runStatus`, but only response
+generation states (`thinking`, `responding`, and `searching`) control its Send
+and Stop actions. Keep the lifecycle of each tool call in `AppToolCallCard` and
+each proposed change in `AppChangeReviewCard`. In a workflow, keep one
+host-owned phase and derive these component statuses from it instead of
+synchronizing several independent state variables. `completed` means the
+current run is finished, not that the conversation has been closed.
+Conversation messages remain historical content and do not carry this
+transient run state.
 
 Use `AppChangeReviewCard` after a tool has prepared concrete file or code
 changes. Keep the final write operation in the host and let the card handle
@@ -558,8 +561,10 @@ details are collapsed by default and can be controlled with `expanded`,
 denied before execution, while `canceled` means a started operation was stopped.
 
 Use `AppToolActivity` for a lightweight event that does not need approval or a
-full details card. Put the action in the title so the spinner communicates
-specific work instead of repeating a generic “using a tool” label:
+full details card. Its status type intentionally excludes approval and
+rejection; those decisions need an `AppToolCallCard` with explicit actions. Put
+the action in the title so the spinner communicates specific work instead of
+repeating a generic “using a tool” label:
 
 ```tsx
 <AppToolActivity
@@ -573,8 +578,8 @@ specific work instead of repeating a generic “using a tool” label:
 Use `AppToolCallGroup` for parallel activity. It derives aggregate progress
 from `items`, renders one animated spinner in the group header, and uses static
 status icons for child rows so several simultaneous tools do not create a field
-of competing animations. Approval decisions still belong in individual
-`AppToolCallCard` entries.
+of competing animations. Mixed failures remain visible in the aggregate label,
+and approval decisions still belong in individual `AppToolCallCard` entries.
 
 ```tsx
 <AppToolCallGroup

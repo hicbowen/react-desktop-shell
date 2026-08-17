@@ -41,18 +41,11 @@
   color: var(--app-shell-success-color, #107c10);
 }
 
-.app-tool-activity--awaiting-approval .app-tool-activity__status-icon,
-.app-tool-activity--awaiting-approval .app-tool-activity__status-label {
-  color: var(--app-shell-warning-color, #8a5d00);
-}
-
 .app-tool-activity--error .app-tool-activity__status-icon,
 .app-tool-activity--error .app-tool-activity__status-label {
   color: var(--app-shell-danger-color, #c42b1c);
 }
 
-.app-tool-activity--rejected .app-tool-activity__status-icon,
-.app-tool-activity--rejected .app-tool-activity__status-label,
 .app-tool-activity--canceled .app-tool-activity__status-icon,
 .app-tool-activity--canceled .app-tool-activity__status-label {
   color: var(--app-shell-muted-text-color, #707070);

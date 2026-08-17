@@ -81,4 +81,23 @@ describe('AppToolCallGroup', () => {
 
     act(() => root.unmount())
   })
+
+  it('keeps active progress visible while surfacing a completed failure count', () => {
+    const host = document.createElement('div')
+    const root = createRoot(host)
+    const mixedItems: AppToolCallGroupItem[] = [
+      { id: 'read', status: 'completed', title: 'Read project README' },
+      { id: 'search', status: 'error', title: 'Search meeting notes' },
+      { id: 'write', status: 'running', title: 'Prepare meeting summary' },
+    ]
+    act(() => root.render(<AppToolCallGroup items={mixedItems} />))
+
+    expect(host.querySelectorAll('.app-progress-ring')).toHaveLength(1)
+    expect(host.textContent).toContain('1 of 3 completed · 1 failed')
+    expect(
+      host.querySelector('.app-tool-call-group')?.getAttribute('aria-busy'),
+    ).toBe('true')
+
+    act(() => root.unmount())
+  })
 })

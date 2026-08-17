@@ -5,7 +5,7 @@ import { Stop16Regular } from '@fluentui/react-icons/svg/stop'
 import { AppIconButton } from '../button'
 import { useAppLocale } from '../localization/useAppLocale'
 import { AppTextArea } from '../text-input'
-import { isAppAiRunBlocked, isAppAiRunBusy } from './runStatus'
+import { isAppAiComposerBusy } from './runStatus'
 import type { AppAiComposerProps } from './types'
 import './AppAiComposer.css'
 
@@ -46,8 +46,7 @@ export const AppAiComposer = forwardRef<
   const inputRef = useRef<HTMLTextAreaElement | null>(null)
   const composingRef = useRef(false)
   const currentValue = value ?? internalValue
-  const busy = isAppAiRunBusy(runStatus)
-  const blocked = isAppAiRunBlocked(runStatus)
+  const busy = isAppAiComposerBusy(runStatus)
   const resolvedLeadingIcon =
     leadingIcon === undefined
       ? appearance === 'embedded'
@@ -67,7 +66,7 @@ export const AppAiComposer = forwardRef<
 
   const submit = () => {
     const prompt = currentValue.trim()
-    if (!prompt || disabled || busy || blocked) return
+    if (!prompt || disabled || busy) return
     onSubmit(prompt)
     if (clearOnSubmit) change('')
   }
@@ -151,7 +150,7 @@ export const AppAiComposer = forwardRef<
               appearance="primary"
               ariaLabel={text.send}
               className="app-ai-composer__submit"
-              disabled={disabled || blocked || !currentValue.trim()}
+              disabled={disabled || !currentValue.trim()}
               icon={submitIcon ?? <Send16Regular />}
               onClick={submit}
               shape="circular"

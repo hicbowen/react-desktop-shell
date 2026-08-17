@@ -21,6 +21,10 @@ describe('AppToolActivity', () => {
     )
 
     expect(host.querySelector('.app-progress-ring')).not.toBeNull()
+    expect(host.querySelector('.app-progress-ring')?.getAttribute('aria-hidden')).toBe('true')
+    expect(host.querySelector('.app-tool-activity')?.getAttribute('role')).toBe(
+      'status',
+    )
     expect(host.querySelector('.app-status-badge')).toBeNull()
     expect(host.textContent).toContain('Saving meeting summary…')
     expect(host.textContent).not.toContain('Running')
@@ -46,6 +50,21 @@ describe('AppToolActivity', () => {
     expect(host.querySelector('.app-tool-activity--canceled')).not.toBeNull()
     expect(host.textContent).toContain('Canceled')
     expect(host.textContent).not.toContain('Rejected')
+
+    act(() => root.unmount())
+  })
+
+  it('renders an activity error without an approval control', () => {
+    const host = document.createElement('div')
+    const root = createRoot(host)
+    act(() =>
+      root.render(
+        <AppToolActivity status="error" title="Prepare meeting summary" />,
+      ),
+    )
+
+    expect(host.querySelector('.app-tool-activity--error')).not.toBeNull()
+    expect(host.querySelector('button')).toBeNull()
 
     act(() => root.unmount())
   })

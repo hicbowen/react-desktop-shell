@@ -85,6 +85,23 @@ export const enUSMessages = {
     toolActivity: 'Tool activity',
     toolProgress: (completed: number, total: number) =>
       `${completed} of ${total} completed`,
+    toolProgressWithFailures: (
+      completed: number,
+      total: number,
+      failed: number,
+    ) => `${completed} of ${total} completed · ${failed} failed`,
+    toolProgressWithCancellations: (
+      completed: number,
+      total: number,
+      canceled: number,
+    ) => `${completed} of ${total} completed · ${canceled} canceled`,
+    toolProgressWithIssues: (
+      completed: number,
+      total: number,
+      failed: number,
+      canceled: number,
+    ) =>
+      `${completed} of ${total} completed · ${failed} failed · ${canceled} canceled`,
     toolApprovalCount: (count: number) =>
       `${count} ${count === 1 ? 'tool needs' : 'tools need'} approval`,
     toolFailureCount: (count: number) =>

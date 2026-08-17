@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import {
   AppAiComposer,
   AppAiMarkdown,
@@ -41,22 +41,14 @@ type WorkflowPhase =
   | 'applying-changes'
   | 'completed'
   | 'tool-rejected'
+  | 'tool-canceled'
   | 'review-rejected'
-
-const workflowRunStatuses: Record<WorkflowPhase, AppAiRunStatus> = {
-  'awaiting-tool-approval': 'awaiting-approval',
-  'running-tool': 'using-tool',
-  'awaiting-review': 'awaiting-review',
-  'applying-changes': 'using-tool',
-  completed: 'completed',
-  'tool-rejected': 'canceled',
-  'review-rejected': 'canceled',
-}
 
 function getToolCallStatus(phase: WorkflowPhase): AppToolCallStatus {
   if (phase === 'awaiting-tool-approval') return 'awaiting-approval'
   if (phase === 'running-tool') return 'running'
   if (phase === 'tool-rejected') return 'rejected'
+  if (phase === 'tool-canceled') return 'canceled'
   return 'completed'
 }
 
@@ -87,24 +79,42 @@ export function ConversationPage() {
     cloneTextMessages(initialConversationMessages),
   )
   const [workflowPhase, setWorkflowPhase] = useState<WorkflowPhase>(
-    'awaiting-tool-approval',
+    'running-tool',
   )
-  const workflowRunStatus = workflowRunStatuses[workflowPhase]
-  const runStatus = chatRunStatus === 'idle' ? workflowRunStatus : chatRunStatus
   const toolCallStatus = getToolCallStatus(workflowPhase)
   const reviewStatus = getReviewStatus(workflowPhase)
   const messageIdRef = useRef(2)
   const timerRef = useRef<number | null>(null)
   const workflowTimerRef = useRef<number | null>(null)
 
+  const stopWorkflowTimer = useCallback(() => {
+    if (workflowTimerRef.current === null) return
+    window.clearTimeout(workflowTimerRef.current)
+    workflowTimerRef.current = null
+  }, [])
+
+  const startWorkflowTool = useCallback(() => {
+    stopWorkflowTimer()
+    setWorkflowPhase('running-tool')
+    workflowTimerRef.current = window.setTimeout(() => {
+      workflowTimerRef.current = null
+      setWorkflowPhase('awaiting-review')
+    }, 1600)
+  }, [stopWorkflowTimer])
+
   useEffect(
-    () => () => {
-      if (timerRef.current !== null) window.clearTimeout(timerRef.current)
-      if (workflowTimerRef.current !== null) {
-        window.clearTimeout(workflowTimerRef.current)
+    () => {
+      if (workflowTimerRef.current !== null) return
+      workflowTimerRef.current = window.setTimeout(() => {
+        workflowTimerRef.current = null
+        setWorkflowPhase('awaiting-review')
+      }, 1600)
+      return () => {
+        if (timerRef.current !== null) window.clearTimeout(timerRef.current)
+        stopWorkflowTimer()
       }
     },
-    [],
+    [stopWorkflowTimer],
   )
 
   const nextMessageId = (role: DemoTextMessage['role']) => {
@@ -183,24 +193,18 @@ export function ConversationPage() {
     ])
   }
 
-  const stopWorkflowTimer = () => {
-    if (workflowTimerRef.current === null) return
-    window.clearTimeout(workflowTimerRef.current)
-    workflowTimerRef.current = null
-  }
-
   const approveWorkflowTool = () => {
-    stopWorkflowTimer()
-    setWorkflowPhase('running-tool')
-    workflowTimerRef.current = window.setTimeout(() => {
-      workflowTimerRef.current = null
-      setWorkflowPhase('awaiting-review')
-    }, 720)
+    startWorkflowTool()
   }
 
   const rejectWorkflowTool = () => {
     stopWorkflowTimer()
     setWorkflowPhase('tool-rejected')
+  }
+
+  const cancelWorkflowTool = () => {
+    stopWorkflowTimer()
+    setWorkflowPhase('tool-canceled')
   }
 
   const applyWorkflowReview = () => {
@@ -221,7 +225,8 @@ export function ConversationPage() {
     stopTimer()
     stopWorkflowTimer()
     setChatRunStatus('idle')
-    setWorkflowPhase('awaiting-tool-approval')
+    if (approvalMode) setWorkflowPhase('awaiting-tool-approval')
+    else startWorkflowTool()
   }
 
   const workflowReviewFiles = useMemo<AppChangeReviewFile[]>(
@@ -300,7 +305,7 @@ export function ConversationPage() {
       content: (
         <AppAiMarkdown
           content={t(
-            'I can prepare the summary and update the README. I need your confirmation before the file tool runs.',
+            'I can prepare the summary and README changes. The tool will only prepare a proposal; the final write waits for your review.',
           )}
         />
       ),
@@ -315,24 +320,26 @@ export function ConversationPage() {
     },
     {
       id: 'conversation-workflow-tool-approval',
+      label: null,
       role: 'tool',
       content: (
         <AppToolCallCard
           description={t(
-            'This prepares a meeting summary and updates the project README. Existing files are not changed.',
+            'This reads the project files and prepares proposed changes. It does not modify files until you approve the review.',
           )}
           details={t(
             'Targets: Documents/meeting-summary.md and Documents/README.md',
           )}
           onApprove={approveWorkflowTool}
+          onCancel={cancelWorkflowTool}
           onReject={rejectWorkflowTool}
           status={toolCallStatus}
           statusLabel={
             toolCallStatus === 'running'
-              ? t('Saving meeting summary…')
+              ? t('Preparing meeting summary…')
               : undefined
           }
-          title={t('Save meeting summary')}
+          title={t('Prepare meeting summary changes')}
         />
       ),
       metaVisibility: 'hover',
@@ -364,6 +371,7 @@ export function ConversationPage() {
       },
       {
         id: 'conversation-workflow-change-review',
+        label: null,
         role: 'tool',
         content: (
           <AppChangeReviewCard
@@ -405,14 +413,16 @@ export function ConversationPage() {
     }
   }
 
-  if (toolCallStatus === 'rejected') {
+  if (toolCallStatus === 'rejected' || toolCallStatus === 'canceled') {
     workflowMessages.push({
       id: 'conversation-workflow-assistant-rejected',
       role: 'assistant',
       content: (
         <AppAiMarkdown
           content={t(
-            'No file was written. The prepared summary remains in this conversation.',
+            toolCallStatus === 'canceled'
+              ? 'The tool was stopped. No file was written.'
+              : 'No file was written. The prepared summary remains in this conversation.',
           )}
         />
       ),
@@ -467,7 +477,7 @@ export function ConversationPage() {
             onCancel={cancel}
             onSubmit={submit}
             onValueChange={setDraft}
-            runStatus={runStatus}
+            runStatus={chatRunStatus}
             style={{ width: '100%' }}
             submitIcon={<ArrowUp />}
             toolbarEnd={
@@ -520,6 +530,11 @@ export function ConversationPage() {
           />
           {lastAction ? <span className="demo-note">{lastAction}</span> : null}
         </DemoPreview>
+        <p className="demo-note">
+          {t(
+            'The tool prepares a proposal automatically. Turn on Ask before tools and reset the workflow to require permission before preparation; review is the only write confirmation.',
+          )}
+        </p>
         <p className="demo-note">
           {t(
             'Scroll up to pause follow mode, then use Jump to latest when you are ready to return.',

@@ -80,6 +80,22 @@ export const zhCNMessages = {
     toolActivity: '工具活动',
     toolProgress: (completed: number, total: number) =>
       `已完成 ${completed}/${total}`,
+    toolProgressWithFailures: (
+      completed: number,
+      total: number,
+      failed: number,
+    ) => `已完成 ${completed}/${total}，失败 ${failed} 个`,
+    toolProgressWithCancellations: (
+      completed: number,
+      total: number,
+      canceled: number,
+    ) => `已完成 ${completed}/${total}，取消 ${canceled} 个`,
+    toolProgressWithIssues: (
+      completed: number,
+      total: number,
+      failed: number,
+      canceled: number,
+    ) => `已完成 ${completed}/${total}，失败 ${failed} 个，取消 ${canceled} 个`,
     toolApprovalCount: (count: number) => `${count} 个工具需要确认`,
     toolFailureCount: (count: number) => `${count} 个工具执行失败`,
     toolCompletedCount: (count: number) => `${count} 个工具已完成`,

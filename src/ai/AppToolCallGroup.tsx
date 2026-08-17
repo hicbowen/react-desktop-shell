@@ -7,24 +7,21 @@ import { AppProgressRing, AppStatusBadge } from '../progress'
 import { ToolActivityRow } from './AppToolActivity'
 import { getAppToolCallBadgeStatus } from './toolCallStatus'
 import type {
+  AppToolActivityStatus,
   AppToolCallGroupItem,
   AppToolCallGroupProps,
-  AppToolCallStatus,
 } from './types'
 import './AppToolCallGroup.css'
 
 function getGroupStatus(
   items: readonly AppToolCallGroupItem[],
-): AppToolCallStatus | null {
+): AppToolActivityStatus | null {
   if (!items.length) return null
-  if (items.some((item) => item.status === 'awaiting-approval')) {
-    return 'awaiting-approval'
-  }
   if (items.some((item) => item.status === 'running')) return 'running'
   if (items.some((item) => item.status === 'error')) return 'error'
   if (items.every((item) => item.status === 'completed')) return 'completed'
   if (items.some((item) => item.status === 'canceled')) return 'canceled'
-  return 'rejected'
+  return 'error'
 }
 
 export function AppToolCallGroup({
@@ -53,25 +50,56 @@ export function AppToolCallGroup({
     (item) => item.status === 'completed',
   ).length
   const runningCount = items.filter((item) => item.status === 'running').length
-  const approvalCount = items.filter(
-    (item) => item.status === 'awaiting-approval',
-  ).length
   const failureCount = items.filter((item) => item.status === 'error').length
+  const canceledCount = items.filter((item) => item.status === 'canceled').length
 
   const getDefaultStatusLabel = () => {
     if (status === null) return text.noToolActivity
     if (status === 'running') {
+      if (failureCount > 0 && canceledCount > 0) {
+        return text.toolProgressWithIssues(
+          completedCount,
+          items.length,
+          failureCount,
+          canceledCount,
+        )
+      }
+      if (failureCount > 0) {
+        return text.toolProgressWithFailures(
+          completedCount,
+          items.length,
+          failureCount,
+        )
+      }
       return text.toolProgress(completedCount, items.length)
     }
-    if (status === 'awaiting-approval') {
-      return text.toolApprovalCount(approvalCount)
+    if (status === 'error') {
+      if (failureCount > 0 && canceledCount > 0) {
+        return text.toolProgressWithIssues(
+          completedCount,
+          items.length,
+          failureCount,
+          canceledCount,
+        )
+      }
+      if (completedCount > 0) {
+        return text.toolProgressWithFailures(
+          completedCount,
+          items.length,
+          failureCount,
+        )
+      }
+      return text.toolFailureCount(failureCount)
     }
-    if (status === 'error') return text.toolFailureCount(failureCount)
     if (status === 'completed') return text.toolCompletedCount(items.length)
     if (completedCount > 0) {
-      return text.toolProgress(completedCount, items.length)
+      return text.toolProgressWithCancellations(
+        completedCount,
+        items.length,
+        canceledCount,
+      )
     }
-    return status === 'canceled' ? text.canceled : text.rejected
+    return text.canceled
   }
 
   const defaultStatusLabel = getDefaultStatusLabel()

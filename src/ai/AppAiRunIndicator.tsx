@@ -80,6 +80,7 @@ export function AppAiRunIndicator({
         <div className="app-ai-run-indicator__indicator">
           {busy ? (
             <AppProgressRing
+              ariaHidden
               ariaLabel={
                 typeof resolvedLabel === 'string'
                   ? resolvedLabel

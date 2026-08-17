@@ -74,6 +74,22 @@ export interface AppLocaleMessages {
     hideToolDetails: string
     toolActivity: string
     toolProgress: (completed: number, total: number) => string
+    toolProgressWithFailures: (
+      completed: number,
+      total: number,
+      failed: number,
+    ) => string
+    toolProgressWithCancellations: (
+      completed: number,
+      total: number,
+      canceled: number,
+    ) => string
+    toolProgressWithIssues: (
+      completed: number,
+      total: number,
+      failed: number,
+      canceled: number,
+    ) => string
     toolApprovalCount: (count: number) => string
     toolFailureCount: (count: number) => string
     toolCompletedCount: (count: number) => string
