@@ -136,8 +136,8 @@ export interface AppFormApi<TValues> {
   reset: (values?: TValues) => void
   resetField: (name: AppFormName) => void
   setErrors: (errors: AppFormErrorMap) => void
-  clearErrors: (names?: AppFormName | readonly AppFormName[]) => void
-  validate: (names?: AppFormName | readonly AppFormName[]) => Promise<boolean>
+  clearErrors: (...names: AppFormName[]) => void
+  validate: (...names: AppFormName[]) => Promise<boolean>
   validateField: (name: AppFormName) => Promise<boolean>
   submit: () => Promise<boolean>
   focusFirstError: () => void

@@ -63,6 +63,7 @@ export function useAppFormSelector<TValues, TSelected>(form: AppFormApi<TValues>
 }
 
 export function AppForm<TValues>({ children, className, columns, compact = false, controlWidth, form, gap, labelAlign = 'start', labelWidth = '140px', layout = 'vertical', noValidate = true, style }: AppFormProps<TValues>) {
+  const isSubmitting = useAppFormSelector(form, (state) => state.isSubmitting)
   const resolvedColumns = columns ?? (layout === 'grid' ? { base: 1, md: 2 } : undefined)
   const formStyle = { ...(style ?? {}) } as AppFormStyle
   setResponsiveCssVariables(formStyle, 'app-form-columns', resolvedColumns)
@@ -78,7 +79,7 @@ export function AppForm<TValues>({ children, className, columns, compact = false
   }
   return <AppFormContext.Provider value={form as AppFormApi<unknown>}>
     <AppFormLayoutContext.Provider value={{ compact, controlWidth, columns: resolvedColumns, gap, labelAlign, labelWidth, layout }}>
-      <form aria-busy={form.state.isSubmitting || undefined} className={['app-form', `app-form--${layout}`, compact ? 'app-form--compact' : '', className].filter(Boolean).join(' ')} noValidate={noValidate} onSubmit={handleSubmit} style={formStyle}>
+      <form aria-busy={isSubmitting || undefined} className={['app-form', `app-form--${layout}`, compact ? 'app-form--compact' : '', className].filter(Boolean).join(' ')} noValidate={noValidate} onSubmit={handleSubmit} style={formStyle}>
         {children}
       </form>
     </AppFormLayoutContext.Provider>

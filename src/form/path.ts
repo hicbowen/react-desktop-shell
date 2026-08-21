@@ -81,11 +81,18 @@ export function getAppFormErrorMessage(error: import('./types').AppFormErrorValu
 export function areAppFormValuesEqual(left: unknown, right: unknown): boolean {
   if (Object.is(left, right)) return true
   if (typeof left !== typeof right || left == null || right == null) return false
+  if (left instanceof Date || right instanceof Date) {
+    return left instanceof Date && right instanceof Date && left.getTime() === right.getTime()
+  }
   if (Array.isArray(left) || Array.isArray(right)) {
     if (!Array.isArray(left) || !Array.isArray(right) || left.length !== right.length) return false
     return left.every((value, index) => areAppFormValuesEqual(value, right[index]))
   }
   if (typeof left !== 'object' || typeof right !== 'object') return false
+  const leftPrototype = Object.getPrototypeOf(left)
+  const rightPrototype = Object.getPrototypeOf(right)
+  if (leftPrototype !== rightPrototype) return false
+  if (leftPrototype !== Object.prototype && leftPrototype !== null) return false
   const leftRecord = left as Record<string, unknown>
   const rightRecord = right as Record<string, unknown>
   const keys = Object.keys(leftRecord)
@@ -93,6 +100,7 @@ export function areAppFormValuesEqual(left: unknown, right: unknown): boolean {
 }
 
 export function cloneAppFormValue<TValue>(value: TValue): TValue {
+  if (value instanceof Date) return new Date(value.getTime()) as TValue
   if (Array.isArray(value)) return value.map((item) => cloneAppFormValue(item)) as TValue
   if (value && typeof value === 'object') {
     const prototype = Object.getPrototypeOf(value)

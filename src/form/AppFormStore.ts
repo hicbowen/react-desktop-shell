@@ -7,6 +7,7 @@ import {
   getAppFormPath,
   getAppFormValue,
   isAppFormValueEmpty,
+  normalizeAppFormName,
   setAppFormValue,
 } from './path'
 import type {
@@ -40,6 +41,39 @@ function isError(error: AppFormErrorValue | null | false | undefined): error is 
 function getValidatorList<TValues, TValue>(validator: AppFormFieldValidatorInput<TValues, TValue> | undefined) {
   if (!validator) return []
   return Array.isArray(validator) ? validator : [validator]
+}
+
+type AppFormListIndexMapper = (index: number) => number | null
+
+function matchAppFormListDescendant(path: string, listPath: string) {
+  if (path === listPath) return null
+  const prefix = listPath ? `${listPath}.` : ''
+  if (!path.startsWith(prefix)) return null
+  const remainder = path.slice(prefix.length)
+  const separatorIndex = remainder.indexOf('.')
+  const indexText = separatorIndex < 0 ? remainder : remainder.slice(0, separatorIndex)
+  if (!/^\d+$/.test(indexText)) return null
+  return {
+    index: Number(indexText),
+    prefix,
+    suffix: separatorIndex < 0 ? '' : remainder.slice(separatorIndex),
+  }
+}
+
+function remapAppFormListPath(path: string, listPath: string, mapIndex: AppFormListIndexMapper) {
+  const match = matchAppFormListDescendant(path, listPath)
+  if (!match) return path
+  const nextIndex = mapIndex(match.index)
+  return nextIndex == null ? null : `${match.prefix}${nextIndex}${match.suffix}`
+}
+
+function remapAppFormPathRecord<TValue>(record: Record<string, TValue>, listPath: string, mapIndex: AppFormListIndexMapper) {
+  const next: Record<string, TValue> = {}
+  for (const [path, value] of Object.entries(record)) {
+    const nextPath = remapAppFormListPath(path, listPath, mapIndex)
+    if (nextPath != null) next[nextPath] = value
+  }
+  return next
 }
 
 export class AppFormStore<TValues> implements AppFormApi<TValues> {
@@ -93,6 +127,7 @@ export class AppFormStore<TValues> implements AppFormApi<TValues> {
 
   setValue = <TValue = unknown>(name: AppFormName, value: TValue, options: AppFormSetValueOptions = {}) => {
     const path = getAppFormPath(name)
+    this.abortFieldValidation(path)
     this.abortFormValidation()
     this.clearTrackedFormErrors()
     this.values = setAppFormValue(this.values, name, value) as TValues
@@ -112,7 +147,7 @@ export class AppFormStore<TValues> implements AppFormApi<TValues> {
   }
 
   setValues = (values: TValues, options: AppFormSetValueOptions = {}) => {
-    this.abortFormValidation()
+    this.abortValidation()
     this.clearTrackedFormErrors()
     this.values = cloneAppFormValue(values)
     if (options.shouldDirty !== false) {
@@ -142,6 +177,7 @@ export class AppFormStore<TValues> implements AppFormApi<TValues> {
 
   resetField = (name: AppFormName) => {
     const path = getAppFormPath(name)
+    this.abortFieldValidation(path)
     this.abortFormValidation()
     this.clearTrackedFormErrors()
     this.values = setAppFormValue(this.values, name, cloneAppFormValue(getAppFormValue(this.initialValues, name))) as TValues
@@ -161,16 +197,13 @@ export class AppFormStore<TValues> implements AppFormApi<TValues> {
     this.emit()
   }
 
-  clearErrors = (names?: AppFormName | readonly AppFormName[]) => {
-    if (!names) {
+  clearErrors = (...names: AppFormName[]) => {
+    if (!names.length) {
       this.errors = {}
       this.formErrorPaths.clear()
     }
     else {
-      const list = Array.isArray(names) && names.every((item) => typeof item === 'string' || Array.isArray(item))
-        ? names as readonly AppFormName[]
-        : [names as AppFormName]
-      for (const name of list) {
+      for (const name of names) {
         const path = getAppFormPath(name)
         delete this.errors[path]
         this.formErrorPaths.delete(path)
@@ -181,10 +214,13 @@ export class AppFormStore<TValues> implements AppFormApi<TValues> {
 
   registerField = <TValue = unknown>(name: AppFormName, registration: AppFormFieldRegistration<TValues, TValue> = {}) => {
     const path = getAppFormPath(name)
+    const validationAborted = this.abortFieldValidation(path)
     this.fields.set(path, { name, path, registration: registration as AppFormFieldRegistration<TValues, unknown> })
+    if (validationAborted) this.emit()
     return () => {
       const current = this.fields.get(path)
       if (!current || current.registration !== registration) return
+      const pendingValidationAborted = this.abortFieldValidation(path)
       this.fields.delete(path)
       if (registration.preserve === false) {
         this.values = deleteAppFormValue(this.values, name) as TValues
@@ -192,8 +228,8 @@ export class AppFormStore<TValues> implements AppFormApi<TValues> {
         this.formErrorPaths.delete(path)
         delete this.touched[path]
         delete this.dirty[path]
-        this.emit()
       }
+      if (pendingValidationAborted || registration.preserve === false) this.emit()
     }
   }
 
@@ -276,10 +312,8 @@ export class AppFormStore<TValues> implements AppFormApi<TValues> {
     }
   }
 
-  validate = async (names?: AppFormName | readonly AppFormName[]) => {
-    const fieldNames = names
-      ? (Array.isArray(names) && names.every((item) => typeof item === 'string' || Array.isArray(item)) ? names as readonly AppFormName[] : [names as AppFormName])
-      : [...this.fields.values()].map((field) => field.name)
+  validate = async (...names: AppFormName[]) => {
+    const fieldNames = names.length ? names : [...this.fields.values()].map((field) => field.name)
 
     const results = await Promise.all(fieldNames.map((name) => this.validateField(name, 'onSubmit')))
     const formValid = await this.validateForm('onSubmit')
@@ -349,6 +383,8 @@ export class AppFormStore<TValues> implements AppFormApi<TValues> {
 
   insertListItem = <TItem>(name: AppFormName, index: number, value: TItem) => {
     const current = [...(getAppFormValue<TItem[]>(this.values, name) ?? [])]
+    if (!Number.isInteger(index) || index < 0 || index > current.length) return
+    this.remapListMetadata(name, (currentIndex) => currentIndex >= index ? currentIndex + 1 : currentIndex)
     current.splice(index, 0, value)
     const path = getAppFormPath(name)
     const keys = this.listKeys.get(path) ?? []
@@ -360,6 +396,11 @@ export class AppFormStore<TValues> implements AppFormApi<TValues> {
 
   removeListItem = (name: AppFormName, index: number) => {
     const current = [...(getAppFormValue<unknown[]>(this.values, name) ?? [])]
+    if (!Number.isInteger(index) || index < 0 || index >= current.length) return
+    this.remapListMetadata(name, (currentIndex) => {
+      if (currentIndex === index) return null
+      return currentIndex > index ? currentIndex - 1 : currentIndex
+    })
     current.splice(index, 1)
     const path = getAppFormPath(name)
     this.listKeys.get(path)?.splice(index, 1)
@@ -368,6 +409,13 @@ export class AppFormStore<TValues> implements AppFormApi<TValues> {
 
   moveListItem = (name: AppFormName, from: number, to: number) => {
     const current = [...(getAppFormValue<unknown[]>(this.values, name) ?? [])]
+    if (!Number.isInteger(from) || !Number.isInteger(to) || from < 0 || to < 0 || from >= current.length || to >= current.length || from === to) return
+    this.remapListMetadata(name, (currentIndex) => {
+      if (currentIndex === from) return to
+      if (from < to && currentIndex > from && currentIndex <= to) return currentIndex - 1
+      if (from > to && currentIndex >= to && currentIndex < from) return currentIndex + 1
+      return currentIndex
+    })
     const [item] = current.splice(from, 1)
     if (item === undefined) return
     current.splice(to, 0, item)
@@ -401,10 +449,64 @@ export class AppFormStore<TValues> implements AppFormApi<TValues> {
   }
 
   private abortValidation() {
-    for (const controller of this.validationControllers.values()) controller.abort()
-    this.validationControllers.clear()
-    this.validating = {}
+    const paths = new Set([...this.validationControllers.keys(), ...Object.keys(this.validating)])
+    for (const path of paths) this.abortFieldValidation(path)
     this.abortFormValidation()
+  }
+
+  private abortFieldValidation(path: string) {
+    const controller = this.validationControllers.get(path)
+    const wasValidating = Boolean(this.validating[path])
+    if (!controller && !wasValidating) return false
+    this.validationTokens.set(path, (this.validationTokens.get(path) ?? 0) + 1)
+    controller?.abort()
+    this.validationControllers.delete(path)
+    delete this.validating[path]
+    return true
+  }
+
+  private remapListMetadata(name: AppFormName, mapIndex: AppFormListIndexMapper) {
+    const listPath = getAppFormPath(name)
+    const listDepth = normalizeAppFormName(name).length
+    const validationPaths = new Set([...this.validationControllers.keys(), ...Object.keys(this.validating)])
+    for (const path of validationPaths) {
+      if (matchAppFormListDescendant(path, listPath)) this.abortFieldValidation(path)
+    }
+    for (const path of [...this.validationTokens.keys()]) {
+      if (matchAppFormListDescendant(path, listPath)) this.validationTokens.delete(path)
+    }
+
+    this.errors = remapAppFormPathRecord(this.errors, listPath, mapIndex)
+    this.touched = remapAppFormPathRecord(this.touched, listPath, mapIndex)
+    this.dirty = remapAppFormPathRecord(this.dirty, listPath, mapIndex)
+    this.validating = remapAppFormPathRecord(this.validating, listPath, mapIndex)
+    this.formErrorPaths = new Set([...this.formErrorPaths].flatMap((path) => {
+      const nextPath = remapAppFormListPath(path, listPath, mapIndex)
+      return nextPath == null ? [] : [nextPath]
+    }))
+
+    const nextFields = new Map<string, RegisteredField<TValues>>()
+    for (const field of this.fields.values()) {
+      const match = matchAppFormListDescendant(field.path, listPath)
+      const nextPath = remapAppFormListPath(field.path, listPath, mapIndex)
+      if (nextPath == null) continue
+      if (!match || nextPath === field.path) {
+        nextFields.set(nextPath, field)
+        continue
+      }
+      const nextIndex = mapIndex(match.index)
+      const nameSegments = normalizeAppFormName(field.name)
+      if (nextIndex != null && typeof nameSegments[listDepth] === 'number') nameSegments[listDepth] = nextIndex
+      nextFields.set(nextPath, { ...field, name: nameSegments, path: nextPath })
+    }
+    this.fields = nextFields
+
+    const nextListKeys = new Map<string, string[]>()
+    for (const [path, keys] of this.listKeys) {
+      const nextPath = remapAppFormListPath(path, listPath, mapIndex)
+      if (nextPath != null) nextListKeys.set(nextPath, keys)
+    }
+    this.listKeys = nextListKeys
   }
 
   private clearTrackedFormErrors() {

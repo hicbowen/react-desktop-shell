@@ -45,4 +45,47 @@ describe('AppForm layout', () => {
     expect(fieldElement.style.getPropertyValue('--app-form-field-span-md')).toBe('2')
     expect(fieldElement.style.getPropertyValue('--app-field-control-width')).toBe('100%')
   })
+
+  it('reflects submitting state on the form element', async () => {
+    let finishSubmit!: () => void
+    const form = new AppFormStore({
+      defaultValues: {},
+      onSubmit: () => new Promise<void>((resolve) => {
+        finishSubmit = resolve
+      }),
+    })
+
+    act(() => root.render(<AppForm form={form} />))
+    const formElement = host.querySelector<HTMLFormElement>('form')!
+    let submission!: Promise<boolean>
+    await act(async () => {
+      submission = form.submit()
+      await Promise.resolve()
+    })
+    expect(formElement.getAttribute('aria-busy')).toBe('true')
+
+    await act(async () => {
+      finishSubmit()
+      await submission
+    })
+    expect(formElement.hasAttribute('aria-busy')).toBe(false)
+  })
+
+  it('keeps a preserve-false field value when only registration options change', () => {
+    const form = new AppFormStore({ defaultValues: { profile: { name: 'Ada' } } })
+    const renderField = (required: boolean) => root.render(
+      <AppForm form={form}>
+        <AppFormField label="Name" name={['profile', 'name']} preserve={false} required={required}>
+          {({ inputId, value }) => <input id={inputId} readOnly value={String(value ?? '')} />}
+        </AppFormField>
+      </AppForm>,
+    )
+
+    act(() => renderField(false))
+    act(() => renderField(true))
+    expect(form.getValue(['profile', 'name'])).toBe('Ada')
+
+    act(() => root.render(<AppForm form={form} />))
+    expect(form.getValue(['profile', 'name'])).toBeUndefined()
+  })
 })
