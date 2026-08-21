@@ -332,6 +332,26 @@ according to the host workflow.
 blocks. They can be placed in any page or conversation and do not depend on
 `AppQuickAsk`.
 
+### Migrating from 0.20.4 AI APIs
+
+The AI lifecycle API is intentionally breaking and has no compatibility
+aliases. Replace the old request-oriented names and ambiguous statuses as
+follows:
+
+| 0.20.4 | Current API |
+| --- | --- |
+| `AppAiActivity` | `AppAiRunIndicator` for the current run, or `AppToolActivity` / `AppToolCallGroup` for tool work |
+| `AppToolApprovalCard` | `AppToolCallCard` |
+| `AppAiRequestStatus` | `AppAiRunStatus` |
+| Composer or Quick Ask `status` | `runStatus` |
+| Request `submitting` / `streaming` | Run `thinking` / `responding` |
+| Tool `pending` / `denied` | Tool `awaiting-approval` / `rejected`; after approval, move to `running` |
+| Change review `pending` | Change review `awaiting-review` |
+
+Run state now describes one host-owned AI run. Tool calls and change reviews
+keep their own lifecycle state in the conversation, so they are not folded into
+the composer's behavior.
+
 ### Conversation building blocks
 
 `AppConversationMessage` renders one user, AI, tool, or system message with
@@ -664,6 +684,104 @@ RDS inputs consume field associations automatically. For a native or third-party
   <input id="external-name" aria-describedby="external-name-help" />
 </AppField>
 ```
+
+## Form state, validation, and dynamic fields
+
+Use `useAppForm` when a form needs shared nested values, validation, dirty and
+touched metadata, submission state, or dynamic lists. `AppForm` supplies the
+native form boundary and layout; `AppFormField` connects an individual control;
+`AppFormSection`, `AppFormList`, and `AppFormErrorSummary` provide grouping,
+repeatable rows, and focusable error feedback.
+
+```tsx
+type ProfileForm = {
+  email: string
+  contacts: Array<{ value: string }>
+}
+
+const form = useAppForm<ProfileForm>({
+  defaultValues: {
+    email: '',
+    contacts: [{ value: '' }],
+  },
+  onSubmit: async ({ values, dirtyValues, signal }) => {
+    await saveProfile({ values, dirtyValues, signal })
+  },
+  onSubmitError: (error, { form }) => {
+    if (isEmailConflict(error)) {
+      form.setErrors({ email: 'This email is already registered' })
+    }
+  },
+})
+
+<AppForm form={form} layout="grid" columns={{ base: 1, md: 2 }}>
+  <AppFormErrorSummary form={form} />
+  <AppFormField<ProfileForm, string>
+    label="Email"
+    name="email"
+    required
+    validators={{
+      onChange: ({ value }) => isEmail(value) ? undefined : 'Enter a valid email',
+      onBlur: async ({ value, signal }) =>
+        await checkEmailAvailability(value, { signal }),
+    }}
+  >
+    {({ value, setValue, onBlur }) => (
+      <AppTextBox
+        onBlur={onBlur}
+        onChange={(event) => setValue(event.currentTarget.value)}
+        value={value}
+      />
+    )}
+  </AppFormField>
+
+  <AppFormList<{ value: string }> name="contacts">
+    {({ append, fields, remove }) => (
+      <AppFormSection title="Contacts">
+        {fields.map((field) => (
+          <div key={field.key}>
+            <AppFormField<ProfileForm, string>
+              label={`Contact ${field.index + 1}`}
+              name={['contacts', field.name, 'value']}
+            >
+              {({ value, setValue }) => (
+                <AppTextBox
+                  onChange={(event) => setValue(event.currentTarget.value)}
+                  value={value}
+                />
+              )}
+            </AppFormField>
+            <AppButton type="button" onClick={() => remove(field.index)}>
+              Remove
+            </AppButton>
+          </div>
+        ))}
+        <AppButton type="button" onClick={() => append({ value: '' })}>
+          Add contact
+        </AppButton>
+      </AppFormSection>
+    )}
+  </AppFormList>
+
+  <AppButton appearance="primary" type="submit">Save</AppButton>
+</AppForm>
+```
+
+Names accept dot paths such as `contacts.0.value` or segment arrays such as
+`['contacts', 0, 'value']`. An array is always one field path; to target several
+fields, pass separate arguments to `form.validate('email', 'name')` or
+`form.clearErrors('email', 'name')`. Calling either method without names targets
+all registered fields or all errors respectively.
+
+Field and form validators may run on change, blur, or submit. Async validators
+receive an `AbortSignal`; changing, resetting, removing, or reordering affected
+values invalidates stale validation work. `AppFormList` keeps stable render keys
+and moves registered fields, errors, touched, dirty, and validating metadata
+with each item. Field values are preserved when a conditional field unmounts by
+default; set `preserve={false}` when unmounting should remove its value and
+metadata. Use `useAppFormSelector` for reactive host-owned status UI,
+`form.state` or `getSnapshot()` for imperative inspection, and
+`getDirtyValues()` for partial update payloads.
 
 ## Progress and status
 

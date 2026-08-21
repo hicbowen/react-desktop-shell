@@ -20,6 +20,8 @@ import {
 import { getEmailValidationError } from './emailValidation'
 import { useDemoCopy } from '../../i18n/interactiveTranslations'
 
+const CONFLICTING_EMAIL = 'used@example.com'
+
 export function AppFormLayoutPage() {
   const t = useDemoCopy()
   const [compact, setCompact] = useState(false)
@@ -39,7 +41,15 @@ export function AppFormLayoutPage() {
       },
     },
     onSubmit: async ({ values }) => {
+      if (values.email.trim().toLowerCase() === CONFLICTING_EMAIL) {
+        throw new Error('email-conflict')
+      }
       setSubmitted(`${values.name || 'Anonymous'} · ${values.email} · ${values.contacts.length} contacts`)
+    },
+    onSubmitError: (error, { form }) => {
+      if (error instanceof Error && error.message === 'email-conflict') {
+        form.setErrors({ email: t('This email is already registered') })
+      }
     },
   })
 
@@ -80,6 +90,7 @@ export function AppFormLayoutPage() {
               <AppButton appearance="primary" type="submit">Submit</AppButton>
               <AppButton type="button" onClick={() => form.reset()}>Reset</AppButton>
             </div>
+            <span className="demo-note">{t('Use used@example.com to preview a server validation error.')}</span>
             {submitted ? <span className="demo-note">Submitted: {submitted}</span> : null}
           </AppForm>
         </DemoPreview>

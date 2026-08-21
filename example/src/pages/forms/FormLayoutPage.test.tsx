@@ -61,5 +61,28 @@ describe('AppFormLayoutPage', () => {
     expect(email.getAttribute('aria-invalid')).toBeNull()
     expect(host.querySelector('.app-form-error-summary')).toBeNull()
     expect(host.querySelector('.app-field__message--error')).toBeNull()
+
+    await act(async () => {
+      host.querySelector<HTMLButtonElement>('button[type="submit"]')!.click()
+      await Promise.resolve()
+    })
+
+    expect(host.textContent).toContain('Submitted: Anonymous · hicbowen@gmail.com · 1 contacts')
+  })
+
+  it('maps a rejected submission to a field error', async () => {
+    act(() => root.render(<AppFormLayoutPage />))
+
+    const email = host.querySelector<HTMLInputElement>('#app-form-field-email')!
+    await act(async () => {
+      enterValue(email, 'used@example.com')
+      host.querySelector<HTMLButtonElement>('button[type="submit"]')!.click()
+      await Promise.resolve()
+      await Promise.resolve()
+    })
+
+    expect(email.getAttribute('aria-invalid')).toBe('true')
+    expect(host.textContent).toContain('This email is already registered')
+    expect(host.querySelector('.app-form-error-summary')).not.toBeNull()
   })
 })

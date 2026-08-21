@@ -205,6 +205,8 @@ export const zhCNInteractiveText: Record<string, string> = {
   'Submitted:': '已提交：', Teams: '团队', Password: '密码', Range: '范围', 'Applied time': '已应用时间',
   'Current range': '当前范围', 'Meeting range': '会议范围', Anonymous: '匿名',
   'Additional contacts': '其他联系人', Contact: '联系人', 'Contact value': '联系人值', 'Add contact': '添加联系人',
+  'Use used@example.com to preview a server validation error.': '使用 used@example.com 可预览服务端校验错误。',
+  'This email is already registered': '此邮箱已被注册',
   Work: '工作', Other: '其他',
   'Search while loading': '加载时搜索', Student: '学生', 'Enter a student name': '请输入学生姓名',
   'Fixed height text': '固定高度文本', 'Line one\nLine two\nLine three': '第一行\n第二行\n第三行', 'Counted text': '计数字符文本',
