@@ -2,14 +2,18 @@ import type { AppShortcut } from './types'
 
 const modifierKeys = new Set(['Alt', 'Control', 'Meta', 'Shift'])
 
+export function normalizeAppShortcutKey(key: string, code?: string) {
+  return code === 'Space' || key === ' ' || key === '\u00A0' ? ' ' : key
+}
+
 export function matchesAppShortcut(
-  event: Pick<KeyboardEvent, 'altKey' | 'ctrlKey' | 'key' | 'metaKey' | 'shiftKey'>,
+  event: Pick<KeyboardEvent, 'altKey' | 'ctrlKey' | 'key' | 'metaKey' | 'shiftKey'> & { code?: string },
   shortcut: AppShortcut,
 ) {
   if (modifierKeys.has(event.key)) return false
 
   return (
-    event.key.toLocaleLowerCase() === shortcut.key.toLocaleLowerCase() &&
+    normalizeAppShortcutKey(event.key, event.code).toLocaleLowerCase() === normalizeAppShortcutKey(shortcut.key).toLocaleLowerCase() &&
     event.altKey === Boolean(shortcut.alt) &&
     event.ctrlKey === Boolean(shortcut.ctrl) &&
     event.metaKey === Boolean(shortcut.meta) &&
@@ -28,11 +32,12 @@ export function formatAppShortcut(
   if (shortcut.shift) parts.push(isMac ? '⇧' : 'Shift')
   if (shortcut.meta) parts.push(isMac ? '⌘' : 'Meta')
 
-  const key = shortcut.key === ' '
+  const normalizedKey = normalizeAppShortcutKey(shortcut.key)
+  const key = normalizedKey === ' '
     ? 'Space'
-    : shortcut.key.length === 1
-      ? shortcut.key.toLocaleUpperCase()
-      : shortcut.key
+    : normalizedKey.length === 1
+      ? normalizedKey.toLocaleUpperCase()
+      : normalizedKey
   parts.push(key)
   return parts.join(isMac ? '' : '+')
 }

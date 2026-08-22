@@ -78,6 +78,21 @@ describe('AppCommandProvider', () => {
     expect(execute).toHaveBeenCalledWith(expect.objectContaining({ commandId: 'file.save', source: 'keyboard' }))
   })
 
+  it('matches macOS Option+Space as a Space shortcut', () => {
+    const execute = vi.fn()
+    render([{
+      id: 'palette.open',
+      label: 'Open palette',
+      shortcut: { alt: true, key: ' ' },
+      execute,
+    }], <div />)
+
+    const event = new KeyboardEvent('keydown', { altKey: true, bubbles: true, cancelable: true, code: 'Space', key: '\u00A0' })
+    act(() => document.dispatchEvent(event))
+    expect(event.defaultPrevented).toBe(true)
+    expect(execute).toHaveBeenCalledWith(expect.objectContaining({ commandId: 'palette.open', source: 'keyboard' }))
+  })
+
   it('ignores shortcuts in editable controls by default', () => {
     const execute = vi.fn()
     render([{
@@ -122,5 +137,6 @@ describe('AppCommandProvider', () => {
     expect(formatAppShortcut({ meta: true, shift: true, key: 'p' }, 'MacIntel')).toBe('⇧⌘P')
     expect(formatAppShortcut({ ctrl: true, key: ' ' })).toBe('Ctrl+Space')
     expect(formatAppShortcut({ meta: true, key: ' ' }, 'MacIntel')).toBe('⌘Space')
+    expect(formatAppShortcut({ alt: true, key: '\u00A0' }, 'MacIntel')).toBe('⌥Space')
   })
 })

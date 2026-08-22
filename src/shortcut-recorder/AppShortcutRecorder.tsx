@@ -1,5 +1,6 @@
 import { useState, type KeyboardEvent } from 'react'
-import { formatAppShortcut, type AppShortcut } from '../command'
+import { formatAppShortcut, normalizeAppShortcutKey } from '../command/shortcut'
+import type { AppShortcut } from '../command'
 import { useAppLocale } from '../localization/useAppLocale'
 import type { AppShortcutRecorderProps } from './types'
 import '../input-frame/AppInputFrame.css'
@@ -22,7 +23,7 @@ export function AppShortcutRecorder({ value, defaultValue = null, onValueChange,
     if (event.key === 'Backspace' || event.key === 'Delete') { commit(null); return }
     if (modifiers.has(event.key)) return
     if (!allowSingleKey && !event.altKey && !event.ctrlKey && !event.metaKey && !event.shiftKey) return
-    commit({ key: event.key, alt: event.altKey || undefined, ctrl: event.ctrlKey || undefined, meta: event.metaKey || undefined, shift: event.shiftKey || undefined })
+    commit({ key: normalizeAppShortcutKey(event.key, event.code), alt: event.altKey || undefined, ctrl: event.ctrlKey || undefined, meta: event.metaKey || undefined, shift: event.shiftKey || undefined })
     setRecording(false)
   }
 
