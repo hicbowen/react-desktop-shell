@@ -21,10 +21,10 @@
 .app-side-pane__header {
   min-height: 52px;
   box-sizing: border-box;
-  padding: 10px 14px 10px 18px;
+  padding: var(--rds-space-2, 8px) var(--rds-space-4, 16px);
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: var(--rds-space-2, 8px);
   flex-shrink: 0;
   border-bottom: 1px solid var(--app-shell-border-color);
 }
@@ -41,8 +41,8 @@
 }
 
 .app-side-pane__close {
-  width: 30px;
-  height: 30px;
+  width: var(--rds-control-height-standard, 32px);
+  height: var(--rds-control-height-standard, 32px);
   padding: 0;
   display: inline-flex;
   align-items: center;
@@ -78,13 +78,14 @@
 
 .app-side-pane__body {
   min-height: 0;
-  padding: 16px 18px;
+  padding: var(--rds-space-4, 16px);
   font-size: var(--rds-font-size-control, 13px);
   line-height: 1.5;
 }
 
 .app-side-pane__footer {
-  padding: 12px 18px 16px;
+  padding: var(--rds-space-3, 12px) var(--rds-space-4, 16px)
+    var(--rds-space-4, 16px);
   flex-shrink: 0;
   border-top: 1px solid var(--app-shell-border-color);
 }

@@ -9,7 +9,7 @@
   position: fixed;
   inset: 0;
   box-sizing: border-box;
-  padding: 16px;
+  padding: var(--rds-space-4, 16px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -28,8 +28,9 @@
   position: relative;
   z-index: 0;
   width: var(--app-dialog-width);
-  max-width: calc(100vw - 32px);
-  max-height: calc(100vh - 32px);
+  max-width: calc(100vw - (2 * var(--rds-space-4, 16px)));
+  max-height: calc(100vh - (2 * var(--rds-space-4, 16px)));
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -104,7 +105,8 @@
 
 .app-dialog__button {
   min-width: 78px;
-  height: 32px;
+  height: var(--rds-control-height-standard, 32px);
+  box-sizing: border-box;
   padding: 0 var(--rds-space-4, 16px);
   color: var(--app-shell-text-color);
   font: inherit;
@@ -157,12 +159,12 @@
 
 .app-message-box {
   display: grid;
-  gap: 6px;
+  gap: var(--rds-space-2, 8px);
 }
 
 .app-message-box--with-icon {
   grid-template-columns: auto minmax(0, 1fr);
-  gap: 0 14px;
+  gap: 0 var(--rds-space-4, 16px);
 }
 
 .app-message-box__icon {
@@ -189,7 +191,7 @@
 }
 
 .app-message-box__message {
-  margin-top: 6px;
+  margin-top: var(--rds-space-2, 8px);
   color: var(--app-shell-muted-text-color);
   font-size: var(--rds-font-size-control, 13px);
   line-height: 1.5;

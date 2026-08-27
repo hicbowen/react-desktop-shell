@@ -1,5 +1,7 @@
 .app-split-button {
+  box-sizing: border-box;
   display: inline-flex;
+  align-items: stretch;
   max-width: 100%;
   min-height: var(--rds-control-height-standard, 32px);
   vertical-align: middle;

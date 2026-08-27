@@ -127,7 +127,7 @@
 
 .app-card-header__image {
   overflow: hidden;
-  border-radius: calc(var(--rds-radius-medium, 8px) - 2px);
+  border-radius: var(--rds-radius-control, 4px);
 }
 
 .app-card-header__image > img {
@@ -168,7 +168,7 @@
   display: flex;
   flex: 0 0 auto;
   align-items: center;
-  gap: 8px;
+  gap: var(--rds-space-2, 8px);
 }
 
 .app-card-footer {
@@ -207,7 +207,7 @@
   display: flex;
   flex: 0 0 auto;
   align-items: center;
-  gap: 8px;
+  gap: var(--rds-space-2, 8px);
   margin-left: auto;
 }
 

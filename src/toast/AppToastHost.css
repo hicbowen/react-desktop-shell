@@ -1,12 +1,12 @@
 .app-toast-host {
   position: fixed;
-  right: 16px;
-  bottom: 16px;
+  right: var(--rds-space-4, 16px);
+  bottom: var(--rds-space-4, 16px);
   z-index: var(--rds-z-toast, 1150);
-  width: min(380px, calc(100vw - 32px));
+  width: min(380px, calc(100vw - (2 * var(--rds-space-4, 16px))));
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: var(--rds-space-2, 8px);
   pointer-events: none;
 }
 
@@ -14,11 +14,11 @@
   box-sizing: border-box;
   min-width: min(280px, 100%);
   width: 100%;
-  padding: 12px;
+  padding: var(--rds-space-3, 12px);
   display: grid;
   grid-template-columns: auto minmax(0, 1fr) auto auto;
   align-items: center;
-  gap: 10px;
+  gap: var(--rds-space-2, 8px);
   color: var(--app-shell-text-color);
   background: var(--app-shell-toast-bg);
   border: 1px solid var(--app-shell-toast-border-color);
@@ -158,16 +158,16 @@
 }
 
 .app-toast__action {
-  min-height: 26px;
-  padding: 0 8px;
+  min-height: var(--rds-control-height-compact, 28px);
+  padding: 0 var(--rds-space-2, 8px);
   color: var(--app-shell-accent-color);
   font-size: 12px;
   font-weight: 600;
 }
 
 .app-toast__close {
-  width: 26px;
-  height: 26px;
+  width: var(--rds-control-height-compact, 28px);
+  height: var(--rds-control-height-compact, 28px);
   padding: 0;
   display: inline-flex;
   align-items: center;

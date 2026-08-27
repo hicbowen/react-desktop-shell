@@ -34,12 +34,12 @@
   position: relative;
   min-width: 40px;
   box-sizing: border-box;
-  padding: 0 12px 3px;
+  padding: 0 var(--rds-control-padding-inline-standard, 12px) var(--rds-space-1, 4px);
   display: inline-flex;
   flex: 0 0 auto;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: var(--rds-space-2, 8px);
   color: var(--app-selector-bar-muted-color);
   font: inherit;
   font-size: 14px;
@@ -60,8 +60,8 @@
 
 .app-selector-bar--small .app-selector-bar__item {
   height: 32px;
-  padding-right: 10px;
-  padding-left: 10px;
+  padding-right: var(--rds-control-padding-inline-compact, 8px);
+  padding-left: var(--rds-control-padding-inline-compact, 8px);
   font-size: var(--rds-font-size-control, 13px);
 }
 

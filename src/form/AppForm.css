@@ -5,7 +5,7 @@
 }
 
 .app-form--compact {
-  gap: var(--app-form-gap, 10px);
+  gap: var(--app-form-gap, var(--rds-space-3, 12px));
 }
 
 .app-form--grid {
@@ -42,12 +42,12 @@
 .app-form__actions {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--rds-space-2, 8px);
   flex-wrap: wrap;
 }
 
 .app-form-error-summary {
-  padding: 10px 12px;
+  padding: var(--rds-space-2, 8px) var(--rds-space-3, 12px);
   color: var(--app-shell-danger-fg, #c42b1c);
   background: rgb(196 43 28 / 7%);
   border: 1px solid currentColor;
@@ -56,7 +56,7 @@
 }
 
 .app-form-error-summary ul {
-  margin: 6px 0 0;
+  margin: var(--rds-space-2, 8px) 0 0;
   padding-left: 20px;
 }
 
@@ -73,32 +73,33 @@
 
 .app-form-section {
   min-width: 0;
-  padding: 12px;
+  padding: var(--rds-space-3, 12px);
   border: 1px solid var(--app-shell-border-color, rgb(0 0 0 / 8%));
   border-radius: var(--rds-radius-overlay, 8px);
 }
 
 .app-form-section__legend {
-  padding: 0 6px;
+  padding: 0 var(--rds-space-2, 8px);
   font-weight: 600;
 }
 
 .app-form-section__legend small {
   display: block;
-  margin-top: 4px;
+  margin-top: var(--rds-space-1, 4px);
   color: var(--app-shell-muted-text-color, #707070);
-  font-size: 12px;
+  font-size: var(--rds-font-size-caption, 12px);
+  line-height: var(--rds-line-height-caption, 16px);
   font-weight: 400;
 }
 
 .app-form-section__content {
   display: grid;
-  gap: 16px;
+  gap: var(--rds-space-4, 16px);
   min-width: 0;
 }
 
 .app-form--compact .app-form-section__content {
-  gap: 10px;
+  gap: var(--rds-space-3, 12px);
 }
 
 @media (min-width: 640px) {

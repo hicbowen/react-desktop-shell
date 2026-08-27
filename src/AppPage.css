@@ -1,6 +1,7 @@
 .app-page {
   --app-page-padding: var(--rds-space-6, 24px);
   --app-page-header-gap: var(--rds-space-2, 8px);
+  --app-page-header-actions-gap: var(--rds-space-4, 16px);
   --app-page-content-gap: var(--rds-space-6, 24px);
   --app-page-title-size: var(--rds-font-size-title, 28px);
   --app-page-title-weight: 600;
@@ -117,7 +118,7 @@
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  gap: var(--app-page-content-gap);
+  gap: var(--app-page-header-actions-gap);
   margin-bottom: var(--app-page-content-gap);
 }
 

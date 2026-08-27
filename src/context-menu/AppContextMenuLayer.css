@@ -7,17 +7,21 @@
 
 .app-context-menu {
   position: fixed;
-  min-width: 188px;
+  min-width: min(188px, max(0px, calc(100vw - 16px)));
   max-width: min(320px, calc(100vw - 16px));
   max-height: calc(100vh - 16px);
   box-sizing: border-box;
-  padding: 4px;
+  padding: var(--rds-space-1, 4px);
   overflow-y: auto;
-  color: var(--app-shell-text-color);
-  background: var(--app-shell-menu-bg);
-  border: 1px solid var(--app-shell-menu-border-color);
+  color: var(--app-shell-text-color, #1f1f1f);
+  background: var(--app-shell-menu-bg, rgb(249 249 249 / 96%));
+  border: 1px solid var(--app-shell-menu-border-color, rgb(0 0 0 / 12%));
   border-radius: var(--rds-radius-overlay, 8px);
-  box-shadow: var(--app-shell-menu-shadow);
+  box-shadow: var(
+    --app-shell-menu-shadow,
+    0 8px 20px rgb(0 0 0 / 14%),
+    0 2px 6px rgb(0 0 0 / 10%)
+  );
   outline: 0;
   pointer-events: auto;
   backdrop-filter: blur(24px);
@@ -27,12 +31,12 @@
 
 .app-context-menu__item {
   width: 100%;
-  min-height: 32px;
+  min-height: var(--rds-control-height-standard, 32px);
   display: grid;
-  grid-template-columns: 24px minmax(0, 1fr) auto;
+  grid-template-columns: 20px minmax(0, 1fr) auto;
   align-items: center;
-  gap: 8px;
-  padding: 0 10px 0 8px;
+  gap: var(--rds-space-2, 8px);
+  padding: 0 var(--rds-space-3, 12px) 0 var(--rds-space-2, 8px);
   color: inherit;
   font: inherit;
   font-size: var(--rds-font-size-control, 13px);
@@ -129,7 +133,7 @@
 
 .app-context-menu__separator {
   height: 1px;
-  margin: 4px 6px;
+  margin: var(--rds-space-1, 4px) var(--rds-space-2, 8px);
   background: var(--app-shell-border-color);
 }
 

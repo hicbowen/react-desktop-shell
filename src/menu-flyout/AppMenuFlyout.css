@@ -8,7 +8,8 @@
     max(0px, calc(100vw - 16px))
   );
   box-sizing: border-box;
-  padding: 4px;
+  max-height: calc(100vh - 16px);
+  padding: var(--rds-space-1, 4px);
   overflow-x: hidden;
   overflow-y: auto;
   color: var(--app-shell-text-color, #1f1f1f);
@@ -18,7 +19,8 @@
   border-radius: var(--rds-radius-overlay, 8px);
   box-shadow: var(
     --app-shell-menu-shadow,
-    0 6px 18px rgb(0 0 0 / 16%)
+    0 8px 20px rgb(0 0 0 / 14%),
+    0 2px 6px rgb(0 0 0 / 10%)
   );
   outline: 0;
   font: inherit;
@@ -30,12 +32,12 @@
 
 .app-menu-flyout__item {
   width: 100%;
-  min-height: 32px;
+  min-height: var(--rds-control-height-standard, 32px);
   display: grid;
   grid-template-columns: 20px minmax(0, 1fr) auto;
   align-items: center;
-  gap: 8px;
-  padding: 0 10px 0 8px;
+  gap: var(--rds-space-2, 8px);
+  padding: 0 var(--rds-space-3, 12px) 0 var(--rds-space-2, 8px);
   color: inherit;
   font: inherit;
   font-size: var(--rds-font-size-control, 13px);
@@ -112,7 +114,7 @@
 
 .app-menu-flyout__separator {
   height: 1px;
-  margin: 4px 6px;
+  margin: var(--rds-space-1, 4px) var(--rds-space-2, 8px);
   background: var(--app-shell-border-color, rgb(0 0 0 / 8%));
 }
 

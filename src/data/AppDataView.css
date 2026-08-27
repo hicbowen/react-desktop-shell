@@ -92,7 +92,7 @@
   display: flex;
   align-items: center;
   flex-wrap: nowrap;
-  gap: 10px 16px;
+  gap: var(--rds-space-2, 8px) var(--rds-space-4, 16px);
   color: var(--app-data-text-color, var(--app-shell-text-color, #1f1f1f));
 }
 
@@ -101,7 +101,7 @@
   min-width: 0;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--rds-space-2, 8px);
 }
 
 .app-selection-bar__label {
@@ -186,7 +186,7 @@
   align-items: center;
   flex: 0 0 auto;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: var(--rds-space-2, 8px);
   background: var(--app-data-surface-bg);
   border-bottom: 1px solid var(--app-data-border-color);
   border-radius: var(--rds-radius-overlay, 8px)
@@ -336,7 +336,11 @@
   background: var(--app-data-surface-bg);
   border: 1px solid var(--app-data-border-color);
   border-radius: var(--rds-radius-overlay, 8px);
-  box-shadow: 0 8px 24px rgb(0 0 0 / 16%);
+  box-shadow: var(
+    --app-shell-menu-shadow,
+    0 8px 20px rgb(0 0 0 / 14%),
+    0 2px 6px rgb(0 0 0 / 10%)
+  );
   pointer-events: auto;
 }
 
@@ -355,21 +359,21 @@
 
 .app-data-table__filter-menu-content {
   box-sizing: border-box;
-  padding: 6px;
+  padding: var(--rds-space-2, 8px);
 }
 
 .app-data-table__filter-group + .app-data-table__filter-group {
-  margin-top: 5px;
-  padding-top: 5px;
+  margin-top: var(--rds-space-2, 8px);
+  padding-top: var(--rds-space-2, 8px);
   border-top: 1px solid var(--app-data-border-color);
 }
 
 .app-data-table__filter-group-header {
   min-height: 28px;
-  padding: 0 6px;
+  padding: 0 var(--rds-space-2, 8px);
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--rds-space-2, 8px);
   color: var(--app-data-muted-color);
   font-size: 12px;
   font-weight: 600;
@@ -385,8 +389,8 @@
 
 .app-data-table__filter-clear,
 .app-data-table__filter-clear-all {
-  min-height: 26px;
-  padding: 0 7px;
+  min-height: var(--rds-control-height-compact, 28px);
+  padding: 0 var(--rds-space-2, 8px);
   color: var(--app-data-accent);
   font: inherit;
   font-size: 11px;
@@ -407,7 +411,7 @@
   padding: 0 var(--rds-space-2, 8px);
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--rds-space-2, 8px);
   color: var(--app-data-text-color);
   font: inherit;
   font-size: var(--rds-font-size-control, 13px);
@@ -494,15 +498,15 @@
 .app-data-table--comfortable {
   --app-data-header-height: 44px;
   --app-data-row-height: 48px;
-  --app-data-cell-padding: 8px 14px;
-  --app-data-sort-padding: 4px 6px;
+  --app-data-cell-padding: 8px var(--rds-space-4, 16px);
+  --app-data-sort-padding: var(--rds-space-1, 4px) var(--rds-space-2, 8px);
 }
 
 .app-data-table--compact {
   --app-data-header-height: 36px;
   --app-data-row-height: 38px;
-  --app-data-cell-padding: 6px 10px;
-  --app-data-sort-padding: 3px 5px;
+  --app-data-cell-padding: 6px var(--rds-space-3, 12px);
+  --app-data-sort-padding: 3px 6px;
 }
 
 .app-data-table__viewport {
@@ -596,11 +600,11 @@
 .app-data-table__pagination-controls {
   min-width: 0;
   flex: 0 0 auto;
-  gap: 4px;
+  gap: var(--rds-space-1, 4px);
 }
 
 .app-data-table__pagination-size {
-  margin-right: 8px;
+  margin-right: var(--rds-space-2, 8px);
   gap: var(--rds-space-2, 8px);
   white-space: nowrap;
 }
@@ -620,7 +624,7 @@
 
 .app-data-table__pagination-page {
   min-width: 76px;
-  padding-inline: 4px;
+  padding-inline: var(--rds-space-1, 4px);
   color: var(--app-data-text-color);
   text-align: center;
   white-space: nowrap;
@@ -657,8 +661,8 @@
 }
 
 .app-data-table__pagination-button svg {
-  width: 17px;
-  height: 17px;
+  width: var(--rds-control-icon-size, 16px);
+  height: var(--rds-control-icon-size, 16px);
   fill: currentColor;
   stroke: none;
 }
@@ -694,7 +698,8 @@
   position: relative;
   height: var(--app-data-header-height);
   color: var(--app-data-muted-color);
-  font-size: 12px;
+  font-size: var(--rds-font-size-caption, 12px);
+  line-height: var(--rds-line-height-caption, 16px);
   font-weight: 600;
   background: var(--app-data-surface-bg);
   overflow: visible;
@@ -745,7 +750,7 @@
   padding: var(--app-data-sort-padding);
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: var(--rds-space-1, 4px);
   color: inherit;
   font: inherit;
   font-weight: inherit;

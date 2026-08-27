@@ -1,4 +1,5 @@
 .app-toggle-button {
+  box-sizing: border-box;
   min-height: var(--rds-control-height-standard, 32px);
   padding: 0 var(--rds-control-padding-inline-standard, 12px);
   display: inline-flex;
@@ -54,6 +55,8 @@
 
 .app-toggle-button-group {
   display: inline-flex;
+  align-items: stretch;
+  vertical-align: middle;
 }
 
 .app-toggle-button-group > .app-toggle-button {
