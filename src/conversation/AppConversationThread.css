@@ -1,4 +1,4 @@
 .app-conversation-thread {
   display: grid;
-  gap: 14px;
+  gap: var(--rds-space-3, 12px);
 }

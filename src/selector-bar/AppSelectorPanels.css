@@ -4,9 +4,9 @@
 }
 
 .app-selector-panels {
-  --app-selector-panel-enter-distance: 24px;
-  --app-selector-panel-slide-distance: 24px;
-  --app-selector-panel-motion-duration: 320ms;
+  --app-selector-panel-enter-distance: var(--rds-space-6, 24px);
+  --app-selector-panel-slide-distance: var(--rds-space-6, 24px);
+  --app-selector-panel-motion-duration: var(--rds-motion-slow, 320ms);
   --app-selector-panel-motion-easing: var(
     --rds-ease-enter,
     cubic-bezier(0.1, 0.9, 0.2, 1)

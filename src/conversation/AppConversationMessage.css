@@ -2,7 +2,7 @@
   min-width: 0;
   display: flex;
   align-items: flex-start;
-  gap: 10px;
+  gap: var(--rds-space-2, 8px);
 }
 
 .app-conversation-message--user {
@@ -26,7 +26,7 @@
   max-width: min(88%, 640px);
   display: grid;
   justify-items: start;
-  gap: 4px;
+  gap: var(--rds-space-1, 4px);
 }
 
 .app-conversation-message--user .app-conversation-message__body {
@@ -52,24 +52,24 @@
   min-width: 0;
   display: flex;
   align-items: baseline;
-  gap: 7px;
+  gap: var(--rds-space-2, 8px);
   color: var(--app-shell-muted-text-color, #707070);
-  font-size: 12px;
-  line-height: 18px;
+  font-size: var(--rds-font-size-caption, 12px);
+  line-height: var(--rds-line-height-caption, 16px);
 }
 
 .app-conversation-message__label {
   font-size: var(--rds-font-size-control, 13px);
   font-weight: 600;
-  line-height: 18px;
+  line-height: var(--rds-line-height-control, 20px);
 }
 
 .app-conversation-message__timestamp {
   color: var(--app-shell-muted-text-color, #707070);
   font-variant-numeric: tabular-nums;
-  font-size: 11px;
+  font-size: var(--rds-font-size-caption, 12px);
   font-weight: 400;
-  line-height: 16px;
+  line-height: var(--rds-line-height-caption, 16px);
 }
 
 .app-conversation-message__meta {
@@ -77,7 +77,7 @@
   max-width: 100%;
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: var(--rds-space-2, 8px);
 }
 
 .app-conversation-message--user .app-conversation-message__meta {
@@ -120,14 +120,16 @@
 }
 
 .app-conversation-message--user .app-conversation-message__content {
-  padding: 7px 10px;
+  padding: var(--rds-space-2, 8px) var(--rds-space-3, 12px);
   background: var(--app-shell-active-bg, rgb(17 94 163 / 8%));
-  border-radius: 8px 8px 2px 8px;
+  border-radius: var(--rds-radius-overlay, 8px) var(--rds-radius-overlay, 8px)
+    var(--rds-radius-control, 4px) var(--rds-radius-overlay, 8px);
 }
 
 .app-conversation-message--system .app-conversation-message__content {
   color: var(--app-shell-muted-text-color, #707070);
-  font-size: 12px;
+  font-size: var(--rds-font-size-caption, 12px);
+  line-height: var(--rds-line-height-caption, 16px);
 }
 
 .app-conversation-message__content > :first-child {

@@ -158,6 +158,7 @@
   --app-sidebar-width: var(--app-sidebar-expanded-width);
   --rds-motion-fast: 120ms;
   --rds-motion-normal: 180ms;
+  --rds-motion-slow: 320ms;
   --rds-ease-standard: cubic-bezier(0.2, 0, 0, 1);
   --rds-ease-enter: cubic-bezier(0.1, 0.9, 0.2, 1);
   --rds-ease-exit: cubic-bezier(0.7, 0, 1, 0.5);

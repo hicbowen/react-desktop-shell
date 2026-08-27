@@ -28,7 +28,7 @@
 }
 
 .app-scroll-area__viewport:focus-visible {
-  outline: 2px solid var(--app-shell-accent-color, Highlight);
+  outline: 2px solid var(--rds-state-focus-ring, var(--app-shell-accent-color, Highlight));
   outline-offset: -2px;
 }
 
@@ -187,9 +187,9 @@
 .app-scroll-area__thumb::before {
   content: '';
   position: absolute;
-  inset: 3px;
+  inset: var(--app-scrollbar-thumb-inset, 3px);
   background: var(--app-scrollbar-thumb-color, rgb(0 0 0 / 34%));
-  border-radius: 999px;
+  border-radius: var(--rds-radius-pill, 999px);
   transition: background-color 83ms linear;
 }
 
@@ -364,7 +364,7 @@
   background-color: var(--app-scrollbar-thumb-color, rgb(0 0 0 / 34%));
   background-clip: padding-box;
   border: var(--app-scrollbar-thumb-inset, 3px) solid transparent;
-  border-radius: 999px;
+  border-radius: var(--rds-radius-pill, 999px);
 }
 
 .app-scrollbar::-webkit-scrollbar-thumb:hover {

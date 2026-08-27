@@ -2,7 +2,7 @@
   min-width: 0;
   display: inline-flex;
   align-items: center;
-  gap: 2px;
+  gap: var(--rds-space-1, 4px);
   color: var(--app-shell-muted-text-color, #616161);
 }
 
@@ -30,11 +30,12 @@
 }
 
 .app-ai-message-actions .app-icon-button {
-  width: 26px;
-  min-width: 26px;
-  height: 26px;
-  min-height: 26px;
+  width: var(--rds-control-height-compact, 28px);
+  min-width: var(--rds-control-height-compact, 28px);
+  height: var(--rds-control-height-compact, 28px);
+  min-height: var(--rds-control-height-compact, 28px);
   padding: 0;
+  box-sizing: border-box;
   color: inherit;
 }
 
@@ -44,12 +45,12 @@
 
 .app-ai-message-actions .app-icon-button[aria-pressed='true'] {
   color: var(--app-shell-accent-color, #005fb8);
-  background: var(--app-shell-selection-bg, rgb(0 120 212 / 10%));
+  background: var(--rds-state-selected-bg, var(--app-shell-selection-bg, rgb(0 120 212 / 10%)));
 }
 
 .app-ai-message-actions .app-icon-button svg {
-  width: 16px;
-  height: 16px;
+  width: var(--rds-control-icon-size, 16px);
+  height: var(--rds-control-icon-size, 16px);
 }
 
 @media (hover: none), (pointer: coarse) {

@@ -12,6 +12,28 @@ The basic example uses `lucide-react` for icons. Install it separately with
 `npm install lucide-react`, or replace those icons with your preferred icon
 library. Lucide is not required by `react-desktop-shell`.
 
+## Fluent design alignment
+
+The component library uses a Fluent-aligned token layer for desktop surfaces;
+it is an implementation guideline for this library, not a replacement for the
+official Fluent UI React styles.
+
+The core geometry and rhythm are:
+
+- Control radius: `--rds-radius-control` (4px)
+- Overlay radius: `--rds-radius-overlay` (8px)
+- Spacing: `--rds-space-1` through `--rds-space-4` (4/8/12/16px)
+- Control heights: `--rds-control-height-standard` (32px) and
+  `--rds-control-height-compact` (28px)
+- Control icon slot: `--rds-control-icon-size` (16px)
+- Body text: `--rds-font-size-body` / `--rds-line-height-body` (14/20px)
+- Caption text: `--rds-font-size-caption` / `--rds-line-height-caption` (12/16px)
+
+Use the shared `--rds-state-*` variables for hover, pressed, selected, focus,
+and disabled states. Keep component-specific variables as compatibility hooks,
+but make their defaults resolve to the shared tokens so light, dark, system, and
+forced-colors themes remain coherent.
+
 ## Basic Usage
 
 ```tsx
@@ -2386,19 +2408,22 @@ Override variables on `.app-shell`, `.app-page`, `.app-rail`, and `.app-title-ba
 | `--rds-control-height-standard`    | `32px`                |
 | `--rds-control-height-compact`     | `28px`                |
 | `--rds-control-padding-inline-standard` | `12px`          |
-| `--rds-control-padding-inline-compact`  | `10px`          |
-| `--rds-control-font-size`          | `13px`                |
+| `--rds-control-padding-inline-compact`  | `8px`           |
+| `--rds-control-font-size`          | `14px` (compact: `13px`) |
 | `--rds-control-icon-size`          | `16px`                |
+| `--rds-radius-control`              | `4px`                 |
+| `--rds-radius-overlay`              | `8px`                 |
+| `--rds-motion-slow`                  | `320ms`               |
 | `--app-shell-pane-scrim-bg`        | `rgb(0 0 0 / 18%)`    |
 | `--app-shell-pane-shadow`          | Layered right shadow  |
 | `--app-shell-pane-content-reveal`  | `56px`                |
 | `--app-shell-content-margin`       | `0`                   |
-| `--app-shell-content-radius`       | `10px 0 0 0`          |
+| `--app-shell-content-radius`       | `var(--rds-radius-overlay) 0 0 0` |
 | `--app-shell-content-border-color` | `var(--app-shell-border-color)` |
-| `--app-page-padding`               | `20px`                |
+| `--app-page-padding`               | `24px`                |
 | `--app-page-header-gap`            | `8px`                 |
-| `--app-page-content-gap`           | `20px`                |
-| `--app-page-title-size`            | `26px`                |
+| `--app-page-content-gap`           | `24px`                |
+| `--app-page-title-size`            | `28px`                |
 | `--app-page-title-weight`          | `600`                 |
 | `--app-page-text-color`            | `var(--app-shell-text-color, #1f1f1f)` |
 | `--app-page-muted-text-color`      | `var(--app-shell-muted-text-color, #707070)` |

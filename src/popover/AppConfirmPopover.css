@@ -1,27 +1,30 @@
 .app-popover.app-confirm-popover {
   width: max-content;
   min-width: 220px;
-  max-width: min(320px, calc(100vw - 20px));
+  max-width: min(320px, calc(100vw - (2 * var(--rds-space-4, 16px))));
 }
 
 .app-confirm-popover__dialog {
   display: grid;
-  gap: 8px;
+  gap: var(--rds-space-2, 8px);
 }
 
 .app-confirm-popover__title {
-  line-height: 1.35;
+  font-size: var(--rds-font-size-body, 14px);
+  line-height: var(--rds-line-height-body, 20px);
+  font-weight: 600;
 }
 
 .app-confirm-popover__description {
   max-width: 280px;
   color: var(--app-shell-secondary-text-color, rgb(0 0 0 / 62%));
-  line-height: 1.45;
+  font-size: var(--rds-font-size-control, 13px);
+  line-height: var(--rds-line-height-control, 20px);
 }
 
 .app-confirm-popover__actions {
   display: flex;
   justify-content: flex-end;
-  gap: 6px;
-  padding-top: 2px;
+  gap: var(--rds-space-2, 8px);
+  padding-top: var(--rds-space-1, 4px);
 }
