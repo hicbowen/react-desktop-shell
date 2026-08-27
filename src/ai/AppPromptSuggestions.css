@@ -83,7 +83,7 @@
 }
 
 .app-prompt-suggestions__label {
-  font-size: 13px;
+  font-size: var(--rds-font-size-control, 13px);
   font-weight: 600;
   line-height: 1.35;
 }

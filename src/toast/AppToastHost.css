@@ -22,7 +22,7 @@
   color: var(--app-shell-text-color);
   background: var(--app-shell-toast-bg);
   border: 1px solid var(--app-shell-toast-border-color);
-  border-radius: 8px;
+  border-radius: var(--rds-radius-overlay, 8px);
   box-shadow: var(--app-shell-toast-shadow);
   pointer-events: auto;
   backdrop-filter: blur(24px);
@@ -130,7 +130,7 @@
 }
 
 .app-toast__title {
-  font-size: 13px;
+  font-size: var(--rds-font-size-control, 13px);
   font-weight: 600;
   line-height: 1.35;
   overflow-wrap: anywhere;
@@ -153,7 +153,7 @@
   font: inherit;
   background: transparent;
   border: 0;
-  border-radius: 6px;
+  border-radius: var(--rds-radius-control, 4px);
   cursor: default;
 }
 

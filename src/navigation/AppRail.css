@@ -25,9 +25,10 @@
   --app-rail-item-padding-left: 16px;
   --app-rail-item-padding-right: 12px;
   --app-rail-item-depth-offset: 0px;
-  --app-rail-nav-padding: 4px;
-  --app-rail-nav-top-padding: 4px;
-  --app-rail-footer-padding: 4px 4px 8px;
+  --app-rail-nav-padding: var(--rds-space-1, 4px);
+  --app-rail-nav-top-padding: var(--rds-space-1, 4px);
+  --app-rail-footer-padding: var(--rds-space-1, 4px) var(--rds-space-1, 4px)
+    var(--rds-space-2, 8px);
   --app-rail-item-icon-size: 16px;
   --app-rail-item-icon-gap: 12px;
   --app-rail-item-icon-column-width: 16px;
@@ -92,7 +93,7 @@
     var(--app-rail-nav-padding);
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: var(--rds-space-1, 4px);
 }
 
 .app-rail__nav--fade-bottom {
@@ -143,7 +144,7 @@
   text-align: left;
   background: transparent;
   border: 0;
-  border-radius: 8px;
+  border-radius: var(--rds-radius-control, 4px);
   cursor: default;
   transition:
     background 0.15s ease,
@@ -191,7 +192,7 @@
 
 .app-rail__item--active {
   color: var(--app-rail-text-color);
-  background: rgb(17 94 163 / 6%);
+  background: var(--app-rail-accent-bg);
 }
 
 .app-rail__item--active:disabled {
@@ -206,7 +207,7 @@
   top: 50%;
   width: 4px;
   height: 16px;
-  border-radius: 4px;
+  border-radius: var(--rds-radius-control, 4px);
   background: var(--app-rail-accent-color);
   transform: translateY(-50%);
 }
@@ -371,7 +372,7 @@
 
 .app-rail__submenu-item {
   height: 32px;
-  font-size: 13px;
+  font-size: var(--rds-font-size-control, 13px);
 }
 
 .app-rail__submenu-item > .app-rail__item-content {
@@ -429,11 +430,11 @@
   max-width: 280px;
   overflow-y: auto;
   box-sizing: border-box;
-  padding: 6px;
+  padding: var(--rds-space-1, 4px);
   color: var(--app-rail-text-color);
   background: var(--app-rail-flyout-bg);
   border: 1px solid var(--app-rail-flyout-border-color);
-  border-radius: 8px;
+  border-radius: var(--rds-radius-overlay, 8px);
   box-shadow: var(--app-rail-flyout-shadow);
   font: inherit;
   pointer-events: auto;
@@ -441,7 +442,8 @@
 }
 
 .app-rail-flyout__title {
-  padding: 6px 8px 8px;
+  padding: var(--rds-space-1, 4px) var(--rds-space-2, 8px)
+    var(--rds-space-2, 8px);
   color: var(--app-rail-muted-text-color);
   font-size: 12px;
   font-weight: 600;
@@ -451,7 +453,7 @@
 .app-rail-flyout__items {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: var(--rds-space-1, 4px);
 }
 
 .app-rail-flyout__item {
@@ -460,14 +462,14 @@
   padding: 0 10px;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: var(--rds-space-2, 8px);
   color: inherit;
   font: inherit;
-  font-size: 13px;
+  font-size: var(--rds-font-size-control, 13px);
   text-align: left;
   background: transparent;
   border: 0;
-  border-radius: 6px;
+  border-radius: var(--rds-radius-control, 4px);
   cursor: default;
 }
 

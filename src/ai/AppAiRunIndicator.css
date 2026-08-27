@@ -22,7 +22,7 @@
 .app-ai-run-indicator__header strong {
   min-width: 0;
   overflow: hidden;
-  font-size: 13px;
+  font-size: var(--rds-font-size-control, 13px);
   font-weight: 600;
   line-height: 1.35;
   text-overflow: ellipsis;

@@ -16,7 +16,7 @@
   color: var(--app-shell-text-color);
   background: var(--app-shell-menu-bg);
   border: 1px solid var(--app-shell-menu-border-color);
-  border-radius: 8px;
+  border-radius: var(--rds-radius-overlay, 8px);
   box-shadow: var(--app-shell-menu-shadow);
   outline: 0;
   pointer-events: auto;
@@ -35,12 +35,12 @@
   padding: 0 10px 0 8px;
   color: inherit;
   font: inherit;
-  font-size: 13px;
+  font-size: var(--rds-font-size-control, 13px);
   line-height: 1.25;
   text-align: left;
   background: transparent;
   border: 0;
-  border-radius: 6px;
+  border-radius: var(--rds-radius-control, 4px);
   cursor: default;
 }
 

@@ -1,13 +1,14 @@
 .app-select { min-height: var(--rds-control-height-standard, 32px); display: inline-flex; }
 .app-select--compact { min-height: var(--rds-control-height-compact, 28px); }
-.app-select select { min-width: 140px; flex: 1 1 auto; align-self: stretch; padding: 0 30px 0 9px; color: inherit; background: transparent; border: 0; outline: 0; appearance: none; font: inherit; font-size: 13px; }
+.app-select select { min-width: 140px; flex: 1 1 auto; align-self: stretch; padding: 0 30px 0 var(--rds-space-2, 8px); color: inherit; background: transparent; border: 0; outline: 0; appearance: none; font: inherit; font-size: var(--rds-font-size-control, 13px); line-height: var(--rds-line-height-control, 20px); }
+.app-select--compact select { font-size: var(--rds-font-size-control-compact, 13px); line-height: var(--rds-line-height-control-compact, 16px); }
 .app-select select:disabled { color: var(--app-shell-disabled-text-color, rgb(0 0 0 / 36%)); }
-.app-select__placeholder { position: absolute; left: 9px; right: 30px; top: 50%; overflow: hidden; color: var(--app-shell-secondary-text-color, rgb(0 0 0 / 62%)); font-size: 13px; text-overflow: ellipsis; white-space: nowrap; transform: translateY(-50%); pointer-events: none; }
+.app-select__placeholder { position: absolute; left: 9px; right: 30px; top: 50%; overflow: hidden; color: var(--app-shell-secondary-text-color, rgb(0 0 0 / 62%)); font-size: var(--rds-font-size-control, 13px); text-overflow: ellipsis; white-space: nowrap; transform: translateY(-50%); pointer-events: none; }
 .app-select__chevron { position: absolute; right: 9px; top: 50%; width: 16px; height: 16px; display: grid; place-items: center; color: var(--app-shell-secondary-text-color, rgb(0 0 0 / 62%)); transform: translateY(-50%); pointer-events: none; transition: color 100ms ease-out; }
 .app-select__chevron svg { width: 16px; height: 16px; display: block; fill: currentColor; stroke: none; }
-.app-select__clear { position: absolute; right: 5px; top: 50%; width: 24px; height: 24px; display: grid; place-items: center; padding: 0; color: inherit; background: transparent; border: 0; border-radius: 4px; font: inherit; font-size: 18px; transform: translateY(-50%); }
+.app-select__clear { position: absolute; right: 5px; top: 50%; width: 24px; height: 24px; display: grid; place-items: center; padding: 0; color: inherit; background: transparent; border: 0; border-radius: var(--rds-radius-control, 4px); font: inherit; font-size: 18px; transform: translateY(-50%); }
 .app-select__clear:hover { background: var(--app-shell-card-hover-bg, rgb(0 0 0 / 5%)); }
-.app-select__clear:focus-visible { outline: 2px solid var(--app-shell-accent-color, #005fb8); outline-offset: 0; }
+.app-select__clear:focus-visible { outline: 2px solid var(--app-shell-focus-ring-color, var(--app-shell-accent-color, #005fb8)); outline-offset: 0; }
 
 /* Chromium 135+ and other browsers implementing customizable selects expose
    the native picker to CSS while retaining select's form and keyboard behavior. */
@@ -48,7 +49,7 @@
     color: var(--app-shell-text-color, #1f1f1f);
     background: var(--app-shell-menu-bg, rgb(249 249 249 / 96%));
     border: 1px solid var(--app-shell-menu-border-color, rgb(0 0 0 / 12%));
-    border-radius: 8px;
+    border-radius: var(--rds-radius-overlay, 8px);
     box-shadow: var(
       --app-shell-menu-shadow,
       0 8px 20px rgb(0 0 0 / 14%),
@@ -59,7 +60,7 @@
       0
       var(--app-select-picker-closed-bottom)
       0
-      round 6px
+      round var(--rds-radius-control, 4px)
     );
     font: inherit;
     backdrop-filter: blur(30px) saturate(1.15);
@@ -86,7 +87,7 @@
         0
         var(--app-select-picker-closed-bottom)
         0
-        round 6px
+        round var(--rds-radius-control, 4px)
       );
     }
   }
@@ -100,9 +101,9 @@
     color: inherit;
     background: transparent;
     border: 0;
-    border-radius: 6px;
+    border-radius: var(--rds-radius-control, 4px);
     font: inherit;
-    font-size: 13px;
+    font-size: var(--rds-font-size-control, 13px);
     cursor: default;
     transition: background-color 80ms ease-out;
   }

@@ -27,7 +27,7 @@
 
 .app-settings-group__description {
   color: var(--app-shell-muted-text-color, #707070);
-  font-size: 13px;
+  font-size: var(--rds-font-size-control, 13px);
   line-height: 1.5;
   overflow-wrap: anywhere;
 }

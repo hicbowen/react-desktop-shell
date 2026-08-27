@@ -1,6 +1,7 @@
-.app-text-box { min-height: var(--rds-control-height-standard, 32px); display: inline-flex; align-items: center; gap: 7px; padding: 0 9px; }
-.app-text-box--compact { min-height: var(--rds-control-height-compact, 28px); }
-.app-text-box__input { width: 100%; min-width: 0; padding: 0; color: inherit; background: transparent; border: 0; outline: 0; font: inherit; font-size: 13px; }
+.app-text-box { min-height: var(--rds-control-height-standard, 32px); display: inline-flex; align-items: center; gap: var(--rds-space-2, 8px); padding: 0 var(--rds-space-3, 12px); }
+.app-text-box--compact { min-height: var(--rds-control-height-compact, 28px); padding-inline: var(--rds-space-2, 8px); font-size: var(--rds-font-size-control-compact, 13px); line-height: var(--rds-line-height-control-compact, 16px); }
+.app-text-box__input { width: 100%; min-width: 0; padding: 0; color: inherit; background: transparent; border: 0; outline: 0; font: inherit; font-size: var(--rds-font-size-control, 13px); }
+.app-text-box--compact .app-text-box__input { font-size: var(--rds-font-size-control-compact, 13px); line-height: var(--rds-line-height-control-compact, 16px); }
 .app-text-box__input[type='search'] { appearance: none; }
 .app-text-box__input[type='search']::-webkit-search-cancel-button,
 .app-text-box__input[type='search']::-webkit-search-decoration,
@@ -10,14 +11,14 @@
 .app-text-box__input[type='search']::-ms-reveal { width: 0; height: 0; display: none; }
 .app-text-box__icon, .app-text-box__loading { width: 16px; height: 16px; display: inline-flex; flex: 0 0 16px; align-items: center; justify-content: center; color: var(--app-shell-secondary-text-color, rgb(0 0 0 / 58%)); }
 .app-text-box__icon > svg { width: 16px; height: 16px; }
-.app-text-box__clear { width: 22px; height: 22px; display: grid; place-items: center; padding: 0; color: inherit; background: transparent; border: 0; border-radius: 4px; font: inherit; font-size: 18px; }
+.app-text-box__clear { width: 22px; height: 22px; display: grid; place-items: center; padding: 0; color: inherit; background: transparent; border: 0; border-radius: var(--rds-radius-control, 4px); font: inherit; font-size: 18px; }
 .app-text-box__clear:hover { background: var(--app-shell-card-hover-bg, rgb(0 0 0 / 5%)); }
-.app-text-box__clear:focus-visible { outline: 2px solid var(--app-shell-accent-color, #005fb8); outline-offset: 0; }
+.app-text-box__clear:focus-visible { outline: 2px solid var(--app-shell-focus-ring-color, var(--app-shell-accent-color, #005fb8)); outline-offset: 0; }
 .app-text-box__loading { box-sizing: border-box; border: 2px solid currentColor; border-right-color: transparent; border-radius: 50%; animation: app-text-spin .9s linear infinite; }
 .app-text-area { display: inline-block; min-width: 200px; color: var(--app-shell-text-color, #1f1f1f); }
 .app-text-area--full-width { width: 100%; }
 .app-text-area__frame { width: 100%; display: inline-grid; }
-.app-text-area__control { box-sizing: border-box; width: 100%; padding: 7px 9px 20px; color: inherit; background: transparent; border: 0; border-radius: inherit; outline: 0; font: inherit; font-size: 13px; line-height: 20px; }
+.app-text-area__control { box-sizing: border-box; width: 100%; padding: var(--rds-space-2, 8px) var(--rds-space-3, 12px) 20px; color: inherit; background: transparent; border: 0; border-radius: inherit; outline: 0; font: inherit; font-size: var(--rds-font-size-control, 13px); line-height: var(--rds-line-height-control, 20px); }
 .app-text-area__count { justify-self: end; margin: -18px 8px 5px; color: var(--app-shell-secondary-text-color, rgb(0 0 0 / 58%)); font-size: 11px; pointer-events: none; }
 @keyframes app-text-spin { to { transform: rotate(360deg); } }
 @media (prefers-reduced-motion: reduce) { .app-text-box__loading { animation: none; } }

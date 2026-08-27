@@ -9,7 +9,7 @@
   grid-template-columns: minmax(0, 1fr);
   gap: 2px;
   padding: 10px 12px 8px;
-  background: var(--app-shell-card-background, #fff);
+  background: var(--app-shell-card-bg, #fff);
   border: 1px solid var(--app-shell-border-color, #d1d1d1);
   border-radius: 18px;
   box-shadow: 0 4px 16px rgb(0 0 0 / 8%);

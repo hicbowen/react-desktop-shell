@@ -51,7 +51,7 @@
   color: var(--app-shell-muted-text-color);
   background: transparent;
   border: 0;
-  border-radius: 6px;
+  border-radius: var(--rds-radius-control, 4px);
   cursor: default;
 }
 
@@ -75,7 +75,7 @@
 .app-side-pane__body {
   min-height: 0;
   padding: 16px 18px;
-  font-size: 13px;
+  font-size: var(--rds-font-size-control, 13px);
   line-height: 1.5;
 }
 

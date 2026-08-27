@@ -6,16 +6,16 @@
     max(0px, calc(100vw - 24px))
   );
   box-sizing: border-box;
-  padding: 14px;
+  padding: var(--rds-space-4, 16px);
   display: grid;
   grid-template-rows: auto minmax(0, auto) auto;
-  gap: 10px;
+  gap: var(--rds-space-2, 8px);
   overflow: hidden;
   color: var(--app-shell-text-color, #1f1f1f);
   background: var(--app-shell-menu-bg, rgb(249 249 249 / 96%));
   border: 1px solid
     var(--app-shell-menu-border-color, rgb(0 0 0 / 12%));
-  border-radius: 10px;
+  border-radius: var(--rds-radius-overlay, 8px);
   box-shadow: var(
     --app-shell-menu-shadow,
     0 10px 28px rgb(0 0 0 / 18%)
@@ -57,7 +57,7 @@
   color: inherit;
   background: transparent;
   border: 0;
-  border-radius: 5px;
+  border-radius: var(--rds-radius-control, 4px);
   cursor: default;
 }
 
@@ -67,7 +67,7 @@
 
 .app-teaching-tip__close:focus-visible,
 .app-teaching-tip__action:focus-visible {
-  outline: 2px solid var(--app-shell-accent-color, #005fb8);
+  outline: 2px solid var(--app-shell-focus-ring-color, var(--app-shell-accent-color, #005fb8));
   outline-offset: 1px;
 }
 
@@ -83,7 +83,7 @@
   min-height: 0;
   overflow-y: auto;
   color: var(--app-shell-muted-text-color, #5d5d5d);
-  font-size: 13px;
+  font-size: var(--rds-font-size-control, 13px);
   line-height: 1.5;
   overflow-wrap: anywhere;
   user-select: text;
@@ -98,14 +98,15 @@
 }
 
 .app-teaching-tip__action {
-  min-height: 30px;
-  padding: 0 12px;
+  min-height: var(--rds-control-height-standard, 32px);
+  padding: 0 var(--rds-space-3, 12px);
   color: inherit;
   background: var(--app-shell-card-bg, #fff);
   border: 1px solid var(--app-shell-border-color, rgb(0 0 0 / 12%));
-  border-radius: 5px;
+  border-radius: var(--rds-radius-control, 4px);
   font: inherit;
-  font-size: 13px;
+  font-size: var(--rds-font-size-control, 13px);
+  line-height: var(--rds-line-height-control, 20px);
   cursor: default;
 }
 
@@ -114,7 +115,7 @@
 }
 
 .app-teaching-tip__action--primary {
-  color: #fff;
+  color: var(--app-shell-accent-text-color, #fff);
   background: var(--app-shell-accent-color, #005fb8);
   border-color: transparent;
 }

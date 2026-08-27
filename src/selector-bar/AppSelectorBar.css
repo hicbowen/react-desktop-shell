@@ -15,7 +15,7 @@
   max-width: 100%;
   display: flex;
   align-items: stretch;
-  gap: 2px;
+  gap: var(--rds-space-1, 4px);
   overflow-x: auto;
   overflow-y: hidden;
   color: var(--app-selector-bar-text-color);
@@ -47,7 +47,7 @@
   white-space: nowrap;
   background: transparent;
   border: 0;
-  border-radius: 6px;
+  border-radius: var(--rds-radius-control, 4px);
   cursor: default;
   transition:
     color 120ms ease,
@@ -62,7 +62,7 @@
   height: 32px;
   padding-right: 10px;
   padding-left: 10px;
-  font-size: 13px;
+  font-size: var(--rds-font-size-control, 13px);
 }
 
 .app-selector-bar__item:hover:not(:disabled) {

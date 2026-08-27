@@ -26,7 +26,7 @@
 
 .app-tool-call-group__heading strong {
   overflow-wrap: anywhere;
-  font-size: 13px;
+  font-size: var(--rds-font-size-control, 13px);
   line-height: 1.35;
 }
 

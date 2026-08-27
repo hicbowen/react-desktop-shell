@@ -1,5 +1,5 @@
 .app-command-palette {
-  border-radius: 8px;
+  border-radius: var(--rds-radius-overlay, 8px);
 }
 
 .app-command-palette__input {
@@ -21,23 +21,23 @@
 
 .app-command-palette__results {
   max-height: 360px;
-  padding: 5px;
+  padding: var(--rds-space-1, 4px);
   overflow: auto;
 }
 
 .app-command-palette__result {
   width: 100%;
   min-height: 42px;
-  padding: 5px 9px;
+  padding: var(--rds-space-1, 4px) var(--rds-space-2, 8px);
   display: flex;
   align-items: center;
-  gap: 9px;
+  gap: var(--rds-space-2, 8px);
   color: inherit;
   text-align: left;
   font: inherit;
   background: transparent;
   border: 0;
-  border-radius: 5px;
+  border-radius: var(--rds-radius-control, 4px);
 }
 
 .app-command-palette__result[aria-selected='true'] {

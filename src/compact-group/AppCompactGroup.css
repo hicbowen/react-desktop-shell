@@ -32,15 +32,17 @@
 }
 
 .app-compact-group--horizontal > .app-compact-group__control:first-child {
-  border-radius: 5px 0 0 5px;
+  border-radius: var(--rds-radius-control, 4px) 0 0
+    var(--rds-radius-control, 4px);
 }
 
 .app-compact-group--horizontal > .app-compact-group__control:last-child {
-  border-radius: 0 5px 5px 0;
+  border-radius: 0 var(--rds-radius-control, 4px)
+    var(--rds-radius-control, 4px) 0;
 }
 
 .app-compact-group--horizontal > .app-compact-group__control:only-child {
-  border-radius: 5px;
+  border-radius: var(--rds-radius-control, 4px);
 }
 
 .app-compact-group--vertical > .app-compact-group__control + .app-compact-group__control {
@@ -48,15 +50,17 @@
 }
 
 .app-compact-group--vertical > .app-compact-group__control:first-child {
-  border-radius: 5px 5px 0 0;
+  border-radius: var(--rds-radius-control, 4px)
+    var(--rds-radius-control, 4px) 0 0;
 }
 
 .app-compact-group--vertical > .app-compact-group__control:last-child {
-  border-radius: 0 0 5px 5px;
+  border-radius: 0 0 var(--rds-radius-control, 4px)
+    var(--rds-radius-control, 4px);
 }
 
 .app-compact-group--vertical > .app-compact-group__control:only-child {
-  border-radius: 5px;
+  border-radius: var(--rds-radius-control, 4px);
 }
 
 .app-compact-group > .app-compact-group__control:hover,
@@ -77,7 +81,7 @@
   background: var(--app-shell-hover-bg, rgb(0 0 0 / 4%));
   border: 1px solid var(--app-shell-border-color, rgb(0 0 0 / 18%));
   font: inherit;
-  font-size: 13px;
+  font-size: var(--rds-font-size-control, 13px);
   white-space: nowrap;
 }
 

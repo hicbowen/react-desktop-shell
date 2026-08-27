@@ -8,12 +8,12 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 10px;
+  gap: var(--rds-space-2, 8px);
   color: var(--app-shell-text-color);
   background: var(--app-shell-surface-bg);
   border: 1px solid var(--app-shell-border-color);
   border-left: 3px solid var(--app-info-bar-accent);
-  border-radius: 7px;
+  border-radius: var(--rds-radius-control, 4px);
 }
 
 .app-info-bar--success {
@@ -53,7 +53,7 @@
 }
 
 .app-info-bar__title {
-  font-size: 13px;
+  font-size: var(--rds-font-size-control, 13px);
   font-weight: 600;
   line-height: 1.4;
   overflow-wrap: anywhere;
@@ -95,7 +95,7 @@
   font: inherit;
   background: transparent;
   border: 0;
-  border-radius: 6px;
+  border-radius: var(--rds-radius-control, 4px);
   cursor: default;
 }
 
@@ -113,6 +113,6 @@
 }
 
 .app-info-bar__dismiss:focus-visible {
-  outline: 2px solid var(--app-shell-accent-color);
+  outline: 2px solid var(--app-shell-focus-ring-color, var(--app-shell-accent-color));
   outline-offset: 1px;
 }

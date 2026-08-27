@@ -9,7 +9,7 @@
   padding: 10px;
   overflow: hidden;
   color: var(--app-shell-text-color, #1f1f1f);
-  font-size: 13px;
+  font-size: var(--rds-font-size-control, 13px);
 }
 
 .app-time-panel__empty {
@@ -44,7 +44,7 @@
   box-sizing: border-box;
   overflow: hidden;
   border: 1px solid var(--app-shell-border-color, rgb(0 0 0 / 12%));
-  border-radius: 6px;
+  border-radius: var(--rds-radius-control, 4px);
 }
 
 .app-time-panel__list {
@@ -58,7 +58,7 @@
   color: inherit;
   background: transparent;
   border: 0;
-  border-radius: 4px;
+  border-radius: var(--rds-radius-control, 4px);
   font: inherit;
 }
 
@@ -76,7 +76,7 @@
 }
 
 .app-time-panel__option:focus-visible {
-  outline: 2px solid var(--app-shell-accent-color, #005fb8);
+  outline: 2px solid var(--app-shell-focus-ring-color, var(--app-shell-accent-color, #005fb8));
   outline-offset: -2px;
 }
 
@@ -102,7 +102,7 @@
   border: 0;
   outline: 0;
   font: inherit;
-  font-size: 13px;
+  font-size: var(--rds-font-size-control, 13px);
   text-align: left;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -122,7 +122,7 @@
   color: inherit;
   background: transparent;
   border: 0;
-  border-radius: 4px;
+  border-radius: var(--rds-radius-control, 4px);
   font: inherit;
   font-size: 17px;
 }
@@ -132,7 +132,7 @@
 }
 
 .app-time-picker__icon-button:focus-visible {
-  outline: 2px solid var(--app-shell-accent-color, #005fb8);
+  outline: 2px solid var(--app-shell-focus-ring-color, var(--app-shell-accent-color, #005fb8));
   outline-offset: -2px;
 }
 
@@ -156,7 +156,7 @@
   color: var(--app-shell-text-color, #1f1f1f);
   background: var(--app-shell-card-bg, #fff);
   border: 1px solid var(--app-shell-border-color, rgb(0 0 0 / 14%));
-  border-radius: 8px;
+  border-radius: var(--rds-radius-overlay, 8px);
   box-shadow: 0 6px 18px rgb(0 0 0 / 16%);
   animation: app-time-picker-enter var(--rds-motion-fast, 120ms)
     var(--rds-ease-enter, ease-out);
@@ -210,7 +210,7 @@
   border: 0;
   outline: 0;
   font: inherit;
-  font-size: 13px;
+  font-size: var(--rds-font-size-control, 13px);
   text-align: left;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -231,7 +231,7 @@
   margin: 10px 10px 0;
   padding: 3px;
   background: var(--app-shell-hover-bg, rgb(0 0 0 / 5%));
-  border-radius: 6px;
+  border-radius: var(--rds-radius-control, 4px);
 }
 
 .app-time-range-picker__tabs button {
@@ -239,7 +239,7 @@
   color: inherit;
   background: transparent;
   border: 0;
-  border-radius: 4px;
+  border-radius: var(--rds-radius-control, 4px);
   font: inherit;
   font-size: 12px;
 }
@@ -257,5 +257,5 @@
 }
 
 .app-time-range-picker__summary--invalid {
-  color: var(--app-shell-danger-color, #c42b1c);
+  color: var(--app-shell-danger-fg, #c42b1c);
 }

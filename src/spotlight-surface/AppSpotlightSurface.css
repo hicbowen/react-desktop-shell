@@ -29,7 +29,7 @@
   color: var(--app-shell-text-color, #1f1f1f);
   background: var(--app-shell-dialog-bg, rgb(249 249 249));
   border: 1px solid var(--app-shell-dialog-border-color, rgb(0 0 0 / 12%));
-  border-radius: 10px;
+  border-radius: var(--rds-radius-overlay, 8px);
   box-shadow: var(
     --app-shell-dialog-shadow,
     0 18px 42px rgb(0 0 0 / 18%),

@@ -19,7 +19,7 @@
   color: var(--app-data-text-color);
   background: var(--app-data-surface-bg);
   border: 1px solid var(--app-data-border-color);
-  border-radius: 8px;
+  border-radius: var(--rds-radius-overlay, 8px);
 }
 
 .app-data-view--fill {
@@ -41,11 +41,11 @@
 .app-data-view__header,
 .app-data-view__footer {
   box-sizing: border-box;
-  padding: 12px 16px;
+  padding: var(--rds-space-3, 12px) var(--rds-space-4, 16px);
 }
 
 .app-data-view__header {
-  min-height: 57px;
+  min-height: 56px;
   display: flex;
   align-items: center;
   border-bottom: 1px solid var(--app-data-border-color);
@@ -107,7 +107,7 @@
 .app-selection-bar__label {
   flex: 1 1 auto;
   overflow: hidden;
-  font-size: 13px;
+  font-size: var(--rds-font-size-control, 13px);
   font-weight: 600;
   white-space: nowrap;
 }
@@ -142,7 +142,7 @@
   font: inherit;
   background: transparent;
   border: 0;
-  border-radius: 6px;
+  border-radius: var(--rds-radius-control, 4px);
   cursor: default;
 }
 
@@ -172,7 +172,7 @@
   color: var(--app-data-text-color);
   background: var(--app-data-surface-bg);
   border: 1px solid var(--app-data-border-color);
-  border-radius: 8px;
+  border-radius: var(--rds-radius-overlay, 8px);
 }
 
 .app-data-table__controls {
@@ -181,7 +181,7 @@
   box-sizing: border-box;
   width: 100%;
   min-width: 0;
-  padding: 10px 12px;
+  padding: var(--rds-space-2, 8px) var(--rds-space-3, 12px);
   display: flex;
   align-items: center;
   flex: 0 0 auto;
@@ -189,7 +189,8 @@
   gap: 8px;
   background: var(--app-data-surface-bg);
   border-bottom: 1px solid var(--app-data-border-color);
-  border-radius: 8px 8px 0 0;
+  border-radius: var(--rds-radius-overlay, 8px)
+    var(--rds-radius-overlay, 8px) 0 0;
 }
 
 .app-data-table__search {
@@ -208,10 +209,10 @@
   padding: 0 34px;
   color: var(--app-data-text-color);
   font: inherit;
-  font-size: 13px;
+  font-size: var(--rds-font-size-control, 13px);
   background: var(--app-data-control-bg);
   border: 1px solid var(--app-data-border-color);
-  border-radius: 6px;
+  border-radius: var(--rds-radius-control, 4px);
   outline: none;
 }
 
@@ -247,7 +248,7 @@
   color: var(--app-data-muted-color);
   background: transparent;
   border: 0;
-  border-radius: 5px;
+  border-radius: var(--rds-radius-control, 4px);
   cursor: default;
 }
 
@@ -278,17 +279,17 @@
 .app-data-table__controls-clear-all {
   min-height: 32px;
   box-sizing: border-box;
-  padding: 0 10px;
+  padding: 0 var(--rds-space-3, 12px);
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 7px;
+  gap: var(--rds-space-2, 8px);
   color: var(--app-data-text-color);
   font: inherit;
-  font-size: 13px;
+  font-size: var(--rds-font-size-control, 13px);
   background: var(--app-data-control-bg);
   border: 1px solid var(--app-data-border-color);
-  border-radius: 6px;
+  border-radius: var(--rds-radius-control, 4px);
   cursor: default;
   white-space: nowrap;
 }
@@ -334,7 +335,7 @@
   color: var(--app-data-text-color);
   background: var(--app-data-surface-bg);
   border: 1px solid var(--app-data-border-color);
-  border-radius: 8px;
+  border-radius: var(--rds-radius-overlay, 8px);
   box-shadow: 0 8px 24px rgb(0 0 0 / 16%);
   pointer-events: auto;
 }
@@ -391,29 +392,29 @@
   font-size: 11px;
   background: transparent;
   border: 0;
-  border-radius: 5px;
+  border-radius: var(--rds-radius-control, 4px);
   cursor: default;
 }
 
 .app-data-table__filter-options {
   display: grid;
-  gap: 1px;
+  gap: var(--rds-space-1, 4px);
 }
 
 .app-data-table__filter-option {
   width: 100%;
-  min-height: 30px;
-  padding: 0 8px;
+  min-height: var(--rds-control-height-standard, 32px);
+  padding: 0 var(--rds-space-2, 8px);
   display: flex;
   align-items: center;
   gap: 8px;
   color: var(--app-data-text-color);
   font: inherit;
-  font-size: 13px;
+  font-size: var(--rds-font-size-control, 13px);
   text-align: left;
   background: transparent;
   border: 0;
-  border-radius: 5px;
+  border-radius: var(--rds-radius-control, 4px);
   cursor: default;
 }
 
@@ -426,7 +427,7 @@
   justify-content: center;
   color: var(--app-data-accent);
   border: 1px solid var(--app-data-border-color);
-  border-radius: 4px;
+  border-radius: var(--rds-radius-control, 4px);
   font-size: 11px;
   font-weight: 700;
   line-height: 1;
@@ -448,8 +449,8 @@
 }
 
 .app-data-table__filter-menu-footer {
-  margin-top: 5px;
-  padding-top: 5px;
+  margin-top: var(--rds-space-1, 4px);
+  padding-top: var(--rds-space-1, 4px);
   display: flex;
   justify-content: flex-end;
   border-top: 1px solid var(--app-data-border-color);
@@ -473,7 +474,8 @@
 }
 
 .app-data-table--with-controls > .app-data-table__viewport {
-  border-radius: 0 0 8px 8px;
+  border-radius: 0 0 var(--rds-radius-overlay, 8px)
+    var(--rds-radius-overlay, 8px);
 }
 
 .app-data-table--with-pagination > .app-data-table__viewport {
@@ -575,7 +577,8 @@
   color: var(--app-data-muted-color);
   background: var(--app-data-surface-bg);
   border-top: 1px solid var(--app-data-border-color);
-  border-radius: 0 0 8px 8px;
+  border-radius: 0 0 var(--rds-radius-overlay, 8px)
+    var(--rds-radius-overlay, 8px);
 }
 
 .app-data-table__pagination-summary {
@@ -598,7 +601,7 @@
 
 .app-data-table__pagination-size {
   margin-right: 8px;
-  gap: 7px;
+  gap: var(--rds-space-2, 8px);
   white-space: nowrap;
 }
 
@@ -608,10 +611,10 @@
   padding: 0 24px 0 8px;
   color: var(--app-data-text-color);
   font: inherit;
-  font-size: 13px;
+  font-size: var(--rds-font-size-control, 13px);
   background: var(--app-data-control-bg);
   border: 1px solid var(--app-data-border-color);
-  border-radius: 6px;
+  border-radius: var(--rds-radius-control, 4px);
   cursor: default;
 }
 
@@ -624,17 +627,17 @@
 }
 
 .app-data-table__pagination-button {
-  width: 32px;
-  height: 32px;
+  width: var(--rds-control-height-standard, 32px);
+  height: var(--rds-control-height-standard, 32px);
   padding: 0;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  flex: 0 0 32px;
+  flex: 0 0 var(--rds-control-height-standard, 32px);
   color: var(--app-data-text-color);
   background: transparent;
   border: 1px solid transparent;
-  border-radius: 6px;
+  border-radius: var(--rds-radius-control, 4px);
   cursor: default;
 }
 
@@ -673,7 +676,7 @@
   min-width: 0;
   table-layout: fixed;
   color: inherit;
-  font-size: 13px;
+  font-size: var(--rds-font-size-control, 13px);
 }
 
 .app-data-table th,
@@ -749,7 +752,7 @@
   text-align: left;
   background: transparent;
   border: 0;
-  border-radius: 4px;
+  border-radius: var(--rds-radius-control, 4px);
   cursor: default;
 }
 
@@ -816,7 +819,7 @@
   width: 16px;
   height: 16px;
   flex-basis: 16px;
-  border-radius: 3px;
+  border-radius: var(--rds-radius-control, 4px);
 }
 
 .app-data-table__checkbox-control .app-check-box__check {

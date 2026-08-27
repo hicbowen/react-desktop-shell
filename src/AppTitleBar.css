@@ -28,10 +28,11 @@
   height: var(--app-title-bar-height);
   display: flex;
   align-items: center;
-  padding: 0 16px;
-  gap: 8px;
-  font-size: 14px;
+  padding: 0 var(--rds-space-4, 16px);
+  gap: var(--rds-space-2, 8px);
+  font-size: var(--rds-font-size-body, 14px);
   font-weight: 650;
+  line-height: var(--rds-line-height-body, 20px);
 }
 
 .app-title-bar__left:empty {
@@ -77,7 +78,7 @@
   max-width: calc(100% - 296px);
   min-width: 0;
   height: var(--app-title-bar-height);
-  padding: 0 8px;
+  padding: 0 var(--rds-space-2, 8px);
   box-sizing: border-box;
   display: flex;
   align-items: center;
@@ -106,7 +107,7 @@
   height: var(--app-title-bar-height);
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: var(--rds-space-1, 4px);
   flex-shrink: 0;
   -webkit-app-region: no-drag;
 }

@@ -3,6 +3,44 @@
 .app-shell[data-theme='light'] {
   color-scheme: light;
 
+  /* Fluent-aligned foundation tokens. Keep the app-shell names below as the
+     public compatibility surface for existing consumers. */
+  --rds-font-family: "Segoe UI Variable", "Segoe UI", system-ui, sans-serif;
+  --rds-font-family-monospace: "Cascadia Mono", "Cascadia Code", Consolas, monospace;
+  --rds-font-size-caption: 12px;
+  --rds-line-height-caption: 16px;
+  --rds-font-size-body: 14px;
+  --rds-line-height-body: 20px;
+  --rds-font-size-body-large: 18px;
+  --rds-line-height-body-large: 24px;
+  --rds-font-size-subtitle: 20px;
+  --rds-line-height-subtitle: 28px;
+  --rds-font-size-title: 28px;
+  --rds-line-height-title: 36px;
+  --rds-font-size-title-large: 40px;
+  --rds-line-height-title-large: 48px;
+  --rds-font-size-display: 68px;
+  --rds-line-height-display: 72px;
+  --rds-font-size-control: var(--rds-font-size-body);
+  --rds-font-size-control-compact: 13px;
+  --rds-line-height-control: var(--rds-line-height-body);
+  --rds-line-height-control-compact: var(--rds-line-height-caption);
+
+  --rds-radius-control: 4px;
+  --rds-radius-overlay: 8px;
+  --rds-radius-tooltip: 4px;
+  --rds-radius-bar: 4px;
+  --rds-radius-pill: 999px;
+
+  --rds-space-1: 4px;
+  --rds-space-2: 8px;
+  --rds-space-3: 12px;
+  --rds-space-4: 16px;
+  --rds-space-5: 20px;
+  --rds-space-6: 24px;
+  --rds-space-7: 28px;
+  --rds-space-8: 32px;
+
   --app-shell-chrome-bg: #f3f3f3;
   --app-shell-content-bg: #f7f8fa;
   --app-shell-surface-bg: #ffffff;
@@ -45,6 +83,27 @@
   --app-shell-success-fg: #107c10;
   --app-shell-warning-fg: #9a6700;
   --app-shell-info-fg: #115ea3;
+  --app-shell-code-text-color: #242424;
+
+  /* Semantic aliases used by older component styles. They intentionally
+     resolve to the same theme values so custom themes stay coherent. */
+  --app-shell-accent-pressed-color: #0c4f87;
+  --app-shell-accent-text-color: #ffffff;
+  --app-shell-focus-ring-color: var(--app-shell-accent-color);
+  --app-shell-selection-bg: var(--app-shell-active-bg);
+  --app-shell-strong-border-color: var(--app-shell-input-strong-border-color);
+  --app-shell-card-bg: var(--app-shell-card-bg);
+  --app-shell-overlay-bg: var(--app-shell-menu-bg);
+  --app-shell-card-pressed-bg: var(--app-shell-card-pressed-bg);
+  --app-shell-subtle-bg: var(--app-shell-hover-bg);
+  --app-shell-subtle-bg: var(--app-shell-hover-bg);
+  --app-shell-code-bg: var(--app-shell-subtle-bg);
+  --app-shell-code-bg: var(--app-shell-code-bg);
+  --app-shell-success-fg: var(--app-shell-success-fg);
+  --app-shell-warning-fg: var(--app-shell-warning-fg);
+  --app-shell-danger-fg: var(--app-shell-danger-fg);
+  --app-shell-monospace-font-family: var(--rds-font-family-monospace);
+
   --app-shell-menu-bg: rgb(249 249 249 / 92%);
   --app-shell-menu-border-color: rgb(0 0 0 / 10%);
   --app-shell-menu-shadow:
@@ -70,7 +129,7 @@
     0 10px 28px rgb(0 0 0 / 16%),
     0 2px 8px rgb(0 0 0 / 10%);
   --app-shell-content-margin: 0;
-  --app-shell-content-radius: 10px 0 0 0;
+  --app-shell-content-radius: var(--rds-radius-overlay) 0 0 0;
   --app-shell-content-border-color: var(--app-shell-border-color);
   --app-titlebar-height: 38px;
   --app-sidebar-expanded-width: 316px;
@@ -83,16 +142,17 @@
   --rds-ease-standard: cubic-bezier(0.2, 0, 0, 1);
   --rds-ease-enter: cubic-bezier(0.1, 0.9, 0.2, 1);
   --rds-ease-exit: cubic-bezier(0.7, 0, 1, 0.5);
-  --rds-radius-medium: 8px;
+  --rds-radius-medium: var(--rds-radius-overlay);
   --rds-control-height-standard: 32px;
   --rds-control-height-compact: 28px;
-  --rds-control-padding-inline-standard: 12px;
-  --rds-control-padding-inline-compact: 10px;
-  --rds-control-font-size: 13px;
+  --rds-control-padding-inline-standard: var(--rds-space-3);
+  --rds-control-padding-inline-compact: var(--rds-space-2);
+  --rds-control-font-size: var(--rds-font-size-control);
+  --rds-control-line-height: var(--rds-line-height-control);
   --rds-control-icon-size: 16px;
-  --rds-space-card-compact: 12px;
-  --rds-space-card-regular: 16px;
-  --rds-space-card-gap: 12px;
+  --rds-space-card-compact: var(--rds-space-3);
+  --rds-space-card-regular: var(--rds-space-4);
+  --rds-space-card-gap: var(--rds-space-3);
   --rds-disabled-opacity: 0.55;
   --rds-z-overlay: 1050;
   --rds-z-pane: 1100;
@@ -109,6 +169,9 @@
   overflow: hidden;
   color: var(--app-shell-text-color);
   background: var(--app-shell-chrome-bg);
+  font-family: var(--rds-font-family);
+  font-size: var(--rds-font-size-body);
+  line-height: var(--rds-line-height-body);
   cursor: default;
   user-select: none;
   -webkit-user-select: none;
@@ -174,12 +237,15 @@
   --app-shell-border-color: rgb(255 255 255 / 8%);
   --app-shell-accent-color: #60cdff;
   --app-shell-accent-hover-color: #56b8e6;
+  --app-shell-accent-pressed-color: #4aa4cc;
+  --app-shell-accent-text-color: #00131f;
   --app-shell-danger-bg: #ef4444;
   --app-shell-danger-fg: #ff99a4;
   --app-shell-danger-subtle-bg: rgb(255 153 164 / 12%);
   --app-shell-success-fg: #6ccb5f;
   --app-shell-warning-fg: #f6d46b;
   --app-shell-info-fg: #60cdff;
+  --app-shell-code-text-color: #f5f5f5;
   --app-shell-menu-bg: rgb(44 44 44 / 92%);
   --app-shell-menu-border-color: rgb(255 255 255 / 12%);
   --app-shell-menu-shadow:
@@ -229,10 +295,10 @@
   min-width: 0;
   min-height: 0;
   height: var(--app-titlebar-height);
-  padding: 0 12px;
+  padding: 0 var(--rds-space-3, 12px);
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: var(--rds-space-2, 8px);
   overflow: hidden;
   background: var(--app-shell-chrome-bg);
   user-select: none;
@@ -251,7 +317,7 @@
   color: var(--app-shell-text-color);
   background: transparent;
   border: 0;
-  border-radius: 4px;
+  border-radius: var(--rds-radius-control, 4px);
   cursor: default;
   transition:
     background-color 80ms ease,
@@ -268,7 +334,7 @@
 }
 
 .app-shell__pane-toggle:focus-visible {
-  outline: 2px solid var(--app-shell-accent-color);
+  outline: 2px solid var(--app-shell-focus-ring-color, var(--app-shell-accent-color));
   outline-offset: -2px;
 }
 
@@ -299,8 +365,9 @@
   min-width: 0;
   overflow: hidden;
   color: var(--app-shell-text-color);
-  font-size: 14px;
+  font-size: var(--rds-font-size-body, 14px);
   font-weight: 650;
+  line-height: var(--rds-line-height-body, 20px);
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -527,12 +594,15 @@
     --app-shell-border-color: rgb(255 255 255 / 8%);
     --app-shell-accent-color: #60cdff;
     --app-shell-accent-hover-color: #56b8e6;
+    --app-shell-accent-pressed-color: #4aa4cc;
+    --app-shell-accent-text-color: #00131f;
     --app-shell-danger-bg: #ef4444;
     --app-shell-danger-fg: #ff99a4;
     --app-shell-danger-subtle-bg: rgb(255 153 164 / 12%);
     --app-shell-success-fg: #6ccb5f;
     --app-shell-warning-fg: #f6d46b;
     --app-shell-info-fg: #60cdff;
+    --app-shell-code-text-color: #f5f5f5;
     --app-shell-menu-bg: rgb(44 44 44 / 92%);
     --app-shell-menu-border-color: rgb(255 255 255 / 12%);
     --app-shell-menu-shadow:
@@ -556,5 +626,62 @@
     --app-shell-toast-shadow:
       0 14px 34px rgb(0 0 0 / 46%),
       0 2px 10px rgb(0 0 0 / 28%);
+  }
+}
+
+@media (forced-colors: active) {
+  .app-shell,
+  .app-shell[data-theme] {
+    color-scheme: normal;
+    --app-shell-chrome-bg: Canvas;
+    --app-shell-content-bg: Canvas;
+    --app-shell-surface-bg: Canvas;
+    --app-shell-card-bg: Canvas;
+    --app-shell-card-hover-bg: ButtonFace;
+    --app-shell-card-pressed-bg: Highlight;
+    --app-shell-input-bg: Canvas;
+    --app-shell-input-hover-bg: Canvas;
+    --app-shell-input-pressed-bg: ButtonFace;
+    --app-shell-input-focused-bg: Canvas;
+    --app-shell-input-readonly-bg: ButtonFace;
+    --app-shell-input-disabled-bg: Canvas;
+    --app-shell-input-border-color: ButtonText;
+    --app-shell-input-strong-border-color: ButtonText;
+    --app-shell-input-disabled-strong-border-color: GrayText;
+    --app-shell-text-color: CanvasText;
+    --app-shell-muted-text-color: GrayText;
+    --app-shell-secondary-text-color: CanvasText;
+    --app-shell-disabled-text-color: GrayText;
+    --app-shell-disabled-bg: Canvas;
+    --app-shell-hover-bg: ButtonFace;
+    --app-shell-control-hover-bg: Highlight;
+    --app-shell-active-bg: Highlight;
+    --app-shell-border-color: ButtonText;
+    --app-shell-accent-color: Highlight;
+    --app-shell-accent-hover-color: Highlight;
+    --app-shell-accent-pressed-color: Highlight;
+    --app-shell-accent-text-color: HighlightText;
+    --app-shell-focus-ring-color: Highlight;
+    --app-shell-selection-bg: Highlight;
+    --app-shell-danger-fg: CanvasText;
+    --app-shell-success-fg: CanvasText;
+    --app-shell-warning-fg: CanvasText;
+    --app-shell-info-fg: Highlight;
+    --app-shell-code-text-color: CanvasText;
+    --app-shell-menu-bg: Canvas;
+    --app-shell-menu-border-color: ButtonText;
+    --app-shell-menu-shadow: none;
+    --app-shell-dialog-bg: Canvas;
+    --app-shell-dialog-border-color: ButtonText;
+    --app-shell-dialog-shadow: none;
+    --app-shell-dialog-primary-fg: HighlightText;
+    --app-shell-toast-bg: Canvas;
+    --app-shell-toast-border-color: ButtonText;
+    --app-shell-toast-shadow: none;
+  }
+
+  .app-shell :where(button, input, select, textarea):focus-visible,
+  .app-shell [tabindex]:focus-visible {
+    outline-color: Highlight;
   }
 }

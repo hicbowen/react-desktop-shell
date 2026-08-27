@@ -48,11 +48,11 @@
 
 .app-form-error-summary {
   padding: 10px 12px;
-  color: var(--app-shell-danger-color, #c42b1c);
+  color: var(--app-shell-danger-fg, #c42b1c);
   background: rgb(196 43 28 / 7%);
   border: 1px solid currentColor;
-  border-radius: 6px;
-  font-size: 13px;
+  border-radius: var(--rds-radius-control, 4px);
+  font-size: var(--rds-font-size-control, 13px);
 }
 
 .app-form-error-summary ul {
@@ -75,7 +75,7 @@
   min-width: 0;
   padding: 12px;
   border: 1px solid var(--app-shell-border-color, rgb(0 0 0 / 8%));
-  border-radius: 8px;
+  border-radius: var(--rds-radius-overlay, 8px);
 }
 
 .app-form-section__legend {

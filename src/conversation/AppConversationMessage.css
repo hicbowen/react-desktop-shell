@@ -18,7 +18,7 @@
 
 .app-conversation-message__avatar .app-avatar--medium {
   --app-avatar-size: 36px;
-  font-size: 13px;
+  font-size: var(--rds-font-size-control, 13px);
 }
 
 .app-conversation-message__body {
@@ -59,7 +59,7 @@
 }
 
 .app-conversation-message__label {
-  font-size: 13px;
+  font-size: var(--rds-font-size-control, 13px);
   font-weight: 600;
   line-height: 18px;
 }

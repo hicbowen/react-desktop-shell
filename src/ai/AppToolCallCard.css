@@ -24,7 +24,7 @@
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  font-size: 13px;
+  font-size: var(--rds-font-size-control, 13px);
 }
 
 .app-tool-call-card__header strong {

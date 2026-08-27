@@ -17,11 +17,11 @@
 .app-pagination__size-select { min-width: 64px; }
 .app-pagination__size-select select { min-width: 0; }
 .app-pagination__page { min-width: 76px; padding-inline: 4px; color: var(--app-shell-text-color, #1f1f1f); text-align: center; white-space: nowrap; }
-.app-pagination__button { width: 32px; height: 32px; padding: 0; display: inline-flex; align-items: center; justify-content: center; flex: 0 0 32px; color: var(--app-shell-text-color, #1f1f1f); background: transparent; border: 1px solid transparent; border-radius: 6px; }
+.app-pagination__button { width: var(--rds-control-height-standard, 32px); height: var(--rds-control-height-standard, 32px); padding: 0; display: inline-flex; align-items: center; justify-content: center; flex: 0 0 var(--rds-control-height-standard, 32px); color: var(--app-shell-text-color, #1f1f1f); background: transparent; border: 1px solid transparent; border-radius: var(--rds-radius-control, 4px); }
 .app-pagination__button:hover:not(:disabled) { background: var(--app-shell-hover-bg, rgb(0 0 0 / 5%)); border-color: var(--app-shell-border-color, rgb(0 0 0 / 14%)); }
-.app-pagination__button:active:not(:disabled) { background: var(--app-shell-pressed-bg, rgb(0 0 0 / 9%)); }
+.app-pagination__button:active:not(:disabled) { background: var(--app-shell-card-pressed-bg, rgb(0 0 0 / 9%)); }
 .app-pagination__button:disabled { opacity: .55; }
 .app-pagination__button svg { width: 17px; height: 17px; }
-.app-pagination__button:focus-visible { outline: 2px solid var(--app-shell-accent-color, #115ea3); outline-offset: 1px; }
+.app-pagination__button:focus-visible { outline: 2px solid var(--app-shell-focus-ring-color, var(--app-shell-accent-color, #115ea3)); outline-offset: 1px; }
 .app-pagination--compact { min-height: 40px; padding-block: 4px; }
 @media (max-width: 560px) { .app-pagination { flex-wrap: wrap; } .app-pagination__summary { display: none; } .app-pagination__controls { width: 100%; justify-content: flex-end; } }

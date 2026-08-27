@@ -19,7 +19,7 @@
     --app-shell-input-strong-border-color,
     rgb(0 0 0 / 45%)
   );
-  border-radius: 4px;
+  border-radius: var(--rds-radius-control, 4px);
   transition:
     background-color 100ms ease-out,
     border-color 100ms ease-out;
@@ -75,7 +75,7 @@
 .app-input-frame.app-input-frame--invalid:not(.app-input-frame--disabled) {
   --app-input-frame-underline-color: var(
     --app-shell-danger-fg,
-    var(--app-shell-danger-color, #c42b1c)
+    var(--app-shell-danger-fg, #c42b1c)
   );
   --app-input-frame-underline-opacity: 1;
 }

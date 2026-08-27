@@ -131,7 +131,7 @@
 }
 .app-range-slider__input--start:focus-visible ~ .app-range-slider__thumb-layer .app-range-slider__thumb--start,
 .app-range-slider__input--end:focus-visible ~ .app-range-slider__thumb-layer .app-range-slider__thumb--end {
-  outline: 2px solid var(--app-shell-accent-color, #005fb8);
+  outline: 2px solid var(--app-shell-focus-ring-color, var(--app-shell-accent-color, #005fb8));
   outline-offset: 3px;
 }
 .app-range-slider__tooltip {

@@ -41,7 +41,8 @@
 
 .app-tab-view__tab-shell--selected {
   background: var(--app-shell-content-bg, #f7f8fa);
-  border-radius: 6px 6px 0 0;
+  border-radius: var(--rds-radius-control, 4px)
+    var(--rds-radius-control, 4px) 0 0;
 }
 
 .app-tab-view__tab-shell--selected::before {
@@ -52,7 +53,7 @@
   height: 2px;
   content: '';
   background: var(--app-shell-accent-color, #115ea3);
-  border-radius: 2px;
+  border-radius: var(--rds-radius-bar, 4px);
 }
 
 .app-tab-view__tab {
@@ -61,11 +62,11 @@
   display: flex;
   flex: 1;
   align-items: center;
-  gap: 6px;
+  gap: var(--rds-space-2, 8px);
   overflow: hidden;
   color: inherit;
   font: inherit;
-  font-size: 13px;
+  font-size: var(--rds-font-size-control, 13px);
   background: transparent;
   border: 0;
   cursor: default;
@@ -80,7 +81,7 @@
 .app-tab-view__add:focus-visible,
 .app-tab-view__list:focus-visible {
   z-index: 1;
-  outline: 2px solid var(--app-shell-accent-color, #115ea3);
+  outline: 2px solid var(--app-shell-focus-ring-color, var(--app-shell-accent-color, #115ea3));
   outline-offset: -2px;
 }
 
@@ -102,7 +103,7 @@
   color: inherit;
   background: transparent;
   border: 0;
-  border-radius: 4px;
+  border-radius: var(--rds-radius-control, 4px);
   cursor: default;
 }
 

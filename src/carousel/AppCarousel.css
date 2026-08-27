@@ -29,7 +29,7 @@
   overflow: hidden;
   background: var(--app-carousel-surface-color);
   border: 1px solid var(--app-carousel-border-color);
-  border-radius: 12px;
+  border-radius: var(--rds-radius-overlay, 8px);
 }
 
 .app-carousel__slide--with-visual {

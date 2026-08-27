@@ -18,16 +18,16 @@
   border-radius: 0;
   font: inherit;
   font-size: var(--rds-control-font-size, 13px);
-  line-height: 1;
+  line-height: var(--rds-control-line-height, 20px);
   cursor: default;
   transition: background-color var(--rds-motion-fast, 120ms) ease;
 }
 
 .app-split-button__primary {
   min-width: 0;
-  padding: 0 12px;
-  gap: 7px;
-  border-radius: 6px 0 0 6px;
+  padding: 0 var(--rds-control-padding-inline-standard, 12px);
+  gap: var(--rds-space-2, 8px);
+  border-radius: var(--rds-radius-control, 4px) 0 0 var(--rds-radius-control, 4px);
 }
 
 .app-split-button__menu {
@@ -35,7 +35,7 @@
   flex: 0 0 var(--rds-control-height-standard, 32px);
   padding: 0;
   margin-left: -1px;
-  border-radius: 0 6px 6px 0;
+  border-radius: 0 var(--rds-radius-control, 4px) var(--rds-radius-control, 4px) 0;
 }
 
 .app-split-button__primary:hover:not(:disabled),
@@ -53,7 +53,7 @@
 .app-split-button__menu:focus-visible {
   position: relative;
   z-index: 1;
-  outline: 2px solid var(--app-shell-accent-color, #005fb8);
+  outline: 2px solid var(--app-shell-focus-ring-color, var(--app-shell-accent-color, #005fb8));
   outline-offset: -2px;
 }
 
@@ -97,7 +97,9 @@
 }
 
 .app-split-button--compact .app-split-button__primary {
-  padding-inline: var(--rds-control-padding-inline-compact, 10px);
+  padding-inline: var(--rds-control-padding-inline-compact, 8px);
+  font-size: var(--rds-font-size-control-compact, 13px);
+  line-height: var(--rds-line-height-control-compact, 16px);
 }
 
 .app-split-button--compact .app-split-button__menu {

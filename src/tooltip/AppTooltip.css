@@ -2,7 +2,7 @@
   position: fixed;
   z-index: var(--rds-z-overlay, 1050);
   box-sizing: border-box;
-  padding: 5px 8px;
+  padding: var(--rds-space-1, 4px) var(--rds-space-2, 8px);
   max-width: min(
     var(--app-tooltip-max-width, 320px),
     max(0px, calc(100vw - 16px))
@@ -12,14 +12,14 @@
   background: var(--app-shell-menu-bg, rgb(249 249 249 / 96%));
   border: 1px solid
     var(--app-shell-menu-border-color, rgb(0 0 0 / 12%));
-  border-radius: 5px;
+  border-radius: var(--rds-radius-tooltip, 4px);
   box-shadow: var(
     --app-shell-menu-shadow,
     0 6px 18px rgb(0 0 0 / 16%)
   );
   font: inherit;
-  font-size: 12px;
-  line-height: 1.35;
+  font-size: var(--rds-font-size-caption, 12px);
+  line-height: var(--rds-line-height-caption, 16px);
   overflow-wrap: anywhere;
   white-space: normal;
   pointer-events: none;
