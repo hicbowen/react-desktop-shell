@@ -1,32 +1,206 @@
-.app-list-view { display: grid; color: var(--app-shell-text-color, #1f1f1f); border-block: 1px solid var(--app-shell-border-color, rgb(0 0 0 / 12%)); }
-.app-list-view-item { position: relative; min-width: 0; min-height: 48px; display: flex; align-items: center; gap: var(--rds-space-2, 8px); box-sizing: border-box; padding: var(--rds-space-2, 8px) var(--rds-space-3, 12px); border-bottom: 1px solid var(--app-shell-border-color, rgb(0 0 0 / 10%)); outline: 0; }
-.app-list-view-item:last-child { border-bottom: 0; }
-.app-list-view--compact .app-list-view-item { min-height: 36px; padding-block: 4px; }
-.app-list-view-item--invoke, .app-list-view-item--selection { gap: 0; padding: 0; }
-.app-list-view-item__main-action { min-width: 0; min-height: inherit; display: flex; flex: 1; align-items: center; gap: var(--rds-space-2, 8px); box-sizing: border-box; padding: var(--rds-space-2, 8px) var(--rds-space-3, 12px); outline: 0; }
-.app-list-view--compact .app-list-view-item__main-action { padding-block: 4px; }
-.app-list-view-item--interactive:hover { background: var(--rds-state-hover-bg, var(--app-shell-hover-bg, rgb(0 0 0 / 5%))); }
-.app-list-view-item--interactive:active { background: var(--rds-state-pressed-bg, var(--app-shell-card-pressed-bg, rgb(0 0 0 / 7%))); }
-.app-list-view-item:focus-visible, .app-list-view-item__main-action:focus-visible, .app-list-view-item__selection:focus-visible { outline: 2px solid var(--rds-state-focus-ring, var(--app-shell-accent-color, #005fb8)); outline-offset: 2px; z-index: 1; }
-.app-list-view-item--selected { background: var(--rds-state-selected-bg, var(--app-shell-selection-bg, var(--app-shell-active-bg, rgb(17 94 163 / 8%)))); }
-.app-list-view-item--selected.app-list-view-item--interactive:hover { background: var(--rds-state-selected-bg, var(--app-shell-selection-bg, var(--app-shell-active-bg, rgb(17 94 163 / 8%)))); }
-.app-list-view-item--selected.app-list-view-item--interactive:active { background: var(--rds-state-pressed-bg, var(--app-shell-card-pressed-bg, var(--app-shell-active-bg, rgb(17 94 163 / 8%)))); }
-.app-list-view-item--selected:not(.app-list-view-item--selection)::before { content: ''; position: absolute; left: 2px; top: 25%; bottom: 25%; width: 3px; background: var(--rds-state-selected-border, var(--app-shell-accent-color, #005fb8)); border-radius: var(--rds-radius-bar, 4px); }
-.app-list-view-item--disabled { color: var(--rds-state-disabled-fg, var(--app-shell-disabled-text-color, rgb(0 0 0 / 36%))); }
-.app-list-view-item__selection { width: 16px; height: 16px; margin: 0; flex: 0 0 16px; appearance: none; background: transparent; border: 1px solid var(--app-shell-border-color, rgb(0 0 0 / 28%)); border-radius: var(--rds-radius-control, 4px); }
-.app-list-view-item__selection[type='radio'] { border-radius: 50%; }
-.app-list-view-item__selection[type='radio']:checked { background: var(--rds-state-selected-border, var(--app-shell-accent-color, #005fb8)); border: 4px solid var(--app-shell-accent-text-color, #fff); box-shadow: 0 0 0 1px var(--rds-state-selected-border, var(--app-shell-accent-color, #005fb8)); }
-.app-list-view-item__selection[type='checkbox']::after { content: ''; width: 7px; height: 4px; display: block; margin: 3px 0 0 3px; border: solid var(--app-shell-accent-text-color, #fff); border-width: 0 0 2px 2px; opacity: 0; transform: rotate(-45deg); }
-.app-list-view-item__selection[type='checkbox']:checked { background: var(--rds-state-selected-border, var(--app-shell-accent-color, #005fb8)); border-color: transparent; }
-.app-list-view-item__selection[type='checkbox']:checked::after { opacity: 1; }
-.app-list-view-item__selection:disabled { opacity: 0.55; }
-.app-list-view-item__icon { width: 20px; height: 20px; display: inline-flex; flex: 0 0 20px; color: var(--app-shell-secondary-text-color, rgb(0 0 0 / 58%)); }
-.app-list-view-item__icon > svg { width: 100%; height: 100%; }
-.app-list-view-item__content { min-width: 0; flex: 1; display: grid; gap: 2px; }
-.app-list-view-item__top { min-width: 0; display: flex; justify-content: space-between; gap: 12px; }
-.app-list-view-item__title { overflow: hidden; font-size: var(--rds-font-size-control, 13px); font-weight: 500; text-overflow: ellipsis; white-space: nowrap; }
-.app-list-view-item__secondary, .app-list-view-item__description { color: var(--app-shell-secondary-text-color, rgb(0 0 0 / 62%)); font-size: var(--rds-font-size-caption, 12px); line-height: var(--rds-line-height-caption, 16px); }
-.app-list-view-item__description { white-space: normal; }
-.app-list-view-item__trailing { display: inline-flex; align-items: center; gap: 6px; }
-.app-list-view-item--selection > .app-list-view-item__trailing { padding-right: 10px; }
-.app-list-view-item--disabled > .app-list-view-item__trailing { pointer-events: none; }
+.app-list-view {
+  display: grid;
+  color: var(--app-shell-text-color, #1f1f1f);
+  border-block: 1px solid var(--app-shell-border-color, rgb(0 0 0 / 12%));
+}
+
+.app-list-view-item {
+  position: relative;
+  min-width: 0;
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+  gap: var(--rds-space-2, 8px);
+  box-sizing: border-box;
+  padding: var(--rds-space-2, 8px) var(--rds-space-3, 12px);
+  border-bottom: 1px solid var(--app-shell-border-color, rgb(0 0 0 / 10%));
+  outline: 0;
+}
+
+.app-list-view-item:last-child {
+  border-bottom: 0;
+}
+
+.app-list-view--compact .app-list-view-item {
+  min-height: 36px;
+  padding-block: var(--rds-space-1, 4px);
+}
+
+.app-list-view-item--invoke,
+.app-list-view-item--selection {
+  gap: 0;
+  padding: 0;
+}
+
+.app-list-view-item__main-action {
+  min-width: 0;
+  min-height: inherit;
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: var(--rds-space-2, 8px);
+  box-sizing: border-box;
+  padding: var(--rds-space-2, 8px) var(--rds-space-3, 12px);
+  outline: 0;
+}
+
+.app-list-view--compact .app-list-view-item__main-action {
+  padding-block: var(--rds-space-1, 4px);
+}
+
+.app-list-view-item--interactive:hover {
+  background: var(--rds-state-hover-bg, var(--app-shell-hover-bg, rgb(0 0 0 / 5%)));
+}
+
+.app-list-view-item--interactive:active {
+  background: var(--rds-state-pressed-bg, var(--app-shell-card-pressed-bg, rgb(0 0 0 / 7%)));
+}
+
+.app-list-view-item:focus-visible,
+.app-list-view-item__main-action:focus-visible,
+.app-list-view-item__selection:focus-visible {
+  outline: 2px solid var(--rds-state-focus-ring, var(--app-shell-accent-color, #005fb8));
+  outline-offset: 2px;
+  z-index: 1;
+}
+
+.app-list-view-item--selected {
+  background: var(--rds-state-selected-bg, var(--app-shell-selection-bg, var(--app-shell-active-bg, rgb(17 94 163 / 8%))));
+}
+
+.app-list-view-item--selected.app-list-view-item--interactive:hover {
+  background: var(--rds-state-selected-bg, var(--app-shell-selection-bg, var(--app-shell-active-bg, rgb(17 94 163 / 8%))));
+}
+
+.app-list-view-item--selected.app-list-view-item--interactive:active {
+  background: var(--rds-state-pressed-bg, var(--app-shell-card-pressed-bg, var(--app-shell-active-bg, rgb(17 94 163 / 8%))));
+}
+
+.app-list-view-item--selected:not(.app-list-view-item--selection)::before {
+  content: '';
+  position: absolute;
+  left: 2px;
+  top: 25%;
+  bottom: 25%;
+  width: 3px;
+  background: var(--rds-state-selected-border, var(--app-shell-accent-color, #005fb8));
+  border-radius: var(--rds-radius-bar, 4px);
+}
+
+.app-list-view-item--disabled {
+  color: var(--rds-state-disabled-fg, var(--app-shell-disabled-text-color, rgb(0 0 0 / 36%)));
+}
+
+.app-list-view-item__selection {
+  width: var(--rds-control-icon-size, 16px);
+  height: var(--rds-control-icon-size, 16px);
+  margin: 0;
+  flex: 0 0 var(--rds-control-icon-size, 16px);
+  box-sizing: border-box;
+  appearance: none;
+  background: transparent;
+  border: 1px solid var(--app-shell-border-color, rgb(0 0 0 / 28%));
+  border-radius: var(--rds-radius-control, 4px);
+}
+
+.app-list-view-item__selection[type='radio'] {
+  border-radius: 50%;
+}
+
+.app-list-view-item__selection[type='radio']:checked {
+  background: var(--rds-state-selected-border, var(--app-shell-accent-color, #005fb8));
+  border: 4px solid var(--app-shell-accent-text-color, #fff);
+  box-shadow: 0 0 0 1px var(--rds-state-selected-border, var(--app-shell-accent-color, #005fb8));
+}
+
+.app-list-view-item__selection[type='checkbox']::after {
+  content: '';
+  width: 7px;
+  height: 4px;
+  display: block;
+  margin: 3px 0 0 3px;
+  border: solid var(--app-shell-accent-text-color, #fff);
+  border-width: 0 0 2px 2px;
+  opacity: 0;
+  transform: rotate(-45deg);
+}
+
+.app-list-view-item__selection[type='checkbox']:checked {
+  background: var(--rds-state-selected-border, var(--app-shell-accent-color, #005fb8));
+  border-color: transparent;
+}
+
+.app-list-view-item__selection[type='checkbox']:checked::after {
+  opacity: 1;
+}
+
+.app-list-view-item__selection:disabled {
+  opacity: 0.55;
+}
+
+.app-list-view-item__icon {
+  width: var(--rds-space-5, 20px);
+  height: var(--rds-space-5, 20px);
+  display: inline-flex;
+  flex: 0 0 var(--rds-space-5, 20px);
+  color: var(--app-shell-secondary-text-color, rgb(0 0 0 / 58%));
+}
+
+.app-list-view-item__icon > svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.app-list-view-item__content {
+  min-width: 0;
+  flex: 1;
+  display: grid;
+  gap: var(--rds-space-1, 4px);
+}
+
+.app-list-view-item__top {
+  min-width: 0;
+  display: flex;
+  justify-content: space-between;
+  gap: var(--rds-space-2, 8px);
+}
+
+.app-list-view-item__title {
+  overflow: hidden;
+  font-size: var(--rds-font-size-body, 14px);
+  line-height: var(--rds-line-height-body, 20px);
+  font-weight: 500;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.app-list-view--compact .app-list-view-item__title {
+  font-size: var(--rds-font-size-control, 13px);
+  line-height: var(--rds-line-height-control, 20px);
+}
+
+.app-list-view-item__secondary,
+.app-list-view-item__description {
+  color: var(--app-shell-secondary-text-color, rgb(0 0 0 / 62%));
+  font-size: var(--rds-font-size-caption, 12px);
+  line-height: var(--rds-line-height-caption, 16px);
+}
+
+.app-list-view-item__description {
+  white-space: normal;
+}
+
+.app-list-view-item__trailing {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--rds-space-2, 8px);
+}
+
+.app-list-view-item--selection > .app-list-view-item__trailing {
+  padding-right: var(--rds-space-3, 12px);
+}
+
+.app-list-view-item--disabled > .app-list-view-item__trailing {
+  pointer-events: none;
+}

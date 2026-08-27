@@ -1,2 +1,65 @@
-.app-copyable-text{max-width:100%;display:inline-flex;align-items:center;gap:var(--rds-space-1,4px);color:var(--app-shell-text-color,#1f1f1f)}.app-copyable-text__content{min-width:0}.app-copyable-text--truncate .app-copyable-text__content{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.app-copyable-text__button{width:26px;height:26px;padding:0;display:inline-grid;flex:0 0 26px;place-items:center;color:var(--app-shell-muted-text-color,#616161);background:transparent;border:0;border-radius:var(--rds-radius-control,4px)}.app-copyable-text__button:hover:not(:disabled){color:var(--app-shell-text-color,#1f1f1f);background:var(--rds-state-hover-bg,var(--app-shell-hover-bg,rgb(0 0 0 / 5%)))}.app-copyable-text__button:focus-visible{outline:2px solid var(--rds-state-focus-ring,var(--app-shell-accent-color,#005fb8));outline-offset:1px}.app-copyable-text__button>svg{width:16px;height:16px;fill:currentColor;stroke:none}.app-copyable-text--disabled{color:var(--rds-state-disabled-fg,var(--app-shell-disabled-text-color,rgb(0 0 0 / 36%)))}.app-copyable-text__status{position:absolute;width:1px;height:1px;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}
-.app-copyable-text__content{user-select:text;-webkit-user-select:text;cursor:text}
+.app-copyable-text {
+  max-width: 100%;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--rds-space-1, 4px);
+  color: var(--app-shell-text-color, #1f1f1f);
+}
+
+.app-copyable-text__content {
+  min-width: 0;
+  user-select: text;
+  -webkit-user-select: text;
+  cursor: text;
+}
+
+.app-copyable-text--truncate .app-copyable-text__content {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.app-copyable-text__button {
+  width: var(--rds-control-height-compact, 28px);
+  height: var(--rds-control-height-compact, 28px);
+  padding: 0;
+  display: inline-grid;
+  flex: 0 0 var(--rds-control-height-compact, 28px);
+  box-sizing: border-box;
+  place-items: center;
+  color: var(--app-shell-muted-text-color, #616161);
+  background: transparent;
+  border: 0;
+  border-radius: var(--rds-radius-control, 4px);
+}
+
+.app-copyable-text__button:hover:not(:disabled) {
+  color: var(--app-shell-text-color, #1f1f1f);
+  background: var(--rds-state-hover-bg, var(--app-shell-hover-bg, rgb(0 0 0 / 5%)));
+}
+
+.app-copyable-text__button:focus-visible {
+  outline: 2px solid var(--rds-state-focus-ring, var(--app-shell-accent-color, #005fb8));
+  outline-offset: 1px;
+}
+
+.app-copyable-text__button > svg {
+  width: var(--rds-control-icon-size, 16px);
+  height: var(--rds-control-icon-size, 16px);
+  fill: currentColor;
+  stroke: none;
+}
+
+.app-copyable-text--disabled {
+  color: var(--rds-state-disabled-fg, var(--app-shell-disabled-text-color, rgb(0 0 0 / 36%)));
+}
+
+.app-copyable-text__status {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+}
