@@ -3,12 +3,13 @@
 .app-combo-box--compact .app-combo-box__input { font-size: var(--rds-font-size-control-compact, 13px); line-height: var(--rds-line-height-control-compact, 16px); }
 .app-combo-box__input { width: 100%; min-width: 140px; padding: 0 52px 0 9px; color: inherit; background: transparent; border: 0; outline: 0; font: inherit; font-size: var(--rds-font-size-control, 13px); }
 .app-combo-box__clear { position: absolute; right: 26px; width: 22px; height: 22px; display: grid; place-items: center; padding: 0; color: inherit; background: transparent; border: 0; border-radius: var(--rds-radius-control, 4px); font: inherit; font-size: 18px; }
-.app-combo-box__clear:hover { background: var(--app-shell-card-hover-bg, rgb(0 0 0 / 5%)); }
-.app-combo-box__clear:focus-visible { outline: 2px solid var(--app-shell-focus-ring-color, var(--app-shell-accent-color, #005fb8)); outline-offset: 0; }
+.app-combo-box__clear:hover { background: var(--rds-state-hover-bg, var(--app-shell-card-hover-bg, rgb(0 0 0 / 5%))); }
+.app-combo-box__clear:focus-visible { outline: 2px solid var(--rds-state-focus-ring, var(--app-shell-accent-color, #005fb8)); outline-offset: 0; }
 .app-combo-box__chevron { position: absolute; right: 8px; width: 16px; height: 16px; display: grid; place-items: center; color: var(--app-shell-secondary-text-color, rgb(0 0 0 / 62%)); pointer-events: none; }
 .app-combo-box__chevron svg { width: 16px; height: 16px; fill: currentColor; stroke: none; }
 .app-combo-box__listbox { position: absolute; z-index: var(--rds-z-overlay, 1050); top: calc(100% + 4px); left: 0; right: 0; max-height: 240px; display: grid; overflow-y: auto; padding: var(--rds-space-1, 4px); color: var(--app-shell-text-color, #1f1f1f); background: var(--app-shell-overlay-bg, var(--app-shell-card-bg, #fff)); border: 1px solid var(--app-shell-border-color, rgb(0 0 0 / 18%)); border-radius: var(--rds-radius-overlay, 8px); box-shadow: var(--app-shell-menu-shadow, 0 8px 24px rgb(0 0 0 / 16%)); }
 .app-combo-box__option { min-height: var(--rds-control-height-standard, 32px); padding: var(--rds-space-1, 4px) var(--rds-space-2, 8px); overflow: hidden; color: inherit; background: transparent; border: 0; border-radius: var(--rds-radius-control, 4px); font: inherit; font-size: var(--rds-font-size-control, 13px); line-height: var(--rds-line-height-control, 20px); text-align: left; text-overflow: ellipsis; white-space: nowrap; }
-.app-combo-box__option:hover:not(:disabled), .app-combo-box__option--active { background: var(--app-shell-card-hover-bg, rgb(0 0 0 / 5%)); }
-.app-combo-box__option[aria-selected="true"] { color: var(--app-shell-accent-color, #005fb8); font-weight: 600; }
-.app-combo-box__option:disabled { opacity: .45; }
+.app-combo-box__option:hover:not(:disabled), .app-combo-box__option--active { background: var(--rds-state-hover-bg, var(--app-shell-card-hover-bg, rgb(0 0 0 / 5%))); }
+.app-combo-box__option:focus-visible { outline: 2px solid var(--rds-state-focus-ring, var(--app-shell-accent-color, #005fb8)); outline-offset: -2px; }
+.app-combo-box__option[aria-selected="true"] { color: var(--rds-state-selected-fg, var(--app-shell-accent-color, #005fb8)); font-weight: 600; }
+.app-combo-box__option:disabled { color: var(--rds-state-disabled-fg, var(--app-shell-disabled-text-color, currentColor)); opacity: 1; }

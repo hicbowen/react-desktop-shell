@@ -16,7 +16,7 @@
 }
 
 .app-command-palette__input:focus {
-  border-bottom-color: var(--app-shell-accent-color, #115ea3);
+  border-bottom-color: var(--rds-state-selected-border, var(--app-shell-accent-color, #115ea3));
 }
 
 .app-command-palette__results {
@@ -41,11 +41,17 @@
 }
 
 .app-command-palette__result[aria-selected='true'] {
-  background: var(--app-shell-active-bg, rgb(17 94 163 / 8%));
+  background: var(--rds-state-selected-bg, var(--app-shell-active-bg, rgb(17 94 163 / 8%)));
+}
+
+.app-command-palette__result:focus-visible {
+  z-index: 1;
+  outline: 2px solid var(--rds-state-focus-ring, var(--app-shell-accent-color, #115ea3));
+  outline-offset: -2px;
 }
 
 .app-command-palette__result:disabled {
-  color: var(--app-shell-disabled-text-color, rgb(0 0 0 / 36%));
+  color: var(--rds-state-disabled-fg, var(--app-shell-disabled-text-color, rgb(0 0 0 / 36%)));
 }
 
 .app-command-palette__icon {

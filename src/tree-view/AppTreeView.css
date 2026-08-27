@@ -1,9 +1,9 @@
 .app-tree-view { min-width: 0; padding: 2px; color: var(--app-shell-text-color, #1f1f1f); font: inherit; user-select: none; }
 .app-tree-view__item { min-width: 0; height: 30px; padding: 0 8px 0 calc((var(--app-tree-level) - 1) * 16px + 4px); display: flex; align-items: center; gap: 4px; border-radius: var(--rds-radius-control, 4px); cursor: default; }
 .app-tree-view__item:hover { background: var(--app-shell-hover-bg, rgb(0 0 0 / 5%)); }
-.app-tree-view__item--selected { background: var(--app-shell-active-bg, rgb(17 94 163 / 8%)); }
-.app-tree-view__item:focus-visible { outline: 2px solid var(--app-shell-focus-ring-color, var(--app-shell-accent-color, #115ea3)); outline-offset: -2px; }
-.app-tree-view__item[aria-disabled='true'] { color: var(--app-shell-disabled-text-color, rgb(0 0 0 / 36%)); }
+.app-tree-view__item--selected { background: var(--rds-state-selected-bg, var(--app-shell-active-bg, rgb(17 94 163 / 8%))); }
+.app-tree-view__item:focus-visible { outline: 2px solid var(--rds-state-focus-ring, var(--app-shell-accent-color, #115ea3)); outline-offset: -2px; }
+.app-tree-view__item[aria-disabled='true'] { color: var(--rds-state-disabled-fg, var(--app-shell-disabled-text-color, rgb(0 0 0 / 36%))); }
 .app-tree-view__expand { width: 20px; height: 24px; padding: 0; display: inline-flex; flex: 0 0 20px; align-items: center; justify-content: center; color: inherit; background: transparent; border: 0; border-radius: 3px; }
 .app-tree-view__expand:hover:not(:disabled) { background: var(--app-shell-hover-bg, rgb(0 0 0 / 5%)); }
 .app-tree-view__expand:disabled { color: transparent; }

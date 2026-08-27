@@ -5,11 +5,11 @@
   --app-data-surface-bg: var(--app-shell-surface-bg, #fff);
   --app-data-text-color: var(--app-shell-text-color, #1f1f1f);
   --app-data-muted-color: var(--app-shell-muted-text-color, #707070);
-  --app-data-hover-bg: var(--app-shell-hover-bg, rgb(0 0 0 / 5%));
-  --app-data-selected-bg: var(--app-shell-active-bg, rgb(17 94 163 / 8%));
-  --app-data-accent: var(--app-shell-accent-color, #115ea3);
+  --app-data-hover-bg: var(--rds-state-hover-bg, var(--app-shell-hover-bg, rgb(0 0 0 / 5%)));
+  --app-data-selected-bg: var(--rds-state-selected-bg, var(--app-shell-active-bg, rgb(17 94 163 / 8%)));
+  --app-data-accent: var(--rds-state-selected-border, var(--app-shell-accent-color, #115ea3));
   --app-data-control-bg: var(--app-shell-card-bg, #fbfbfb);
-  --app-data-control-pressed-bg: var(--app-shell-card-pressed-bg, #f1f1f1);
+  --app-data-control-pressed-bg: var(--rds-state-pressed-bg, var(--app-shell-card-pressed-bg, #f1f1f1));
 }
 
 .app-data-view {
@@ -158,7 +158,7 @@
 .app-data-table__sort-button:focus-visible,
 .app-data-table__checkbox:focus-visible,
 .app-data-table__row--clickable:focus-visible {
-  outline: 2px solid var(--app-data-accent);
+  outline: 2px solid var(--rds-state-focus-ring, var(--app-data-accent));
   outline-offset: -2px;
 }
 
@@ -463,13 +463,13 @@
 .app-data-table__filter-clear:focus-visible,
 .app-data-table__filter-option:focus-visible,
 .app-data-table__filter-clear-all:focus-visible {
-  outline: 2px solid var(--app-data-accent);
+  outline: 2px solid var(--rds-state-focus-ring, var(--app-data-accent));
   outline-offset: -2px;
 }
 
 .app-data-table__pagination-button:focus-visible,
 .app-data-table__pagination-size select:focus-visible {
-  outline: 2px solid var(--app-data-accent);
+  outline: 2px solid var(--rds-state-focus-ring, var(--app-data-accent));
   outline-offset: -2px;
 }
 
@@ -652,8 +652,8 @@
 
 .app-data-table__pagination-button:disabled,
 .app-data-table__pagination-size select:disabled {
-  color: var(--app-data-muted-color);
-  opacity: 0.62;
+  color: var(--rds-state-disabled-fg, var(--app-data-muted-color));
+  opacity: var(--rds-state-disabled-opacity, 0.62);
 }
 
 .app-data-table__pagination-button svg {
@@ -828,7 +828,7 @@
 }
 
 .app-data-table__checkbox-control input:focus-visible + .app-check-box__box {
-  outline-color: var(--app-data-accent);
+  outline-color: var(--rds-state-focus-ring, var(--app-data-accent));
 }
 
 .app-data-table [data-column-id='__app_data_table_selection'] {

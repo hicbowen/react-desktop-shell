@@ -184,8 +184,13 @@
 .app-toast__action:focus-visible,
 .app-toast__close:hover,
 .app-toast__close:focus-visible {
-  background: var(--app-shell-hover-bg);
-  outline: 0;
+  background: var(--rds-state-hover-bg, var(--app-shell-hover-bg));
+}
+
+.app-toast__action:focus-visible,
+.app-toast__close:focus-visible {
+  outline: 2px solid var(--rds-state-focus-ring, var(--app-shell-accent-color, #005fb8));
+  outline-offset: 2px;
 }
 
 .app-toast__spinner circle {

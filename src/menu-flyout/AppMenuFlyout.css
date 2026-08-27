@@ -48,18 +48,23 @@
 }
 
 .app-menu-flyout__item:hover:not(:disabled),
-.app-menu-flyout__item:focus-visible,
 .app-menu-flyout__item--active:not(:disabled) {
-  background: var(--app-shell-hover-bg, rgb(0 0 0 / 4%));
-  outline: 0;
+  background: var(--rds-state-hover-bg, rgb(0 0 0 / 4%));
+}
+
+.app-menu-flyout__item:focus-visible {
+  z-index: 1;
+  background: var(--rds-state-hover-bg, rgb(0 0 0 / 4%));
+  outline: 2px solid var(--rds-state-focus-ring, var(--app-shell-accent-color, #005fb8));
+  outline-offset: -2px;
 }
 
 .app-menu-flyout__item:active:not(:disabled) {
-  background: var(--app-shell-active-bg, rgb(0 95 184 / 10%));
+  background: var(--rds-state-pressed-bg, var(--app-shell-active-bg, rgb(0 95 184 / 10%)));
 }
 
 .app-menu-flyout__item:disabled {
-  color: var(--app-shell-disabled-text-color, rgb(0 0 0 / 36%));
+  color: var(--rds-state-disabled-fg, var(--app-shell-disabled-text-color, rgb(0 0 0 / 36%)));
 }
 
 .app-menu-flyout__item--danger {

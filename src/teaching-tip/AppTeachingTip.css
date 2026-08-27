@@ -62,12 +62,12 @@
 }
 
 .app-teaching-tip__close:hover {
-  background: var(--app-shell-hover-bg, rgb(0 0 0 / 4%));
+  background: var(--rds-state-hover-bg, var(--app-shell-hover-bg, rgb(0 0 0 / 4%)));
 }
 
 .app-teaching-tip__close:focus-visible,
 .app-teaching-tip__action:focus-visible {
-  outline: 2px solid var(--app-shell-focus-ring-color, var(--app-shell-accent-color, #005fb8));
+  outline: 2px solid var(--rds-state-focus-ring, var(--app-shell-accent-color, #005fb8));
   outline-offset: 1px;
 }
 
@@ -111,7 +111,7 @@
 }
 
 .app-teaching-tip__action:hover {
-  background: var(--app-shell-card-hover-bg, rgb(0 0 0 / 4%));
+  background: var(--rds-state-surface-hover-bg, var(--app-shell-card-hover-bg, rgb(0 0 0 / 4%)));
 }
 
 .app-teaching-tip__action--primary {
@@ -121,7 +121,7 @@
 }
 
 .app-teaching-tip__action--primary:hover {
-  background: var(--app-shell-accent-hover-color, #005a9e);
+  background: var(--rds-state-accent-hover, var(--app-shell-accent-hover-color, #005a9e));
 }
 
 @keyframes app-teaching-tip-enter {

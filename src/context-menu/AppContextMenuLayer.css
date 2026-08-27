@@ -45,19 +45,24 @@
 }
 
 .app-context-menu__item:hover,
-.app-context-menu__item:focus-visible,
 .app-context-menu__item--active {
-  background: var(--app-shell-hover-bg);
-  outline: 0;
+  background: var(--rds-state-hover-bg, var(--app-shell-hover-bg));
+}
+
+.app-context-menu__item:focus-visible {
+  z-index: 1;
+  background: var(--rds-state-hover-bg, var(--app-shell-hover-bg));
+  outline: 2px solid var(--rds-state-focus-ring, var(--app-shell-accent-color));
+  outline-offset: -2px;
 }
 
 .app-context-menu__item:active {
-  background: var(--app-shell-active-bg);
+  background: var(--rds-state-pressed-bg, var(--app-shell-active-bg));
 }
 
 .app-context-menu__item:disabled,
 .app-context-menu__item[aria-disabled='true'] {
-  color: var(--app-shell-disabled-text-color);
+  color: var(--rds-state-disabled-fg, var(--app-shell-disabled-text-color));
 }
 
 .app-context-menu__item:disabled:hover,

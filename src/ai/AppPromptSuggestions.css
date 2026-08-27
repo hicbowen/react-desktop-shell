@@ -47,17 +47,17 @@
 }
 
 .app-prompt-suggestions__item:hover:not(:disabled) {
-  background: var(--app-shell-hover-bg, rgb(0 0 0 / 4%));
+  background: var(--rds-state-hover-bg, var(--app-shell-hover-bg, rgb(0 0 0 / 4%)));
   border-color: var(--app-shell-accent-color, #0f6cbd);
 }
 
 .app-prompt-suggestions__item:focus-visible {
-  outline: 2px solid var(--app-shell-focus-ring-color, #0f6cbd);
+  outline: 2px solid var(--rds-state-focus-ring, #0f6cbd);
   outline-offset: 2px;
 }
 
 .app-prompt-suggestions__item:disabled {
-  color: var(--app-shell-disabled-text-color, rgb(0 0 0 / 40%));
+  color: var(--rds-state-disabled-fg, var(--app-shell-disabled-text-color, rgb(0 0 0 / 40%)));
   cursor: not-allowed;
 }
 

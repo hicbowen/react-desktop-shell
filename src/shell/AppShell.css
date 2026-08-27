@@ -92,17 +92,36 @@
   --app-shell-focus-ring-color: var(--app-shell-accent-color);
   --app-shell-selection-bg: var(--app-shell-active-bg);
   --app-shell-strong-border-color: var(--app-shell-input-strong-border-color);
-  --app-shell-card-bg: var(--app-shell-card-bg);
+  --app-shell-card-background: var(--app-shell-card-bg);
   --app-shell-overlay-bg: var(--app-shell-menu-bg);
-  --app-shell-card-pressed-bg: var(--app-shell-card-pressed-bg);
-  --app-shell-subtle-bg: var(--app-shell-hover-bg);
+  --app-shell-pressed-bg: var(--app-shell-card-pressed-bg);
   --app-shell-subtle-bg: var(--app-shell-hover-bg);
   --app-shell-code-bg: var(--app-shell-subtle-bg);
-  --app-shell-code-bg: var(--app-shell-code-bg);
-  --app-shell-success-fg: var(--app-shell-success-fg);
-  --app-shell-warning-fg: var(--app-shell-warning-fg);
-  --app-shell-danger-fg: var(--app-shell-danger-fg);
+  --app-shell-subtle-background: var(--app-shell-subtle-bg);
+  --app-shell-code-background: var(--app-shell-code-bg);
+  --app-shell-success-color: var(--app-shell-success-fg);
+  --app-shell-warning-color: var(--app-shell-warning-fg);
+  --app-shell-danger-color: var(--app-shell-danger-fg);
   --app-shell-monospace-font-family: var(--rds-font-family-monospace);
+
+  /* Shared interaction-state tokens. Component-specific surface tokens stay
+     available where a card or input needs a different visual weight. */
+  --rds-state-hover-bg: var(--app-shell-hover-bg);
+  --rds-state-surface-hover-bg: var(--app-shell-card-hover-bg);
+  --rds-state-pressed-bg: var(--app-shell-card-pressed-bg);
+  --rds-state-input-hover-bg: var(--app-shell-input-hover-bg);
+  --rds-state-input-pressed-bg: var(--app-shell-input-pressed-bg);
+  --rds-state-input-focused-bg: var(--app-shell-input-focused-bg);
+  --rds-state-input-disabled-bg: var(--app-shell-input-disabled-bg);
+  --rds-state-selected-bg: var(--app-shell-selection-bg);
+  --rds-state-selected-fg: var(--app-shell-accent-color);
+  --rds-state-selected-border: var(--app-shell-accent-color);
+  --rds-state-focus-ring: var(--app-shell-focus-ring-color);
+  --rds-state-disabled-fg: var(--app-shell-disabled-text-color);
+  --rds-state-disabled-bg: var(--app-shell-disabled-bg);
+  --rds-state-disabled-opacity: var(--rds-disabled-opacity);
+  --rds-state-accent-hover: var(--app-shell-accent-hover-color);
+  --rds-state-accent-pressed: var(--app-shell-accent-pressed-color);
 
   --app-shell-menu-bg: rgb(249 249 249 / 92%);
   --app-shell-menu-border-color: rgb(0 0 0 / 10%);
@@ -326,20 +345,20 @@
 }
 
 .app-shell__pane-toggle:hover:not(:disabled) {
-  background: color-mix(in srgb, currentColor 4%, transparent);
+  background: var(--rds-state-hover-bg, color-mix(in srgb, currentColor 4%, transparent));
 }
 
 .app-shell__pane-toggle:active:not(:disabled) {
-  background: color-mix(in srgb, currentColor 8%, transparent);
+  background: var(--rds-state-pressed-bg, color-mix(in srgb, currentColor 8%, transparent));
 }
 
 .app-shell__pane-toggle:focus-visible {
-  outline: 2px solid var(--app-shell-focus-ring-color, var(--app-shell-accent-color));
+  outline: 2px solid var(--rds-state-focus-ring, var(--app-shell-accent-color));
   outline-offset: -2px;
 }
 
 .app-shell__pane-toggle:disabled {
-  color: var(--app-shell-disabled-text-color);
+  color: var(--rds-state-disabled-fg, var(--app-shell-disabled-text-color));
   background: transparent;
 }
 

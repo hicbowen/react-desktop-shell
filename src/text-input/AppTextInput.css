@@ -12,8 +12,8 @@
 .app-text-box__icon, .app-text-box__loading { width: 16px; height: 16px; display: inline-flex; flex: 0 0 16px; align-items: center; justify-content: center; color: var(--app-shell-secondary-text-color, rgb(0 0 0 / 58%)); }
 .app-text-box__icon > svg { width: 16px; height: 16px; }
 .app-text-box__clear { width: 22px; height: 22px; display: grid; place-items: center; padding: 0; color: inherit; background: transparent; border: 0; border-radius: var(--rds-radius-control, 4px); font: inherit; font-size: 18px; }
-.app-text-box__clear:hover { background: var(--app-shell-card-hover-bg, rgb(0 0 0 / 5%)); }
-.app-text-box__clear:focus-visible { outline: 2px solid var(--app-shell-focus-ring-color, var(--app-shell-accent-color, #005fb8)); outline-offset: 0; }
+.app-text-box__clear:hover { background: var(--rds-state-hover-bg, var(--app-shell-card-hover-bg, rgb(0 0 0 / 5%))); }
+.app-text-box__clear:focus-visible { outline: 2px solid var(--rds-state-focus-ring, var(--app-shell-accent-color, #005fb8)); outline-offset: 0; }
 .app-text-box__loading { box-sizing: border-box; border: 2px solid currentColor; border-right-color: transparent; border-radius: 50%; animation: app-text-spin .9s linear infinite; }
 .app-text-area { display: inline-block; min-width: 200px; color: var(--app-shell-text-color, #1f1f1f); }
 .app-text-area--full-width { width: 100%; }

@@ -113,6 +113,6 @@
 }
 
 .app-info-bar__dismiss:focus-visible {
-  outline: 2px solid var(--app-shell-focus-ring-color, var(--app-shell-accent-color));
+  outline: 2px solid var(--rds-state-focus-ring, var(--app-shell-accent-color));
   outline-offset: 1px;
 }

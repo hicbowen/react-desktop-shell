@@ -10,12 +10,12 @@
     --app-shell-muted-text-color,
     rgba(0, 0, 0, 0.58)
   );
-  --app-rail-hover-bg: var(--app-shell-hover-bg, rgba(0, 0, 0, 0.05));
+  --app-rail-hover-bg: var(--rds-state-hover-bg, var(--app-shell-hover-bg, rgba(0, 0, 0, 0.05)));
   --app-rail-accent-color: var(--app-shell-accent-color, #115ea3);
-  --app-rail-accent-bg: var(--app-shell-active-bg, rgb(17 94 163 / 8%));
+  --app-rail-accent-bg: var(--rds-state-selected-bg, var(--app-shell-active-bg, rgb(17 94 163 / 8%)));
   --app-rail-disabled-text-color: var(
-    --app-shell-disabled-text-color,
-    rgb(0 0 0 / 36%)
+    --rds-state-disabled-fg,
+    var(--app-shell-disabled-text-color, rgb(0 0 0 / 36%))
   );
   --app-rail-bg: transparent;
   --app-rail-flyout-bg: var(--app-shell-surface-bg, #ffffff);
@@ -181,6 +181,13 @@
   background: var(--app-rail-hover-bg);
 }
 
+.app-rail__item:focus-visible,
+.app-rail-flyout__item:focus-visible {
+  z-index: 1;
+  outline: 2px solid var(--rds-state-focus-ring, var(--app-shell-accent-color, #115ea3));
+  outline-offset: -2px;
+}
+
 .app-rail__item:disabled {
   color: var(--app-rail-disabled-text-color);
   cursor: default;
@@ -208,7 +215,7 @@
   width: 4px;
   height: 16px;
   border-radius: var(--rds-radius-control, 4px);
-  background: var(--app-rail-accent-color);
+  background: var(--rds-state-selected-border, var(--app-rail-accent-color));
   transform: translateY(-50%);
 }
 

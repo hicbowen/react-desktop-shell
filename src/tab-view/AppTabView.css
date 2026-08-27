@@ -52,7 +52,7 @@
   left: 8px;
   height: 2px;
   content: '';
-  background: var(--app-shell-accent-color, #115ea3);
+  background: var(--rds-state-selected-border, var(--app-shell-accent-color, #115ea3));
   border-radius: var(--rds-radius-bar, 4px);
 }
 
@@ -73,7 +73,7 @@
 }
 
 .app-tab-view__tab-shell:hover:not(.app-tab-view__tab-shell--selected) {
-  background: var(--app-shell-hover-bg, rgb(0 0 0 / 5%));
+  background: var(--rds-state-hover-bg, rgb(0 0 0 / 5%));
 }
 
 .app-tab-view__tab:focus-visible,
@@ -81,11 +81,11 @@
 .app-tab-view__add:focus-visible,
 .app-tab-view__list:focus-visible {
   z-index: 1;
-  outline: 2px solid var(--app-shell-focus-ring-color, var(--app-shell-accent-color, #115ea3));
+  outline: 2px solid var(--rds-state-focus-ring, var(--app-shell-accent-color, #115ea3));
   outline-offset: -2px;
 }
 
-.app-tab-view__tab:disabled { color: var(--app-shell-disabled-text-color, rgb(0 0 0 / 36%)); }
+.app-tab-view__tab:disabled { color: var(--rds-state-disabled-fg, var(--app-shell-disabled-text-color, rgb(0 0 0 / 36%))); }
 .app-tab-view__icon { width: 16px; height: 16px; display: inline-flex; flex: 0 0 16px; }
 .app-tab-view__icon > svg { width: 16px; height: 16px; }
 .app-tab-view__label { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -110,7 +110,7 @@
 .app-tab-view__close { width: 24px; height: 24px; margin: 4px 4px 0 0; flex-basis: 24px; }
 .app-tab-view__add { height: 28px; margin: 0 4px; align-self: center; }
 .app-tab-view__list { height: 28px; margin: 0 4px 4px 0; align-self: flex-end; }
-.app-tab-view__close:hover, .app-tab-view__add:hover, .app-tab-view__list:hover { background: var(--app-shell-hover-bg, rgb(0 0 0 / 5%)); }
+.app-tab-view__close:hover, .app-tab-view__add:hover, .app-tab-view__list:hover { background: var(--rds-state-hover-bg, rgb(0 0 0 / 5%)); }
 .app-tab-view__close svg, .app-tab-view__add svg { width: 12px; height: 12px; fill: currentColor; stroke: none; }
 .app-tab-view__panels { min-width: 0; min-height: 0; display: flex; flex: 1; }
 .app-tab-view__panel { min-width: 0; min-height: 0; flex: 1; outline: none; }

@@ -131,7 +131,7 @@
 }
 .app-range-slider__input--start:focus-visible ~ .app-range-slider__thumb-layer .app-range-slider__thumb--start,
 .app-range-slider__input--end:focus-visible ~ .app-range-slider__thumb-layer .app-range-slider__thumb--end {
-  outline: 2px solid var(--app-shell-focus-ring-color, var(--app-shell-accent-color, #005fb8));
+  outline: 2px solid var(--rds-state-focus-ring, var(--app-shell-accent-color, #005fb8));
   outline-offset: 3px;
 }
 .app-range-slider__tooltip {
@@ -140,7 +140,7 @@
   font-variant-numeric: tabular-nums;
 }
 .app-range-slider--disabled {
-  color: var(--app-shell-disabled-text-color, rgb(0 0 0 / 36%));
+  color: var(--rds-state-disabled-fg, var(--app-shell-disabled-text-color, rgb(0 0 0 / 36%)));
   opacity: .65;
 }
 .app-range-slider--disabled .app-range-slider__input { cursor: default; }

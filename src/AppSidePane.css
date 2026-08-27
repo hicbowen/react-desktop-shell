@@ -58,8 +58,12 @@
 .app-side-pane__close:hover,
 .app-side-pane__close:focus-visible {
   color: var(--app-shell-text-color);
-  background: var(--app-shell-hover-bg);
-  outline: 0;
+  background: var(--rds-state-hover-bg, var(--app-shell-hover-bg));
+}
+
+.app-side-pane__close:focus-visible {
+  outline: 2px solid var(--rds-state-focus-ring, var(--app-shell-accent-color, #005fb8));
+  outline-offset: 2px;
 }
 
 .app-side-pane__close > svg {
