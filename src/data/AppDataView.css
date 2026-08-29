@@ -30,14 +30,21 @@
   );
 }
 
+.app-data-view,
+.app-data-table {
+  --app-data-surface-radius: var(--rds-radius-overlay, 8px);
+}
+
 .app-data-view {
+  /* The outer data surface owns the frame and clips every child surface. */
   box-sizing: border-box;
   width: 100%;
   min-width: 0;
   color: var(--app-data-text-color);
   background: var(--app-data-surface-bg);
   border: 1px solid var(--app-data-border-color);
-  border-radius: var(--rds-radius-overlay, 8px);
+  border-radius: var(--app-data-surface-radius);
+  overflow: hidden;
 }
 
 .app-data-view--fill {
@@ -185,6 +192,7 @@
 }
 
 .app-data-table {
+  /* Standalone tables use the same single-surface contract as AppDataView. */
   box-sizing: border-box;
   width: 100%;
   min-width: 0;
@@ -194,7 +202,8 @@
   color: var(--app-data-text-color);
   background: var(--app-data-surface-bg);
   border: 1px solid var(--app-data-border-color);
-  border-radius: var(--rds-radius-control, 4px);
+  border-radius: var(--app-data-surface-radius);
+  overflow: hidden;
 }
 
 .app-data-table__controls {
@@ -211,8 +220,7 @@
   gap: var(--rds-space-2, 8px);
   background: var(--app-data-surface-bg);
   border-bottom: 1px solid var(--app-data-border-color);
-  border-radius: var(--rds-radius-control, 4px) var(--rds-radius-control, 4px) 0
-    0;
+  border-radius: 0;
 }
 
 .app-data-table__search {
@@ -603,15 +611,6 @@
   outline-offset: -2px;
 }
 
-.app-data-table--with-controls > .app-data-table__viewport {
-  border-radius: 0 0 var(--rds-radius-control, 4px)
-    var(--rds-radius-control, 4px);
-}
-
-.app-data-table--with-pagination > .app-data-table__viewport {
-  border-radius: 0;
-}
-
 .app-data-view--fill > .app-data-view__body > .app-data-table {
   flex: 1 1 auto;
 }
@@ -619,6 +618,8 @@
 .app-data-view__body > .app-data-table {
   border: 0;
   border-radius: 0;
+  overflow: visible;
+  background: transparent;
 }
 
 .app-data-table--comfortable {
@@ -642,7 +643,7 @@
   flex: 1 1 auto;
   overflow: hidden;
   background: var(--app-data-surface-bg);
-  border-radius: inherit;
+  border-radius: 0;
 }
 
 .app-data-table__viewport--with-state {
@@ -720,8 +721,7 @@
   color: var(--app-data-muted-color);
   background: var(--app-data-surface-bg);
   border-top: 1px solid var(--app-data-border-color);
-  border-radius: 0 0 var(--rds-radius-control, 4px)
-    var(--rds-radius-control, 4px);
+  border-radius: 0;
 }
 
 .app-data-table__pagination-summary {
@@ -808,10 +808,6 @@
 
 .app-data-view--fill .app-data-table__viewport {
   flex: 1 1 0;
-}
-
-.app-data-view__body > .app-data-table > .app-data-table__viewport {
-  border-radius: 0;
 }
 
 .app-data-table__table {
