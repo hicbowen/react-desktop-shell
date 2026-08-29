@@ -1348,14 +1348,18 @@ consumer-provided batch actions without owning selection state. `AppDataTable`
 uses TanStack Table's `ColumnDef<TData>` directly.
 
 The data table supports client-side pagination, client or manual sorting, optional built-in global
-search and column filter controls, manual/server-side filtering, column
+search and column filters opened from each column menu, manual/server-side filtering, column
 visibility, controlled row selection, loading and empty states, comfortable
-and compact density, row activation, horizontal scrolling, and opt-in column sizing. Column sizing
+and compact density, cell keyboard navigation, row activation, horizontal
+scrolling, and opt-in column sizing. Compact density is the default. Column sizing
 supports controlled or uncontrolled state, mouse and touch resizing, minimum
 and maximum widths, per-column resize control, `onEnd` and `onChange` modes,
 and double-click reset. Sticky table headers and controlled or uncontrolled
-left/right column pinning include pinned boundary shadows and compose with
-resizing and visibility. The table does not provide column order dragging.
+left/right column pinning compose with resizing and visibility. Sticky columns
+show a small pin indicator in their headers and a subtle one-sided boundary only
+after they reach their sticky position. The automatically pinned selection
+column keeps the regular grid divider without adding another shadow. The table
+does not provide column order dragging.
 
 ```tsx
 import { useState } from 'react'
@@ -1421,7 +1425,14 @@ function StudentsView({ students }: { students: Student[] }) {
 Provide a stable `getRowId` when enabling row selection, sorting, or filtering.
 The table never adds fields to or mutates input data.
 
-`selection.selectAllMode` defaults to `'filtered'`. In this mode the header
+`selection.mode` defaults to `'multiple'`. Both modes reuse one leading
+selection/status column rather than adding a separate Corner column. Multiple
+mode uses a 44px column with centered checkboxes. Single mode narrows the same
+column to 16px and replaces the checkboxes with a selected-row accent indicator;
+clicking a selectable row replaces the current selection. The status column
+header remains intentionally blank.
+
+In multiple mode, `selection.selectAllMode` defaults to `'filtered'`. The header
 checkbox selects or clears only selectable rows in the current filtered result.
 Use `'all'` to make it operate on all data rows instead. Changing filters does
 not automatically clear already selected rows outside the filtered result.
@@ -1430,6 +1441,26 @@ page; `'filtered'` continues to include matching rows on every page.
 
 `AppDataTable` currently supports flat leaf-column definitions. Multi-level
 grouped headers are not currently supported.
+
+Each ordinary column header separates its sort target from a column menu
+containing only the core sorting and filtering actions. The column panel uses
+the shared popover positioning and context-menu action styling, while only the
+filter option list scrolls. Column menus are part of the default desktop
+interaction and do not require additional props. The internal selection/status
+column has no menu.
+
+The body uses a roving cell focus model. Press `Tab` to enter the current data
+cell, arrow keys to move between visible cells, `Home` or `End` to move within
+the row, and `Ctrl+Home` or `Ctrl+End` to move to the first or last data cell.
+Interactive descendants such as links, buttons, inputs, and checkboxes retain
+their native keyboard behavior. Pressing `Enter` in a data cell invokes
+single-row selection and invokes `onRowClick` when that callback is provided.
+
+The default compact layout uses a 36px header and 38px data rows. Pass
+`density="comfortable"` for a 44px header and 48px rows. Table backgrounds
+continue to inherit shell surface variables; header, hover, selected, pressed,
+focus, border, and accent visuals use the corresponding semantic
+`--app-data-*` and `--rds-state-*` tokens.
 
 ### Client-side pagination
 
@@ -1478,8 +1509,9 @@ virtualization inside a constrained scroll area:
 Virtualization requires `@tanstack/react-virtual` and either a fill-height data
 view or an `AppDataTable maxHeight`. It reduces rendered row DOM only: search,
 column filtering, and sorting still run against the complete data set. The
-default fixed row height follows `density` (48px for comfortable and 38px for
-compact). A custom `rowHeight` must match the actual CSS row height.
+default fixed row height follows `density` (38px for the default compact
+density and 48px for comfortable). A custom `rowHeight` must match the actual
+CSS row height.
 
 Only fixed-height vertical row virtualization is supported. Dynamic row
 heights and horizontal column virtualization are not supported. For roughly a
@@ -1489,9 +1521,11 @@ but only the current page is virtualized, so the benefit is usually limited.
 
 ### Filtering and column visibility
 
-Pass `controls` for the optional built-in search field and unified filter menu.
-The search field writes directly to TanStack Table's `globalFilter`. Filter
-definitions write directly to `columnFilters`; single filters use one string
+Pass `controls` for the optional built-in global search field and column filter
+definitions. The top control row contains the global search; filter definitions
+are opened from the matching column's ellipsis menu. Selecting options edits a
+local draft and `Apply` commits it to TanStack Table's `columnFilters`; `Cancel`,
+Escape, or an outside click discards the draft. Single filters use one string
 value, while multiple filters use a string array. Without `controls`, no
 additional control-bar DOM is rendered.
 
@@ -1504,7 +1538,7 @@ const categoryOptions = Array.from(
   data={students}
   columns={columns}
   controls={{
-    search: { placeholder: 'Search students' },
+    search: true,
     filters: [
       {
         columnId: 'category',
@@ -1525,11 +1559,11 @@ const categoryOptions = Array.from(
 />
 ```
 
-Built-in control text defaults to English. Override only the labels needed by
-the current locale through `controls.locale`; dynamic aria labels use formatter
-functions. Explicit values in `controls.search` take precedence over locale
-search defaults. The combined clear-all button is hidden by default; set
-`controls.clearAll` to `true` to show it.
+Built-in control text follows the surrounding `AppShell` locale. The combined
+clear-all button is hidden by default; set `controls.clearAll` to `true` to show
+it when search or filter state is active. The filter menu also provides local
+option search and, for multiple filters, selects or clears only the options
+currently visible in that search result.
 
 ```tsx
 <AppDataTable
@@ -1539,18 +1573,6 @@ search defaults. The combined clear-all button is hidden by default; set
     search: true,
     filters: studentFilters,
     clearAll: true,
-    locale: {
-      searchPlaceholder: '搜索学生',
-      searchAriaLabel: '搜索学生',
-      clearSearchAriaLabel: '清除搜索',
-      filtersLabel: '筛选',
-      activeFiltersAriaLabel: (count) => `筛选，已启用 ${count} 项`,
-      clearFilterLabel: '清除',
-      clearFilterAriaLabel: (label) => `清除“${label}”筛选`,
-      clearFiltersLabel: '清除筛选',
-      clearAllLabel: '全部清除',
-      clearAllAriaLabel: '清除搜索和所有筛选',
-    },
   }}
 />
 ```
@@ -1702,8 +1724,9 @@ instead of stretching columns.
 
 Sticky headers remain inside the AppDataTable scroll container. Pass a numeric
 or CSS `maxHeight` to create vertical scrolling within that same container;
-horizontal header and body scrolling therefore stay synchronized without
-JavaScript scroll listeners.
+horizontal header and body scrolling therefore stay synchronized. Sticky column
+state is reflected locally in the affected header and only the active sticky
+boundary receives the visual shadow.
 
 ```tsx
 <AppDataTable
@@ -1732,7 +1755,9 @@ Unlike TanStack column pinning, this does not move the column into a left or
 right group. Multiple sticky columns accumulate from the left in their current
 visible table order, regardless of the order of IDs in `stickyColumns`. Hidden
 columns and unknown IDs are ignored. Resizing a sticky column automatically
-updates the offsets of sticky columns after it.
+updates the offsets of sticky columns after it. Active sticky columns display a
+small pin indicator in the header; their boundary shadow appears only after the
+column has reached the sticky position during horizontal scrolling.
 
 `columnPinning` continues to move columns into TanStack's pinned regions and
 takes precedence when the same ID also appears in `stickyColumns`. Visible
@@ -1822,7 +1847,9 @@ height should keep the default `height="auto"` behavior.
 Column pinning uses stable TanStack column IDs. Offsets are derived from the
 current column sizes, so resizing a pinned column immediately updates the pinned
 layout. Boundary shadows mark only the last left-pinned and first right-pinned
-columns.
+layout. Boundary shadows mark only the last left-pinned and first right-pinned
+columns; the automatically pinned selection column uses the regular grid
+divider.
 
 ```tsx
 import type { ColumnPinningState } from '@tanstack/react-table'
@@ -1840,23 +1867,12 @@ const [columnPinning, setColumnPinning] = useState<ColumnPinningState>({
 />
 ```
 
-Use the exported stable ID to pin the optional internal selection column without
-guessing implementation details:
-
-```tsx
-import {
-  APP_DATA_TABLE_SELECTION_COLUMN_ID,
-} from 'react-desktop-shell/data'
-
-<AppDataTable
-  data={students}
-  columns={columns}
-  selection={selection}
-  defaultColumnPinning={{
-    left: [APP_DATA_TABLE_SELECTION_COLUMN_ID, 'name'],
-  }}
-/>
-```
+When `selection` is enabled, the internal selection column is automatically
+pinned to the left edge. It remains before user-pinned left columns and keeps
+its mode-specific width: the single-selection indicator is narrow, while the
+multiple-selection checkbox column is wider. It is always visible and is not
+part of the user-managed `columnPinning` state, so applications do not need to
+add the exported internal selection-column ID to their pinning configuration.
 
 Hiding a pinned column does not remove its ID from `columnPinning`; showing it
 again restores the pinned position and existing size. Pinning menus and state
@@ -1889,6 +1905,7 @@ export interface AppDataTableSelectionOptions<TData> {
   value: RowSelectionState
   onChange: OnChangeFn<RowSelectionState>
   enableRowSelection?: TableOptions<TData>['enableRowSelection']
+  mode?: 'single' | 'multiple'
   selectAllMode?: 'all' | 'filtered' | 'page'
 }
 

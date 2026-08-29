@@ -1,9 +1,9 @@
-import type { RowSelectionState, SortingState } from '@tanstack/react-table'
-import { useState } from 'react'
+import type { ColumnPinningState, RowSelectionState, SortingState } from '@tanstack/react-table'
+import { useCallback, useMemo, useState } from 'react'
 import { AppButton, AppEmptyState, AppSegmentedControl, AppSelect, AppToggleSwitch, AppToolbar, useAppContextMenu, useAppToast } from '../../../../src'
-import { AppDataTable, AppDataView, AppSelectionBar } from '../../../../src/data'
+import { AppDataTable, AppDataView, AppSelectionBar, type AppDataTableProps } from '../../../../src/data'
 import { DemoControls, DemoPage, DemoPreview, DemoSection } from '../../components/DemoPage'
-import { tableRows } from '../../fixtures/tableRows'
+import { tableRows, type DemoRow } from '../../fixtures/tableRows'
 import { useDemoCopy } from '../../i18n/interactiveTranslations'
 import { createColumns, createTableControls, localizeTableValue } from './tableConfig'
 
@@ -16,17 +16,67 @@ export function AppDataTablePage() {
   const [sticky, setSticky] = useState(true)
   const [resizing, setResizing] = useState(true)
   const [heightMode, setHeightMode] = useState<'auto' | 'fixed' | 'fill'>('auto')
-  const [density, setDensity] = useState<'comfortable' | 'compact'>('comfortable')
+  const [density, setDensity] = useState<'comfortable' | 'compact'>('compact')
+  const [selectionMode, setSelectionMode] = useState<'single' | 'multiple'>('multiple')
   const [pagination, setPagination] = useState(true)
   const [virtualized, setVirtualized] = useState(false)
   const [stickyCategory, setStickyCategory] = useState(true)
+  const [pinCategory, setPinCategory] = useState(false)
+  const columnPinning = useMemo<ColumnPinningState>(
+    () => (pinCategory ? { left: ['category'] } : {}),
+    [pinCategory],
+  )
   const count = Object.values(selection).filter(Boolean).length
-  const columns = createColumns(t)
-  const tableControls = createTableControls(t)
+  const columns = useMemo(() => createColumns(t), [t])
+  const tableControls = useMemo(() => createTableControls(t), [t])
+  const handleRowContextMenu = useCallback<
+    NonNullable<AppDataTableProps<DemoRow>['onRowContextMenu']>
+  >(
+    (row, event) => {
+      event.preventDefault()
+      const rowName = localizeTableValue(t, row.original.name)
+      contextMenu.open({
+        items: [
+          {
+            key: 'open',
+            label: `${t('Open row')} ${rowName}`,
+            onClick: () => toast.info(`${t('Opened row')} ${rowName}`),
+          },
+          {
+            key: 'archive',
+            label: t('Archive'),
+            disabled: row.original.status === 'Processing',
+            onClick: () => toast.info(`${t('Archived row')} ${rowName}`),
+          },
+          { type: 'separator' },
+          {
+            key: 'delete',
+            label: t('Delete'),
+            danger: true,
+            onClick: () => toast.info(`${t('Delete row')} ${rowName}`),
+          },
+        ],
+        x: event.clientX,
+        y: event.clientY,
+        trigger: event.currentTarget,
+      })
+    },
+    [contextMenu, t, toast],
+  )
 
   const handleHeightModeChange = (next: 'auto' | 'fixed' | 'fill') => {
     setHeightMode(next)
     if (next === 'auto') setVirtualized(false)
+  }
+
+  const handleStickyCategoryChange = (next: boolean) => {
+    setStickyCategory(next)
+    if (next) setPinCategory(false)
+  }
+
+  const handlePinCategoryChange = (next: boolean) => {
+    setPinCategory(next)
+    if (next) setStickyCategory(false)
   }
 
   const tableClassName = heightMode === 'fill'
@@ -47,7 +97,8 @@ export function AppDataTablePage() {
         <DemoControls>
           <AppToggleSwitch checked={sticky} label={t('Sticky header')} onCheckedChange={setSticky} size="compact" />
           <AppToggleSwitch checked={resizing} label={t('Column resizing')} onCheckedChange={setResizing} size="compact" />
-          <AppToggleSwitch checked={stickyCategory} label={t('Sticky Category column')} onCheckedChange={setStickyCategory} size="compact" />
+          <AppToggleSwitch checked={stickyCategory} label={t('Sticky Category column')} onCheckedChange={handleStickyCategoryChange} size="compact" />
+          <AppToggleSwitch checked={pinCategory} label={t('Pin Category column')} onCheckedChange={handlePinCategoryChange} size="compact" />
           <span>{t('Table height')}</span>
           <AppSegmentedControl
             ariaLabel={t('Table height')}
@@ -76,6 +127,22 @@ export function AppDataTablePage() {
             ]}
             size="compact"
             value={density}
+          />
+          <span>{t('Selection mode')}</span>
+          <AppSegmentedControl
+            ariaLabel={t('Selection mode')}
+            onValueChange={(value) => {
+              if (value === 'single' || value === 'multiple') {
+                setSelection({})
+                setSelectionMode(value)
+              }
+            }}
+            options={[
+              { value: 'single', label: t('Single') },
+              { value: 'multiple', label: t('Multiple') },
+            ]}
+            size="compact"
+            value={selectionMode}
           />
           <AppToggleSwitch checked={pagination} label={t('Pagination')} onCheckedChange={setPagination} size="compact" />
           <AppToggleSwitch checked={virtualized} disabled={heightMode === 'auto'} label={t('Vertical virtualization')} onCheckedChange={setVirtualized} size="compact" />
@@ -136,42 +203,16 @@ export function AppDataTablePage() {
             }
             sorting={sorting}
             onSortingChange={setSorting}
-            onRowContextMenu={(row, event) => {
-              event.preventDefault()
-              const rowName = localizeTableValue(t, row.original.name)
-              contextMenu.open({
-                items: [
-                  {
-                    key: 'open',
-                    label: `${t('Open row')} ${rowName}`,
-                    onClick: () => toast.info(`${t('Opened row')} ${rowName}`),
-                  },
-                  {
-                    key: 'archive',
-                    label: t('Archive'),
-                    disabled: row.original.status === 'Processing',
-                    onClick: () => toast.info(`${t('Archived row')} ${rowName}`),
-                  },
-                  { type: 'separator' },
-                  {
-                    key: 'delete',
-                    label: t('Delete'),
-                    danger: true,
-                    onClick: () => toast.info(`${t('Delete row')} ${rowName}`),
-                  },
-                ],
-                x: event.clientX,
-                y: event.clientY,
-                trigger: event.currentTarget,
-              })
-            }}
+            onRowContextMenu={handleRowContextMenu}
             selection={{
               value: selection,
               onChange: setSelection,
+              mode: selectionMode,
               selectAllMode: 'page',
             }}
             stickyHeader={sticky}
             stickyColumns={stickyCategory ? ['category'] : undefined}
+            columnPinning={columnPinning}
             enableColumnResizing={resizing}
             density={density}
             virtualization={virtualized ? { overscan: 5 } : false}

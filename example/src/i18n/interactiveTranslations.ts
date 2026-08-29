@@ -1,3 +1,4 @@
+import { useCallback } from 'react'
 import { useDemoI18n } from './DemoI18nContext'
 
 export const zhCNInteractiveText: Record<string, string> = {
@@ -219,7 +220,7 @@ export const zhCNInteractiveText: Record<string, string> = {
   Volume: '音量', Zoom: '缩放', 'Compact slider': '紧凑滑块', 'Disabled slider': '禁用滑块',
   'Invalid slider': '无效滑块', 'Brush size': '画笔大小', Quality: '质量', Low: '低', Medium: '中', High: '高',
   'Vertical level': '垂直级别',
-  'Sticky header': '固定表头', 'Column resizing': '调整列宽', 'Sticky Category column': '固定“类别”列',
+  'Sticky header': '固定表头', 'Column resizing': '调整列宽', 'Sticky Category column': '吸附“类别”列', 'Pin Category column': '固定“类别”列（Pin）',
   'Fixed height': '固定高度', 'Fill remaining height': '填满剩余高度', Pagination: '分页',
   'Vertical virtualization': '垂直虚拟化',
   'Table height': '表格高度', 'Table density': '表格密度',
@@ -790,7 +791,10 @@ export const zhCNInteractiveText: Record<string, string> = {
 
 export function useDemoCopy() {
   const { locale } = useDemoI18n()
-  return (text: string) => localizeInteractiveText(locale, text)
+  return useCallback(
+    (text: string) => localizeInteractiveText(locale, text),
+    [locale],
+  )
 }
 
 export function localizeInteractiveText(
