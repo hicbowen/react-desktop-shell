@@ -1,5 +1,7 @@
 /* eslint-disable react-refresh/only-export-components */
 import {
+  memo,
+  useCallback,
   useMemo,
   useEffect,
   useState,
@@ -8,7 +10,7 @@ import {
   type MouseEvent,
   type ReactNode,
   type RefObject,
-} from 'react'
+} from "react";
 import {
   flexRender,
   getCoreRowModel,
@@ -28,64 +30,154 @@ import {
   type SortingState,
   type Table,
   type VisibilityState,
-} from '@tanstack/react-table'
-import { DataTableCheckbox } from '../DataTableCheckbox'
-import { useAppLocale } from '../../localization/useAppLocale'
-import { AppScrollArea } from '../../scroll-area/AppScrollArea'
+} from "@tanstack/react-table";
+import { ArrowSortDown16Regular } from "@fluentui/react-icons/svg/arrow-sort-down";
+import { ArrowSortUp16Regular } from "@fluentui/react-icons/svg/arrow-sort-up";
+import { Pin16Regular } from "@fluentui/react-icons/svg/pin";
+import { DataTableCheckbox } from "../DataTableCheckbox";
+import { useAppLocale } from "../../localization/useAppLocale";
+import { AppScrollArea } from "../../scroll-area/AppScrollArea";
 import type {
+  AppDataTableFilterDefinition,
   AppDataTablePaginationOptions,
   AppDataTableProps,
-} from '../types'
-import { resolveControlFilterColumns } from './dataTableFilters'
+} from "../types";
+import { DataTableColumnMenu } from "./DataTableColumnMenu";
+import {
+  getColumnDefinitionId,
+  resolveControlFilterColumns,
+} from "./dataTableFilters";
 
-export const APP_DATA_TABLE_SELECTION_COLUMN_ID =
-  '__app_data_table_selection'
+export const APP_DATA_TABLE_SELECTION_COLUMN_ID = "__app_data_table_selection";
+
+const internalColumnIds = new Set([APP_DATA_TABLE_SELECTION_COLUMN_ID]);
+
+export function isAppDataTableInternalColumn(columnId: string) {
+  return internalColumnIds.has(columnId);
+}
 
 const interactiveSelector = [
-  'a',
-  'button',
-  'input',
-  'select',
-  'textarea',
+  "a",
+  "button",
+  "input",
+  "select",
+  "textarea",
   '[contenteditable="true"]',
   '[role="button"]',
   '[role="checkbox"]',
   '[role="link"]',
   '[role="menuitem"]',
   '[role="switch"]',
-].join(',')
+].join(",");
 
 function isInteractiveTarget(target: EventTarget | null) {
-  return target instanceof Element && target.closest(interactiveSelector) != null
+  return (
+    target instanceof Element && target.closest(interactiveSelector) != null
+  );
 }
 
 export interface DataTableStickyLayout {
-  offsets: ReadonlyMap<string, number>
-  edgeColumnId?: string
+  offsets: ReadonlyMap<string, number>;
+  naturalOffsets: ReadonlyMap<string, number>;
+  edgeColumnId?: string;
+}
+
+export interface DataTableActiveCell {
+  rowId: string;
+  columnId: string;
+}
+
+export interface DataTableCellNavigation {
+  activeCell: DataTableActiveCell | null;
+  activateCell: (
+    rowId: string,
+    columnId: string,
+    cell: HTMLTableCellElement,
+    focus: boolean,
+  ) => void;
+  onKeyDown: (
+    rowId: string,
+    columnId: string,
+    event: KeyboardEvent<HTMLTableCellElement>,
+  ) => void;
+}
+
+interface DataTableLayoutState {
+  columnPinning: ColumnPinningState;
+  columnSizing: ColumnSizingState;
+  columnVisibility: VisibilityState;
 }
 
 function createStickyColumnLayout<TData>(
   table: Table<TData>,
   stickyColumns: string[] | undefined,
+  layoutState: DataTableLayoutState,
 ): DataTableStickyLayout {
-  const requestedIds = new Set(stickyColumns ?? [])
-  const leftPinnedIds = table.getState().columnPinning.left ?? []
+  const requestedIds = new Set(stickyColumns ?? []);
+  const pinnedIds = new Set([
+    ...(layoutState.columnPinning.left ?? []),
+    ...(layoutState.columnPinning.right ?? []),
+  ]);
+  const leftPinnedIds = layoutState.columnPinning.left ?? [];
+  const isVisible = (columnId: string) =>
+    layoutState.columnVisibility[columnId] !== false;
+  const getSize = (column: Column<TData>) => {
+    const configuredSize = layoutState.columnSizing[column.id];
+    if (configuredSize === undefined) return column.getSize();
+
+    return Math.min(
+      Math.max(configuredSize, column.columnDef.minSize ?? 20),
+      column.columnDef.maxSize ?? 1000,
+    );
+  };
   let offset = leftPinnedIds.reduce((width, columnId) => {
-    const column = table.getColumn(columnId)
-    return column?.getIsVisible() ? width + column.getSize() : width
-  }, 0)
-  const offsets = new Map<string, number>()
-  let edgeColumnId: string | undefined
+    const column = table.getColumn(columnId);
+    return column && isVisible(column.id) ? width + getSize(column) : width;
+  }, 0);
+  const offsets = new Map<string, number>();
+  const naturalOffsets = new Map<string, number>();
+  let edgeColumnId: string | undefined;
+  let naturalOffset = 0;
 
   for (const column of table.getVisibleLeafColumns()) {
-    if (column.getIsPinned() || !requestedIds.has(column.id)) continue
+    if (!pinnedIds.has(column.id) && requestedIds.has(column.id)) {
+      offsets.set(column.id, offset);
+      naturalOffsets.set(column.id, naturalOffset);
+      offset += getSize(column);
+      edgeColumnId = column.id;
+    }
 
-    offsets.set(column.id, offset)
-    offset += column.getSize()
-    edgeColumnId = column.id
+    naturalOffset += getSize(column);
   }
 
-  return { offsets, edgeColumnId }
+  return { offsets, naturalOffsets, edgeColumnId };
+}
+
+function areColumnIdListsEqual(first: string[], second: string[]) {
+  return (
+    first.length === second.length &&
+    first.every((columnId, index) => columnId === second[index])
+  );
+}
+
+function getActiveStickyColumnIds<TData>(
+  table: Table<TData>,
+  stickyLayout: DataTableStickyLayout,
+  scrollLeft: number,
+) {
+  if (scrollLeft <= 0 || stickyLayout.offsets.size === 0) return [];
+
+  return table
+    .getVisibleLeafColumns()
+    .filter((column) => {
+      const stickyLeft = stickyLayout.offsets.get(column.id);
+      const naturalLeft = stickyLayout.naturalOffsets.get(column.id);
+      if (stickyLeft === undefined || naturalLeft === undefined) return false;
+
+      const activationOffset = Math.max(0, naturalLeft - stickyLeft);
+      return scrollLeft + 1 >= activationOffset;
+    })
+    .map((column) => column.id);
 }
 
 function getPositionedColumnStyles<TData>(
@@ -94,24 +186,24 @@ function getPositionedColumnStyles<TData>(
   stickyHeader: boolean,
   stickyLayout: DataTableStickyLayout,
 ): CSSProperties {
-  const pinned = column.getIsPinned()
-  const stickyLeft = pinned ? undefined : stickyLayout.offsets.get(column.id)
-  const sticky = stickyLeft !== undefined
+  const pinned = column.getIsPinned();
+  const stickyLeft = pinned ? undefined : stickyLayout.offsets.get(column.id);
+  const sticky = stickyLeft !== undefined;
 
   return {
     position:
       pinned || sticky || (isHeader && stickyHeader)
-        ? 'sticky'
+        ? "sticky"
         : isHeader
-          ? 'relative'
+          ? "relative"
           : undefined,
     left:
-      pinned === 'left'
-        ? column.getStart('left')
+      pinned === "left"
+        ? column.getStart("left")
         : sticky
           ? stickyLeft
           : undefined,
-    right: pinned === 'right' ? column.getAfter('right') : undefined,
+    right: pinned === "right" ? column.getAfter("right") : undefined,
     top: isHeader && stickyHeader ? 0 : undefined,
     width: column.getSize(),
     zIndex: isHeader
@@ -125,19 +217,65 @@ function getPositionedColumnStyles<TData>(
       : pinned || sticky
         ? 1
         : undefined,
-  }
+  };
 }
 
 function getPinnedEdge<TData>(column: Column<TData>) {
-  const pinned = column.getIsPinned()
+  const pinned = column.getIsPinned();
 
-  if (pinned === 'left' && column.getIsLastColumn('left')) {
-    return 'left'
+  if (pinned === "left" && column.getIsLastColumn("left")) {
+    return "left";
   }
-  if (pinned === 'right' && column.getIsFirstColumn('right')) {
-    return 'right'
+  if (pinned === "right" && column.getIsFirstColumn("right")) {
+    return "right";
   }
-  return undefined
+  return undefined;
+}
+
+export interface DataTableStickyState {
+  activeColumnIds: ReadonlySet<string>;
+  activeEdgeColumnId?: string;
+}
+
+export function useDataTableStickyState<TData>(
+  scrollRef: RefObject<HTMLDivElement | null> | undefined,
+  table: Table<TData>,
+  stickyLayout: DataTableStickyLayout,
+): DataTableStickyState {
+  const [activeColumnIds, setActiveColumnIds] = useState<string[]>([]);
+  const updateActiveColumns = useCallback(() => {
+    const next = getActiveStickyColumnIds(
+      table,
+      stickyLayout,
+      scrollRef?.current?.scrollLeft ?? 0,
+    );
+
+    setActiveColumnIds((current) =>
+      areColumnIdListsEqual(current, next) ? current : next,
+    );
+  }, [scrollRef, stickyLayout, table]);
+
+  useEffect(() => {
+    const viewport = scrollRef?.current;
+    if (!viewport) return;
+
+    updateActiveColumns();
+    viewport.addEventListener("scroll", updateActiveColumns, {
+      passive: true,
+    });
+
+    return () => viewport.removeEventListener("scroll", updateActiveColumns);
+  }, [scrollRef, updateActiveColumns]);
+
+  const activeColumnIdSet = useMemo(
+    () => new Set(activeColumnIds),
+    [activeColumnIds],
+  );
+
+  return {
+    activeColumnIds: activeColumnIdSet,
+    activeEdgeColumnId: activeColumnIds[activeColumnIds.length - 1],
+  };
 }
 
 export function useAppDataTable<TData>({
@@ -167,7 +305,7 @@ export function useAppDataTable<TData>({
   columnSizing,
   defaultColumnSizing = {},
   onColumnSizingChange,
-  columnResizeMode = 'onEnd',
+  columnResizeMode = "onEnd",
   stickyHeader = false,
   stickyColumns,
   maxHeight,
@@ -178,193 +316,236 @@ export function useAppDataTable<TData>({
   loading = false,
   loadingContent,
   emptyContent,
-  density = 'comfortable',
+  density = "compact",
   onRowClick,
   onRowContextMenu,
   className,
   style,
 }: AppDataTableProps<TData>) {
-  const { messages } = useAppLocale()
-  const resolvedLoadingContent =
-    loadingContent ?? messages.dataTable.loading
-  const resolvedEmptyContent = emptyContent ?? messages.dataTable.empty
-  const paginationEnabled = Boolean(pagination)
+  const { messages } = useAppLocale();
+  const resolvedLoadingContent = loadingContent ?? messages.dataTable.loading;
+  const resolvedEmptyContent = emptyContent ?? messages.dataTable.empty;
+  const paginationEnabled = Boolean(pagination);
   const paginationOptions: AppDataTablePaginationOptions =
-    typeof pagination === 'object' ? pagination : {}
+    typeof pagination === "object" ? pagination : {};
   const [internalSorting, setInternalSorting] = useState<SortingState>(
     () => defaultSorting,
-  )
+  );
   const [internalGlobalFilter, setInternalGlobalFilter] = useState<unknown>(
     () => defaultGlobalFilter,
-  )
+  );
   const [internalColumnFilters, setInternalColumnFilters] =
-    useState<ColumnFiltersState>(() => defaultColumnFilters)
+    useState<ColumnFiltersState>(() => defaultColumnFilters);
   const [internalColumnVisibility, setInternalColumnVisibility] =
-    useState<VisibilityState>(() => defaultColumnVisibility)
+    useState<VisibilityState>(() => defaultColumnVisibility);
   const [internalColumnSizing, setInternalColumnSizing] =
-    useState<ColumnSizingState>(() => defaultColumnSizing)
+    useState<ColumnSizingState>(() => defaultColumnSizing);
   const [internalColumnPinning, setInternalColumnPinning] =
-    useState<ColumnPinningState>(() => defaultColumnPinning)
+    useState<ColumnPinningState>(() => defaultColumnPinning);
   const [internalPagination, setInternalPagination] = useState<PaginationState>(
     () => ({
       pageIndex: 0,
       pageSize: 10,
       ...paginationOptions.defaultValue,
     }),
-  )
-  const resolvedSorting = sorting ?? internalSorting
+  );
+  const resolvedSorting = sorting ?? internalSorting;
   const resolvedGlobalFilter =
-    globalFilter !== undefined ? globalFilter : internalGlobalFilter
-  const resolvedColumnFilters = columnFilters ?? internalColumnFilters
-  const resolvedColumnVisibility = columnVisibility ?? internalColumnVisibility
-  const resolvedColumnSizing = columnSizing ?? internalColumnSizing
-  const resolvedColumnPinning = columnPinning ?? internalColumnPinning
-  const resolvedPagination = paginationOptions.value ?? internalPagination
-  const effectiveColumnVisibility = selection
-    ? {
-        ...resolvedColumnVisibility,
-        [APP_DATA_TABLE_SELECTION_COLUMN_ID]: true,
-      }
-    : resolvedColumnVisibility
-  const selectionEnabled = selection !== undefined
-  const selectAllMode = selection?.selectAllMode ?? 'filtered'
+    globalFilter !== undefined ? globalFilter : internalGlobalFilter;
+  const resolvedColumnFilters = columnFilters ?? internalColumnFilters;
+  const resolvedColumnVisibility = columnVisibility ?? internalColumnVisibility;
+  const resolvedColumnSizing = columnSizing ?? internalColumnSizing;
+  const resolvedColumnPinning = columnPinning ?? internalColumnPinning;
+  const resolvedPagination = paginationOptions.value ?? internalPagination;
+  const selectionEnabled = selection !== undefined;
+  const selectionMode = selection?.mode ?? "multiple";
+  const effectiveColumnPinning = useMemo<ColumnPinningState>(() => {
+    if (!selectionEnabled) return resolvedColumnPinning;
+
+    const left = resolvedColumnPinning.left ?? [];
+    const right = resolvedColumnPinning.right ?? [];
+
+    return {
+      ...resolvedColumnPinning,
+      left: [
+        APP_DATA_TABLE_SELECTION_COLUMN_ID,
+        ...left.filter(
+          (columnId) => columnId !== APP_DATA_TABLE_SELECTION_COLUMN_ID,
+        ),
+      ],
+      right: right.filter(
+        (columnId) => columnId !== APP_DATA_TABLE_SELECTION_COLUMN_ID,
+      ),
+    };
+  }, [resolvedColumnPinning, selectionEnabled]);
+  const effectiveColumnVisibility = useMemo(
+    () => ({
+      ...resolvedColumnVisibility,
+      ...(selectionEnabled
+        ? { [APP_DATA_TABLE_SELECTION_COLUMN_ID]: true }
+        : undefined),
+    }),
+    [resolvedColumnVisibility, selectionEnabled],
+  );
+  const selectAllMode = selection?.selectAllMode ?? "filtered";
   const columnsWithControlFilters = useMemo(
     () => resolveControlFilterColumns(columns, controls?.filters ?? []),
     [columns, controls?.filters],
-  )
+  );
   const getOptionalPaginationRowModel = useMemo(() => {
-    const createPaginationRowModel = getPaginationRowModel<TData>()
+    const createPaginationRowModel = getPaginationRowModel<TData>();
 
     return (table: Table<TData>) => {
-      const getPaginatedRows = createPaginationRowModel(table)
+      const getPaginatedRows = createPaginationRowModel(table);
 
       return () =>
         (
           table.options.meta as
-            | { __appDataTablePaginationEnabled?: boolean }
-            | undefined
+            { __appDataTablePaginationEnabled?: boolean } | undefined
         )?.__appDataTablePaginationEnabled
           ? getPaginatedRows()
-          : table.getPrePaginationRowModel()
-    }
-  }, [])
+          : table.getPrePaginationRowModel();
+    };
+  }, []);
 
   const handleSortingChange: OnChangeFn<SortingState> = (updater) => {
-    if (sorting === undefined) setInternalSorting(updater)
-    onSortingChange?.(updater)
-  }
+    if (sorting === undefined) setInternalSorting(updater);
+    onSortingChange?.(updater);
+  };
   const handleGlobalFilterChange: OnChangeFn<unknown> = (updater) => {
-    if (globalFilter === undefined) setInternalGlobalFilter(updater)
-    onGlobalFilterChange?.(updater)
-  }
-  const handleColumnFiltersChange: OnChangeFn<ColumnFiltersState> = (updater) => {
-    if (columnFilters === undefined) setInternalColumnFilters(updater)
-    onColumnFiltersChange?.(updater)
-  }
-  const handleColumnVisibilityChange: OnChangeFn<VisibilityState> = (updater) => {
-    if (columnVisibility === undefined) setInternalColumnVisibility(updater)
-    onColumnVisibilityChange?.(updater)
-  }
+    if (globalFilter === undefined) setInternalGlobalFilter(updater);
+    onGlobalFilterChange?.(updater);
+  };
+  const handleColumnFiltersChange: OnChangeFn<ColumnFiltersState> = (
+    updater,
+  ) => {
+    if (columnFilters === undefined) setInternalColumnFilters(updater);
+    onColumnFiltersChange?.(updater);
+  };
+  const handleColumnVisibilityChange: OnChangeFn<VisibilityState> = (
+    updater,
+  ) => {
+    if (columnVisibility === undefined) setInternalColumnVisibility(updater);
+    onColumnVisibilityChange?.(updater);
+  };
   const handleColumnSizingChange: OnChangeFn<ColumnSizingState> = (updater) => {
-    if (columnSizing === undefined) setInternalColumnSizing(updater)
-    onColumnSizingChange?.(updater)
-  }
-  const handleColumnPinningChange: OnChangeFn<ColumnPinningState> = (updater) => {
-    if (columnPinning === undefined) setInternalColumnPinning(updater)
-    onColumnPinningChange?.(updater)
-  }
+    if (columnSizing === undefined) setInternalColumnSizing(updater);
+    onColumnSizingChange?.(updater);
+  };
+  const handleColumnPinningChange: OnChangeFn<ColumnPinningState> = (
+    updater,
+  ) => {
+    if (columnPinning === undefined) setInternalColumnPinning(updater);
+    onColumnPinningChange?.(updater);
+  };
   const handlePaginationChange: OnChangeFn<PaginationState> = (updater) => {
     if (paginationOptions.value === undefined) {
-      setInternalPagination(updater)
+      setInternalPagination(updater);
     }
-    paginationOptions.onChange?.(updater)
-  }
+    paginationOptions.onChange?.(updater);
+  };
 
   const resolvedColumns = useMemo<ColumnDef<TData>[]>(() => {
-    if (!selectionEnabled) return columnsWithControlFilters
+    if (!selectionEnabled) {
+      return columnsWithControlFilters;
+    }
 
+    const selectionColumnSize = selectionMode === "single" ? 16 : 44;
     const selectionColumn: ColumnDef<TData> = {
       id: APP_DATA_TABLE_SELECTION_COLUMN_ID,
-      size: 44,
-      minSize: 44,
-      maxSize: 44,
+      size: selectionColumnSize,
+      minSize: selectionColumnSize,
+      maxSize: selectionColumnSize,
       enableSorting: false,
       enableHiding: false,
       enableResizing: false,
-      enablePinning: true,
+      enablePinning: false,
       header: ({ table }) => {
-        if (selectAllMode === 'all') {
+        if (selectionMode === "single") return null;
+
+        if (selectAllMode === "all") {
           return (
             <DataTableCheckbox
               aria-label={messages.dataTable.selectAllRows}
+              animateIndicator={false}
               checked={table.getIsAllRowsSelected()}
               disabled={
-                !table.getCoreRowModel().flatRows.some((row) => row.getCanSelect())
+                !table
+                  .getCoreRowModel()
+                  .flatRows.some((row) => row.getCanSelect())
               }
               indeterminate={table.getIsSomeRowsSelected()}
               onChange={table.getToggleAllRowsSelectedHandler()}
             />
-          )
+          );
         }
 
         const selectionRowModel =
-          selectAllMode === 'page'
+          selectAllMode === "page"
             ? table.getRowModel()
-            : table.getFilteredRowModel()
+            : table.getFilteredRowModel();
         const selectableRows = selectionRowModel.flatRows.filter((row) =>
           row.getCanSelect(),
-        )
+        );
         const selectedRowCount = selectableRows.filter((row) =>
           row.getIsSelected(),
-        ).length
+        ).length;
         const allSelected =
           selectableRows.length > 0 &&
-          selectedRowCount === selectableRows.length
+          selectedRowCount === selectableRows.length;
 
         return (
           <DataTableCheckbox
             aria-label={
-              selectAllMode === 'page'
+              selectAllMode === "page"
                 ? messages.dataTable.selectAllPageRows
                 : messages.dataTable.selectAllFilteredRows
             }
+            animateIndicator={false}
             checked={allSelected}
             disabled={selectableRows.length === 0}
             indeterminate={selectedRowCount > 0 && !allSelected}
             onChange={(event) => {
-              const shouldSelect = event.currentTarget.checked
+              const shouldSelect = event.currentTarget.checked;
               table.setRowSelection((current) => {
-                const next = { ...current }
+                const next = { ...current };
                 for (const row of selectableRows) {
                   if (shouldSelect) {
-                    next[row.id] = true
+                    next[row.id] = true;
                   } else {
-                    delete next[row.id]
+                    delete next[row.id];
                   }
                 }
-                return next
-              })
+                return next;
+              });
             }}
           />
-        )
+        );
       },
-      cell: ({ row }) => (
-        <DataTableCheckbox
-          aria-label={messages.dataTable.selectRow(row.id)}
-          checked={row.getIsSelected()}
-          disabled={!row.getCanSelect()}
-          indeterminate={row.getIsSomeSelected()}
-          onChange={row.getToggleSelectedHandler()}
-        />
-      ),
-    }
-    return [selectionColumn, ...columnsWithControlFilters]
+      cell: ({ row }) =>
+        selectionMode === "single" ? (
+          <span
+            aria-hidden="true"
+            className="app-data-table__selection-indicator"
+          />
+        ) : (
+          <DataTableCheckbox
+            aria-label={messages.dataTable.selectRow(row.id)}
+            checked={row.getIsSelected()}
+            disabled={!row.getCanSelect()}
+            indeterminate={row.getIsSomeSelected()}
+            onChange={row.getToggleSelectedHandler()}
+          />
+        ),
+    };
+    return [selectionColumn, ...columnsWithControlFilters];
   }, [
     columnsWithControlFilters,
     messages.dataTable,
     selectAllMode,
     selectionEnabled,
-  ])
+    selectionMode,
+  ]);
 
   // TanStack Table intentionally exposes mutable table helpers to its renderer.
   // eslint-disable-next-line react-hooks/incompatible-library
@@ -381,6 +562,7 @@ export function useAppDataTable<TData>({
     ...(globalFilterFn !== undefined ? { globalFilterFn } : {}),
     filterFns,
     enableRowSelection: selection?.enableRowSelection,
+    enableMultiRowSelection: selectionMode === "multiple",
     enableColumnResizing,
     columnResizeMode,
     enableColumnPinning,
@@ -391,7 +573,7 @@ export function useAppDataTable<TData>({
       columnFilters: resolvedColumnFilters,
       columnVisibility: effectiveColumnVisibility,
       columnSizing: resolvedColumnSizing,
-      columnPinning: resolvedColumnPinning,
+      columnPinning: effectiveColumnPinning,
       ...(selection ? { rowSelection: selection.value } : {}),
       ...(paginationEnabled ? { pagination: resolvedPagination } : {}),
     },
@@ -404,16 +586,58 @@ export function useAppDataTable<TData>({
     onRowSelectionChange: selection?.onChange,
     onPaginationChange: handlePaginationChange,
     autoResetPageIndex: paginationOptions.autoResetPageIndex ?? true,
-  })
-  const stickyLayout = createStickyColumnLayout(table, stickyColumns)
+  });
+  const filterColumnIds = useMemo(
+    () =>
+      new Set(
+        columnsWithControlFilters
+          .map(getColumnDefinitionId)
+          .filter((columnId): columnId is string => columnId !== undefined),
+      ),
+    [columnsWithControlFilters],
+  );
+  const filterDefinitions = useMemo(
+    () =>
+      controls?.filters?.filter((definition) =>
+        filterColumnIds.has(definition.columnId),
+      ) ?? [],
+    [controls?.filters, filterColumnIds],
+  );
+  const tableState = table.getState();
+  const stickyColumnKey = stickyColumns?.join("\u0000");
+  const stickyColumnIds = useMemo(
+    () =>
+      stickyColumnKey === undefined
+        ? undefined
+        : stickyColumnKey === ""
+          ? []
+          : stickyColumnKey.split("\u0000"),
+    [stickyColumnKey],
+  );
+  const stickyLayoutState = useMemo<DataTableLayoutState>(
+    () => ({
+      columnPinning: tableState.columnPinning,
+      columnSizing: tableState.columnSizing,
+      columnVisibility: tableState.columnVisibility,
+    }),
+    [
+      tableState.columnPinning,
+      tableState.columnSizing,
+      tableState.columnVisibility,
+    ],
+  );
+  const stickyLayout = useMemo(
+    () => createStickyColumnLayout(table, stickyColumnIds, stickyLayoutState),
+    [table, stickyColumnIds, stickyLayoutState],
+  );
 
   useEffect(() => {
-    if (!paginationEnabled) return
+    if (!paginationEnabled) return;
 
-    const pageCount = table.getPageCount()
-    const pageIndex = table.getState().pagination.pageIndex
+    const pageCount = table.getPageCount();
+    const pageIndex = table.getState().pagination.pageIndex;
     if (pageCount > 0 && pageIndex >= pageCount) {
-      table.setPageIndex(pageCount - 1)
+      table.setPageIndex(pageCount - 1);
     }
   }, [
     data,
@@ -424,7 +648,7 @@ export function useAppDataTable<TData>({
     resolvedPagination.pageSize,
     resolvedSorting,
     table,
-  ])
+  ]);
 
   return {
     table,
@@ -443,49 +667,91 @@ export function useAppDataTable<TData>({
     style,
     paginationEnabled,
     paginationOptions,
+    filterDefinitions,
     stickyLayout,
-  }
+    selectionEnabled,
+    selectionMode,
+    selectAllMode,
+  };
 }
 
 interface DataTableHeaderProps<TData> {
-  table: Table<TData>
-  stickyHeader: boolean
-  enableColumnResizing: boolean
-  columnResizeMode: ColumnResizeMode
-  stickyLayout: DataTableStickyLayout
+  filterDefinitions: AppDataTableFilterDefinition<TData>[];
+  table: Table<TData>;
+  stickyHeader: boolean;
+  enableColumnResizing: boolean;
+  columnResizeMode: ColumnResizeMode;
+  stickyLayout: DataTableStickyLayout;
+  stickyActiveColumnIds: ReadonlySet<string>;
+  stickyActiveEdgeColumnId?: string;
 }
 
 function DataTableHeader<TData>({
+  filterDefinitions,
   table,
   stickyHeader,
   enableColumnResizing,
   columnResizeMode,
   stickyLayout,
+  stickyActiveColumnIds,
+  stickyActiveEdgeColumnId,
 }: DataTableHeaderProps<TData>) {
+  const { messages } = useAppLocale();
+  const filterDefinitionsByColumn = useMemo(
+    () =>
+      new Map(
+        filterDefinitions.map((definition) => [
+          definition.columnId,
+          definition,
+        ]),
+      ),
+    [filterDefinitions],
+  );
+
   return (
     <thead>
       {table.getHeaderGroups().map((headerGroup) => (
         <tr key={headerGroup.id}>
           {headerGroup.headers.map((header) => {
-            const sorted = header.column.getIsSorted()
-            const canSort = header.column.getCanSort()
-            const canResize = enableColumnResizing && header.column.getCanResize()
-            const isResizing = header.column.getIsResizing()
+            const sorted = header.column.getIsSorted();
+            const canSort = header.column.getCanSort();
+            const canResize =
+              enableColumnResizing && header.column.getCanResize();
+            const isResizing = header.column.getIsResizing();
             const resizeOffset =
-              columnResizeMode === 'onEnd' && isResizing
-                ? table.getState().columnSizingInfo.deltaOffset ?? 0
-                : 0
-            const resizeHandler = header.getResizeHandler()
+              columnResizeMode === "onEnd" && isResizing
+                ? (table.getState().columnSizingInfo.deltaOffset ?? 0)
+                : 0;
+            const resizeHandler = header.getResizeHandler();
+            const isSelection =
+              header.column.id === APP_DATA_TABLE_SELECTION_COLUMN_ID;
+            const columnFilter = filterDefinitionsByColumn.get(
+              header.column.id,
+            );
+            const isStickyColumn = stickyLayout.offsets.has(header.column.id);
+            const pinned = header.column.getIsPinned();
+            const isPinnedColumn = !isSelection && pinned !== false;
+            const columnPosition = isStickyColumn
+              ? "sticky"
+              : isPinnedColumn
+                ? "pinned"
+                : undefined;
+            const columnPositionLabel =
+              columnPosition === "sticky"
+                ? messages.dataTable.stickyColumn(header.column.id)
+                : columnPosition === "pinned"
+                  ? messages.dataTable.pinnedColumn(header.column.id)
+                  : undefined;
 
             return (
               <th
                 aria-sort={
-                  sorted === 'asc'
-                    ? 'ascending'
-                    : sorted === 'desc'
-                      ? 'descending'
+                  sorted === "asc"
+                    ? "ascending"
+                    : sorted === "desc"
+                      ? "descending"
                       : canSort
-                        ? 'none'
+                        ? "none"
                         : undefined
                 }
                 colSpan={header.colSpan}
@@ -493,14 +759,23 @@ function DataTableHeader<TData>({
                 data-pinned={header.column.getIsPinned() || undefined}
                 data-pinned-edge={getPinnedEdge(header.column)}
                 data-sticky-column={
-                  stickyLayout.offsets.has(header.column.id) || undefined
+                  isStickyColumn || undefined
                 }
                 data-sticky-edge={
                   stickyLayout.edgeColumnId === header.column.id
-                    ? 'left'
+                    ? "left"
+                    : undefined
+                }
+                data-sticky-active={
+                  stickyActiveColumnIds.has(header.column.id) || undefined
+                }
+                data-sticky-active-edge={
+                  stickyActiveEdgeColumnId === header.column.id
+                    ? "left"
                     : undefined
                 }
                 key={header.id}
+                role="columnheader"
                 style={getPositionedColumnStyles(
                   header.column,
                   true,
@@ -509,27 +784,91 @@ function DataTableHeader<TData>({
                 )}
               >
                 <div className="app-data-table__header-content">
-                  {header.isPlaceholder ? null : canSort ? (
-                    <button
-                      className="app-data-table__sort-button"
-                      type="button"
-                      onClick={header.column.getToggleSortingHandler()}
-                    >
-                      <span>
-                        {flexRender(
-                          header.column.columnDef.header,
-                          header.getContext(),
-                        )}
-                      </span>
-                      <span aria-hidden="true" className="app-data-table__sort-indicator">
-                        {sorted === 'asc' ? '↑' : sorted === 'desc' ? '↓' : ''}
-                      </span>
-                    </button>
+                  {header.isPlaceholder ? null : isSelection ? (
+                    <div className="app-data-table__header-label app-data-table__header-label--control">
+                      {flexRender(
+                        header.column.columnDef.header,
+                        header.getContext(),
+                      )}
+                    </div>
                   ) : (
-                    flexRender(
-                      header.column.columnDef.header,
-                      header.getContext(),
-                    )
+                    <>
+                      {canSort ? (
+                        <button
+                          className="app-data-table__sort-button"
+                          type="button"
+                          onClick={header.column.getToggleSortingHandler()}
+                        >
+                          <span className="app-data-table__header-title">
+                            <span className="app-data-table__header-text">
+                              {flexRender(
+                                header.column.columnDef.header,
+                                header.getContext(),
+                              )}
+                            </span>
+                            {columnPosition && columnPositionLabel ? (
+                              <span
+                                aria-label={columnPositionLabel}
+                                className="app-data-table__column-position-indicator"
+                                data-column-position={columnPosition}
+                                role="img"
+                                title={columnPositionLabel}
+                              >
+                                <Pin16Regular
+                                  aria-hidden="true"
+                                  focusable="false"
+                                />
+                              </span>
+                            ) : null}
+                          </span>
+                        </button>
+                      ) : (
+                        <div className="app-data-table__header-label">
+                          <span className="app-data-table__header-title">
+                            <span className="app-data-table__header-text">
+                              {flexRender(
+                                header.column.columnDef.header,
+                                header.getContext(),
+                              )}
+                            </span>
+                            {columnPosition && columnPositionLabel ? (
+                              <span
+                                aria-label={columnPositionLabel}
+                                className="app-data-table__column-position-indicator"
+                                data-column-position={columnPosition}
+                                role="img"
+                                title={columnPositionLabel}
+                              >
+                                <Pin16Regular
+                                  aria-hidden="true"
+                                  focusable="false"
+                                />
+                              </span>
+                            ) : null}
+                          </span>
+                        </div>
+                      )}
+                      <div className="app-data-table__header-actions">
+                        <span
+                          aria-hidden="true"
+                          className="app-data-table__header-status"
+                        >
+                          {sorted ? (
+                            <span className="app-data-table__sort-indicator">
+                              {sorted === "asc" ? (
+                                <ArrowSortUp16Regular focusable="false" />
+                              ) : (
+                                <ArrowSortDown16Regular focusable="false" />
+                              )}
+                            </span>
+                          ) : null}
+                        </span>
+                        <DataTableColumnMenu
+                          column={header.column}
+                          filterDefinition={columnFilter}
+                        />
+                      </div>
+                    </>
                   )}
                 </div>
                 {canResize ? (
@@ -539,51 +878,57 @@ function DataTableHeader<TData>({
                     data-resizing={isResizing || undefined}
                     style={{ transform: `translateX(${resizeOffset}px)` }}
                     onDoubleClick={(event) => {
-                      event.stopPropagation()
-                      header.column.resetSize()
+                      event.stopPropagation();
+                      header.column.resetSize();
                     }}
                     onMouseDown={(event) => {
-                      event.stopPropagation()
-                      resizeHandler(event)
+                      event.stopPropagation();
+                      resizeHandler(event);
                     }}
                     onTouchStart={(event) => {
-                      event.stopPropagation()
-                      resizeHandler(event)
+                      event.stopPropagation();
+                      resizeHandler(event);
                     }}
                   >
                     <span className="app-data-table__resize-indicator" />
                   </div>
                 ) : null}
               </th>
-            )
+            );
           })}
         </tr>
       ))}
     </thead>
-  )
+  );
 }
 
 interface DataTableFrameProps<TData> {
-  table: Table<TData>
-  density: 'comfortable' | 'compact'
-  stickyHeader: boolean
-  maxHeight?: number | string
-  enableColumnResizing: boolean
-  columnResizeMode: ColumnResizeMode
-  loading: boolean
-  controls?: ReactNode
-  pagination?: ReactNode
-  state?: 'empty' | 'loading'
-  stateContent?: ReactNode
-  scrollRef?: RefObject<HTMLDivElement | null>
-  virtualized?: boolean
-  stickyLayout: DataTableStickyLayout
-  className?: string
-  style?: CSSProperties
-  children: ReactNode
+  filterDefinitions: AppDataTableFilterDefinition<TData>[];
+  table: Table<TData>;
+  density: "comfortable" | "compact";
+  stickyHeader: boolean;
+  maxHeight?: number | string;
+  enableColumnResizing: boolean;
+  columnResizeMode: ColumnResizeMode;
+  loading: boolean;
+  controls?: ReactNode;
+  pagination?: ReactNode;
+  state?: "empty" | "loading";
+  stateContent?: ReactNode;
+  scrollRef?: RefObject<HTMLDivElement | null>;
+  virtualized?: boolean;
+  stickyLayout: DataTableStickyLayout;
+  stickyActiveColumnIds: ReadonlySet<string>;
+  stickyActiveEdgeColumnId?: string;
+  selectionEnabled: boolean;
+  selectionMode: "single" | "multiple";
+  className?: string;
+  style?: CSSProperties;
+  children: ReactNode;
 }
 
 export function DataTableFrame<TData>({
+  filterDefinitions,
   table,
   density,
   stickyHeader,
@@ -598,23 +943,29 @@ export function DataTableFrame<TData>({
   scrollRef,
   virtualized = false,
   stickyLayout,
+  stickyActiveColumnIds,
+  stickyActiveEdgeColumnId,
+  selectionEnabled,
+  selectionMode,
   className,
   style,
   children,
 }: DataTableFrameProps<TData>) {
-  const tableWidth = table.getTotalSize()
+  const tableWidth = table.getTotalSize();
 
   return (
     <div
-      className={`app-data-table app-data-table--${density} ${stickyHeader ? 'app-data-table--sticky-header' : ''} ${controls ? 'app-data-table--with-controls' : ''} ${pagination ? 'app-data-table--with-pagination' : ''} ${virtualized ? 'app-data-table--virtualized' : ''} ${className ?? ''}`.trim()}
+      className={`app-data-table app-data-table--${density} ${stickyHeader ? "app-data-table--sticky-header" : ""} ${controls ? "app-data-table--with-controls" : ""} ${pagination ? "app-data-table--with-pagination" : ""} ${virtualized ? "app-data-table--virtualized" : ""} ${selectionEnabled ? `app-data-table--selection-${selectionMode}` : ""} ${className ?? ""}`.trim()}
       style={style}
     >
       {controls}
       <div
         className={[
-          'app-data-table__viewport',
-          state ? 'app-data-table__viewport--with-state' : '',
-        ].filter(Boolean).join(' ')}
+          "app-data-table__viewport",
+          state ? "app-data-table__viewport--with-state" : "",
+        ]
+          .filter(Boolean)
+          .join(" ")}
         style={{ maxHeight }}
       >
         <AppScrollArea
@@ -627,13 +978,24 @@ export function DataTableFrame<TData>({
         >
           <table
             aria-busy={loading || undefined}
+            aria-colcount={table.getVisibleLeafColumns().length}
+            aria-multiselectable={
+              selectionEnabled && selectionMode === "multiple"
+                ? true
+                : undefined
+            }
+            aria-rowcount={table.getRowModel().rows.length}
             className="app-data-table__table"
+            role="grid"
             style={{ width: tableWidth, minWidth: tableWidth }}
           >
             <DataTableHeader
               columnResizeMode={columnResizeMode}
               enableColumnResizing={enableColumnResizing}
+              filterDefinitions={filterDefinitions}
               stickyHeader={stickyHeader}
+              stickyActiveColumnIds={stickyActiveColumnIds}
+              stickyActiveEdgeColumnId={stickyActiveEdgeColumnId}
               stickyLayout={stickyLayout}
               table={table}
             />
@@ -644,7 +1006,7 @@ export function DataTableFrame<TData>({
           <div
             className="app-data-table__state-overlay"
             data-state={state}
-            role={state === 'loading' ? 'status' : undefined}
+            role={state === "loading" ? "status" : undefined}
           >
             {stateContent}
           </div>
@@ -652,74 +1014,155 @@ export function DataTableFrame<TData>({
       </div>
       {pagination}
     </div>
-  )
+  );
 }
 
 interface DataTableRowProps<TData> {
-  row: Row<TData>
-  stickyHeader: boolean
-  onRowClick?: AppDataTableProps<TData>['onRowClick']
-  onRowContextMenu?: AppDataTableProps<TData>['onRowContextMenu']
-  rowHeight?: number
-  stickyLayout: DataTableStickyLayout
+  row: Row<TData>;
+  isSelected: boolean;
+  isSomeSelected: boolean;
+  canSelect: boolean;
+  stickyHeader: boolean;
+  onRowClick?: AppDataTableProps<TData>["onRowClick"];
+  onRowContextMenu?: AppDataTableProps<TData>["onRowContextMenu"];
+  rowHeight?: number;
+  stickyLayout: DataTableStickyLayout;
+  stickyActiveColumnIds: ReadonlySet<string>;
+  stickyActiveEdgeColumnId?: string;
+  cellNavigation?: DataTableCellNavigation;
+  selectionMode?: "single" | "multiple";
 }
 
-export function DataTableRow<TData>({
+function DataTableRowImpl<TData>({
   row,
+  isSelected,
+  isSomeSelected,
+  canSelect,
   stickyHeader,
   onRowClick,
   onRowContextMenu,
   rowHeight,
   stickyLayout,
+  stickyActiveColumnIds,
+  stickyActiveEdgeColumnId,
+  cellNavigation,
+  selectionMode,
 }: DataTableRowProps<TData>) {
+  const selectionState = isSelected
+    ? "selected"
+    : isSomeSelected
+      ? "mixed"
+      : canSelect
+        ? undefined
+        : "disabled";
   const handleClick = (event: MouseEvent<HTMLTableRowElement>) => {
-    if (!onRowClick || isInteractiveTarget(event.target)) return
-    onRowClick(row, event)
-  }
-  const handleKeyDown = (event: KeyboardEvent<HTMLTableRowElement>) => {
-    if (event.key !== 'Enter' || !onRowClick || isInteractiveTarget(event.target)) {
-      return
+    if (isInteractiveTarget(event.target)) return;
+    if (selectionMode === "single" && row.getCanSelect()) {
+      row.toggleSelected(true);
     }
-    event.preventDefault()
-    event.currentTarget.click()
-  }
+    onRowClick?.(row, event);
+  };
   const handleContextMenu = (event: MouseEvent<HTMLTableRowElement>) => {
-    if (!onRowContextMenu || isInteractiveTarget(event.target)) return
-    onRowContextMenu(row, event)
-  }
+    if (!onRowContextMenu || isInteractiveTarget(event.target)) return;
+    onRowContextMenu(row, event);
+  };
 
   return (
     <tr
-      className={onRowClick ? 'app-data-table__row--clickable' : undefined}
-      data-selected={row.getIsSelected() || undefined}
-      tabIndex={onRowClick ? 0 : undefined}
+      className={
+        onRowClick || selectionMode === "single"
+          ? "app-data-table__row--clickable"
+          : undefined
+      }
+      data-row-id={row.id}
+      data-selected={isSelected || undefined}
+      data-selection-state={selectionState}
       style={rowHeight !== undefined ? { height: rowHeight } : undefined}
       onClick={handleClick}
       onContextMenu={onRowContextMenu ? handleContextMenu : undefined}
-      onKeyDown={handleKeyDown}
     >
-      {row.getVisibleCells().map((cell) => (
-        <td
-          data-column-id={cell.column.id}
-          data-pinned={cell.column.getIsPinned() || undefined}
-          data-pinned-edge={getPinnedEdge(cell.column)}
-          data-sticky-column={
-            stickyLayout.offsets.has(cell.column.id) || undefined
-          }
-          data-sticky-edge={
-            stickyLayout.edgeColumnId === cell.column.id ? 'left' : undefined
-          }
-          key={cell.id}
-          style={getPositionedColumnStyles(
-            cell.column,
-            false,
-            stickyHeader,
-            stickyLayout,
-          )}
-        >
-          {flexRender(cell.column.columnDef.cell, cell.getContext())}
-        </td>
-      ))}
+      {row.getVisibleCells().map((cell) => {
+        const navigable = !isAppDataTableInternalColumn(cell.column.id);
+        const active =
+          navigable &&
+          cellNavigation?.activeCell?.rowId === row.id &&
+          cellNavigation.activeCell.columnId === cell.column.id;
+
+        return (
+          <td
+            data-active-cell={active || undefined}
+            data-column-id={cell.column.id}
+            data-grid-cell={navigable || undefined}
+            data-pinned={cell.column.getIsPinned() || undefined}
+            data-pinned-edge={getPinnedEdge(cell.column)}
+            data-sticky-column={
+              stickyLayout.offsets.has(cell.column.id) || undefined
+            }
+            data-sticky-edge={
+              stickyLayout.edgeColumnId === cell.column.id ? "left" : undefined
+            }
+            data-sticky-active={
+              stickyActiveColumnIds.has(cell.column.id) || undefined
+            }
+            data-sticky-active-edge={
+              stickyActiveEdgeColumnId === cell.column.id ? "left" : undefined
+            }
+            key={cell.id}
+            role="gridcell"
+            tabIndex={navigable ? (active ? 0 : -1) : undefined}
+            style={getPositionedColumnStyles(
+              cell.column,
+              false,
+              stickyHeader,
+              stickyLayout,
+            )}
+            onClick={
+              navigable && cellNavigation
+                ? (event) =>
+                    cellNavigation.activateCell(
+                      row.id,
+                      cell.column.id,
+                      event.currentTarget,
+                      !isInteractiveTarget(event.target),
+                    )
+                : undefined
+            }
+            onFocus={
+              navigable && cellNavigation
+                ? (event) =>
+                    cellNavigation.activateCell(
+                      row.id,
+                      cell.column.id,
+                      event.currentTarget,
+                      false,
+                    )
+                : undefined
+            }
+            onKeyDown={
+              navigable && cellNavigation
+                ? (event) => {
+                    if (isInteractiveTarget(event.target)) return;
+                    if (
+                      event.key === "Enter" &&
+                      (onRowClick || selectionMode === "single")
+                    ) {
+                      event.preventDefault();
+                      event.currentTarget.closest("tr")?.click();
+                      return;
+                    }
+                    cellNavigation.onKeyDown(row.id, cell.column.id, event);
+                  }
+                : undefined
+            }
+          >
+            <div className="app-data-table__cell-content">
+              {flexRender(cell.column.columnDef.cell, cell.getContext())}
+            </div>
+          </td>
+        );
+      })}
     </tr>
-  )
+  );
 }
+
+export const DataTableRow = memo(DataTableRowImpl) as typeof DataTableRowImpl;

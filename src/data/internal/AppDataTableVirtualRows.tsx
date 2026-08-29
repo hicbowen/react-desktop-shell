@@ -4,6 +4,7 @@ import { useVirtualizer } from '@tanstack/react-virtual'
 import type { AppDataTableProps } from '../types'
 import {
   DataTableRow,
+  type DataTableCellNavigation,
   type DataTableStickyLayout,
 } from './dataTableCore'
 
@@ -23,6 +24,11 @@ interface AppDataTableVirtualRowsProps<TData> {
   pageSize?: number
   initialViewportHeight?: number
   stickyLayout: DataTableStickyLayout
+  stickyActiveColumnIds: ReadonlySet<string>
+  stickyActiveEdgeColumnId?: string
+  cellNavigation: DataTableCellNavigation
+  registerScrollToIndex: (handler: ((index: number) => void) | null) => void
+  selectionMode?: 'single' | 'multiple'
 }
 
 function DataTableVirtualSpacerRow({
@@ -55,6 +61,11 @@ export default function AppDataTableVirtualRows<TData>({
   pageSize,
   initialViewportHeight,
   stickyLayout,
+  stickyActiveColumnIds,
+  stickyActiveEdgeColumnId,
+  cellNavigation,
+  registerScrollToIndex,
+  selectionMode,
 }: AppDataTableVirtualRowsProps<TData>) {
   const didMountRef = useRef(false)
   // TanStack Virtual intentionally exposes mutable virtualizer helpers.
@@ -74,6 +85,11 @@ export default function AppDataTableVirtualRows<TData>({
   const lastItem = virtualItems[virtualItems.length - 1]
   const paddingTop = firstItem?.start ?? 0
   const paddingBottom = virtualizer.getTotalSize() - (lastItem?.end ?? 0)
+
+  useEffect(() => {
+    registerScrollToIndex((index) => virtualizer.scrollToIndex(index, { align: 'auto' }))
+    return () => registerScrollToIndex(null)
+  }, [registerScrollToIndex, virtualizer])
 
   useEffect(() => {
     if (!didMountRef.current) {
@@ -104,12 +120,19 @@ export default function AppDataTableVirtualRows<TData>({
 
         return (
           <DataTableRow
+            cellNavigation={cellNavigation}
+            canSelect={row.getCanSelect()}
+            isSelected={row.getIsSelected()}
+            isSomeSelected={row.getIsSomeSelected()}
             key={row.id}
             onRowClick={onRowClick}
             onRowContextMenu={onRowContextMenu}
             row={row}
             rowHeight={rowHeight}
+            selectionMode={selectionMode}
             stickyHeader={stickyHeader}
+            stickyActiveColumnIds={stickyActiveColumnIds}
+            stickyActiveEdgeColumnId={stickyActiveEdgeColumnId}
             stickyLayout={stickyLayout}
           />
         )

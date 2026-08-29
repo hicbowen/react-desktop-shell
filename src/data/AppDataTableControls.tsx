@@ -1,126 +1,37 @@
-import {
-  useId,
-  useRef,
-  useState,
-  type KeyboardEvent,
-  type ReactNode,
-} from 'react'
-import { createPortal } from 'react-dom'
 import type { Table } from '@tanstack/react-table'
 import { Dismiss16Regular } from '@fluentui/react-icons/svg/dismiss'
-import { Filter16Regular } from '@fluentui/react-icons/svg/filter'
 import { Search16Regular } from '@fluentui/react-icons/svg/search'
-import { useAppOverlayHost } from '../overlay/AppOverlayHostContext'
-import { useAnchoredOverlayPosition } from '../overlay/useAnchoredOverlayPosition'
-import { useOverlayDismiss } from '../overlay/useOverlayDismiss'
 import { useAppLocale } from '../localization/useAppLocale'
-import type { AppLocaleMessages } from '../localization/types'
-import { AppScrollArea } from '../scroll-area/AppScrollArea'
-import { CheckMark } from '../selection-controls/CheckBoxIndicator'
-import type {
-  AppDataTableControlsOptions,
-  AppDataTableFilterDefinition,
-} from './types'
-
-function hasFilterValue(value: unknown) {
-  if (Array.isArray(value)) {
-    return value.length > 0
-  }
-  return value !== undefined && value !== null && value !== ''
-}
-
-function accessibleLabel(
-  label: ReactNode,
-  index: number,
-  locale: AppLocaleMessages['dataTable'],
-) {
-  return typeof label === 'string' || typeof label === 'number'
-    ? String(label)
-    : locale.unnamedFilter(index)
-}
-
-function activateWithKeyboard(
-  event: KeyboardEvent<HTMLButtonElement>,
-  action: () => void,
-) {
-  if (event.key !== 'Enter' && event.key !== ' ') {
-    return
-  }
-
-  event.preventDefault()
-  action()
-}
+import type { AppDataTableControlsOptions } from './types'
+import { hasFilterValue } from './internal/dataTableFilters'
 
 interface AppDataTableControlsProps<TData> {
   table: Table<TData>
   options: AppDataTableControlsOptions<TData>
-  filterDefinitions: AppDataTableFilterDefinition<TData>[]
 }
-
-const FILTER_MENU_GAP = 5
-const FILTER_MENU_MAX_HEIGHT = 420
-const FILTER_MENU_MAX_WIDTH = 340
-const FILTER_MENU_MIN_WIDTH = 260
-const FILTER_MENU_VIEWPORT_PADDING = 8
 
 export function AppDataTableControls<TData>({
   table,
   options,
-  filterDefinitions,
 }: AppDataTableControlsProps<TData>) {
   const { messages } = useAppLocale()
   const locale = messages.dataTable
-  const [menuOpen, setMenuOpen] = useState(false)
-  const filterButtonRef = useRef<HTMLButtonElement | null>(null)
-  const menuRef = useRef<HTMLDivElement | null>(null)
-  const overlayHost = useAppOverlayHost()
-  const menuId = useId()
   const searchEnabled = options.search === true
   const globalFilter = table.getState().globalFilter
   const searchValue = typeof globalFilter === 'string' ? globalFilter : ''
   const activeColumnFilters = table
     .getState()
     .columnFilters.filter((filter) => hasFilterValue(filter.value))
-  const activeFilterCount = activeColumnFilters.length
   const hasActiveSearch = searchValue.length > 0
-  const hasActiveControls = hasActiveSearch || activeFilterCount > 0
-  const showFilters = filterDefinitions.length > 0
-  const closeMenu = () => setMenuOpen(false)
-  const menuPosition = useAnchoredOverlayPosition({
-    open: menuOpen,
-    triggerRef: filterButtonRef,
-    overlayRef: menuRef,
-    preferredPlacement: 'bottom-end',
-    gap: FILTER_MENU_GAP,
-    viewportPadding: FILTER_MENU_VIEWPORT_PADDING,
-    maxHeight: FILTER_MENU_MAX_HEIGHT,
-    maxWidth: FILTER_MENU_MAX_WIDTH,
-    dependencies: [activeFilterCount],
-  })
+  const hasActiveControls = hasActiveSearch || activeColumnFilters.length > 0
 
-  useOverlayDismiss({
-    open: menuOpen,
-    triggerRef: filterButtonRef,
-    overlayRef: menuRef,
-    onDismiss: closeMenu,
-    restoreFocus: true,
-  })
-
-  if (!searchEnabled && !showFilters) {
+  if (!searchEnabled && !(options.clearAll === true && hasActiveControls)) {
     return null
   }
 
   const clearAll = () => {
     table.setGlobalFilter('')
     table.setColumnFilters([])
-  }
-
-  const toggleFilterMenu = () => {
-    setMenuOpen((current) => !current)
-  }
-
-  const openFilterMenu = () => {
-    setMenuOpen(true)
   }
 
   return (
@@ -136,7 +47,9 @@ export function AppDataTableControls<TData>({
             placeholder={locale.searchPlaceholder}
             type="search"
             value={searchValue}
-            onChange={(event) => table.setGlobalFilter(event.currentTarget.value)}
+            onChange={(event) =>
+              table.setGlobalFilter(event.currentTarget.value)
+            }
           />
           {hasActiveSearch ? (
             <button
@@ -148,189 +61,6 @@ export function AppDataTableControls<TData>({
               <Dismiss16Regular aria-hidden="true" focusable="false" />
             </button>
           ) : null}
-        </div>
-      ) : null}
-
-      {showFilters ? (
-        <div className="app-data-table__filter">
-          <button
-            ref={filterButtonRef}
-            aria-controls={menuOpen ? menuId : undefined}
-            aria-expanded={menuOpen}
-            aria-haspopup="menu"
-            aria-label={
-              activeFilterCount > 0
-                ? locale.activeFilters(activeFilterCount)
-                : locale.filters
-            }
-            className="app-data-table__filter-button"
-            type="button"
-            onClick={toggleFilterMenu}
-            onKeyDown={(event) => {
-              if (event.key === 'ArrowDown') {
-                event.preventDefault()
-                openFilterMenu()
-                return
-              }
-              activateWithKeyboard(event, toggleFilterMenu)
-            }}
-          >
-            <Filter16Regular aria-hidden="true" focusable="false" />
-            <span>{locale.filters}</span>
-            {activeFilterCount > 0 ? (
-              <span
-                aria-hidden="true"
-                className="app-data-table__filter-count"
-              >
-                {activeFilterCount}
-              </span>
-            ) : null}
-          </button>
-
-          {menuOpen
-            ? (() => {
-                const menu = (
-                  <div
-                    ref={menuRef}
-                    aria-label={locale.filters}
-                    className="app-data-table__filter-menu"
-                    data-placement={menuPosition.placement}
-                    id={menuId}
-                    role="menu"
-                    style={{
-                      left: menuPosition.x,
-                      maxHeight: menuPosition.measured
-                        ? menuPosition.maxHeight
-                        : FILTER_MENU_MAX_HEIGHT,
-                      maxWidth: menuPosition.measured
-                        ? menuPosition.maxWidth
-                        : undefined,
-                      minWidth: menuPosition.measured
-                        ? Math.min(
-                            FILTER_MENU_MIN_WIDTH,
-                            menuPosition.maxWidth,
-                          )
-                        : undefined,
-                      pointerEvents: menuPosition.measured
-                        ? undefined
-                        : 'none',
-                      top: menuPosition.y,
-                      visibility: menuPosition.measured ? 'visible' : 'hidden',
-                    }}
-                  >
-                    <AppScrollArea
-                      className="app-data-table__filter-menu-scroll"
-                      viewportClassName="app-data-table__filter-menu-content"
-                    >
-              {filterDefinitions.map((definition, index) => {
-                const column = table.getColumn(definition.columnId)
-                if (!column) {
-                  return null
-                }
-
-                const mode = definition.mode ?? 'single'
-                const value = column.getFilterValue()
-                const selectedValues = Array.isArray(value)
-                  ? value.map(String)
-                  : []
-                const fieldActive = hasFilterValue(value)
-                const labelId = `${menuId}-group-${index}`
-                const label = accessibleLabel(definition.label, index, locale)
-
-                return (
-                  <div
-                    aria-labelledby={labelId}
-                    className="app-data-table__filter-group"
-                    key={definition.columnId}
-                    role="group"
-                  >
-                    <div className="app-data-table__filter-group-header">
-                      <span id={labelId}>{definition.label}</span>
-                      {fieldActive ? (
-                        <button
-                          aria-label={locale.clearFilterAriaLabel(label)}
-                          className="app-data-table__filter-clear"
-                          role="menuitem"
-                          type="button"
-                          onClick={() => column.setFilterValue(undefined)}
-                        >
-                          {locale.clearFilter}
-                        </button>
-                      ) : null}
-                    </div>
-
-                    <div className="app-data-table__filter-options">
-                      {definition.options.map((option) => {
-                        const checked =
-                          mode === 'multiple'
-                            ? selectedValues.includes(option.value)
-                            : String(value ?? '') === option.value
-                        const selectOption = () => {
-                          if (mode === 'multiple') {
-                            const next = checked
-                              ? selectedValues.filter(
-                                  (selected) => selected !== option.value,
-                                )
-                              : [...selectedValues, option.value]
-                            column.setFilterValue(
-                              next.length > 0 ? next : undefined,
-                            )
-                            return
-                          }
-
-                          column.setFilterValue(option.value)
-                        }
-
-                        return (
-                          <button
-                            aria-checked={checked}
-                            className="app-data-table__filter-option"
-                            key={option.value}
-                            role={
-                              mode === 'multiple'
-                                ? 'menuitemcheckbox'
-                                : 'menuitemradio'
-                            }
-                            type="button"
-                            onClick={selectOption}
-                            onKeyDown={(event) =>
-                              activateWithKeyboard(event, selectOption)
-                            }
-                          >
-                            <span
-                              aria-hidden="true"
-                              className="app-data-table__filter-check"
-                            >
-                              {checked ? <CheckMark /> : null}
-                            </span>
-                            <span>{option.label}</span>
-                          </button>
-                        )
-                      })}
-                    </div>
-                  </div>
-                )
-              })}
-
-              {activeFilterCount > 0 ? (
-                <div className="app-data-table__filter-menu-footer">
-                  <button
-                    className="app-data-table__filter-clear-all"
-                    role="menuitem"
-                    type="button"
-                    onClick={() => table.setColumnFilters([])}
-                  >
-                    {locale.clearFilters}
-                  </button>
-                </div>
-              ) : null}
-                    </AppScrollArea>
-                  </div>
-                )
-
-                return overlayHost ? createPortal(menu, overlayHost) : menu
-              })()
-            : null}
         </div>
       ) : null}
 

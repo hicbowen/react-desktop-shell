@@ -1,5 +1,6 @@
 import {
   useEffect,
+  useLayoutEffect,
   useRef,
   useState,
   type InputHTMLAttributes,
@@ -10,9 +11,14 @@ import '../selection-controls/AppSelectionControls.css'
 interface DataTableCheckboxProps
   extends Omit<InputHTMLAttributes<HTMLInputElement>, 'type'> {
   indeterminate?: boolean
+  animateIndicator?: boolean
 }
 
+const useBrowserLayoutEffect =
+  typeof window === 'undefined' ? useEffect : useLayoutEffect
+
 export function DataTableCheckbox({
+  animateIndicator = true,
   checked,
   className,
   defaultChecked = false,
@@ -24,8 +30,13 @@ export function DataTableCheckbox({
   const inputRef = useRef<HTMLInputElement>(null)
   const [internalChecked, setInternalChecked] = useState(defaultChecked)
   const resolvedChecked = checked ?? internalChecked
+  const visualState = indeterminate
+    ? 'mixed'
+    : resolvedChecked
+      ? 'checked'
+      : 'unchecked'
 
-  useEffect(() => {
+  useBrowserLayoutEffect(() => {
     if (inputRef.current) {
       inputRef.current.indeterminate = indeterminate
     }
@@ -36,8 +47,12 @@ export function DataTableCheckbox({
       className={[
         'app-check-box',
         'app-data-table__checkbox-control',
+        !animateIndicator
+          ? 'app-data-table__checkbox-control--static-indicator'
+          : '',
         props.disabled ? 'app-check-box--disabled' : '',
       ].filter(Boolean).join(' ')}
+      data-state={visualState}
       onClick={(event) => event.stopPropagation()}
     >
       <input
@@ -57,6 +72,7 @@ export function DataTableCheckbox({
         type="checkbox"
       />
       <CheckBoxIndicator
+        animated={animateIndicator}
         checked={resolvedChecked}
         indeterminate={indeterminate}
       />

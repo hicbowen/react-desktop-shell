@@ -31,7 +31,9 @@ export interface AppDataTableFilterDefinition<TData> {
 }
 
 export interface AppDataTableControlsOptions<TData> {
+  /** Render the global row search field above the table. */
   search?: boolean
+  /** Render each definition in the matching column's menu. */
   filters?: AppDataTableFilterDefinition<TData>[]
   /** Show a button that clears both search and filters. Defaults to false. */
   clearAll?: boolean
@@ -51,7 +53,7 @@ export interface AppDataTableVirtualizationOptions {
   /**
    * Fixed rendered row height in pixels.
    *
-   * Defaults to 48 for comfortable density and 38 for compact density.
+   * Defaults to 38 for compact density and 48 for comfortable density.
    */
   rowHeight?: number
   /** Number of extra rows rendered before and after the visible area. */
@@ -62,6 +64,8 @@ export interface AppDataTableSelectionOptions<TData> {
   value: RowSelectionState
   onChange: OnChangeFn<RowSelectionState>
   enableRowSelection?: TableOptions<TData>['enableRowSelection']
+  /** Single uses a narrow accent-indicator column; multiple uses a wider checkbox column. Defaults to multiple. */
+  mode?: 'single' | 'multiple'
   selectAllMode?: 'all' | 'filtered' | 'page'
 }
 
@@ -116,11 +120,9 @@ export interface AppDataTableProps<TData> {
   loading?: boolean
   loadingContent?: ReactNode
   emptyContent?: ReactNode
+  /** Visual density. Defaults to compact. */
   density?: 'comfortable' | 'compact'
-  onRowClick?: (
-    row: Row<TData>,
-    event: MouseEvent<HTMLTableRowElement>,
-  ) => void
+  onRowClick?: (row: Row<TData>, event: MouseEvent<HTMLTableRowElement>) => void
   /**
    * Called when the user opens the context menu on a non-interactive
    * area of a data row.

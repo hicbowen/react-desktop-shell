@@ -1,7 +1,15 @@
 import type { ColumnDef, FilterFn } from '@tanstack/react-table'
 import type { AppDataTableFilterDefinition } from '../types'
 
-function getColumnDefinitionId<TData>(column: ColumnDef<TData>) {
+export function hasFilterValue(value: unknown) {
+  if (Array.isArray(value)) {
+    return value.length > 0
+  }
+
+  return value !== undefined && value !== null && value !== ''
+}
+
+export function getColumnDefinitionId<TData>(column: ColumnDef<TData>) {
   if (column.id) {
     return column.id
   }
