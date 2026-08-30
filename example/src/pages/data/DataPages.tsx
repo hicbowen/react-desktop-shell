@@ -1,7 +1,8 @@
 import type { ColumnPinningState, RowSelectionState, SortingState } from '@tanstack/react-table'
 import { useCallback, useMemo, useState } from 'react'
+import { Copy } from '../../components/fluentIcons'
 import { AppButton, AppEmptyState, AppSegmentedControl, AppSelect, AppToggleSwitch, AppToolbar, useAppContextMenu, useAppToast } from '../../../../src'
-import { AppDataTable, AppDataView, AppSelectionBar, type AppDataTableProps } from '../../../../src/data'
+import { AppDataTable, AppDataView, AppSelectionBar, type AppDataTableCellRange, type AppDataTableProps } from '../../../../src/data'
 import { DemoControls, DemoPage, DemoPreview, DemoSection } from '../../components/DemoPage'
 import { tableRows, type DemoRow } from '../../fixtures/tableRows'
 import { useDemoCopy } from '../../i18n/interactiveTranslations'
@@ -22,6 +23,7 @@ export function AppDataTablePage() {
   const [virtualized, setVirtualized] = useState(false)
   const [stickyCategory, setStickyCategory] = useState(true)
   const [pinCategory, setPinCategory] = useState(false)
+  const [cellRange, setCellRange] = useState<AppDataTableCellRange | null>(null)
   const columnPinning = useMemo<ColumnPinningState>(
     () => (pinCategory ? { left: ['category'] } : {}),
     [pinCategory],
@@ -29,14 +31,45 @@ export function AppDataTablePage() {
   const count = Object.values(selection).filter(Boolean).length
   const columns = useMemo(() => createColumns(t), [t])
   const tableControls = useMemo(() => createTableControls(t), [t])
+  const copyCellSelection = useCallback(() => {
+    const activeCell = document.querySelector<HTMLElement>(
+      '.app-data-table td[data-active-cell="true"]',
+    )
+    activeCell?.focus({ preventScroll: true })
+
+    let copied = false
+    try {
+      copied = document.execCommand?.('copy') ?? false
+    } catch {
+      copied = false
+    }
+    toast.info(
+      copied
+        ? t('Selected cells copied.')
+        : t('Use Ctrl+C to copy the selected cells.'),
+    )
+  }, [t, toast])
   const handleRowContextMenu = useCallback<
     NonNullable<AppDataTableProps<DemoRow>['onRowContextMenu']>
   >(
     (row, event) => {
       event.preventDefault()
       const rowName = localizeTableValue(t, row.original.name)
+      const cellSelectionItems = cellRange
+        ? [
+            {
+              key: 'copy-cell-selection',
+              label: t('Copy selected cells'),
+              icon: <Copy />,
+              shortcut: 'Ctrl+C',
+              onClick: copyCellSelection,
+            },
+            { type: 'separator' as const },
+          ]
+        : []
       contextMenu.open({
         items: [
+          ...cellSelectionItems,
           {
             key: 'open',
             label: `${t('Open row')} ${rowName}`,
@@ -61,7 +94,7 @@ export function AppDataTablePage() {
         trigger: event.currentTarget,
       })
     },
-    [contextMenu, t, toast],
+    [cellRange, contextMenu, copyCellSelection, t, toast],
   )
 
   const handleHeightModeChange = (next: 'auto' | 'fixed' | 'fill') => {
@@ -146,6 +179,7 @@ export function AppDataTablePage() {
           />
           <AppToggleSwitch checked={pagination} label={t('Pagination')} onCheckedChange={setPagination} size="compact" />
           <AppToggleSwitch checked={virtualized} disabled={heightMode === 'auto'} label={t('Vertical virtualization')} onCheckedChange={setVirtualized} size="compact" />
+          <span>{t('Drag across cells, then right-click to copy')}</span>
           <span>{t('Right-click a data row for row-specific actions')}</span>
         </DemoControls>
         <AppDataView
@@ -210,7 +244,7 @@ export function AppDataTablePage() {
               mode: selectionMode,
               selectAllMode: 'page',
             }}
-            cellSelection
+            cellSelection={{ value: cellRange, onChange: setCellRange }}
             stickyHeader={sticky}
             stickyColumns={stickyCategory ? ['category'] : undefined}
             columnPinning={columnPinning}

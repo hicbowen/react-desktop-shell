@@ -18,6 +18,13 @@
     --rds-state-selected-border,
     var(--app-shell-accent-color, #115ea3)
   );
+  --app-data-cell-selection-border-color: var(
+    --rds-state-focus-ring,
+    var(--app-data-accent)
+  );
+  /* Keep the active-cell focus ring and range perimeter visually identical. */
+  --app-data-cell-selection-border-width: 2px;
+  --app-data-cell-selection-radius: var(--rds-radius-control, 4px);
   --app-data-control-bg: var(--app-shell-card-bg, #fbfbfb);
   --app-data-control-pressed-bg: var(
     --rds-state-pressed-bg,
@@ -185,8 +192,7 @@
 .app-selection-bar__clear:focus-visible,
 .app-data-table__sort-button:focus-visible,
 .app-data-table__column-menu-button:focus-visible,
-.app-data-table__checkbox:focus-visible,
-.app-data-table td[data-active-cell="true"]:focus {
+.app-data-table__checkbox:focus-visible {
   outline: 2px solid var(--rds-state-focus-ring, var(--app-data-accent));
   outline-offset: -2px;
 }
@@ -1214,14 +1220,19 @@
   );
 }
 
-.app-data-table td[data-active-cell="true"]:focus {
+/* Selected cells use the perimeter; the active ring is only for unselected cells. */
+.app-data-table td[data-active-cell="true"]:focus:not([data-cell-selected="true"]) {
   background: var(--app-data-surface-bg);
-  border-radius: var(--rds-radius-control, 4px);
+  border-radius: var(--app-data-cell-selection-radius);
+  outline: var(--app-data-cell-selection-border-width) solid
+    var(--app-data-cell-selection-border-color);
+  outline-offset: -2px;
 }
 
-.app-data-table td[data-active-cell="true"]:focus::before {
+.app-data-table
+  td[data-active-cell="true"]:focus:not([data-cell-selected="true"])::before {
   inset: 2px;
-  border-radius: var(--rds-radius-control, 4px);
+  border-radius: var(--app-data-cell-selection-radius);
   background: color-mix(in srgb, var(--app-data-accent) 6%, transparent);
 }
 
@@ -1232,39 +1243,49 @@
   inset: 0;
   pointer-events: none;
   background: color-mix(in srgb, var(--app-data-accent) 10%, transparent);
-  border-color: var(--app-data-accent);
+  border-color: var(--app-data-cell-selection-border-color);
   border-style: solid;
   border-width: 0;
 }
 
 .app-data-table td[data-cell-range-top="true"]::after {
-  border-top-width: 1px;
+  border-top-width: var(--app-data-cell-selection-border-width);
 }
 
 .app-data-table td[data-cell-range-bottom="true"]::after {
-  border-bottom-width: 1px;
+  border-bottom-width: var(--app-data-cell-selection-border-width);
 }
 
 .app-data-table td[data-cell-range-left="true"]::after {
-  border-left-width: 1px;
+  border-left-width: var(--app-data-cell-selection-border-width);
 }
 
 .app-data-table td[data-cell-range-right="true"]::after {
-  border-right-width: 1px;
+  border-right-width: var(--app-data-cell-selection-border-width);
 }
 
-.app-data-table[data-cell-selecting="true"] tbody td {
-  user-select: none;
-  -webkit-user-select: none;
+.app-data-table
+  td[data-cell-range-top="true"][data-cell-range-left="true"]::after {
+  border-top-left-radius: var(--app-data-cell-selection-radius);
+}
+
+.app-data-table
+  td[data-cell-range-top="true"][data-cell-range-right="true"]::after {
+  border-top-right-radius: var(--app-data-cell-selection-radius);
+}
+
+.app-data-table
+  td[data-cell-range-bottom="true"][data-cell-range-left="true"]::after {
+  border-bottom-left-radius: var(--app-data-cell-selection-radius);
+}
+
+.app-data-table
+  td[data-cell-range-bottom="true"][data-cell-range-right="true"]::after {
+  border-bottom-right-radius: var(--app-data-cell-selection-radius);
 }
 
 .app-data-table__row--clickable {
   cursor: default;
-}
-
-.app-data-table tbody td {
-  user-select: text;
-  -webkit-user-select: text;
 }
 
 @media (max-width: 560px) {

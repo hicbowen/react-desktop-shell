@@ -1063,7 +1063,29 @@ function DataTableRowImpl<TData>({
     onRowClick?.(row, event);
   };
   const handleContextMenu = (event: MouseEvent<HTMLTableRowElement>) => {
-    if (!onRowContextMenu || isDataTableInteractiveTarget(event.target)) return;
+    if (isDataTableInteractiveTarget(event.target)) return;
+    if (cellSelection?.enabled) {
+      const targetCell =
+        event.target instanceof Element
+          ? event.target.closest<HTMLTableCellElement>(
+              'td[data-grid-cell="true"]',
+            )
+          : null;
+      const columnId = targetCell?.dataset.columnId;
+      if (targetCell && columnId) {
+        const position = { rowId: row.id, columnId };
+        if (!cellSelection.getCellState(position).selected) {
+          cellSelection.selectCell(position);
+        }
+        cellNavigation?.activateCell(
+          row.id,
+          columnId,
+          targetCell,
+          true,
+        );
+      }
+    }
+    if (!onRowContextMenu) return;
     onRowContextMenu(row, event);
   };
 
@@ -1079,7 +1101,11 @@ function DataTableRowImpl<TData>({
       data-selection-state={selectionState}
       style={rowHeight !== undefined ? { height: rowHeight } : undefined}
       onClick={handleClick}
-      onContextMenu={onRowContextMenu ? handleContextMenu : undefined}
+      onContextMenu={
+        onRowContextMenu || cellSelection?.enabled
+          ? handleContextMenu
+          : undefined
+      }
     >
       {row.getVisibleCells().map((cell) => {
         const navigable = !isAppDataTableInternalColumn(cell.column.id);

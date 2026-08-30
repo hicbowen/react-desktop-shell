@@ -2185,6 +2185,67 @@ describe("AppDataTable controls", () => {
     ).toHaveLength(4);
   });
 
+  it("moves cell selection to a right-clicked cell outside the current range", () => {
+    const onRowContextMenu = vi.fn();
+    renderTable({ cellSelection: true, onRowContextMenu });
+
+    pointer(cell("2", "name"), "pointerdown", {
+      clientX: 10,
+      clientY: 10,
+    });
+    movePointer(20, 20);
+    pointer(cell("4", "category"), "pointerover");
+    pointer(window, "pointerup");
+    expect(
+      container.querySelectorAll('td[data-cell-selected="true"]'),
+    ).toHaveLength(8);
+
+    contextMenu(cell("1", "status"));
+
+    expect(onRowContextMenu).toHaveBeenCalledOnce();
+    expect(
+      container.querySelectorAll('td[data-cell-selected="true"]'),
+    ).toHaveLength(1);
+    expect(cell("1", "status").dataset.cellSelected).toBe("true");
+    expect(cell("1", "status").dataset.activeCell).toBe("true");
+  });
+
+  it("keeps a controlled range for in-range context menus and moves it outside", () => {
+    const onRowContextMenu = vi.fn();
+    const initialRange: AppDataTableCellRange = {
+      anchor: { rowId: "2", columnId: "name" },
+      focus: { rowId: "4", columnId: "category" },
+    };
+    function Harness() {
+      const [range, setRange] = useState<AppDataTableCellRange | null>(
+        initialRange,
+      );
+      return (
+        <AppDataTable
+          columns={columns}
+          data={data}
+          getRowId={(row) => row.id}
+          cellSelection={{ value: range, onChange: setRange }}
+          onRowContextMenu={onRowContextMenu}
+        />
+      );
+    }
+
+    render(<Harness />);
+    contextMenu(cell("2", "category"));
+    expect(
+      container.querySelectorAll('td[data-cell-selected="true"]'),
+    ).toHaveLength(8);
+    expect(cell("2", "category").dataset.activeCell).toBe("true");
+
+    contextMenu(cell("1", "status"));
+    expect(
+      container.querySelectorAll('td[data-cell-selected="true"]'),
+    ).toHaveLength(1);
+    expect(cell("1", "status").dataset.activeCell).toBe("true");
+    expect(onRowContextMenu).toHaveBeenCalledTimes(2);
+  });
+
   it("does not alter rows when no row context-menu callback is provided", () => {
     renderTable();
     const row = bodyRows()[0]!;
