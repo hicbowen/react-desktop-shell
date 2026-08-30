@@ -1,7 +1,7 @@
 import './AppDataView.css'
 
 export {
-  APP_DATA_TABLE_SELECTION_COLUMN_ID,
+  APP_DATA_TABLE_ROW_SELECTION_COLUMN_ID,
   AppDataTable,
 } from './AppDataTable'
 export { AppDataView } from './AppDataView'
@@ -15,7 +15,10 @@ export type {
   AppDataTableProps,
   AppDataTablePaginationOptions,
   AppDataTableVirtualizationOptions,
-  AppDataTableSelectionOptions,
+  AppDataTableRowSelectionOptions,
+  AppDataTableCellPosition,
+  AppDataTableCellRange,
+  AppDataTableCellSelectionOptions,
   AppDataViewProps,
   AppSelectionBarProps,
 } from './types'

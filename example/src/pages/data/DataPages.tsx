@@ -204,12 +204,13 @@ export function AppDataTablePage() {
             sorting={sorting}
             onSortingChange={setSorting}
             onRowContextMenu={handleRowContextMenu}
-            selection={{
+            rowSelection={{
               value: selection,
               onChange: setSelection,
               mode: selectionMode,
               selectAllMode: 'page',
             }}
+            cellSelection
             stickyHeader={sticky}
             stickyColumns={stickyCategory ? ['category'] : undefined}
             columnPinning={columnPinning}

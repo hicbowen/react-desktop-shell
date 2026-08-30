@@ -7,6 +7,7 @@ import {
   type DataTableCellNavigation,
   type DataTableStickyLayout,
 } from './dataTableCore'
+import type { DataTableCellSelectionInteraction } from './useDataTableCellSelection'
 
 interface AppDataTableVirtualRowsProps<TData> {
   rows: Row<TData>[]
@@ -27,8 +28,9 @@ interface AppDataTableVirtualRowsProps<TData> {
   stickyActiveColumnIds: ReadonlySet<string>
   stickyActiveEdgeColumnId?: string
   cellNavigation: DataTableCellNavigation
+  cellSelection: DataTableCellSelectionInteraction
   registerScrollToIndex: (handler: ((index: number) => void) | null) => void
-  selectionMode?: 'single' | 'multiple'
+  rowSelectionMode?: 'single' | 'multiple'
 }
 
 function DataTableVirtualSpacerRow({
@@ -64,8 +66,9 @@ export default function AppDataTableVirtualRows<TData>({
   stickyActiveColumnIds,
   stickyActiveEdgeColumnId,
   cellNavigation,
+  cellSelection,
   registerScrollToIndex,
-  selectionMode,
+  rowSelectionMode,
 }: AppDataTableVirtualRowsProps<TData>) {
   const didMountRef = useRef(false)
   // TanStack Virtual intentionally exposes mutable virtualizer helpers.
@@ -121,6 +124,7 @@ export default function AppDataTableVirtualRows<TData>({
         return (
           <DataTableRow
             cellNavigation={cellNavigation}
+            cellSelection={cellSelection}
             canSelect={row.getCanSelect()}
             isSelected={row.getIsSelected()}
             isSomeSelected={row.getIsSomeSelected()}
@@ -129,7 +133,7 @@ export default function AppDataTableVirtualRows<TData>({
             onRowContextMenu={onRowContextMenu}
             row={row}
             rowHeight={rowHeight}
-            selectionMode={selectionMode}
+            rowSelectionMode={rowSelectionMode}
             stickyHeader={stickyHeader}
             stickyActiveColumnIds={stickyActiveColumnIds}
             stickyActiveEdgeColumnId={stickyActiveEdgeColumnId}

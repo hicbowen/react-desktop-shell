@@ -13,11 +13,13 @@ import {
   DataTableRow,
   useDataTableStickyState,
   useAppDataTable,
-  APP_DATA_TABLE_SELECTION_COLUMN_ID,
+  APP_DATA_TABLE_ROW_SELECTION_COLUMN_ID,
   isAppDataTableInternalColumn,
   type DataTableActiveCell,
   type DataTableCellNavigation,
 } from './internal/dataTableCore'
+import { serializeDataTableCellRange, writeDataTableClipboard } from './internal/dataTableClipboard'
+import { useDataTableCellSelection } from './internal/useDataTableCellSelection'
 import { AppDataTableControls } from './AppDataTableControls'
 import { AppDataTablePagination } from './AppDataTablePagination'
 import type { AppDataTableProps } from './types'
@@ -27,7 +29,7 @@ const AppDataTableVirtualRows = lazy(
   () => import('./internal/AppDataTableVirtualRows'),
 ) as typeof import('./internal/AppDataTableVirtualRows').default
 
-export { APP_DATA_TABLE_SELECTION_COLUMN_ID }
+export { APP_DATA_TABLE_ROW_SELECTION_COLUMN_ID }
 
 function findDataCell(
   root: HTMLElement | null,
@@ -58,6 +60,7 @@ export function AppDataTable<TData>(props: AppDataTableProps<TData>) {
     core.stickyLayout,
   )
   const rows = core.table.getRowModel().rows
+  const tableState = core.table.getState()
   const virtualizationEnabled = Boolean(props.virtualization)
   const virtualizationOptions =
     typeof props.virtualization === 'object' ? props.virtualization : {}
@@ -140,12 +143,53 @@ export function AppDataTable<TData>(props: AppDataTableProps<TData>) {
     [],
   )
 
+  const activateCellPosition = useCallback(
+    (target: DataTableActiveCell, focus: boolean) => {
+      setRequestedActiveCell(target)
+      if (focus) focusCell(target)
+    },
+    [focusCell],
+  )
+  const cellSelection = useDataTableCellSelection({
+    options: props.cellSelection,
+    rowIds,
+    columnIds: dataColumnIds,
+    scrollRef,
+    pageIndex: core.paginationEnabled
+      ? tableState.pagination.pageIndex
+      : undefined,
+    activateCell: activateCellPosition,
+  })
+
   const handleCellKeyDown = useCallback(
     (
       rowId: string,
       columnId: string,
       event: KeyboardEvent<HTMLTableCellElement>,
     ) => {
+      if (
+        cellSelection.enabled &&
+        cellSelection.range &&
+        (event.ctrlKey || event.metaKey) &&
+        event.key.toLowerCase() === 'c'
+      ) {
+        const copyEnabled =
+          typeof props.cellSelection !== 'object' ||
+          props.cellSelection.copy !== false
+        if (copyEnabled) {
+          event.preventDefault()
+          const text = serializeDataTableCellRange(
+            core.table,
+            cellSelection.range,
+            rowIds,
+            dataColumnIds,
+            props.getCellCopyValue,
+          )
+          void writeDataTableClipboard(text).catch(() => undefined)
+        }
+        return
+      }
+
       const rowIndex = rowIds.indexOf(rowId)
       const columnIndex = dataColumnIds.indexOf(columnId)
       if (rowIndex < 0 || columnIndex < 0) return
@@ -183,6 +227,13 @@ export function AppDataTable<TData>(props: AppDataTableProps<TData>) {
 
       event.preventDefault()
       const target = { rowId: nextRowId, columnId: nextColumnId }
+      if (cellSelection.enabled) {
+        if (event.shiftKey) {
+          cellSelection.extendSelection(target, { rowId, columnId })
+        } else {
+          cellSelection.selectCell(target)
+        }
+      }
       pendingFocusRef.current = target
       if (virtualizationEnabled) {
         virtualScrollToIndexRef.current?.(nextRowIndex)
@@ -190,7 +241,16 @@ export function AppDataTable<TData>(props: AppDataTableProps<TData>) {
       setRequestedActiveCell(target)
       scheduleCellFocus(target)
     },
-    [dataColumnIds, rowIds, scheduleCellFocus, virtualizationEnabled],
+    [
+      cellSelection,
+      core.table,
+      dataColumnIds,
+      props.cellSelection,
+      props.getCellCopyValue,
+      rowIds,
+      scheduleCellFocus,
+      virtualizationEnabled,
+    ],
   )
 
   const cellNavigation = useMemo<DataTableCellNavigation>(
@@ -203,7 +263,6 @@ export function AppDataTable<TData>(props: AppDataTableProps<TData>) {
     },
     [],
   )
-  const tableState = core.table.getState()
   const controls =
     props.controls &&
     (props.controls.search === true || props.controls.clearAll === true) ? (
@@ -223,6 +282,7 @@ export function AppDataTable<TData>(props: AppDataTableProps<TData>) {
   const normalRows = rows.map((row) => (
     <DataTableRow
       cellNavigation={cellNavigation}
+      cellSelection={cellSelection}
       canSelect={row.getCanSelect()}
       isSelected={row.getIsSelected()}
       isSomeSelected={row.getIsSomeSelected()}
@@ -230,7 +290,9 @@ export function AppDataTable<TData>(props: AppDataTableProps<TData>) {
       onRowClick={core.onRowClick}
       onRowContextMenu={core.onRowContextMenu}
       row={row}
-      selectionMode={core.selectionEnabled ? core.selectionMode : undefined}
+      rowSelectionMode={
+        core.rowSelectionEnabled ? core.rowSelectionMode : undefined
+      }
       stickyActiveColumnIds={stickyState.activeColumnIds}
       stickyActiveEdgeColumnId={stickyState.activeEdgeColumnId}
       stickyHeader={core.stickyHeader}
@@ -257,8 +319,10 @@ export function AppDataTable<TData>(props: AppDataTableProps<TData>) {
       enableColumnResizing={core.enableColumnResizing}
       loading={core.loading}
       maxHeight={core.maxHeight}
-      selectionEnabled={core.selectionEnabled}
-      selectionMode={core.selectionMode}
+      rowSelectionEnabled={core.rowSelectionEnabled}
+      rowSelectionMode={core.rowSelectionMode}
+      cellSelectionEnabled={cellSelection.enabled}
+      cellSelecting={cellSelection.selecting}
       stickyHeader={core.stickyHeader}
       stickyActiveColumnIds={stickyState.activeColumnIds}
       stickyActiveEdgeColumnId={stickyState.activeEdgeColumnId}
@@ -273,6 +337,7 @@ export function AppDataTable<TData>(props: AppDataTableProps<TData>) {
         <Suspense fallback={null}>
           <AppDataTableVirtualRows
             cellNavigation={cellNavigation}
+            cellSelection={cellSelection}
             columnFilters={tableState.columnFilters}
             globalFilter={tableState.globalFilter}
             initialViewportHeight={
@@ -294,8 +359,8 @@ export function AppDataTable<TData>(props: AppDataTableProps<TData>) {
             rowHeight={rowHeight}
             registerScrollToIndex={registerVirtualScrollToIndex}
             rows={rows}
-            selectionMode={
-              core.selectionEnabled ? core.selectionMode : undefined
+            rowSelectionMode={
+              core.rowSelectionEnabled ? core.rowSelectionMode : undefined
             }
             scrollRef={scrollRef}
             sorting={tableState.sorting}

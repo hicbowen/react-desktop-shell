@@ -47,10 +47,12 @@ import {
   getColumnDefinitionId,
   resolveControlFilterColumns,
 } from "./dataTableFilters";
+import type { DataTableCellSelectionInteraction } from "./useDataTableCellSelection";
 
-export const APP_DATA_TABLE_SELECTION_COLUMN_ID = "__app_data_table_selection";
+export const APP_DATA_TABLE_ROW_SELECTION_COLUMN_ID =
+  "__app_data_table_row_selection";
 
-const internalColumnIds = new Set([APP_DATA_TABLE_SELECTION_COLUMN_ID]);
+const internalColumnIds = new Set([APP_DATA_TABLE_ROW_SELECTION_COLUMN_ID]);
 
 export function isAppDataTableInternalColumn(columnId: string) {
   return internalColumnIds.has(columnId);
@@ -284,7 +286,7 @@ export function useAppDataTable<TData>({
   controls,
   pagination,
   getRowId,
-  selection,
+  rowSelection,
   sorting,
   defaultSorting = [],
   onSortingChange,
@@ -357,10 +359,10 @@ export function useAppDataTable<TData>({
   const resolvedColumnSizing = columnSizing ?? internalColumnSizing;
   const resolvedColumnPinning = columnPinning ?? internalColumnPinning;
   const resolvedPagination = paginationOptions.value ?? internalPagination;
-  const selectionEnabled = selection !== undefined;
-  const selectionMode = selection?.mode ?? "multiple";
+  const rowSelectionEnabled = rowSelection !== undefined;
+  const rowSelectionMode = rowSelection?.mode ?? "multiple";
   const effectiveColumnPinning = useMemo<ColumnPinningState>(() => {
-    if (!selectionEnabled) return resolvedColumnPinning;
+    if (!rowSelectionEnabled) return resolvedColumnPinning;
 
     const left = resolvedColumnPinning.left ?? [];
     const right = resolvedColumnPinning.right ?? [];
@@ -368,26 +370,26 @@ export function useAppDataTable<TData>({
     return {
       ...resolvedColumnPinning,
       left: [
-        APP_DATA_TABLE_SELECTION_COLUMN_ID,
+        APP_DATA_TABLE_ROW_SELECTION_COLUMN_ID,
         ...left.filter(
-          (columnId) => columnId !== APP_DATA_TABLE_SELECTION_COLUMN_ID,
+          (columnId) => columnId !== APP_DATA_TABLE_ROW_SELECTION_COLUMN_ID,
         ),
       ],
       right: right.filter(
-        (columnId) => columnId !== APP_DATA_TABLE_SELECTION_COLUMN_ID,
+        (columnId) => columnId !== APP_DATA_TABLE_ROW_SELECTION_COLUMN_ID,
       ),
     };
-  }, [resolvedColumnPinning, selectionEnabled]);
+  }, [resolvedColumnPinning, rowSelectionEnabled]);
   const effectiveColumnVisibility = useMemo(
     () => ({
       ...resolvedColumnVisibility,
-      ...(selectionEnabled
-        ? { [APP_DATA_TABLE_SELECTION_COLUMN_ID]: true }
+      ...(rowSelectionEnabled
+        ? { [APP_DATA_TABLE_ROW_SELECTION_COLUMN_ID]: true }
         : undefined),
     }),
-    [resolvedColumnVisibility, selectionEnabled],
+    [resolvedColumnVisibility, rowSelectionEnabled],
   );
-  const selectAllMode = selection?.selectAllMode ?? "filtered";
+  const selectAllMode = rowSelection?.selectAllMode ?? "filtered";
   const columnsWithControlFilters = useMemo(
     () => resolveControlFilterColumns(columns, controls?.filters ?? []),
     [columns, controls?.filters],
@@ -446,22 +448,22 @@ export function useAppDataTable<TData>({
   };
 
   const resolvedColumns = useMemo<ColumnDef<TData>[]>(() => {
-    if (!selectionEnabled) {
+    if (!rowSelectionEnabled) {
       return columnsWithControlFilters;
     }
 
-    const selectionColumnSize = selectionMode === "single" ? 16 : 44;
-    const selectionColumn: ColumnDef<TData> = {
-      id: APP_DATA_TABLE_SELECTION_COLUMN_ID,
-      size: selectionColumnSize,
-      minSize: selectionColumnSize,
-      maxSize: selectionColumnSize,
+    const rowSelectionColumnSize = rowSelectionMode === "single" ? 16 : 44;
+    const rowSelectionColumn: ColumnDef<TData> = {
+      id: APP_DATA_TABLE_ROW_SELECTION_COLUMN_ID,
+      size: rowSelectionColumnSize,
+      minSize: rowSelectionColumnSize,
+      maxSize: rowSelectionColumnSize,
       enableSorting: false,
       enableHiding: false,
       enableResizing: false,
       enablePinning: false,
       header: ({ table }) => {
-        if (selectionMode === "single") return null;
+        if (rowSelectionMode === "single") return null;
 
         if (selectAllMode === "all") {
           return (
@@ -523,7 +525,7 @@ export function useAppDataTable<TData>({
         );
       },
       cell: ({ row }) =>
-        selectionMode === "single" ? (
+        rowSelectionMode === "single" ? (
           <span
             aria-hidden="true"
             className="app-data-table__selection-indicator"
@@ -538,13 +540,13 @@ export function useAppDataTable<TData>({
           />
         ),
     };
-    return [selectionColumn, ...columnsWithControlFilters];
+    return [rowSelectionColumn, ...columnsWithControlFilters];
   }, [
     columnsWithControlFilters,
     messages.dataTable,
     selectAllMode,
-    selectionEnabled,
-    selectionMode,
+    rowSelectionEnabled,
+    rowSelectionMode,
   ]);
 
   // TanStack Table intentionally exposes mutable table helpers to its renderer.
@@ -561,8 +563,8 @@ export function useAppDataTable<TData>({
     manualFiltering,
     ...(globalFilterFn !== undefined ? { globalFilterFn } : {}),
     filterFns,
-    enableRowSelection: selection?.enableRowSelection,
-    enableMultiRowSelection: selectionMode === "multiple",
+    enableRowSelection: rowSelection?.enableRowSelection,
+    enableMultiRowSelection: rowSelectionMode === "multiple",
     enableColumnResizing,
     columnResizeMode,
     enableColumnPinning,
@@ -574,7 +576,7 @@ export function useAppDataTable<TData>({
       columnVisibility: effectiveColumnVisibility,
       columnSizing: resolvedColumnSizing,
       columnPinning: effectiveColumnPinning,
-      ...(selection ? { rowSelection: selection.value } : {}),
+      ...(rowSelection ? { rowSelection: rowSelection.value } : {}),
       ...(paginationEnabled ? { pagination: resolvedPagination } : {}),
     },
     onSortingChange: handleSortingChange,
@@ -583,7 +585,7 @@ export function useAppDataTable<TData>({
     onColumnVisibilityChange: handleColumnVisibilityChange,
     onColumnSizingChange: handleColumnSizingChange,
     onColumnPinningChange: handleColumnPinningChange,
-    onRowSelectionChange: selection?.onChange,
+    onRowSelectionChange: rowSelection?.onChange,
     onPaginationChange: handlePaginationChange,
     autoResetPageIndex: paginationOptions.autoResetPageIndex ?? true,
   });
@@ -669,8 +671,8 @@ export function useAppDataTable<TData>({
     paginationOptions,
     filterDefinitions,
     stickyLayout,
-    selectionEnabled,
-    selectionMode,
+    rowSelectionEnabled,
+    rowSelectionMode,
     selectAllMode,
   };
 }
@@ -724,7 +726,7 @@ function DataTableHeader<TData>({
                 : 0;
             const resizeHandler = header.getResizeHandler();
             const isSelection =
-              header.column.id === APP_DATA_TABLE_SELECTION_COLUMN_ID;
+              header.column.id === APP_DATA_TABLE_ROW_SELECTION_COLUMN_ID;
             const columnFilter = filterDefinitionsByColumn.get(
               header.column.id,
             );
@@ -923,8 +925,10 @@ interface DataTableFrameProps<TData> {
   stickyLayout: DataTableStickyLayout;
   stickyActiveColumnIds: ReadonlySet<string>;
   stickyActiveEdgeColumnId?: string;
-  selectionEnabled: boolean;
-  selectionMode: "single" | "multiple";
+  rowSelectionEnabled: boolean;
+  rowSelectionMode: "single" | "multiple";
+  cellSelectionEnabled?: boolean;
+  cellSelecting?: boolean;
   className?: string;
   style?: CSSProperties;
   children: ReactNode;
@@ -948,8 +952,10 @@ export function DataTableFrame<TData>({
   stickyLayout,
   stickyActiveColumnIds,
   stickyActiveEdgeColumnId,
-  selectionEnabled,
-  selectionMode,
+  rowSelectionEnabled,
+  rowSelectionMode,
+  cellSelectionEnabled = false,
+  cellSelecting = false,
   className,
   style,
   children,
@@ -958,7 +964,9 @@ export function DataTableFrame<TData>({
 
   return (
     <div
-      className={`app-data-table app-data-table--${density} ${stickyHeader ? "app-data-table--sticky-header" : ""} ${controls ? "app-data-table--with-controls" : ""} ${pagination ? "app-data-table--with-pagination" : ""} ${virtualized ? "app-data-table--virtualized" : ""} ${selectionEnabled ? `app-data-table--selection-${selectionMode}` : ""} ${className ?? ""}`.trim()}
+      className={`app-data-table app-data-table--${density} ${stickyHeader ? "app-data-table--sticky-header" : ""} ${controls ? "app-data-table--with-controls" : ""} ${pagination ? "app-data-table--with-pagination" : ""} ${virtualized ? "app-data-table--virtualized" : ""} ${rowSelectionEnabled ? `app-data-table--row-selection-${rowSelectionMode}` : ""} ${className ?? ""}`.trim()}
+      data-cell-selecting={cellSelecting || undefined}
+      data-cell-selection={cellSelectionEnabled || undefined}
       style={style}
     >
       {controls}
@@ -983,7 +991,8 @@ export function DataTableFrame<TData>({
             aria-busy={loading || undefined}
             aria-colcount={table.getVisibleLeafColumns().length}
             aria-multiselectable={
-              selectionEnabled && selectionMode === "multiple"
+              cellSelectionEnabled ||
+              (rowSelectionEnabled && rowSelectionMode === "multiple")
                 ? true
                 : undefined
             }
@@ -1033,7 +1042,8 @@ interface DataTableRowProps<TData> {
   stickyActiveColumnIds: ReadonlySet<string>;
   stickyActiveEdgeColumnId?: string;
   cellNavigation?: DataTableCellNavigation;
-  selectionMode?: "single" | "multiple";
+  cellSelection?: DataTableCellSelectionInteraction;
+  rowSelectionMode?: "single" | "multiple";
 }
 
 function DataTableRowImpl<TData>({
@@ -1049,7 +1059,8 @@ function DataTableRowImpl<TData>({
   stickyActiveColumnIds,
   stickyActiveEdgeColumnId,
   cellNavigation,
-  selectionMode,
+  cellSelection,
+  rowSelectionMode,
 }: DataTableRowProps<TData>) {
   const selectionState = isSelected
     ? "selected"
@@ -1060,7 +1071,7 @@ function DataTableRowImpl<TData>({
         : "disabled";
   const handleClick = (event: MouseEvent<HTMLTableRowElement>) => {
     if (isInteractiveTarget(event.target)) return;
-    if (selectionMode === "single" && row.getCanSelect()) {
+    if (rowSelectionMode === "single" && row.getCanSelect()) {
       row.toggleSelected(true);
     }
     onRowClick?.(row, event);
@@ -1073,7 +1084,7 @@ function DataTableRowImpl<TData>({
   return (
     <tr
       className={
-        onRowClick || selectionMode === "single"
+        onRowClick || rowSelectionMode === "single"
           ? "app-data-table__row--clickable"
           : undefined
       }
@@ -1090,12 +1101,26 @@ function DataTableRowImpl<TData>({
           navigable &&
           cellNavigation?.activeCell?.rowId === row.id &&
           cellNavigation.activeCell.columnId === cell.column.id;
+        const position = { rowId: row.id, columnId: cell.column.id };
+        const cellRangeState = navigable
+          ? cellSelection?.getCellState(position)
+          : undefined;
 
         return (
           <td
+            aria-selected={
+              cellSelection?.enabled
+                ? Boolean(cellRangeState?.selected)
+                : undefined
+            }
             data-active-cell={active || undefined}
             data-column-id={cell.column.id}
             data-grid-cell={navigable || undefined}
+            data-cell-selected={cellRangeState?.selected || undefined}
+            data-cell-range-top={cellRangeState?.top || undefined}
+            data-cell-range-bottom={cellRangeState?.bottom || undefined}
+            data-cell-range-left={cellRangeState?.left || undefined}
+            data-cell-range-right={cellRangeState?.right || undefined}
             data-pinned={cell.column.getIsPinned() || undefined}
             data-pinned-edge={getPinnedEdge(cell.column)}
             data-sticky-column={
@@ -1130,6 +1155,16 @@ function DataTableRowImpl<TData>({
                     )
                 : undefined
             }
+            onPointerDown={
+              navigable && cellSelection?.enabled
+                ? (event) => cellSelection.onPointerDown(position, event)
+                : undefined
+            }
+            onPointerEnter={
+              navigable && cellSelection?.enabled
+                ? () => cellSelection.onPointerEnter(position)
+                : undefined
+            }
             onFocus={
               navigable && cellNavigation
                 ? (event) =>
@@ -1147,7 +1182,7 @@ function DataTableRowImpl<TData>({
                     if (isInteractiveTarget(event.target)) return;
                     if (
                       event.key === "Enter" &&
-                      (onRowClick || selectionMode === "single")
+                      (onRowClick || rowSelectionMode === "single")
                     ) {
                       event.preventDefault();
                       event.currentTarget.closest("tr")?.click();

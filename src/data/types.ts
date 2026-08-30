@@ -1,6 +1,7 @@
 import type { CSSProperties, MouseEvent, ReactNode } from 'react'
 import type {
   ColumnDef,
+  Cell,
   ColumnFiltersState,
   ColumnPinningState,
   ColumnResizeMode,
@@ -60,13 +61,29 @@ export interface AppDataTableVirtualizationOptions {
   overscan?: number
 }
 
-export interface AppDataTableSelectionOptions<TData> {
+export interface AppDataTableRowSelectionOptions<TData> {
   value: RowSelectionState
   onChange: OnChangeFn<RowSelectionState>
   enableRowSelection?: TableOptions<TData>['enableRowSelection']
   /** Single uses a narrow accent-indicator column; multiple uses a wider checkbox column. Defaults to multiple. */
   mode?: 'single' | 'multiple'
   selectAllMode?: 'all' | 'filtered' | 'page'
+}
+
+export interface AppDataTableCellPosition {
+  rowId: string
+  columnId: string
+}
+
+export interface AppDataTableCellRange {
+  anchor: AppDataTableCellPosition
+  focus: AppDataTableCellPosition
+}
+
+export interface AppDataTableCellSelectionOptions {
+  copy?: boolean
+  value?: AppDataTableCellRange | null
+  onChange?: (range: AppDataTableCellRange | null) => void
 }
 
 export interface AppDataTableProps<TData> {
@@ -81,7 +98,9 @@ export interface AppDataTableProps<TData> {
   pagination?: boolean | AppDataTablePaginationOptions
   virtualization?: boolean | AppDataTableVirtualizationOptions
   getRowId?: TableOptions<TData>['getRowId']
-  selection?: AppDataTableSelectionOptions<TData>
+  rowSelection?: AppDataTableRowSelectionOptions<TData>
+  cellSelection?: boolean | AppDataTableCellSelectionOptions
+  getCellCopyValue?: (cell: Cell<TData, unknown>) => string
   sorting?: SortingState
   defaultSorting?: SortingState
   onSortingChange?: OnChangeFn<SortingState>

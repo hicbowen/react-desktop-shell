@@ -14,7 +14,10 @@ import {
 } from "vitest";
 import { AppDataTable } from "./AppDataTable";
 import { AppShell } from "../shell/AppShell";
-import type { AppDataTableControlsOptions } from "./types";
+import type {
+  AppDataTableCellRange,
+  AppDataTableControlsOptions,
+} from "./types";
 
 interface RowData {
   id: string;
@@ -139,6 +142,25 @@ describe("AppDataTable controls", () => {
     );
   const bodyRows = () =>
     Array.from(container.querySelectorAll<HTMLTableRowElement>("tbody tr"));
+  const cell = (rowId: string, columnId: string) =>
+    container.querySelector<HTMLTableCellElement>(
+      `tbody tr[data-row-id="${rowId}"] td[data-column-id="${columnId}"]`,
+    )!;
+  const pointer = (
+    target: EventTarget,
+    type: "pointerdown" | "pointerover" | "pointerup",
+    init: PointerEventInit = {},
+  ) =>
+    act(() =>
+      target.dispatchEvent(
+        new PointerEvent(type, {
+          bubbles: true,
+          button: 0,
+          isPrimary: true,
+          ...init,
+        }),
+      ),
+    );
   const searchInput = () =>
     container.querySelector<HTMLInputElement>('[aria-label="Search rows"]')!;
   const setSearch = (value: string) => {
@@ -183,13 +205,13 @@ describe("AppDataTable controls", () => {
 
   it("renders only the checkbox column for multiple selection and uses compact density by default", () => {
     renderTable({
-      selection: { value: {}, onChange: vi.fn() },
+      rowSelection: { value: {}, onChange: vi.fn() },
       pagination: true,
     });
 
     const headers = Array.from(container.querySelectorAll("th"));
     expect(headers.map((header) => header.dataset.columnId)).toEqual([
-      "__app_data_table_selection",
+      "__app_data_table_row_selection",
       "name",
       "category",
       "status",
@@ -200,7 +222,7 @@ describe("AppDataTable controls", () => {
     expect(headers[0]?.style.left).toBe("0px");
     expect(container.querySelector(".app-data-table--compact")).not.toBeNull();
     expect(
-      container.querySelector(".app-data-table--selection-multiple"),
+      container.querySelector(".app-data-table--row-selection-multiple"),
     ).not.toBeNull();
     expect(container.querySelector(".app-pagination--compact")).not.toBeNull();
     expect(
@@ -208,12 +230,12 @@ describe("AppDataTable controls", () => {
     ).toBeNull();
     expect(
       bodyRows()[0]?.querySelector(
-        'td[data-column-id="__app_data_table_selection"] .app-data-table__cell-content',
+        'td[data-column-id="__app_data_table_row_selection"] .app-data-table__cell-content',
       ),
     ).not.toBeNull();
     expect(
       bodyRows()[0]?.querySelector(
-        'td[data-column-id="__app_data_table_selection"]',
+        'td[data-column-id="__app_data_table_row_selection"]',
       )?.getAttribute("data-pinned"),
     ).toBe("left");
   });
@@ -226,7 +248,7 @@ describe("AppDataTable controls", () => {
           columns={columns}
           data={data}
           getRowId={(row) => row.id}
-          selection={{ value: selection, onChange: setSelection }}
+          rowSelection={{ value: selection, onChange: setSelection }}
         />
       );
     }
@@ -273,14 +295,14 @@ describe("AppDataTable controls", () => {
   it("keeps the selection column pinned when column pinning is disabled", () => {
     renderTable({
       enableColumnPinning: false,
-      selection: { value: {}, onChange: vi.fn() },
+      rowSelection: { value: {}, onChange: vi.fn() },
     });
 
     const selectionHeader = container.querySelector<HTMLElement>(
-      'th[data-column-id="__app_data_table_selection"]',
+      'th[data-column-id="__app_data_table_row_selection"]',
     );
     const selectionCell = container.querySelector<HTMLElement>(
-      'tbody td[data-column-id="__app_data_table_selection"]',
+      'tbody td[data-column-id="__app_data_table_row_selection"]',
     );
 
     expect(selectionHeader?.dataset.pinned).toBe("left");
@@ -337,7 +359,7 @@ describe("AppDataTable controls", () => {
             columns={columns}
             data={data}
             getRowId={(row) => row.id}
-            selection={{
+            rowSelection={{
               value: selection,
               onChange: setSelection,
               mode: "single",
@@ -350,7 +372,7 @@ describe("AppDataTable controls", () => {
     render(<Harness />);
     expect(container.querySelector('thead input[type="checkbox"]')).toBeNull();
     const selectionHeader = container.querySelector<HTMLTableCellElement>(
-      'th[data-column-id="__app_data_table_selection"]',
+      'th[data-column-id="__app_data_table_row_selection"]',
     );
     expect(selectionHeader?.style.width).toBe("16px");
     expect(selectionHeader?.dataset.pinned).toBe("left");
@@ -360,7 +382,7 @@ describe("AppDataTable controls", () => {
       bodyRows()[0]?.querySelector(".app-data-table__selection-indicator"),
     ).not.toBeNull();
     expect(
-      container.querySelector(".app-data-table--selection-single"),
+      container.querySelector(".app-data-table--row-selection-single"),
     ).not.toBeNull();
 
     act(() => bodyRows()[0]?.click());
@@ -435,6 +457,169 @@ describe("AppDataTable controls", () => {
     );
     expect(cell.dataset.activeCell).toBe("true");
     expect(document.activeElement).toBe(button);
+  });
+
+  it("selects one cell and a reverse rectangular range with pointer events", () => {
+    renderTable({ cellSelection: true });
+
+    pointer(cell("4", "status"), "pointerdown");
+    expect(cell("4", "status").dataset.cellSelected).toBe("true");
+    expect(
+      container.querySelectorAll('td[data-cell-selected="true"]'),
+    ).toHaveLength(1);
+
+    pointer(cell("1", "name"), "pointerover");
+    expect(
+      container.querySelectorAll('td[data-cell-selected="true"]'),
+    ).toHaveLength(9);
+    expect(cell("1", "name").dataset.cellRangeTop).toBe("true");
+    expect(cell("4", "status").dataset.cellRangeBottom).toBe("true");
+    pointer(window, "pointerup");
+    expect(
+      container.querySelector(".app-data-table")?.hasAttribute("data-cell-selecting"),
+    ).toBe(false);
+  });
+
+  it("extends with Shift+click and Shift+Arrow, then collapses on Arrow", async () => {
+    renderTable({ cellSelection: true });
+    const start = cell("2", "name");
+    pointer(start, "pointerdown");
+    pointer(window, "pointerup");
+    pointer(cell("1", "category"), "pointerdown", { shiftKey: true });
+    pointer(window, "pointerup");
+    expect(
+      container.querySelectorAll('td[data-cell-selected="true"]'),
+    ).toHaveLength(4);
+
+    const focus = cell("1", "category");
+    act(() => focus.focus());
+    act(() =>
+      focus.dispatchEvent(
+        new KeyboardEvent("keydown", {
+          bubbles: true,
+          key: "ArrowDown",
+          shiftKey: true,
+        }),
+      ),
+    );
+    await act(async () => new Promise((resolve) => setTimeout(resolve, 20)));
+    expect(
+      container.querySelectorAll('td[data-cell-selected="true"]'),
+    ).toHaveLength(6);
+
+    const nextFocus = cell("3", "category");
+    act(() =>
+      nextFocus.dispatchEvent(
+        new KeyboardEvent("keydown", { bubbles: true, key: "ArrowRight" }),
+      ),
+    );
+    await act(async () => new Promise((resolve) => setTimeout(resolve, 20)));
+    expect(
+      container.querySelectorAll('td[data-cell-selected="true"]'),
+    ).toHaveLength(1);
+    expect(cell("3", "status").dataset.cellSelected).toBe("true");
+  });
+
+  it("copies a controlled range as TSV in current sorted order", async () => {
+    const writeText = vi.fn().mockResolvedValue(undefined);
+    vi.stubGlobal("navigator", {
+      ...navigator,
+      clipboard: { writeText },
+    });
+    const range: AppDataTableCellRange = {
+      anchor: { rowId: "3", columnId: "name" },
+      focus: { rowId: "1", columnId: "category" },
+    };
+    renderTable({
+      cellSelection: { value: range },
+      sorting: [{ id: "name", desc: true }],
+      getCellCopyValue: (selectedCell) =>
+        selectedCell.column.id === "category"
+          ? `[${String(selectedCell.getValue())}]`
+          : String(selectedCell.getValue() ?? ""),
+    });
+    const active = cell("4", "name");
+    act(() => active.focus());
+    act(() =>
+      active.dispatchEvent(
+        new KeyboardEvent("keydown", {
+          bubbles: true,
+          key: "c",
+          ctrlKey: true,
+        }),
+      ),
+    );
+    await act(async () => Promise.resolve());
+
+    expect(writeText).toHaveBeenCalledWith(
+      "Gamma\t[Archive]\nDelta\t[Document]\nBeta\t[Media]\nAlpha\t[Document]",
+    );
+
+    writeText.mockClear();
+    act(() =>
+      active.dispatchEvent(
+        new KeyboardEvent("keydown", {
+          bubbles: true,
+          key: "C",
+          metaKey: true,
+        }),
+      ),
+    );
+    await act(async () => Promise.resolve());
+    expect(writeText).toHaveBeenCalledOnce();
+  });
+
+  it("copies default string, number, and null values without reading DOM text", async () => {
+    const writeText = vi.fn().mockResolvedValue(undefined);
+    vi.stubGlobal("navigator", {
+      ...navigator,
+      clipboard: { writeText },
+    });
+    const mixedColumns: ColumnDef<{ id: string; label: string; count: number; note: null }>[] = [
+      { accessorKey: "label", cell: () => <strong>Rendered label</strong> },
+      { accessorKey: "count" },
+      { accessorKey: "note" },
+    ];
+    render(
+      <AppDataTable
+        cellSelection={{
+          value: {
+            anchor: { rowId: "mixed", columnId: "label" },
+            focus: { rowId: "mixed", columnId: "note" },
+          },
+        }}
+        columns={mixedColumns}
+        data={[{ id: "mixed", label: "Raw label", count: 42, note: null }]}
+        getRowId={(row) => row.id}
+      />,
+    );
+    const active = container.querySelector<HTMLTableCellElement>(
+      'td[data-column-id="label"]',
+    )!;
+    act(() =>
+      active.dispatchEvent(
+        new KeyboardEvent("keydown", {
+          bubbles: true,
+          key: "c",
+          ctrlKey: true,
+        }),
+      ),
+    );
+    await act(async () => Promise.resolve());
+    expect(writeText).toHaveBeenCalledWith("Raw label\t42\t");
+  });
+
+  it("does not start cell selection from interactive content", () => {
+    renderTable({
+      cellSelection: true,
+      columns: [
+        { accessorKey: "name", cell: () => <button type="button">Open</button> },
+        ...columns.slice(1),
+      ],
+    });
+    const button = container.querySelector("tbody button")!;
+    pointer(button, "pointerdown");
+    expect(container.querySelector('td[data-cell-selected="true"]')).toBeNull();
   });
 
   it("does not render control DOM when controls are omitted", () => {
@@ -790,7 +975,7 @@ describe("AppDataTable controls", () => {
             controls={controls}
             data={data}
             getRowId={(row) => row.id}
-            selection={{ value: selection, onChange: setSelection }}
+            rowSelection={{ value: selection, onChange: setSelection }}
           />
         </>
       );
@@ -1171,6 +1356,29 @@ describe("AppDataTable controls", () => {
     expect(container.textContent).toContain("Page 1 of 3");
   });
 
+  it("clears cell selection when the current page changes", () => {
+    const onChange = vi.fn();
+    renderTable({
+      cellSelection: { onChange },
+      data: pagedData,
+      pagination: true,
+    });
+    pointer(cell("1", "name"), "pointerdown");
+    pointer(window, "pointerup");
+    expect(onChange).toHaveBeenLastCalledWith({
+      anchor: { rowId: "1", columnId: "name" },
+      focus: { rowId: "1", columnId: "name" },
+    });
+
+    act(() =>
+      container
+        .querySelector<HTMLButtonElement>('[aria-label="Next page"]')
+        ?.click(),
+    );
+    expect(onChange).toHaveBeenLastCalledWith(null);
+    expect(container.querySelector('td[data-cell-selected="true"]')).toBeNull();
+  });
+
   it("selects only the current page in page mode", () => {
     function Harness() {
       const [selection, setSelection] = useState<RowSelectionState>({});
@@ -1184,7 +1392,7 @@ describe("AppDataTable controls", () => {
             data={pagedData}
             getRowId={(row) => row.id}
             pagination
-            selection={{
+            rowSelection={{
               value: selection,
               onChange: setSelection,
               selectAllMode: "page",
@@ -1216,7 +1424,7 @@ describe("AppDataTable controls", () => {
             data={pagedData}
             getRowId={(row) => row.id}
             pagination
-            selection={{
+            rowSelection={{
               value: selection,
               onChange: setSelection,
               selectAllMode: "filtered",
@@ -1324,12 +1532,12 @@ describe("AppDataTable controls", () => {
 
   it("shows column position state and activates the sticky boundary only after scrolling", () => {
     renderTable({
-      selection: { value: {}, onChange: vi.fn() },
+      rowSelection: { value: {}, onChange: vi.fn() },
       stickyColumns: ["category"],
     });
 
     const selectionHeader = container.querySelector<HTMLElement>(
-      'th[data-column-id="__app_data_table_selection"]',
+      'th[data-column-id="__app_data_table_row_selection"]',
     )!;
     const categoryHeader = container.querySelector<HTMLElement>(
       'th[data-column-id="category"]',
@@ -1478,7 +1686,7 @@ describe("AppDataTable controls", () => {
           enableColumnResizing
           getRowId={(row) => row.id}
           maxHeight={200}
-          selection={{ value: selection, onChange: setSelection }}
+          rowSelection={{ value: selection, onChange: setSelection }}
           stickyColumns={["category"]}
           virtualization
         />
@@ -1498,6 +1706,36 @@ describe("AppDataTable controls", () => {
     expect(
       container.querySelector(".app-data-table__resize-handle"),
     ).not.toBeNull();
+  });
+
+  it("keeps cell ranges logical across pinned, hidden, and row-selection columns", () => {
+    const onRowSelectionChange = vi.fn();
+    renderTable({
+      cellSelection: true,
+      columnPinning: { left: ["name"], right: ["category"] },
+      columnVisibility: { status: false },
+      rowSelection: { value: {}, onChange: onRowSelectionChange },
+    });
+    pointer(cell("2", "name"), "pointerdown");
+    pointer(cell("1", "category"), "pointerover");
+    pointer(window, "pointerup");
+
+    expect(
+      container.querySelectorAll('td[data-cell-selected="true"]'),
+    ).toHaveLength(4);
+    expect(cell("2", "name").dataset.pinned).toBe("left");
+    expect(cell("1", "category").dataset.pinned).toBe("right");
+    expect(
+      container.querySelector(
+        'td[data-column-id="__app_data_table_row_selection"][data-cell-selected]',
+      ),
+    ).toBeNull();
+
+    act(() => container.querySelector<HTMLInputElement>("tbody input")?.click());
+    expect(onRowSelectionChange).toHaveBeenCalledOnce();
+    expect(
+      container.querySelectorAll('td[data-cell-selected="true"]'),
+    ).toHaveLength(4);
   });
 
   it("does not alter rows when no row context-menu callback is provided", () => {
@@ -1603,7 +1841,7 @@ describe("AppDataTable controls", () => {
     const onSelectionChange = vi.fn();
     renderTable({
       onRowContextMenu,
-      selection: { value: {}, onChange: onSelectionChange },
+      rowSelection: { value: {}, onChange: onSelectionChange },
     });
     contextMenu(bodyRows()[0]!.querySelector('td[data-column-id="name"]')!);
 
@@ -1760,7 +1998,7 @@ describe("AppDataTable controls", () => {
             data={virtualData}
             getRowId={(row) => row.id}
             maxHeight={200}
-            selection={{ value: selection, onChange: setSelection }}
+            rowSelection={{ value: selection, onChange: setSelection }}
             virtualization
           />
         </>
@@ -1777,6 +2015,50 @@ describe("AppDataTable controls", () => {
     expect(
       container.querySelectorAll(".app-data-table__virtual-spacer input"),
     ).toHaveLength(0);
+  });
+
+  it("renders and copies an offscreen virtual cell range from the row model", async () => {
+    const writeText = vi.fn().mockResolvedValue(undefined);
+    vi.stubGlobal("navigator", {
+      ...navigator,
+      clipboard: { writeText },
+    });
+    renderTable({
+      cellSelection: {
+        value: {
+          anchor: { rowId: "1", columnId: "name" },
+          focus: { rowId: "50", columnId: "status" },
+        },
+      },
+      data: virtualData,
+      maxHeight: 200,
+      virtualization: true,
+    });
+    await settleVirtualization();
+    const renderedDataCells = container.querySelectorAll(
+      'tbody tr:not(.app-data-table__virtual-spacer) td[data-grid-cell="true"]',
+    );
+    expect(renderedDataCells.length).toBeGreaterThan(0);
+    expect(
+      container.querySelectorAll('td[data-cell-selected="true"]'),
+    ).toHaveLength(renderedDataCells.length);
+
+    const active = container.querySelector<HTMLTableCellElement>(
+      'tbody td[data-active-cell="true"]',
+    )!;
+    act(() =>
+      active.dispatchEvent(
+        new KeyboardEvent("keydown", {
+          bubbles: true,
+          key: "c",
+          ctrlKey: true,
+        }),
+      ),
+    );
+    await act(async () => Promise.resolve());
+    const copied = writeText.mock.calls[0]?.[0] as string;
+    expect(copied.split("\n")).toHaveLength(50);
+    expect(copied).toContain("Virtual 050\tMedia\tProcessing");
   });
 
   it("keeps sticky headers, pinning, and resizing with virtualization", async () => {

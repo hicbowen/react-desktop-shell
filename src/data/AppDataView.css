@@ -876,7 +876,7 @@
 
 .app-data-table
   [data-pinned-edge="left"]:not(
-    [data-column-id="__app_data_table_selection"]
+    [data-column-id="__app_data_table_row_selection"]
   ) {
   box-shadow: inset -10px 0 8px -10px
     color-mix(in srgb, var(--app-data-text-color) 30%, transparent);
@@ -1114,22 +1114,22 @@
   outline-color: var(--rds-state-focus-ring, var(--app-data-accent));
 }
 
-.app-data-table [data-column-id="__app_data_table_selection"] {
+.app-data-table [data-column-id="__app_data_table_row_selection"] {
   padding-inline: 0;
   text-align: center;
 }
 
 .app-data-table
-  [data-column-id="__app_data_table_selection"]
+  [data-column-id="__app_data_table_row_selection"]
   .app-data-table__cell-content,
 .app-data-table
-  [data-column-id="__app_data_table_selection"]
+  [data-column-id="__app_data_table_row_selection"]
   .app-data-table__checkbox-control {
   justify-content: center;
 }
 
-.app-data-table--selection-single
-  [data-column-id="__app_data_table_selection"]
+.app-data-table--row-selection-single
+  [data-column-id="__app_data_table_row_selection"]
   .app-data-table__cell-content {
   box-sizing: border-box;
   padding-left: 4px;
@@ -1145,9 +1145,9 @@
   opacity: 0;
 }
 
-.app-data-table--selection-single
+.app-data-table--row-selection-single
   tr[data-selected="true"]
-  [data-column-id="__app_data_table_selection"]
+  [data-column-id="__app_data_table_row_selection"]
   .app-data-table__selection-indicator {
   opacity: 1;
 }
@@ -1223,6 +1223,39 @@
   inset: 2px;
   border-radius: var(--rds-radius-control, 4px);
   background: color-mix(in srgb, var(--app-data-accent) 6%, transparent);
+}
+
+.app-data-table td[data-cell-selected="true"]::after {
+  content: "";
+  position: absolute;
+  z-index: 2;
+  inset: 0;
+  pointer-events: none;
+  background: color-mix(in srgb, var(--app-data-accent) 10%, transparent);
+  border-color: var(--app-data-accent);
+  border-style: solid;
+  border-width: 0;
+}
+
+.app-data-table td[data-cell-range-top="true"]::after {
+  border-top-width: 1px;
+}
+
+.app-data-table td[data-cell-range-bottom="true"]::after {
+  border-bottom-width: 1px;
+}
+
+.app-data-table td[data-cell-range-left="true"]::after {
+  border-left-width: 1px;
+}
+
+.app-data-table td[data-cell-range-right="true"]::after {
+  border-right-width: 1px;
+}
+
+.app-data-table[data-cell-selecting="true"] tbody td {
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 .app-data-table__row--clickable {

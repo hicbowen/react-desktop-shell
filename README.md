@@ -1349,8 +1349,8 @@ uses TanStack Table's `ColumnDef<TData>` directly.
 
 The data table supports client-side pagination, client or manual sorting, optional built-in global
 search and column filters opened from each column menu, manual/server-side filtering, column
-visibility, controlled row selection, loading and empty states, comfortable
-and compact density, cell keyboard navigation, row activation, horizontal
+visibility, controlled row selection, rectangular cell selection and TSV copy,
+loading and empty states, comfortable and compact density, cell keyboard navigation, row activation, horizontal
 scrolling, and opt-in column sizing. Compact density is the default. Column sizing
 supports controlled or uncontrolled state, mouse and touch resizing, minimum
 and maximum widths, per-column resize control, `onEnd` and `onChange` modes,
@@ -1370,6 +1370,7 @@ import {
   AppDataTable,
   AppDataView,
   AppSelectionBar,
+  type AppDataTableCellRange,
 } from 'react-desktop-shell/data'
 
 type Student = {
@@ -1411,7 +1412,7 @@ function StudentsView({ students }: { students: Student[] }) {
         columns={columns}
         data={students}
         getRowId={(student) => student.id}
-        selection={{
+        rowSelection={{
           value: rowSelection,
           onChange: setRowSelection,
           selectAllMode: 'filtered',
@@ -1425,14 +1426,14 @@ function StudentsView({ students }: { students: Student[] }) {
 Provide a stable `getRowId` when enabling row selection, sorting, or filtering.
 The table never adds fields to or mutates input data.
 
-`selection.mode` defaults to `'multiple'`. Both modes reuse one leading
+`rowSelection.mode` defaults to `'multiple'`. Both modes reuse one leading
 selection/status column rather than adding a separate Corner column. Multiple
 mode uses a 44px column with centered checkboxes. Single mode narrows the same
 column to 16px and replaces the checkboxes with a selected-row accent indicator;
 clicking a selectable row replaces the current selection. The status column
 header remains intentionally blank.
 
-In multiple mode, `selection.selectAllMode` defaults to `'filtered'`. The header
+In multiple mode, `rowSelection.selectAllMode` defaults to `'filtered'`. The header
 checkbox selects or clears only selectable rows in the current filtered result.
 Use `'all'` to make it operate on all data rows instead. Changing filters does
 not automatically clear already selected rows outside the filtered result.
@@ -1455,6 +1456,37 @@ the row, and `Ctrl+Home` or `Ctrl+End` to move to the first or last data cell.
 Interactive descendants such as links, buttons, inputs, and checkboxes retain
 their native keyboard behavior. Pressing `Enter` in a data cell invokes
 single-row selection and invokes `onRowClick` when that callback is provided.
+
+Pass `cellSelection` to enable Excel-style cell interaction independently of
+`rowSelection`. Click selects one cell, pointer dragging selects a logical
+rectangle, and `Shift` + click or `Shift` + arrow extends from the current
+anchor. A plain arrow key collapses the range to the next active cell.
+`Ctrl+C` and `Cmd+C` copy the current rectangle as tab-separated rows in the
+current sorted and filtered order, including offscreen virtual rows. Hidden and
+internal control columns are excluded. Cell ranges are scoped to the current
+page and clear when the page changes.
+
+```tsx
+const [cellRange, setCellRange] = useState<AppDataTableCellRange | null>(null)
+
+<AppDataTable
+  columns={columns}
+  data={students}
+  getRowId={(student) => student.id}
+  cellSelection={{
+    value: cellRange,
+    onChange: setCellRange,
+    copy: true,
+  }}
+  getCellCopyValue={(cell) => String(cell.getValue() ?? '')}
+/>
+```
+
+The range stores only stable `{ rowId, columnId }` anchor and focus endpoints;
+its size is constant regardless of how many cells it covers. Copy values come
+from the table data model, not rendered React nodes or DOM text. Interactive
+descendants such as buttons, links, form controls, and editable content keep
+their native pointer and keyboard behavior.
 
 The default compact layout uses a 36px header and 38px data rows. Pass
 `density="comfortable"` for a 44px header and 48px rows. Table backgrounds
@@ -1486,7 +1518,7 @@ the application should not call `slice()` before rendering the table.
 `pagination={true}` uses a 10-row initial page and the default page-size
 choices of 10, 20, and 50. The object form supports uncontrolled state through
 `defaultValue`, or controlled state through `value` and `onChange`. Use
-`selection.selectAllMode: 'page'` when the header checkbox should affect only
+`rowSelection.selectAllMode: 'page'` when the header checkbox should affect only
 the visible page. This version supports client-side pagination only.
 
 ### Vertical row virtualization
@@ -1867,7 +1899,7 @@ const [columnPinning, setColumnPinning] = useState<ColumnPinningState>({
 />
 ```
 
-When `selection` is enabled, the internal selection column is automatically
+When `rowSelection` is enabled, the internal row-selection column is automatically
 pinned to the left edge. It remains before user-pinned left columns and keeps
 its mode-specific width: the single-selection indicator is narrow, while the
 multiple-selection checkbox column is wider. It is always visible and is not
@@ -1901,12 +1933,28 @@ export interface AppSelectionBarProps {
   style?: CSSProperties
 }
 
-export interface AppDataTableSelectionOptions<TData> {
+export interface AppDataTableRowSelectionOptions<TData> {
   value: RowSelectionState
   onChange: OnChangeFn<RowSelectionState>
   enableRowSelection?: TableOptions<TData>['enableRowSelection']
   mode?: 'single' | 'multiple'
   selectAllMode?: 'all' | 'filtered' | 'page'
+}
+
+export interface AppDataTableCellPosition {
+  rowId: string
+  columnId: string
+}
+
+export interface AppDataTableCellRange {
+  anchor: AppDataTableCellPosition
+  focus: AppDataTableCellPosition
+}
+
+export interface AppDataTableCellSelectionOptions {
+  copy?: boolean
+  value?: AppDataTableCellRange | null
+  onChange?: (range: AppDataTableCellRange | null) => void
 }
 
 export interface AppDataTableFilterOption {
@@ -1952,7 +2000,9 @@ export interface AppDataTableProps<TData> {
   pagination?: boolean | AppDataTablePaginationOptions
   virtualization?: boolean | AppDataTableVirtualizationOptions
   getRowId?: TableOptions<TData>['getRowId']
-  selection?: AppDataTableSelectionOptions<TData>
+  rowSelection?: AppDataTableRowSelectionOptions<TData>
+  cellSelection?: boolean | AppDataTableCellSelectionOptions
+  getCellCopyValue?: (cell: Cell<TData, unknown>) => string
   sorting?: SortingState
   defaultSorting?: SortingState
   onSortingChange?: OnChangeFn<SortingState>
