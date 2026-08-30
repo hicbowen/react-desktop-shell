@@ -963,6 +963,37 @@ describe("AppDataTable controls", () => {
     expect(bodyRows()[0]?.textContent).toContain("Alpha");
   });
 
+  it("raises the active header above adjacent sticky headers while resizing", () => {
+    renderTable({
+      enableColumnResizing: true,
+      stickyColumns: ["category"],
+      stickyHeader: true,
+    });
+
+    const nameHeader = container.querySelector<HTMLElement>(
+      'th[data-column-id="name"]',
+    )!;
+    const resizeHandle = nameHeader.querySelector<HTMLElement>(
+      ".app-data-table__resize-handle",
+    )!;
+
+    expect(nameHeader.style.zIndex).toBe("3");
+    act(() =>
+      resizeHandle.dispatchEvent(
+        new MouseEvent("mousedown", { bubbles: true, clientX: 100 }),
+      ),
+    );
+    expect(resizeHandle.dataset.resizing).toBe("true");
+    expect(nameHeader.style.zIndex).toBe("5");
+
+    act(() =>
+      document.dispatchEvent(
+        new MouseEvent("mouseup", { bubbles: true, clientX: 120 }),
+      ),
+    );
+    expect(nameHeader.style.zIndex).toBe("3");
+  });
+
   it("uses ten rows per page by default and navigates next and previous", () => {
     renderTable({ data: pagedData, pagination: true });
 

@@ -776,12 +776,15 @@ function DataTableHeader<TData>({
                 }
                 key={header.id}
                 role="columnheader"
-                style={getPositionedColumnStyles(
-                  header.column,
-                  true,
-                  stickyHeader,
-                  stickyLayout,
-                )}
+                style={{
+                  ...getPositionedColumnStyles(
+                    header.column,
+                    true,
+                    stickyHeader,
+                    stickyLayout,
+                  ),
+                  ...(isResizing ? { zIndex: 5 } : {}),
+                }}
               >
                 <div className="app-data-table__header-content">
                   {header.isPlaceholder ? null : isSelection ? (
