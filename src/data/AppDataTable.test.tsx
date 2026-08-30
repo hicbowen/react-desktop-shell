@@ -149,7 +149,7 @@ describe("AppDataTable controls", () => {
     )!;
   const pointer = (
     target: EventTarget,
-    type: "pointerdown" | "pointerover" | "pointerup",
+    type: "pointercancel" | "pointerdown" | "pointerover" | "pointerup",
     init: PointerEventInit = {},
   ) =>
     act(() =>
@@ -793,6 +793,279 @@ describe("AppDataTable controls", () => {
     act(() => start.click());
     expect(onRowClick).not.toHaveBeenCalled();
     expect(onRowSelectionChange).not.toHaveBeenCalled();
+  });
+
+  it("clears drag row-click suppression when no click follows pointerup", () => {
+    vi.useFakeTimers();
+    try {
+      const onRowClick = vi.fn();
+      renderTable({ cellSelection: true, onRowClick });
+      const start = cell("2", "name");
+
+      pointer(start, "pointerdown", { clientX: 10, clientY: 10 });
+      movePointer(20, 10);
+      pointer(window, "pointerup");
+      act(() => vi.runAllTimers());
+      act(() => start.click());
+
+      expect(onRowClick).toHaveBeenCalledOnce();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it("clears drag row-click suppression on pointercancel and blur", () => {
+    const onRowClick = vi.fn();
+    renderTable({ cellSelection: true, onRowClick });
+    const start = cell("2", "name");
+
+    pointer(start, "pointerdown", { clientX: 10, clientY: 10 });
+    movePointer(20, 10);
+    pointer(window, "pointercancel");
+    act(() => start.click());
+    expect(onRowClick).toHaveBeenCalledOnce();
+
+    onRowClick.mockClear();
+    pointer(start, "pointerdown", { clientX: 10, clientY: 10 });
+    movePointer(20, 10);
+    act(() => window.dispatchEvent(new Event("blur")));
+    act(() => start.click());
+    expect(onRowClick).toHaveBeenCalledOnce();
+  });
+
+  it("does not let a completed drag suppress keyboard row activation", async () => {
+    const onRowClick = vi.fn();
+    renderTable({ cellSelection: true, onRowClick });
+    const start = cell("2", "name");
+
+    pointer(start, "pointerdown", { clientX: 10, clientY: 10 });
+    movePointer(20, 10);
+    pointer(window, "pointerup");
+    act(() => start.focus());
+    act(() =>
+      start.dispatchEvent(
+        new KeyboardEvent("keydown", { bubbles: true, key: "Enter" }),
+      ),
+    );
+
+    expect(onRowClick).toHaveBeenCalledOnce();
+  });
+
+  it("keeps controlled drag auto-scroll running across parent rerenders", () => {
+    vi.useFakeTimers();
+    const onChange = vi.fn();
+    const Harness = () => {
+      const [range, setRange] = useState<AppDataTableCellRange | null>(null);
+      return (
+        <AppDataTable
+          columns={columns}
+          data={pagedData}
+          getRowId={(row) => row.id}
+          cellSelection={{
+            value: range,
+            onChange: (next) => {
+              onChange(next);
+              setRange(next);
+            },
+          }}
+        />
+      );
+    };
+
+    const originalElementFromPoint = document.elementFromPoint;
+    const elementFromPoint = vi.fn(() => cell("1", "name"));
+    try {
+      render(<Harness />);
+      const viewport = container.querySelector<HTMLDivElement>(
+        ".app-data-table__scroll",
+      )!;
+      viewport.scrollTop = 200;
+      vi.spyOn(viewport, "getBoundingClientRect").mockReturnValue({
+        bottom: 100,
+        height: 100,
+        left: 0,
+        right: 320,
+        top: 0,
+        width: 320,
+        x: 0,
+        y: 0,
+        toJSON: () => ({}),
+      } as DOMRect);
+      Object.defineProperty(document, "elementFromPoint", {
+        configurable: true,
+        value: elementFromPoint,
+      });
+
+      const start = cell("3", "name");
+      pointer(start, "pointerdown", { clientX: 80, clientY: 50 });
+      movePointer(80, -20);
+      const before = viewport.scrollTop;
+      act(() => vi.advanceTimersByTime(16 * 4));
+
+      expect(viewport.scrollTop).toBeLessThan(before);
+      expect(onChange.mock.calls.length).toBeGreaterThan(1);
+      expect(
+        onChange.mock.calls.some(
+          ([next]) =>
+            (next as AppDataTableCellRange | null)?.focus.rowId === "1",
+        ),
+      ).toBe(true);
+
+      pointer(window, "pointerup");
+      act(() => vi.runOnlyPendingTimers());
+    } finally {
+      Object.defineProperty(document, "elementFromPoint", {
+        configurable: true,
+        value: originalElementFromPoint,
+      });
+      vi.useRealTimers();
+    }
+  });
+
+  it("keeps upward auto-scroll below a sticky header", () => {
+    vi.useFakeTimers();
+    const onChange = vi.fn();
+    const originalElementFromPoint = document.elementFromPoint;
+    let viewport: HTMLDivElement | undefined;
+    let firstPointY: number | undefined;
+    const elementFromPoint = vi.fn((...args: [number, number]) => {
+      const [, y] = args;
+      firstPointY ??= y;
+      return cell(
+        y > 32 && (viewport?.scrollTop ?? 200) >= 175 ? "12" : "3",
+        "name",
+      );
+    });
+    try {
+      renderTable({
+        cellSelection: { onChange },
+        data: pagedData,
+        stickyHeader: true,
+      });
+      viewport = container.querySelector<HTMLDivElement>(
+        ".app-data-table__scroll",
+      )!;
+      const header = container.querySelector<HTMLTableSectionElement>("thead")!;
+      viewport.scrollTop = 200;
+      vi.spyOn(viewport, "getBoundingClientRect").mockReturnValue({
+        bottom: 100,
+        height: 100,
+        left: 0,
+        right: 320,
+        top: 0,
+        width: 320,
+        x: 0,
+        y: 0,
+        toJSON: () => ({}),
+      } as DOMRect);
+      vi.spyOn(header, "getBoundingClientRect").mockReturnValue({
+        bottom: 32,
+        height: 32,
+        left: 0,
+        right: 320,
+        top: 0,
+        width: 320,
+        x: 0,
+        y: 0,
+        toJSON: () => ({}),
+      } as DOMRect);
+      Object.defineProperty(document, "elementFromPoint", {
+        configurable: true,
+        value: elementFromPoint,
+      });
+
+      pointer(cell("12", "name"), "pointerdown", {
+        clientX: 80,
+        clientY: 50,
+      });
+      movePointer(80, -20);
+      expect(firstPointY).toBe(33);
+      const before = viewport.scrollTop;
+      act(() => vi.advanceTimersByTime(16 * 4));
+
+      expect(viewport.scrollTop).toBeLessThan(before);
+      expect(
+        onChange.mock.calls.some(
+          ([next]) =>
+            (next as AppDataTableCellRange | null)?.focus.rowId === "3",
+        ),
+      ).toBe(true);
+
+      pointer(window, "pointerup");
+      act(() => vi.runOnlyPendingTimers());
+    } finally {
+      Object.defineProperty(document, "elementFromPoint", {
+        configurable: true,
+        value: originalElementFromPoint,
+      });
+      vi.useRealTimers();
+    }
+  });
+
+  it("keeps ordinary upward auto-scroll unchanged without a sticky header", () => {
+    vi.useFakeTimers();
+    const onChange = vi.fn();
+    const originalElementFromPoint = document.elementFromPoint;
+    let firstPointY: number | undefined;
+    const elementFromPoint = vi.fn((...args: [number, number]) => {
+      const [, y] = args;
+      firstPointY ??= y;
+      return cell("2", "name");
+    });
+    try {
+      renderTable({
+        cellSelection: { onChange },
+        data: pagedData,
+        stickyHeader: false,
+      });
+      const viewport = container.querySelector<HTMLDivElement>(
+        ".app-data-table__scroll",
+      )!;
+      const header = container.querySelector<HTMLTableSectionElement>("thead")!;
+      viewport.scrollTop = 200;
+      vi.spyOn(viewport, "getBoundingClientRect").mockReturnValue({
+        bottom: 100,
+        height: 100,
+        left: 0,
+        right: 320,
+        top: 0,
+        width: 320,
+        x: 0,
+        y: 0,
+        toJSON: () => ({}),
+      } as DOMRect);
+      vi.spyOn(header, "getBoundingClientRect").mockReturnValue({
+        bottom: -10,
+        height: 32,
+        left: 0,
+        right: 320,
+        top: -42,
+        width: 320,
+        x: 0,
+        y: -42,
+        toJSON: () => ({}),
+      } as DOMRect);
+      Object.defineProperty(document, "elementFromPoint", {
+        configurable: true,
+        value: elementFromPoint,
+      });
+
+      pointer(cell("3", "name"), "pointerdown", {
+        clientX: 80,
+        clientY: 50,
+      });
+      movePointer(80, -20);
+      expect(firstPointY).toBe(1);
+
+      pointer(window, "pointerup");
+      act(() => vi.runOnlyPendingTimers());
+    } finally {
+      Object.defineProperty(document, "elementFromPoint", {
+        configurable: true,
+        value: originalElementFromPoint,
+      });
+      vi.useRealTimers();
+    }
   });
 
   it("does not render control DOM when controls are omitted", () => {

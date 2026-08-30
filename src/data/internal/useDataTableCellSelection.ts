@@ -34,7 +34,6 @@ interface UseDataTableCellSelectionOptions {
 export interface DataTableCellSelectionInteraction {
   enabled: boolean;
   selecting: boolean;
-  didDrag: boolean;
   range: AppDataTableCellRange | null;
   selectCell: (position: AppDataTableCellPosition) => void;
   extendSelection: (
@@ -49,6 +48,7 @@ export interface DataTableCellSelectionInteraction {
   ) => void;
   onPointerEnter: (position: AppDataTableCellPosition) => void;
   consumeRowClick: () => boolean;
+  clearRowClickSuppression: () => void;
 }
 
 export function useDataTableCellSelection({
@@ -65,10 +65,12 @@ export function useDataTableCellSelection({
     useState<AppDataTableCellRange | null>(null);
   const range = controlled ? (config.value ?? null) : internalRange;
   const rangeRef = useRef(range);
+  const onChangeRef = useRef(config?.onChange);
   const [selecting, setSelecting] = useState(false);
   const selectingRef = useRef(false);
-  const [didDrag, setDidDrag] = useState(false);
   const didDragRef = useRef(false);
+  const suppressNextRowClickRef = useRef(false);
+  const suppressClearTimerRef = useRef<number | null>(null);
   const pointerDownRef = useRef(false);
   const pointerOriginRef = useRef({ x: 0, y: 0 });
   const pointerRef = useRef({ x: 0, y: 0 });
@@ -88,13 +90,17 @@ export function useDataTableCellSelection({
     rangeRef.current = range;
   }, [range]);
 
+  useEffect(() => {
+    onChangeRef.current = config?.onChange;
+  }, [config?.onChange]);
+
   const updateRange = useCallback(
     (next: AppDataTableCellRange | null) => {
       rangeRef.current = next;
       if (!controlled) setInternalRange(next);
-      config?.onChange?.(next);
+      onChangeRef.current?.(next);
     },
-    [config, controlled],
+    [controlled],
   );
 
   const selectCell = useCallback(
@@ -120,6 +126,14 @@ export function useDataTableCellSelection({
   );
 
   const clearSelection = useCallback(() => updateRange(null), [updateRange]);
+
+  const clearRowClickSuppression = useCallback(() => {
+    suppressNextRowClickRef.current = false;
+    if (suppressClearTimerRef.current !== null) {
+      window.clearTimeout(suppressClearTimerRef.current);
+      suppressClearTimerRef.current = null;
+    }
+  }, []);
 
   const rangeBounds = useMemo(
     () => getCellRangeBoundsFromIndices(range, rowIndices, columnIndices),
@@ -150,9 +164,17 @@ export function useDataTableCellSelection({
       if (!viewport) return { x, y };
       const rect = viewport.getBoundingClientRect();
       if (rect.right <= rect.left || rect.bottom <= rect.top) return { x, y };
+      const header = viewport.querySelector("thead");
+      const headerRect = header?.getBoundingClientRect();
+      const minY =
+        headerRect &&
+        headerRect.bottom > rect.top &&
+        headerRect.top <= rect.top
+          ? headerRect.bottom
+          : rect.top;
       return {
         x: Math.min(Math.max(x, rect.left), rect.right - 1),
-        y: Math.min(Math.max(y, rect.top), rect.bottom - 1),
+        y: Math.min(Math.max(y, minY + 1), rect.bottom - 1),
       };
     },
     [scrollRef],
@@ -194,13 +216,31 @@ export function useDataTableCellSelection({
     ],
   );
 
-  const stopSelecting = useCallback(() => {
-    pointerDownRef.current = false;
-    selectingRef.current = false;
-    setSelecting(false);
-    if (frameRef.current !== null) cancelAnimationFrame(frameRef.current);
-    frameRef.current = null;
-  }, []);
+  const stopSelecting = useCallback(
+    (reason: "pointerup" | "cancel") => {
+      const wasDragging = didDragRef.current;
+      didDragRef.current = false;
+      pointerDownRef.current = false;
+      selectingRef.current = false;
+      setSelecting(false);
+      if (frameRef.current !== null) cancelAnimationFrame(frameRef.current);
+      frameRef.current = null;
+
+      if (reason === "pointerup" && wasDragging) {
+        suppressNextRowClickRef.current = true;
+        if (suppressClearTimerRef.current !== null) {
+          window.clearTimeout(suppressClearTimerRef.current);
+        }
+        suppressClearTimerRef.current = window.setTimeout(() => {
+          suppressNextRowClickRef.current = false;
+          suppressClearTimerRef.current = null;
+        }, 0);
+      } else {
+        clearRowClickSuppression();
+      }
+    },
+    [clearRowClickSuppression],
+  );
 
   useEffect(() => {
     if (!enabled) return;
@@ -249,26 +289,33 @@ export function useDataTableCellSelection({
         selectingRef.current = true;
         didDragRef.current = true;
         setSelecting(true);
-        setDidDrag(true);
         autoScroll();
       }
       updateFromPoint(event.clientX, event.clientY);
     };
-    const handlePointerUp = () => stopSelecting();
+    const handlePointerUp = () => stopSelecting("pointerup");
+    const handlePointerCancel = () => stopSelecting("cancel");
 
     document.addEventListener("pointermove", handlePointerMove);
     window.addEventListener("pointerup", handlePointerUp);
-    window.addEventListener("pointercancel", handlePointerUp);
-    window.addEventListener("blur", handlePointerUp);
+    window.addEventListener("pointercancel", handlePointerCancel);
+    window.addEventListener("blur", handlePointerCancel);
     return () => {
       document.removeEventListener("pointermove", handlePointerMove);
       window.removeEventListener("pointerup", handlePointerUp);
-      window.removeEventListener("pointercancel", handlePointerUp);
-      window.removeEventListener("blur", handlePointerUp);
+      window.removeEventListener("pointercancel", handlePointerCancel);
+      window.removeEventListener("blur", handlePointerCancel);
       if (frameRef.current !== null) cancelAnimationFrame(frameRef.current);
       frameRef.current = null;
+      clearRowClickSuppression();
     };
-  }, [enabled, scrollRef, stopSelecting, updateFromPoint]);
+  }, [
+    clearRowClickSuppression,
+    enabled,
+    scrollRef,
+    stopSelecting,
+    updateFromPoint,
+  ]);
 
   const onPointerDown = useCallback(
     (
@@ -283,11 +330,11 @@ export function useDataTableCellSelection({
       ) {
         return;
       }
+      clearRowClickSuppression();
       pointerDownRef.current = true;
       selectingRef.current = false;
       didDragRef.current = false;
       setSelecting(false);
-      setDidDrag(false);
       pointerOriginRef.current = { x: event.clientX, y: event.clientY };
       pointerRef.current = { x: event.clientX, y: event.clientY };
       if (event.shiftKey) {
@@ -297,7 +344,13 @@ export function useDataTableCellSelection({
       }
       activateCell(position, true);
     },
-    [activateCell, enabled, extendSelection, selectCell],
+    [
+      activateCell,
+      clearRowClickSuppression,
+      enabled,
+      extendSelection,
+      selectCell,
+    ],
   );
 
   const onPointerEnter = useCallback(
@@ -320,17 +373,15 @@ export function useDataTableCellSelection({
   );
 
   const consumeRowClick = useCallback(() => {
-    if (!didDragRef.current) return false;
-    didDragRef.current = false;
-    setDidDrag(false);
+    if (!suppressNextRowClickRef.current) return false;
+    clearRowClickSuppression();
     return true;
-  }, []);
+  }, [clearRowClickSuppression]);
 
   return useMemo(
     () => ({
       enabled,
       selecting,
-      didDrag,
       range,
       selectCell,
       extendSelection,
@@ -339,11 +390,12 @@ export function useDataTableCellSelection({
       onPointerDown,
       onPointerEnter,
       consumeRowClick,
+      clearRowClickSuppression,
     }),
     [
       clearSelection,
+      clearRowClickSuppression,
       consumeRowClick,
-      didDrag,
       enabled,
       extendSelection,
       getCellState,

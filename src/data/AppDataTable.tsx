@@ -167,6 +167,11 @@ export function AppDataTable<TData>(props: AppDataTableProps<TData>) {
     scrollRef,
     activateCell: activateCellPosition,
   })
+  const isCellSelectionEnabled = cellSelection.enabled
+  const extendCellSelection = cellSelection.extendSelection
+  const selectCell = cellSelection.selectCell
+  const cellSelectionCopyEnabled =
+    typeof props.cellSelection !== 'object' || props.cellSelection.copy !== false
 
   const handleCopy = useCallback(
     (event: ClipboardEvent<HTMLDivElement>) => {
@@ -174,8 +179,7 @@ export function AppDataTable<TData>(props: AppDataTableProps<TData>) {
         !cellSelection.enabled ||
         !cellSelection.range ||
         isDataTableInteractiveTarget(event.target) ||
-        (typeof props.cellSelection === 'object' &&
-          props.cellSelection.copy === false)
+        !cellSelectionCopyEnabled
       ) {
         return
       }
@@ -191,10 +195,10 @@ export function AppDataTable<TData>(props: AppDataTableProps<TData>) {
     },
     [
       cellSelection.enabled,
+      cellSelectionCopyEnabled,
       cellSelection.range,
       core.table,
       dataColumnIds,
-      props.cellSelection,
       props.getCellCopyValue,
       rowIds,
     ],
@@ -243,11 +247,11 @@ export function AppDataTable<TData>(props: AppDataTableProps<TData>) {
 
       event.preventDefault()
       const target = { rowId: nextRowId, columnId: nextColumnId }
-      if (cellSelection.enabled) {
+      if (isCellSelectionEnabled) {
         if (event.shiftKey) {
-          cellSelection.extendSelection(target, { rowId, columnId })
+          extendCellSelection(target, { rowId, columnId })
         } else {
-          cellSelection.selectCell(target)
+          selectCell(target)
         }
       }
       pendingFocusRef.current = target
@@ -258,12 +262,14 @@ export function AppDataTable<TData>(props: AppDataTableProps<TData>) {
       scheduleCellFocus(target)
     },
     [
-      cellSelection,
       columnIndices,
       dataColumnIds,
+      extendCellSelection,
+      isCellSelectionEnabled,
       rowIds,
       rowIndices,
       scheduleCellFocus,
+      selectCell,
       virtualizationEnabled,
     ],
   )

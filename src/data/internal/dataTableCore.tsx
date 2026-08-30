@@ -1171,6 +1171,7 @@ function DataTableRowImpl<TData>({
                       (onRowClick || rowSelectionMode === "single")
                     ) {
                       event.preventDefault();
+                      cellSelection?.clearRowClickSuppression();
                       event.currentTarget.closest("tr")?.click();
                       return;
                     }
