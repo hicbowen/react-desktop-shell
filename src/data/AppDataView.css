@@ -1215,7 +1215,6 @@
 }
 
 .app-data-table td[data-active-cell="true"]:focus {
-  z-index: 2;
   background: var(--app-data-surface-bg);
   border-radius: var(--rds-radius-control, 4px);
 }
