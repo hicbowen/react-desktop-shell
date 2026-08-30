@@ -1,8 +1,15 @@
 import type { ColumnPinningState, RowSelectionState, SortingState } from '@tanstack/react-table'
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useMemo, useRef, useState } from 'react'
 import { Copy } from '../../components/fluentIcons'
 import { AppButton, AppEmptyState, AppSegmentedControl, AppSelect, AppToggleSwitch, AppToolbar, useAppContextMenu, useAppToast } from '../../../../src'
-import { AppDataTable, AppDataView, AppSelectionBar, type AppDataTableCellRange, type AppDataTableProps } from '../../../../src/data'
+import {
+  AppDataTable,
+  AppDataView,
+  AppSelectionBar,
+  type AppDataTableCellRange,
+  type AppDataTableHandle,
+  type AppDataTableProps,
+} from '../../../../src/data'
 import { DemoControls, DemoPage, DemoPreview, DemoSection } from '../../components/DemoPage'
 import { tableRows, type DemoRow } from '../../fixtures/tableRows'
 import { useDemoCopy } from '../../i18n/interactiveTranslations'
@@ -24,6 +31,10 @@ export function AppDataTablePage() {
   const [stickyCategory, setStickyCategory] = useState(true)
   const [pinCategory, setPinCategory] = useState(false)
   const [cellRange, setCellRange] = useState<AppDataTableCellRange | null>(null)
+  const tableRef = useRef<AppDataTableHandle | null>(null)
+  const setTableRef = useCallback((handle: AppDataTableHandle | null) => {
+    tableRef.current = handle
+  }, [])
   const columnPinning = useMemo<ColumnPinningState>(
     () => (pinCategory ? { left: ['category'] } : {}),
     [pinCategory],
@@ -31,23 +42,57 @@ export function AppDataTablePage() {
   const count = Object.values(selection).filter(Boolean).length
   const columns = useMemo(() => createColumns(t), [t])
   const tableControls = useMemo(() => createTableControls(t), [t])
-  const copyCellSelection = useCallback(() => {
+  const copyText = useCallback(async (text: string) => {
+    let clipboardError: unknown
+    if (navigator.clipboard?.writeText) {
+      try {
+        await navigator.clipboard.writeText(text)
+        return
+      } catch (error) {
+        clipboardError = error
+      }
+    }
+
+    // Keep the example usable in older browser/WebView hosts. The table's
+    // native copy listener supplies the TSV payload for this command.
     const activeCell = document.querySelector<HTMLElement>(
       '.app-data-table td[data-active-cell="true"]',
     )
     activeCell?.focus({ preventScroll: true })
-
-    let copied = false
-    try {
-      copied = document.execCommand?.('copy') ?? false
-    } catch {
-      copied = false
+    if (
+      typeof document.execCommand === 'function' &&
+      document.execCommand('copy')
+    ) {
+      return
     }
-    toast.info(
-      copied
-        ? t('Selected cells copied.')
-        : t('Use Ctrl+C to copy the selected cells.'),
-    )
+
+    throw clipboardError ?? new Error('Clipboard write is unavailable')
+  }, [])
+  const copyCellSelection = useCallback(async () => {
+    const table = tableRef.current
+    if (!table) {
+      toast.error(t('Could not copy selected cells.'))
+      return
+    }
+    const result = await table.copySelectedCells()
+    if (result.status === 'copied') {
+      toast.success(t('Selected cells copied.'))
+      return
+    }
+    if (result.status === 'skipped') {
+      toast.warning(
+        result.reason === 'no-selection'
+          ? t('Select cells before copying.')
+          : t('Cell copying is disabled.'),
+      )
+      return
+    }
+    toast.error(t('Could not copy selected cells.'), {
+      message:
+        result.error instanceof Error
+          ? result.error.message
+          : String(result.error),
+    })
   }, [t, toast])
   const handleRowContextMenu = useCallback<
     NonNullable<AppDataTableProps<DemoRow>['onRowContextMenu']>
@@ -55,7 +100,8 @@ export function AppDataTablePage() {
     (row, event) => {
       event.preventDefault()
       const rowName = localizeTableValue(t, row.original.name)
-      const cellSelectionItems = cellRange
+      const currentCellRange = tableRef.current?.getCellSelection() ?? cellRange
+      const cellSelectionItems = currentCellRange
         ? [
             {
               key: 'copy-cell-selection',
@@ -215,6 +261,7 @@ export function AppDataTablePage() {
           }
         >
           <AppDataTable
+            ref={setTableRef}
             columns={columns}
             controls={tableControls}
             data={tableRows}
@@ -244,7 +291,11 @@ export function AppDataTablePage() {
               mode: selectionMode,
               selectAllMode: 'page',
             }}
-            cellSelection={{ value: cellRange, onChange: setCellRange }}
+            cellSelection={{
+              value: cellRange,
+              onChange: setCellRange,
+              copy: copyText,
+            }}
             stickyHeader={sticky}
             stickyColumns={stickyCategory ? ['category'] : undefined}
             columnPinning={columnPinning}

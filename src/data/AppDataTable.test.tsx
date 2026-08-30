@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 
-import { act, useState, type ReactNode } from "react";
+import { act, createRef, StrictMode, useState, type ReactNode } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import type { ColumnDef, RowSelectionState } from "@tanstack/react-table";
 import {
@@ -17,6 +17,7 @@ import { AppShell } from "../shell/AppShell";
 import type {
   AppDataTableCellRange,
   AppDataTableControlsOptions,
+  AppDataTableHandle,
 } from "./types";
 import { escapeTsvValue } from "./internal/dataTableClipboard";
 
@@ -546,12 +547,13 @@ describe("AppDataTable controls", () => {
   });
 
   it("copies a controlled range through the native copy event in current sorted order", () => {
+    const onCopy = vi.fn();
     const range: AppDataTableCellRange = {
       anchor: { rowId: "3", columnId: "name" },
       focus: { rowId: "1", columnId: "category" },
     };
     renderTable({
-      cellSelection: { value: range },
+      cellSelection: { value: range, onCopy },
       sorting: [{ id: "name", desc: true }],
       getCellCopyValue: (selectedCell) =>
         selectedCell.column.id === "category"
@@ -566,6 +568,9 @@ describe("AppDataTable controls", () => {
       "text/plain",
       "Gamma\t[Archive]\nDelta\t[Document]\nBeta\t[Media]\nAlpha\t[Document]",
     );
+    expect(onCopy).toHaveBeenCalledWith(
+      "Gamma\t[Archive]\nDelta\t[Document]\nBeta\t[Media]\nAlpha\t[Document]",
+    );
 
     const secondCopy = copyEvent(active);
     expect(secondCopy.event.defaultPrevented).toBe(true);
@@ -573,6 +578,201 @@ describe("AppDataTable controls", () => {
       "text/plain",
       "Gamma\t[Archive]\nDelta\t[Document]\nBeta\t[Media]\nAlpha\t[Document]",
     );
+    expect(onCopy).toHaveBeenCalledTimes(2);
+  });
+
+  it("copies the current range through the imperative API and configured writer", async () => {
+    const writeText = vi.fn().mockResolvedValue(undefined);
+    const onCopy = vi.fn();
+    const ref = createRef<AppDataTableHandle>();
+    const range: AppDataTableCellRange = {
+      anchor: { rowId: "3", columnId: "name" },
+      focus: { rowId: "1", columnId: "category" },
+    };
+    render(
+      <AppDataTable
+        ref={ref}
+        cellSelection={{
+          value: range,
+          copy: writeText,
+          onCopy,
+        }}
+        columns={columns}
+        data={data}
+        getRowId={(row) => row.id}
+        sorting={[{ id: "name", desc: true }]}
+      />,
+    );
+
+    let result: Awaited<ReturnType<AppDataTableHandle["copySelectedCells"]>>;
+    await act(async () => {
+      result = await ref.current!.copySelectedCells();
+    });
+
+    expect(result!).toMatchObject({ status: "copied", range });
+    expect(writeText).toHaveBeenCalledWith(
+      "Gamma\tArchive\nDelta\tDocument\nBeta\tMedia\nAlpha\tDocument",
+    );
+    expect(onCopy).toHaveBeenCalledWith(
+      "Gamma\tArchive\nDelta\tDocument\nBeta\tMedia\nAlpha\tDocument",
+    );
+  });
+
+  it("keeps the imperative handle attached in StrictMode", () => {
+    const ref = createRef<AppDataTableHandle>();
+
+    render(
+      <StrictMode>
+        <AppDataTable
+          ref={ref}
+          cellSelection
+          columns={columns}
+          data={data}
+          getRowId={(row) => row.id}
+        />
+      </StrictMode>,
+    );
+
+    expect(ref.current).not.toBeNull();
+  });
+
+  it("uses the native copy command when no Clipboard API is available", async () => {
+    const setData = vi.fn();
+    const execCommand = vi.fn(() => {
+      const event = new Event("copy", { bubbles: true, cancelable: true });
+      Object.defineProperty(event, "clipboardData", {
+        configurable: true,
+        value: { setData },
+      });
+      cell("2", "name").dispatchEvent(event);
+      return true;
+    });
+    Object.defineProperty(document, "execCommand", {
+      configurable: true,
+      value: execCommand,
+    });
+    const ref = createRef<AppDataTableHandle>();
+    const range: AppDataTableCellRange = {
+      anchor: { rowId: "2", columnId: "name" },
+      focus: { rowId: "2", columnId: "name" },
+    };
+    try {
+      render(
+        <AppDataTable
+          ref={ref}
+          cellSelection={{ value: range }}
+          columns={columns}
+          data={data}
+          getRowId={(row) => row.id}
+        />,
+      );
+
+      let result: Awaited<ReturnType<AppDataTableHandle["copySelectedCells"]>>;
+      await act(async () => {
+        result = await ref.current!.copySelectedCells();
+      });
+
+      expect(result!).toMatchObject({ status: "copied", range });
+      expect(execCommand).toHaveBeenCalledWith("copy");
+      expect(setData).toHaveBeenCalledWith("text/plain", "Beta");
+    } finally {
+      delete (document as unknown as { execCommand?: unknown }).execCommand;
+    }
+  });
+
+  it("returns an explicit result when imperative copy is disabled or has no selection", async () => {
+    const disabledRef = createRef<AppDataTableHandle>();
+    render(
+      <AppDataTable
+        ref={disabledRef}
+        cellSelection={{ copy: false }}
+        columns={columns}
+        data={data}
+        getRowId={(row) => row.id}
+      />,
+    );
+    await act(async () => {
+      await expect(disabledRef.current!.copySelectedCells()).resolves.toEqual({
+        status: "skipped",
+        reason: "disabled",
+      });
+    });
+
+    const emptyRef = createRef<AppDataTableHandle>();
+    render(
+      <AppDataTable
+        ref={emptyRef}
+        cellSelection={{ value: null }}
+        columns={columns}
+        data={data}
+        getRowId={(row) => row.id}
+      />,
+    );
+    await act(async () => {
+      await expect(emptyRef.current!.copySelectedCells()).resolves.toEqual({
+        status: "skipped",
+        reason: "no-selection",
+      });
+    });
+  });
+
+  it("uses the configured writer when native copy has no writable clipboardData", async () => {
+    const writeText = vi.fn().mockResolvedValue(undefined);
+    const range: AppDataTableCellRange = {
+      anchor: { rowId: "2", columnId: "name" },
+      focus: { rowId: "2", columnId: "status" },
+    };
+    renderTable({
+      cellSelection: {
+        value: range,
+        copy: writeText,
+      },
+    });
+
+    const event = new Event("copy", { bubbles: true, cancelable: true });
+    Object.defineProperty(event, "clipboardData", {
+      configurable: true,
+      value: null,
+    });
+    act(() => cell("2", "name").dispatchEvent(event));
+    await act(async () => {
+      await Promise.resolve();
+    });
+
+    expect(event.defaultPrevented).toBe(true);
+    expect(writeText).toHaveBeenCalledWith("Beta\tMedia\tProcessing");
+  });
+
+  it("returns a failed result and reports adapter errors", async () => {
+    const error = new Error("native bridge unavailable");
+    const writeText = vi.fn().mockRejectedValue(error);
+    const onCopyError = vi.fn();
+    const ref = createRef<AppDataTableHandle>();
+    const range: AppDataTableCellRange = {
+      anchor: { rowId: "2", columnId: "name" },
+      focus: { rowId: "2", columnId: "name" },
+    };
+    render(
+      <AppDataTable
+        ref={ref}
+        cellSelection={{
+          value: range,
+          copy: writeText,
+          onCopyError,
+        }}
+        columns={columns}
+        data={data}
+        getRowId={(row) => row.id}
+      />,
+    );
+
+    let result: Awaited<ReturnType<AppDataTableHandle["copySelectedCells"]>>;
+    await act(async () => {
+      result = await ref.current!.copySelectedCells();
+    });
+
+    expect(result!).toMatchObject({ status: "failed", error, range });
+    expect(onCopyError).toHaveBeenCalledWith(error);
   });
 
   it("does not take over native copy when cell copy is disabled", () => {

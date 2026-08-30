@@ -1,13 +1,18 @@
 import {
+  forwardRef,
   lazy,
   Suspense,
   useCallback,
   useEffect,
+  useImperativeHandle,
   useMemo,
   useRef,
   useState,
   type ClipboardEvent,
+  type ForwardedRef,
   type KeyboardEvent,
+  type ReactElement,
+  type RefAttributes,
 } from 'react'
 import {
   DataTableFrame,
@@ -24,7 +29,12 @@ import { isDataTableInteractiveTarget } from './internal/dataTableInteraction'
 import { useDataTableCellSelection } from './internal/useDataTableCellSelection'
 import { AppDataTableControls } from './AppDataTableControls'
 import { AppDataTablePagination } from './AppDataTablePagination'
-import type { AppDataTableProps } from './types'
+import type {
+  AppDataTableCopyResult,
+  AppDataTableCopyWriter,
+  AppDataTableHandle,
+  AppDataTableProps,
+} from './types'
 import './AppDataView.css'
 
 const AppDataTableVirtualRows = lazy(
@@ -49,7 +59,49 @@ function findDataCell(
   )
 }
 
-export function AppDataTable<TData>(props: AppDataTableProps<TData>) {
+/**
+ * Writes text for imperative copy commands when the host did not provide a
+ * copy function. The Clipboard API is preferred; older browser/WebView runtimes can
+ * still expose the native copy command, which routes through this table's
+ * standard `copy` event handler.
+ */
+const defaultDataTableCopyWriter: AppDataTableCopyWriter = async (text) => {
+  let clipboardError: unknown
+  if (typeof navigator !== 'undefined' && navigator.clipboard?.writeText) {
+    try {
+      await navigator.clipboard.writeText(text)
+      return
+    } catch (error) {
+      clipboardError = error
+    }
+  }
+
+  if (
+    typeof document !== 'undefined' &&
+    typeof document.execCommand === 'function' &&
+    document.execCommand('copy')
+  ) {
+    return
+  }
+
+  throw clipboardError ?? new Error('Clipboard write is unavailable')
+}
+
+function reportDataTableCopyError(
+  error: unknown,
+  onCopyError?: (error: unknown) => void,
+) {
+  if (onCopyError) {
+    onCopyError(error)
+    return
+  }
+  console.error('AppDataTable copy failed', error)
+}
+
+function AppDataTableInner<TData>(
+  props: AppDataTableProps<TData>,
+  ref: ForwardedRef<AppDataTableHandle>,
+) {
   const scrollRef = useRef<HTMLDivElement | null>(null)
   const virtualScrollToIndexRef = useRef<((index: number) => void) | null>(null)
   const pendingFocusRef = useRef<DataTableActiveCell | null>(null)
@@ -170,38 +222,149 @@ export function AppDataTable<TData>(props: AppDataTableProps<TData>) {
   const isCellSelectionEnabled = cellSelection.enabled
   const extendCellSelection = cellSelection.extendSelection
   const selectCell = cellSelection.selectCell
+  const getCellSelection = cellSelection.getRange
+  const copyWriter =
+    typeof props.cellSelection === 'object' &&
+    typeof props.cellSelection.copy === 'function'
+      ? props.cellSelection.copy
+      : undefined
+  const copyOnCopy =
+    typeof props.cellSelection === 'object'
+      ? props.cellSelection.onCopy
+      : undefined
+  const copyOnError =
+    typeof props.cellSelection === 'object'
+      ? props.cellSelection.onCopyError
+      : undefined
   const cellSelectionCopyEnabled =
     typeof props.cellSelection !== 'object' || props.cellSelection.copy !== false
+
+  const copyWriterRef = useRef<AppDataTableCopyWriter | undefined>(copyWriter)
+  const copyOnCopyRef = useRef(copyOnCopy)
+  const copyOnErrorRef = useRef(copyOnError)
+  const writerCopyRef = useRef(false)
+  useEffect(() => {
+    copyWriterRef.current = copyWriter
+    copyOnCopyRef.current = copyOnCopy
+    copyOnErrorRef.current = copyOnError
+  }, [copyOnCopy, copyOnError, copyWriter])
+
+  const getCopyText = useCallback(
+    (range: NonNullable<ReturnType<typeof getCellSelection>>) =>
+      serializeDataTableCellRange(
+        core.table,
+        range,
+        rowIds,
+        dataColumnIds,
+        props.getCellCopyValue,
+      ),
+    [core.table, dataColumnIds, props.getCellCopyValue, rowIds],
+  )
+
+  const runCopyWriter = useCallback(
+    async (text: string, writer: AppDataTableCopyWriter) => {
+      // A host writer may itself use execCommand('copy'), which dispatches a
+      // nested copy event. Suppress the nested success callback so each user
+      // action produces one onCopy notification.
+      writerCopyRef.current = true
+      try {
+        await writer(text)
+        copyOnCopyRef.current?.(text)
+      } finally {
+        writerCopyRef.current = false
+      }
+    },
+    [],
+  )
+
+  const copySelectedCells = useCallback(async (): Promise<AppDataTableCopyResult> => {
+    if (!isCellSelectionEnabled || !cellSelectionCopyEnabled) {
+      return { status: 'skipped', reason: 'disabled' }
+    }
+    const range = getCellSelection()
+    if (!range) {
+      return { status: 'skipped', reason: 'no-selection' }
+    }
+
+    const writer = copyWriterRef.current ?? defaultDataTableCopyWriter
+    try {
+      // `execCommand('copy')` targets the focused element. Keep the table's
+      // active cell focused so the native copy event reaches this surface when
+      // the Web Clipboard API is unavailable.
+      if (
+        writer === defaultDataTableCopyWriter &&
+        (typeof navigator === 'undefined' || !navigator.clipboard?.writeText)
+      ) {
+        focusCell(activeCell ?? range.focus)
+      }
+      await runCopyWriter(getCopyText(range), writer)
+      return { status: 'copied', range }
+    } catch (error) {
+      reportDataTableCopyError(error, copyOnErrorRef.current)
+      return { status: 'failed', error, range }
+    }
+  }, [
+    activeCell,
+    cellSelectionCopyEnabled,
+    focusCell,
+    getCellSelection,
+    getCopyText,
+    isCellSelectionEnabled,
+    runCopyWriter,
+  ])
 
   const handleCopy = useCallback(
     (event: ClipboardEvent<HTMLDivElement>) => {
       if (
         !cellSelection.enabled ||
-        !cellSelection.range ||
         isDataTableInteractiveTarget(event.target) ||
         !cellSelectionCopyEnabled
       ) {
         return
       }
-      const text = serializeDataTableCellRange(
-        core.table,
-        cellSelection.range,
-        rowIds,
-        dataColumnIds,
-        props.getCellCopyValue,
-      )
+      const range = getCellSelection()
+      if (!range) return
+
+      const canUseClipboardEvent =
+        typeof event.clipboardData?.setData === 'function'
+
+      if (canUseClipboardEvent) {
+        const text = getCopyText(range)
+        event.preventDefault()
+        event.clipboardData.setData('text/plain', text)
+        if (!writerCopyRef.current) {
+          try {
+            copyOnCopyRef.current?.(text)
+          } catch (error) {
+            reportDataTableCopyError(error, copyOnErrorRef.current)
+          }
+        }
+        return
+      }
+
+      const writer = copyWriterRef.current ?? defaultDataTableCopyWriter
+      const text = getCopyText(range)
       event.preventDefault()
-      event.clipboardData.setData('text/plain', text)
+      void runCopyWriter(text, writer).catch((error) => {
+        reportDataTableCopyError(error, copyOnErrorRef.current)
+      })
     },
     [
       cellSelection.enabled,
       cellSelectionCopyEnabled,
-      cellSelection.range,
-      core.table,
-      dataColumnIds,
-      props.getCellCopyValue,
-      rowIds,
+      getCellSelection,
+      getCopyText,
+      runCopyWriter,
     ],
+  )
+
+  useImperativeHandle(
+    ref,
+    () => ({
+      copySelectedCells,
+      getCellSelection,
+    }),
+    [copySelectedCells, getCellSelection],
   )
 
   const handleCellKeyDown = useCallback(
@@ -399,3 +562,7 @@ export function AppDataTable<TData>(props: AppDataTableProps<TData>) {
     </DataTableFrame>
   )
 }
+
+export const AppDataTable = forwardRef(AppDataTableInner) as <TData>(
+  props: AppDataTableProps<TData> & RefAttributes<AppDataTableHandle>,
+) => ReactElement | null

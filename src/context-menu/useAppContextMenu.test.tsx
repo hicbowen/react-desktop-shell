@@ -100,7 +100,10 @@ describe('useAppContextMenu', () => {
   })
 
   it('opens at the supplied coordinates and runs an item before closing', async () => {
-    const onClick = vi.fn()
+    let menuWasOpenDuringAction = false
+    const onClick = vi.fn(() => {
+      menuWasOpenDuringAction = menu() !== null
+    })
     renderShell()
     open([{ key: 'open', label: 'Open item', onClick }], { x: 40, y: 60 })
     await settlePlacement()
@@ -110,6 +113,7 @@ describe('useAppContextMenu', () => {
     expect(menu()?.style.top).toBe('60px')
     act(() => menuItem('Open item')?.click())
     expect(onClick).toHaveBeenCalledOnce()
+    expect(menuWasOpenDuringAction).toBe(true)
     expect(menu()).toBeNull()
   })
 

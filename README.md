@@ -1484,6 +1484,38 @@ const [cellRange, setCellRange] = useState<AppDataTableCellRange | null>(null)
 />
 ```
 
+For custom context-menu or toolbar actions, pass a clipboard writer and use
+the table handle. The writer has the same shape as `AppCopyableText`'s `copy`
+prop, so the host can provide the implementation for browsers, WebViews,
+Electron, or other runtimes:
+
+```tsx
+const tableRef = useRef<AppDataTableHandle | null>(null)
+
+<AppDataTable
+  ref={tableRef}
+  cellSelection={{
+    value: cellRange,
+    onChange: setCellRange,
+    copy: (text) => window.nativeBridge.clipboard.writeText(text),
+  }}
+  columns={columns}
+  data={students}
+/>
+
+<button onClick={() => tableRef.current?.copySelectedCells()}>
+  Copy selected cells
+</button>
+```
+
+`copySelectedCells()` returns an explicit result with `copied`, `skipped`, or
+`failed` status. `copy: false` disables both native and imperative cell copy.
+When the host does not expose writable `clipboardData`, native copy events use
+the configured writer as a fallback. If no writer is provided, imperative
+copies use the Web Clipboard API and then the browser's native copy command
+when available. `onCopy` and `onCopyError` can be used for the same feedback
+lifecycle as `AppCopyableText`.
+
 The range stores only stable `{ rowId, columnId }` anchor and focus endpoints;
 its size is constant regardless of how many cells it covers. Copy values come
 from the table data model, not rendered React nodes or DOM text. Interactive
@@ -1953,10 +1985,26 @@ export interface AppDataTableCellRange {
   focus: AppDataTableCellPosition
 }
 
+export type AppDataTableCopyWriter = (
+  text: string,
+) => void | Promise<void>
+
 export interface AppDataTableCellSelectionOptions {
-  copy?: boolean
+  copy?: boolean | AppDataTableCopyWriter
   value?: AppDataTableCellRange | null
   onChange?: (range: AppDataTableCellRange | null) => void
+  onCopy?: (text: string) => void
+  onCopyError?: (error: unknown) => void
+}
+
+export type AppDataTableCopyResult =
+  | { status: 'copied'; range: AppDataTableCellRange }
+  | { status: 'skipped'; reason: 'disabled' | 'no-selection' }
+  | { status: 'failed'; error: unknown; range: AppDataTableCellRange }
+
+export interface AppDataTableHandle {
+  copySelectedCells(): Promise<AppDataTableCopyResult>
+  getCellSelection(): AppDataTableCellRange | null
 }
 
 export interface AppDataTableFilterOption {

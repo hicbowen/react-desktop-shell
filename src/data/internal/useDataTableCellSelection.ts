@@ -35,6 +35,7 @@ export interface DataTableCellSelectionInteraction {
   enabled: boolean;
   selecting: boolean;
   range: AppDataTableCellRange | null;
+  getRange: () => AppDataTableCellRange | null;
   selectCell: (position: AppDataTableCellPosition) => void;
   extendSelection: (
     position: AppDataTableCellPosition,
@@ -126,6 +127,11 @@ export function useDataTableCellSelection({
   );
 
   const clearSelection = useCallback(() => updateRange(null), [updateRange]);
+
+  const getRange = useCallback(
+    () => (enabled ? rangeRef.current : null),
+    [enabled],
+  );
 
   const clearRowClickSuppression = useCallback(() => {
     suppressNextRowClickRef.current = false;
@@ -383,6 +389,7 @@ export function useDataTableCellSelection({
       enabled,
       selecting,
       range,
+      getRange,
       selectCell,
       extendSelection,
       clearSelection,
@@ -398,6 +405,7 @@ export function useDataTableCellSelection({
       consumeRowClick,
       enabled,
       extendSelection,
+      getRange,
       getCellState,
       onPointerDown,
       onPointerEnter,

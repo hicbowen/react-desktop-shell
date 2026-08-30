@@ -494,8 +494,11 @@ export function AppContextMenuLayer({
       return
     }
 
-    onClose()
-    item.onClick?.()
+    try {
+      item.onClick?.()
+    } finally {
+      onClose()
+    }
   }
 
   const moveActive = (level: number, direction: 1 | -1) => {

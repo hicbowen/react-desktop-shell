@@ -80,10 +80,38 @@ export interface AppDataTableCellRange {
   focus: AppDataTableCellPosition
 }
 
+/** Writes copied text using the host application's clipboard implementation. */
+export type AppDataTableCopyWriter = (text: string) => void | Promise<void>
+
 export interface AppDataTableCellSelectionOptions {
-  copy?: boolean
+  /** Uses the table's default clipboard handling when omitted. Set to false to disable copying. */
+  copy?: boolean | AppDataTableCopyWriter
   value?: AppDataTableCellRange | null
   onChange?: (range: AppDataTableCellRange | null) => void
+  onCopy?: (text: string) => void
+  onCopyError?: (error: unknown) => void
+}
+
+export type AppDataTableCopyResult =
+  | {
+      status: 'copied'
+      range: AppDataTableCellRange
+    }
+  | {
+      status: 'skipped'
+      reason: 'disabled' | 'no-selection'
+    }
+  | {
+      status: 'failed'
+      error: unknown
+      range: AppDataTableCellRange
+    }
+
+export interface AppDataTableHandle {
+  /** Copies the current logical cell range using the configured copy function. */
+  copySelectedCells: () => Promise<AppDataTableCopyResult>
+  /** Returns the latest logical range, including updates made in the same event. */
+  getCellSelection: () => AppDataTableCellRange | null
 }
 
 export interface AppDataTableProps<TData> {
