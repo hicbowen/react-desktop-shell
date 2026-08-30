@@ -38,6 +38,34 @@ export function getCellRangeBounds(
   };
 }
 
+export function getCellRangeBoundsFromIndices(
+  range: AppDataTableCellRange | null,
+  rowIndices: ReadonlyMap<string, number>,
+  columnIndices: ReadonlyMap<string, number>,
+): DataTableCellRangeBounds | null {
+  if (!range) return null;
+
+  const anchorRow = rowIndices.get(range.anchor.rowId);
+  const focusRow = rowIndices.get(range.focus.rowId);
+  const anchorColumn = columnIndices.get(range.anchor.columnId);
+  const focusColumn = columnIndices.get(range.focus.columnId);
+  if (
+    anchorRow === undefined ||
+    focusRow === undefined ||
+    anchorColumn === undefined ||
+    focusColumn === undefined
+  ) {
+    return null;
+  }
+
+  return {
+    top: Math.min(anchorRow, focusRow),
+    bottom: Math.max(anchorRow, focusRow),
+    left: Math.min(anchorColumn, focusColumn),
+    right: Math.max(anchorColumn, focusColumn),
+  };
+}
+
 export function normalizeCellRange(
   range: AppDataTableCellRange,
   rowIds: readonly string[],

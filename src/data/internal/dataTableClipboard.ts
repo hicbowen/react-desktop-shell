@@ -2,6 +2,12 @@ import type { Cell, Table } from "@tanstack/react-table";
 import type { AppDataTableCellRange } from "../types";
 import { getCellRangeBounds } from "./dataTableCellSelection";
 
+/** Escapes a value for a TSV document while preserving tabs, line breaks, and quotes. */
+export function escapeTsvValue(value: string) {
+  if (!/[\t\r\n"]/.test(value)) return value;
+  return `"${value.replace(/"/g, '""')}"`;
+}
+
 export function serializeDataTableCellRange<TData>(
   table: Table<TData>,
   range: AppDataTableCellRange | null,
@@ -28,17 +34,12 @@ export function serializeDataTableCellRange<TData>(
         .map((columnId) => {
           const cell = cellsByColumnId.get(columnId);
           if (!cell) return "";
-          return getCellCopyValue
+          const value = getCellCopyValue
             ? getCellCopyValue(cell)
             : String(cell.getValue() ?? "");
+          return escapeTsvValue(String(value));
         })
         .join("\t");
     })
     .join("\n");
-}
-
-export async function writeDataTableClipboard(text: string) {
-  if (!text || !navigator.clipboard?.writeText) return false;
-  await navigator.clipboard.writeText(text);
-  return true;
 }

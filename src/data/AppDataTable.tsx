@@ -6,6 +6,7 @@ import {
   useMemo,
   useRef,
   useState,
+  type ClipboardEvent,
   type KeyboardEvent,
 } from 'react'
 import {
@@ -18,7 +19,8 @@ import {
   type DataTableActiveCell,
   type DataTableCellNavigation,
 } from './internal/dataTableCore'
-import { serializeDataTableCellRange, writeDataTableClipboard } from './internal/dataTableClipboard'
+import { serializeDataTableCellRange } from './internal/dataTableClipboard'
+import { isDataTableInteractiveTarget } from './internal/dataTableInteraction'
 import { useDataTableCellSelection } from './internal/useDataTableCellSelection'
 import { AppDataTableControls } from './AppDataTableControls'
 import { AppDataTablePagination } from './AppDataTablePagination'
@@ -77,11 +79,19 @@ export function AppDataTable<TData>(props: AppDataTableProps<TData>) {
     [visibleColumns],
   )
   const rowIds = useMemo(() => rows.map((row) => row.id), [rows])
+  const rowIndices = useMemo(
+    () => new Map(rowIds.map((rowId, index) => [rowId, index])),
+    [rowIds],
+  )
+  const columnIndices = useMemo(
+    () => new Map(dataColumnIds.map((columnId, index) => [columnId, index])),
+    [dataColumnIds],
+  )
   const activeCell = useMemo<DataTableActiveCell | null>(() => {
     const requestedIsValid =
       requestedActiveCell !== null &&
-      rowIds.includes(requestedActiveCell.rowId) &&
-      dataColumnIds.includes(requestedActiveCell.columnId)
+      rowIndices.has(requestedActiveCell.rowId) &&
+      columnIndices.has(requestedActiveCell.columnId)
 
     if (requestedIsValid) return requestedActiveCell
     const firstRowId = rowIds[0]
@@ -89,7 +99,7 @@ export function AppDataTable<TData>(props: AppDataTableProps<TData>) {
     return firstRowId && firstColumnId
       ? { rowId: firstRowId, columnId: firstColumnId }
       : null
-  }, [dataColumnIds, requestedActiveCell, rowIds])
+  }, [columnIndices, dataColumnIds, requestedActiveCell, rowIds, rowIndices])
 
   const focusCell = useCallback((target: DataTableActiveCell) => {
     const cell = findDataCell(scrollRef.current, target)
@@ -155,11 +165,40 @@ export function AppDataTable<TData>(props: AppDataTableProps<TData>) {
     rowIds,
     columnIds: dataColumnIds,
     scrollRef,
-    pageIndex: core.paginationEnabled
-      ? tableState.pagination.pageIndex
-      : undefined,
     activateCell: activateCellPosition,
   })
+
+  const handleCopy = useCallback(
+    (event: ClipboardEvent<HTMLDivElement>) => {
+      if (
+        !cellSelection.enabled ||
+        !cellSelection.range ||
+        isDataTableInteractiveTarget(event.target) ||
+        (typeof props.cellSelection === 'object' &&
+          props.cellSelection.copy === false)
+      ) {
+        return
+      }
+      const text = serializeDataTableCellRange(
+        core.table,
+        cellSelection.range,
+        rowIds,
+        dataColumnIds,
+        props.getCellCopyValue,
+      )
+      event.preventDefault()
+      event.clipboardData.setData('text/plain', text)
+    },
+    [
+      cellSelection.enabled,
+      cellSelection.range,
+      core.table,
+      dataColumnIds,
+      props.cellSelection,
+      props.getCellCopyValue,
+      rowIds,
+    ],
+  )
 
   const handleCellKeyDown = useCallback(
     (
@@ -167,32 +206,9 @@ export function AppDataTable<TData>(props: AppDataTableProps<TData>) {
       columnId: string,
       event: KeyboardEvent<HTMLTableCellElement>,
     ) => {
-      if (
-        cellSelection.enabled &&
-        cellSelection.range &&
-        (event.ctrlKey || event.metaKey) &&
-        event.key.toLowerCase() === 'c'
-      ) {
-        const copyEnabled =
-          typeof props.cellSelection !== 'object' ||
-          props.cellSelection.copy !== false
-        if (copyEnabled) {
-          event.preventDefault()
-          const text = serializeDataTableCellRange(
-            core.table,
-            cellSelection.range,
-            rowIds,
-            dataColumnIds,
-            props.getCellCopyValue,
-          )
-          void writeDataTableClipboard(text).catch(() => undefined)
-        }
-        return
-      }
-
-      const rowIndex = rowIds.indexOf(rowId)
-      const columnIndex = dataColumnIds.indexOf(columnId)
-      if (rowIndex < 0 || columnIndex < 0) return
+      const rowIndex = rowIndices.get(rowId)
+      const columnIndex = columnIndices.get(columnId)
+      if (rowIndex === undefined || columnIndex === undefined) return
 
       let nextRowIndex = rowIndex
       let nextColumnIndex = columnIndex
@@ -243,11 +259,10 @@ export function AppDataTable<TData>(props: AppDataTableProps<TData>) {
     },
     [
       cellSelection,
-      core.table,
+      columnIndices,
       dataColumnIds,
-      props.cellSelection,
-      props.getCellCopyValue,
       rowIds,
+      rowIndices,
       scheduleCellFocus,
       virtualizationEnabled,
     ],
@@ -323,6 +338,7 @@ export function AppDataTable<TData>(props: AppDataTableProps<TData>) {
       rowSelectionMode={core.rowSelectionMode}
       cellSelectionEnabled={cellSelection.enabled}
       cellSelecting={cellSelection.selecting}
+      onCopy={handleCopy}
       stickyHeader={core.stickyHeader}
       stickyActiveColumnIds={stickyState.activeColumnIds}
       stickyActiveEdgeColumnId={stickyState.activeEdgeColumnId}

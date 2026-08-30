@@ -13,46 +13,28 @@ import type {
   AppDataTableCellSelectionOptions,
 } from "../types";
 import {
-  getCellRangeBounds,
+  getCellRangeBoundsFromIndices,
   getCellRangeStateFromIndices,
   type DataTableCellRangeState,
 } from "./dataTableCellSelection";
+import { isDataTableInteractiveTarget } from "./dataTableInteraction";
 
 const EDGE_SIZE = 32;
 const MAX_SCROLL_SPEED = 18;
-
-const interactiveSelector = [
-  "a",
-  "button",
-  "input",
-  "select",
-  "textarea",
-  '[contenteditable="true"]',
-  '[role="button"]',
-  '[role="checkbox"]',
-  '[role="link"]',
-  '[role="menuitem"]',
-  '[role="switch"]',
-].join(",");
-
-export function isDataTableInteractiveTarget(target: EventTarget | null) {
-  return (
-    target instanceof Element && target.closest(interactiveSelector) !== null
-  );
-}
+const DRAG_THRESHOLD = 4;
 
 interface UseDataTableCellSelectionOptions {
   options: boolean | AppDataTableCellSelectionOptions | undefined;
   rowIds: readonly string[];
   columnIds: readonly string[];
   scrollRef: RefObject<HTMLDivElement | null>;
-  pageIndex?: number;
   activateCell: (position: AppDataTableCellPosition, focus: boolean) => void;
 }
 
 export interface DataTableCellSelectionInteraction {
   enabled: boolean;
   selecting: boolean;
+  didDrag: boolean;
   range: AppDataTableCellRange | null;
   selectCell: (position: AppDataTableCellPosition) => void;
   extendSelection: (
@@ -66,6 +48,7 @@ export interface DataTableCellSelectionInteraction {
     event: ReactPointerEvent<HTMLTableCellElement>,
   ) => void;
   onPointerEnter: (position: AppDataTableCellPosition) => void;
+  consumeRowClick: () => boolean;
 }
 
 export function useDataTableCellSelection({
@@ -73,7 +56,6 @@ export function useDataTableCellSelection({
   rowIds,
   columnIds,
   scrollRef,
-  pageIndex,
   activateCell,
 }: UseDataTableCellSelectionOptions): DataTableCellSelectionInteraction {
   const enabled = Boolean(options);
@@ -85,9 +67,22 @@ export function useDataTableCellSelection({
   const rangeRef = useRef(range);
   const [selecting, setSelecting] = useState(false);
   const selectingRef = useRef(false);
+  const [didDrag, setDidDrag] = useState(false);
+  const didDragRef = useRef(false);
+  const pointerDownRef = useRef(false);
+  const pointerOriginRef = useRef({ x: 0, y: 0 });
   const pointerRef = useRef({ x: 0, y: 0 });
   const frameRef = useRef<number | null>(null);
-  const previousPageIndexRef = useRef(pageIndex);
+  const invalidRangeRef = useRef<string | null>(null);
+
+  const rowIndices = useMemo(
+    () => new Map(rowIds.map((rowId, index) => [rowId, index])),
+    [rowIds],
+  );
+  const columnIndices = useMemo(
+    () => new Map(columnIds.map((columnId, index) => [columnId, index])),
+    [columnIds],
+  );
 
   useEffect(() => {
     rangeRef.current = range;
@@ -126,31 +121,81 @@ export function useDataTableCellSelection({
 
   const clearSelection = useCallback(() => updateRange(null), [updateRange]);
 
+  const rangeBounds = useMemo(
+    () => getCellRangeBoundsFromIndices(range, rowIndices, columnIndices),
+    [columnIndices, range, rowIndices],
+  );
+
+  useEffect(() => {
+    if (!range || rangeBounds !== null) {
+      invalidRangeRef.current = null;
+      return;
+    }
+    const invalidKey = [
+      range.anchor.rowId,
+      range.anchor.columnId,
+      range.focus.rowId,
+      range.focus.columnId,
+      rowIds.join("\u0001"),
+      columnIds.join("\u0001"),
+    ].join("\u0000");
+    if (invalidRangeRef.current === invalidKey) return;
+    invalidRangeRef.current = invalidKey;
+    clearSelection();
+  }, [clearSelection, columnIds, range, rangeBounds, rowIds]);
+
+  const clampPointToViewport = useCallback(
+    (x: number, y: number) => {
+      const viewport = scrollRef.current;
+      if (!viewport) return { x, y };
+      const rect = viewport.getBoundingClientRect();
+      if (rect.right <= rect.left || rect.bottom <= rect.top) return { x, y };
+      return {
+        x: Math.min(Math.max(x, rect.left), rect.right - 1),
+        y: Math.min(Math.max(y, rect.top), rect.bottom - 1),
+      };
+    },
+    [scrollRef],
+  );
+
   const updateFromPoint = useCallback(
     (x: number, y: number) => {
       if (typeof document.elementFromPoint !== "function") return;
+      const point = clampPointToViewport(x, y);
       const cell = document
-        .elementFromPoint(x, y)
+        .elementFromPoint(point.x, point.y)
         ?.closest<HTMLTableCellElement>('td[data-grid-cell="true"]');
+      const viewport = scrollRef.current;
       const rowId = cell?.closest("tr")?.dataset.rowId;
       const columnId = cell?.dataset.columnId;
+      const rowIndex = rowId === undefined ? undefined : rowIndices.get(rowId);
+      const columnIndex =
+        columnId === undefined ? undefined : columnIndices.get(columnId);
       if (
         cell &&
-        scrollRef.current?.contains(cell) &&
-        rowId &&
-        columnId &&
-        rowIds.includes(rowId) &&
-        columnIds.includes(columnId)
+        viewport?.contains(cell) &&
+        rowId !== undefined &&
+        columnId !== undefined &&
+        rowIndex !== undefined &&
+        columnIndex !== undefined
       ) {
         const position = { rowId, columnId };
         extendSelection(position);
         activateCell(position, false);
       }
     },
-    [activateCell, columnIds, extendSelection, rowIds, scrollRef],
+    [
+      activateCell,
+      clampPointToViewport,
+      columnIndices,
+      extendSelection,
+      rowIndices,
+      scrollRef,
+    ],
   );
 
   const stopSelecting = useCallback(() => {
+    pointerDownRef.current = false;
     selectingRef.current = false;
     setSelecting(false);
     if (frameRef.current !== null) cancelAnimationFrame(frameRef.current);
@@ -158,23 +203,30 @@ export function useDataTableCellSelection({
   }, []);
 
   useEffect(() => {
-    if (!selecting) return;
+    if (!enabled) return;
 
     const autoScroll = () => {
       const viewport = scrollRef.current;
-      if (!viewport || !selectingRef.current) return;
+      if (!viewport || !pointerDownRef.current || !selectingRef.current) {
+        frameRef.current = null;
+        return;
+      }
       const rect = viewport.getBoundingClientRect();
       const { x, y } = pointerRef.current;
       const edgeSpeed = (distance: number) =>
         Math.ceil(MAX_SCROLL_SPEED * Math.min(1, distance / EDGE_SIZE));
       let dx = 0;
       let dy = 0;
-      if (x < rect.left + EDGE_SIZE) dx = -edgeSpeed(rect.left + EDGE_SIZE - x);
-      else if (x > rect.right - EDGE_SIZE)
+      if (x < rect.left + EDGE_SIZE) {
+        dx = -edgeSpeed(rect.left + EDGE_SIZE - x);
+      } else if (x > rect.right - EDGE_SIZE) {
         dx = edgeSpeed(x - rect.right + EDGE_SIZE);
-      if (y < rect.top + EDGE_SIZE) dy = -edgeSpeed(rect.top + EDGE_SIZE - y);
-      else if (y > rect.bottom - EDGE_SIZE)
+      }
+      if (y < rect.top + EDGE_SIZE) {
+        dy = -edgeSpeed(rect.top + EDGE_SIZE - y);
+      } else if (y > rect.bottom - EDGE_SIZE) {
         dy = edgeSpeed(y - rect.bottom + EDGE_SIZE);
+      }
       if (dx || dy) {
         viewport.scrollLeft += dx;
         viewport.scrollTop += dy;
@@ -182,29 +234,41 @@ export function useDataTableCellSelection({
       }
       frameRef.current = requestAnimationFrame(autoScroll);
     };
+
     const handlePointerMove = (event: PointerEvent) => {
+      if (!pointerDownRef.current) return;
       pointerRef.current = { x: event.clientX, y: event.clientY };
+      if (!selectingRef.current) {
+        const origin = pointerOriginRef.current;
+        const distance = Math.hypot(
+          event.clientX - origin.x,
+          event.clientY - origin.y,
+        );
+        if (distance < DRAG_THRESHOLD) return;
+        event.preventDefault();
+        selectingRef.current = true;
+        didDragRef.current = true;
+        setSelecting(true);
+        setDidDrag(true);
+        autoScroll();
+      }
       updateFromPoint(event.clientX, event.clientY);
     };
     const handlePointerUp = () => stopSelecting();
+
     document.addEventListener("pointermove", handlePointerMove);
     window.addEventListener("pointerup", handlePointerUp);
+    window.addEventListener("pointercancel", handlePointerUp);
     window.addEventListener("blur", handlePointerUp);
-    frameRef.current = requestAnimationFrame(autoScroll);
     return () => {
       document.removeEventListener("pointermove", handlePointerMove);
       window.removeEventListener("pointerup", handlePointerUp);
+      window.removeEventListener("pointercancel", handlePointerUp);
       window.removeEventListener("blur", handlePointerUp);
       if (frameRef.current !== null) cancelAnimationFrame(frameRef.current);
       frameRef.current = null;
     };
-  }, [scrollRef, selecting, stopSelecting, updateFromPoint]);
-
-  useEffect(() => {
-    if (previousPageIndexRef.current === pageIndex) return;
-    previousPageIndexRef.current = pageIndex;
-    clearSelection();
-  }, [clearSelection, pageIndex]);
+  }, [enabled, scrollRef, stopSelecting, updateFromPoint]);
 
   const onPointerDown = useCallback(
     (
@@ -219,14 +283,19 @@ export function useDataTableCellSelection({
       ) {
         return;
       }
-      event.preventDefault();
+      pointerDownRef.current = true;
+      selectingRef.current = false;
+      didDragRef.current = false;
+      setSelecting(false);
+      setDidDrag(false);
+      pointerOriginRef.current = { x: event.clientX, y: event.clientY };
       pointerRef.current = { x: event.clientX, y: event.clientY };
-      if (event.shiftKey)
+      if (event.shiftKey) {
         extendSelection(position, rangeRef.current?.anchor ?? position);
-      else selectCell(position);
+      } else {
+        selectCell(position);
+      }
       activateCell(position, true);
-      selectingRef.current = true;
-      setSelecting(true);
     },
     [activateCell, enabled, extendSelection, selectCell],
   );
@@ -240,19 +309,6 @@ export function useDataTableCellSelection({
     [activateCell, extendSelection],
   );
 
-  const rangeBounds = useMemo(
-    () => getCellRangeBounds(range, rowIds, columnIds),
-    [columnIds, range, rowIds],
-  );
-  const rowIndices = useMemo(
-    () => new Map(rowIds.map((rowId, index) => [rowId, index])),
-    [rowIds],
-  );
-  const columnIndices = useMemo(
-    () => new Map(columnIds.map((columnId, index) => [columnId, index])),
-    [columnIds],
-  );
-
   const getCellState = useCallback(
     (position: AppDataTableCellPosition) =>
       getCellRangeStateFromIndices(
@@ -263,10 +319,18 @@ export function useDataTableCellSelection({
     [columnIndices, rangeBounds, rowIndices],
   );
 
+  const consumeRowClick = useCallback(() => {
+    if (!didDragRef.current) return false;
+    didDragRef.current = false;
+    setDidDrag(false);
+    return true;
+  }, []);
+
   return useMemo(
     () => ({
       enabled,
       selecting,
+      didDrag,
       range,
       selectCell,
       extendSelection,
@@ -274,9 +338,12 @@ export function useDataTableCellSelection({
       getCellState,
       onPointerDown,
       onPointerEnter,
+      consumeRowClick,
     }),
     [
       clearSelection,
+      consumeRowClick,
+      didDrag,
       enabled,
       extendSelection,
       getCellState,

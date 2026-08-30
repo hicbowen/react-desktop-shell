@@ -18,6 +18,7 @@ import type {
   AppDataTableCellRange,
   AppDataTableControlsOptions,
 } from "./types";
+import { escapeTsvValue } from "./internal/dataTableClipboard";
 
 interface RowData {
   id: string;
@@ -156,11 +157,34 @@ describe("AppDataTable controls", () => {
         new PointerEvent(type, {
           bubbles: true,
           button: 0,
+          clientX: 0,
+          clientY: 0,
           isPrimary: true,
           ...init,
         }),
       ),
     );
+  const movePointer = (clientX: number, clientY: number) =>
+    act(() =>
+      document.dispatchEvent(
+        new PointerEvent("pointermove", {
+          bubbles: true,
+          clientX,
+          clientY,
+          isPrimary: true,
+        }),
+      ),
+    );
+  const copyEvent = (target: EventTarget) => {
+    const event = new Event("copy", { bubbles: true, cancelable: true });
+    const setData = vi.fn();
+    Object.defineProperty(event, "clipboardData", {
+      configurable: true,
+      value: { setData },
+    });
+    act(() => target.dispatchEvent(event));
+    return { event, setData };
+  };
   const searchInput = () =>
     container.querySelector<HTMLInputElement>('[aria-label="Search rows"]')!;
   const setSearch = (value: string) => {
@@ -462,12 +486,13 @@ describe("AppDataTable controls", () => {
   it("selects one cell and a reverse rectangular range with pointer events", () => {
     renderTable({ cellSelection: true });
 
-    pointer(cell("4", "status"), "pointerdown");
+    pointer(cell("4", "status"), "pointerdown", { clientX: 10, clientY: 10 });
     expect(cell("4", "status").dataset.cellSelected).toBe("true");
     expect(
       container.querySelectorAll('td[data-cell-selected="true"]'),
     ).toHaveLength(1);
 
+    movePointer(20, 20);
     pointer(cell("1", "name"), "pointerover");
     expect(
       container.querySelectorAll('td[data-cell-selected="true"]'),
@@ -520,12 +545,7 @@ describe("AppDataTable controls", () => {
     expect(cell("3", "status").dataset.cellSelected).toBe("true");
   });
 
-  it("copies a controlled range as TSV in current sorted order", async () => {
-    const writeText = vi.fn().mockResolvedValue(undefined);
-    vi.stubGlobal("navigator", {
-      ...navigator,
-      clipboard: { writeText },
-    });
+  it("copies a controlled range through the native copy event in current sorted order", () => {
     const range: AppDataTableCellRange = {
       anchor: { rowId: "3", columnId: "name" },
       focus: { rowId: "1", columnId: "category" },
@@ -540,41 +560,52 @@ describe("AppDataTable controls", () => {
     });
     const active = cell("4", "name");
     act(() => active.focus());
-    act(() =>
-      active.dispatchEvent(
-        new KeyboardEvent("keydown", {
-          bubbles: true,
-          key: "c",
-          ctrlKey: true,
-        }),
-      ),
-    );
-    await act(async () => Promise.resolve());
-
-    expect(writeText).toHaveBeenCalledWith(
+    const firstCopy = copyEvent(active);
+    expect(firstCopy.event.defaultPrevented).toBe(true);
+    expect(firstCopy.setData).toHaveBeenCalledWith(
+      "text/plain",
       "Gamma\t[Archive]\nDelta\t[Document]\nBeta\t[Media]\nAlpha\t[Document]",
     );
 
-    writeText.mockClear();
-    act(() =>
-      active.dispatchEvent(
-        new KeyboardEvent("keydown", {
-          bubbles: true,
-          key: "C",
-          metaKey: true,
-        }),
-      ),
+    const secondCopy = copyEvent(active);
+    expect(secondCopy.event.defaultPrevented).toBe(true);
+    expect(secondCopy.setData).toHaveBeenCalledWith(
+      "text/plain",
+      "Gamma\t[Archive]\nDelta\t[Document]\nBeta\t[Media]\nAlpha\t[Document]",
     );
-    await act(async () => Promise.resolve());
-    expect(writeText).toHaveBeenCalledOnce();
   });
 
-  it("copies default string, number, and null values without reading DOM text", async () => {
-    const writeText = vi.fn().mockResolvedValue(undefined);
-    vi.stubGlobal("navigator", {
-      ...navigator,
-      clipboard: { writeText },
+  it("does not take over native copy when cell copy is disabled", () => {
+    renderTable({
+      cellSelection: {
+        copy: false,
+        value: {
+          anchor: { rowId: "2", columnId: "name" },
+          focus: { rowId: "2", columnId: "name" },
+        },
+      },
     });
+    const active = cell("2", "name");
+    const copy = copyEvent(active);
+    expect(copy.event.defaultPrevented).toBe(false);
+    expect(copy.setData).not.toHaveBeenCalled();
+  });
+
+  it("leaves native copy available for interactive controls in the table surface", () => {
+    renderTable({
+      cellSelection: {
+        value: {
+          anchor: { rowId: "2", columnId: "name" },
+          focus: { rowId: "2", columnId: "name" },
+        },
+      },
+    });
+    const copy = copyEvent(searchInput());
+    expect(copy.event.defaultPrevented).toBe(false);
+    expect(copy.setData).not.toHaveBeenCalled();
+  });
+
+  it("copies default string, number, and null values without reading DOM text", () => {
     const mixedColumns: ColumnDef<{ id: string; label: string; count: number; note: null }>[] = [
       { accessorKey: "label", cell: () => <strong>Rendered label</strong> },
       { accessorKey: "count" },
@@ -596,30 +627,172 @@ describe("AppDataTable controls", () => {
     const active = container.querySelector<HTMLTableCellElement>(
       'td[data-column-id="label"]',
     )!;
-    act(() =>
-      active.dispatchEvent(
-        new KeyboardEvent("keydown", {
-          bubbles: true,
-          key: "c",
-          ctrlKey: true,
-        }),
-      ),
+    const copy = copyEvent(active);
+    expect(copy.setData).toHaveBeenCalledWith("text/plain", "Raw label\t42\t");
+  });
+
+  it("escapes tabs, CR/LF, and quotes in TSV values", () => {
+    expect(escapeTsvValue("plain")).toBe("plain");
+    expect(escapeTsvValue("a\tb")).toBe('"a\tb"');
+    expect(escapeTsvValue("line 1\r\nline 2\nline 3")).toBe(
+      '"line 1\r\nline 2\nline 3"',
     );
-    await act(async () => Promise.resolve());
-    expect(writeText).toHaveBeenCalledWith("Raw label\t42\t");
+    expect(escapeTsvValue('He said "hi"')).toBe('"He said ""hi"""');
+  });
+
+  it("clears a stale range when filtering removes an endpoint", () => {
+    const onChange = vi.fn();
+    renderTable({
+      cellSelection: {
+        value: {
+          anchor: { rowId: "2", columnId: "name" },
+          focus: { rowId: "4", columnId: "status" },
+        },
+        onChange,
+      },
+      columnFilters: [{ id: "category", value: "Document" }],
+    });
+    expect(onChange).toHaveBeenCalledWith(null);
+    expect(container.querySelector('td[data-cell-selected="true"]')).toBeNull();
+  });
+
+  it("clears a stale range when data or visible columns remove an endpoint", () => {
+    const onChange = vi.fn();
+    renderTable({
+      cellSelection: {
+        value: {
+          anchor: { rowId: "2", columnId: "name" },
+          focus: { rowId: "4", columnId: "status" },
+        },
+        onChange,
+      },
+      data: data.filter((row) => row.id !== "2"),
+    });
+    expect(onChange).toHaveBeenCalledWith(null);
+
+    const visibilityOnChange = vi.fn();
+    renderTable({
+      cellSelection: {
+        value: {
+          anchor: { rowId: "2", columnId: "name" },
+          focus: { rowId: "4", columnId: "status" },
+        },
+        onChange: visibilityOnChange,
+      },
+      columnVisibility: { name: false },
+    });
+    expect(visibilityOnChange).toHaveBeenCalledWith(null);
+  });
+
+  it("keeps a range when sorting changes only row order", () => {
+    const onChange = vi.fn();
+    const value: AppDataTableCellRange = {
+      anchor: { rowId: "2", columnId: "name" },
+      focus: { rowId: "4", columnId: "status" },
+    };
+    renderTable({
+      cellSelection: { value, onChange },
+      sorting: [{ id: "name", desc: true }],
+    });
+    expect(onChange).not.toHaveBeenCalled();
+    expect(container.querySelectorAll('td[data-cell-selected="true"]')).toHaveLength(6);
+  });
+
+  it("clears a range when a page-size change moves its endpoint off-page", () => {
+    const onChange = vi.fn();
+    const value: AppDataTableCellRange = {
+      anchor: { rowId: "11", columnId: "name" },
+      focus: { rowId: "11", columnId: "status" },
+    };
+    renderTable({
+      cellSelection: { value, onChange },
+      data: pagedData,
+      pagination: {
+        value: { pageIndex: 2, pageSize: 5 },
+      },
+    });
+    expect(onChange).not.toHaveBeenCalled();
+
+    renderTable({
+      cellSelection: { value, onChange },
+      data: pagedData,
+      pagination: {
+        value: { pageIndex: 2, pageSize: 10 },
+      },
+    });
+    expect(onChange).toHaveBeenCalledWith(null);
   });
 
   it("does not start cell selection from interactive content", () => {
     renderTable({
       cellSelection: true,
       columns: [
-        { accessorKey: "name", cell: () => <button type="button">Open</button> },
+        {
+          accessorKey: "name",
+          cell: () => (
+            <>
+              <button type="button">Open</button>
+              <label>
+                <span>Label</span>
+              </label>
+              <div contentEditable="true" suppressContentEditableWarning>
+                Editable
+              </div>
+              <span role="textbox">Textbox</span>
+            </>
+          ),
+        },
         ...columns.slice(1),
       ],
     });
-    const button = container.querySelector("tbody button")!;
-    pointer(button, "pointerdown");
+    for (const target of [
+      container.querySelector("tbody button")!,
+      container.querySelector("tbody label span")!,
+      container.querySelector<HTMLElement>("tbody [contenteditable]")!,
+      container.querySelector('tbody [role="textbox"]')!,
+    ]) {
+      pointer(target, "pointerdown");
+    }
     expect(container.querySelector('td[data-cell-selected="true"]')).toBeNull();
+  });
+
+  it("waits for the drag threshold and suppresses row activation after a drag", () => {
+    const onRowClick = vi.fn();
+    const onRowSelectionChange = vi.fn();
+    renderTable({
+      cellSelection: true,
+      onRowClick,
+      rowSelection: {
+        value: {},
+        onChange: onRowSelectionChange,
+        mode: "single",
+      },
+    });
+    const start = cell("2", "name");
+
+    pointer(start, "pointerdown", { clientX: 10, clientY: 10 });
+    movePointer(12, 12);
+    expect(
+      container.querySelector<HTMLElement>(".app-data-table")?.dataset
+        .cellSelecting,
+    ).toBeUndefined();
+    pointer(window, "pointerup");
+    act(() => start.click());
+    expect(onRowClick).toHaveBeenCalledOnce();
+    expect(onRowSelectionChange).toHaveBeenCalledOnce();
+
+    onRowClick.mockClear();
+    onRowSelectionChange.mockClear();
+    pointer(start, "pointerdown", { clientX: 10, clientY: 10 });
+    movePointer(20, 10);
+    expect(
+      container.querySelector<HTMLElement>(".app-data-table")?.dataset
+        .cellSelecting,
+    ).toBe("true");
+    pointer(window, "pointerup");
+    act(() => start.click());
+    expect(onRowClick).not.toHaveBeenCalled();
+    expect(onRowSelectionChange).not.toHaveBeenCalled();
   });
 
   it("does not render control DOM when controls are omitted", () => {
@@ -1716,7 +1889,8 @@ describe("AppDataTable controls", () => {
       columnVisibility: { status: false },
       rowSelection: { value: {}, onChange: onRowSelectionChange },
     });
-    pointer(cell("2", "name"), "pointerdown");
+    pointer(cell("2", "name"), "pointerdown", { clientX: 10, clientY: 10 });
+    movePointer(20, 20);
     pointer(cell("1", "category"), "pointerover");
     pointer(window, "pointerup");
 
@@ -2018,11 +2192,6 @@ describe("AppDataTable controls", () => {
   });
 
   it("renders and copies an offscreen virtual cell range from the row model", async () => {
-    const writeText = vi.fn().mockResolvedValue(undefined);
-    vi.stubGlobal("navigator", {
-      ...navigator,
-      clipboard: { writeText },
-    });
     renderTable({
       cellSelection: {
         value: {
@@ -2046,17 +2215,7 @@ describe("AppDataTable controls", () => {
     const active = container.querySelector<HTMLTableCellElement>(
       'tbody td[data-active-cell="true"]',
     )!;
-    act(() =>
-      active.dispatchEvent(
-        new KeyboardEvent("keydown", {
-          bubbles: true,
-          key: "c",
-          ctrlKey: true,
-        }),
-      ),
-    );
-    await act(async () => Promise.resolve());
-    const copied = writeText.mock.calls[0]?.[0] as string;
+    const copied = copyEvent(active).setData.mock.calls[0]?.[1] as string;
     expect(copied.split("\n")).toHaveLength(50);
     expect(copied).toContain("Virtual 050\tMedia\tProcessing");
   });

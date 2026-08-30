@@ -6,6 +6,7 @@ import {
   useEffect,
   useState,
   type CSSProperties,
+  type ClipboardEvent,
   type KeyboardEvent,
   type MouseEvent,
   type ReactNode,
@@ -48,6 +49,7 @@ import {
   resolveControlFilterColumns,
 } from "./dataTableFilters";
 import type { DataTableCellSelectionInteraction } from "./useDataTableCellSelection";
+import { isDataTableInteractiveTarget } from "./dataTableInteraction";
 
 export const APP_DATA_TABLE_ROW_SELECTION_COLUMN_ID =
   "__app_data_table_row_selection";
@@ -56,26 +58,6 @@ const internalColumnIds = new Set([APP_DATA_TABLE_ROW_SELECTION_COLUMN_ID]);
 
 export function isAppDataTableInternalColumn(columnId: string) {
   return internalColumnIds.has(columnId);
-}
-
-const interactiveSelector = [
-  "a",
-  "button",
-  "input",
-  "select",
-  "textarea",
-  '[contenteditable="true"]',
-  '[role="button"]',
-  '[role="checkbox"]',
-  '[role="link"]',
-  '[role="menuitem"]',
-  '[role="switch"]',
-].join(",");
-
-function isInteractiveTarget(target: EventTarget | null) {
-  return (
-    target instanceof Element && target.closest(interactiveSelector) != null
-  );
 }
 
 export interface DataTableStickyLayout {
@@ -929,6 +911,7 @@ interface DataTableFrameProps<TData> {
   rowSelectionMode: "single" | "multiple";
   cellSelectionEnabled?: boolean;
   cellSelecting?: boolean;
+  onCopy?: (event: ClipboardEvent<HTMLDivElement>) => void;
   className?: string;
   style?: CSSProperties;
   children: ReactNode;
@@ -956,6 +939,7 @@ export function DataTableFrame<TData>({
   rowSelectionMode,
   cellSelectionEnabled = false,
   cellSelecting = false,
+  onCopy,
   className,
   style,
   children,
@@ -967,6 +951,7 @@ export function DataTableFrame<TData>({
       className={`app-data-table app-data-table--${density} ${stickyHeader ? "app-data-table--sticky-header" : ""} ${controls ? "app-data-table--with-controls" : ""} ${pagination ? "app-data-table--with-pagination" : ""} ${virtualized ? "app-data-table--virtualized" : ""} ${rowSelectionEnabled ? `app-data-table--row-selection-${rowSelectionMode}` : ""} ${className ?? ""}`.trim()}
       data-cell-selecting={cellSelecting || undefined}
       data-cell-selection={cellSelectionEnabled || undefined}
+      onCopy={onCopy}
       style={style}
     >
       {controls}
@@ -1070,14 +1055,15 @@ function DataTableRowImpl<TData>({
         ? undefined
         : "disabled";
   const handleClick = (event: MouseEvent<HTMLTableRowElement>) => {
-    if (isInteractiveTarget(event.target)) return;
+    if (isDataTableInteractiveTarget(event.target)) return;
+    if (cellSelection?.consumeRowClick()) return;
     if (rowSelectionMode === "single" && row.getCanSelect()) {
       row.toggleSelected(true);
     }
     onRowClick?.(row, event);
   };
   const handleContextMenu = (event: MouseEvent<HTMLTableRowElement>) => {
-    if (!onRowContextMenu || isInteractiveTarget(event.target)) return;
+    if (!onRowContextMenu || isDataTableInteractiveTarget(event.target)) return;
     onRowContextMenu(row, event);
   };
 
@@ -1151,7 +1137,7 @@ function DataTableRowImpl<TData>({
                       row.id,
                       cell.column.id,
                       event.currentTarget,
-                      !isInteractiveTarget(event.target),
+                      !isDataTableInteractiveTarget(event.target),
                     )
                 : undefined
             }
@@ -1179,7 +1165,7 @@ function DataTableRowImpl<TData>({
             onKeyDown={
               navigable && cellNavigation
                 ? (event) => {
-                    if (isInteractiveTarget(event.target)) return;
+                    if (isDataTableInteractiveTarget(event.target)) return;
                     if (
                       event.key === "Enter" &&
                       (onRowClick || rowSelectionMode === "single")

@@ -1461,10 +1461,12 @@ Pass `cellSelection` to enable Excel-style cell interaction independently of
 `rowSelection`. Click selects one cell, pointer dragging selects a logical
 rectangle, and `Shift` + click or `Shift` + arrow extends from the current
 anchor. A plain arrow key collapses the range to the next active cell.
-`Ctrl+C` and `Cmd+C` copy the current rectangle as tab-separated rows in the
-current sorted and filtered order, including offscreen virtual rows. Hidden and
-internal control columns are excluded. Cell ranges are scoped to the current
-page and clear when the page changes.
+The native `copy` event (including `Ctrl+C`, `Cmd+C`, and browser/WebView Edit →
+Copy) copies the current rectangle as tab-separated rows in the current sorted
+and filtered order, including offscreen virtual rows. Hidden and internal control
+columns are excluded. Cell ranges are scoped to the current page and clear when
+an endpoint is no longer present after pagination, filtering, data, or column
+visibility changes. Set `copy: false` to leave native copy handling untouched.
 
 ```tsx
 const [cellRange, setCellRange] = useState<AppDataTableCellRange | null>(null)
