@@ -104,14 +104,17 @@
 .app-radio-group__option--disabled .app-radio-group__indicator { opacity: var(--rds-state-disabled-opacity, .55); }
 
 .app-segmented-control {
+  --app-segmented-control-inner-radius: max(0px, calc(var(--rds-radius-medium, var(--rds-radius-control, 4px)) - 2px));
+
   position: relative;
   width: fit-content;
   max-width: 100%;
   box-sizing: border-box;
-  padding: var(--rds-space-1, 4px);
+  min-height: var(--rds-control-height-standard, 32px);
+  padding: 2px;
   display: inline-flex;
   align-items: stretch;
-  gap: var(--rds-space-1, 4px);
+  gap: 2px;
   overflow-x: auto;
   color: var(--app-shell-text-color, #1f1f1f);
   font: inherit;
@@ -120,14 +123,15 @@
   border-radius: var(--rds-radius-medium, var(--rds-radius-control, 4px));
   isolation: isolate;
 }
+.app-segmented-control--compact { min-height: var(--rds-control-height-compact, 28px); }
 .app-segmented-control--full-width { display: flex; width: 100%; }
-.app-segmented-control__indicator { position: absolute; z-index: 0; inset-block: var(--rds-space-1, 4px); left: 0; width: 0; opacity: 0; pointer-events: none; background: var(--app-shell-card-bg, #fff); border-radius: var(--rds-radius-control, 4px); box-shadow: 0 1px 2px rgb(0 0 0 / 12%); transform: translateX(0); transition: transform var(--rds-motion-normal, 180ms) var(--rds-ease-enter, cubic-bezier(.1, .9, .2, 1)), width var(--rds-motion-normal, 180ms) var(--rds-ease-enter, cubic-bezier(.1, .9, .2, 1)), opacity var(--rds-motion-fast, 120ms) ease-out; will-change: transform, width; }
+.app-segmented-control__indicator { position: absolute; z-index: 0; inset-block: 2px; left: 0; width: 0; opacity: 0; pointer-events: none; background: var(--app-shell-card-bg, #fff); border-radius: var(--app-segmented-control-inner-radius, var(--rds-radius-control, 4px)); box-shadow: 0 1px 2px rgb(0 0 0 / 12%); transform: translateX(0); transition: transform var(--rds-motion-normal, 180ms) var(--rds-ease-enter, cubic-bezier(.1, .9, .2, 1)), width var(--rds-motion-normal, 180ms) var(--rds-ease-enter, cubic-bezier(.1, .9, .2, 1)), opacity var(--rds-motion-fast, 120ms) ease-out; will-change: transform, width; }
 .app-segmented-control__option { position: relative; z-index: 1; min-width: 0; display: flex; flex: 0 0 auto; cursor: default; }
 .app-segmented-control--full-width .app-segmented-control__option { flex: 1 1 0; }
 .app-segmented-control__option input { position: absolute; width: 1px; height: 1px; opacity: 0; }
-.app-segmented-control__content { position: relative; z-index: 1; min-width: 0; box-sizing: border-box; display: inline-flex; flex: 1; align-items: center; justify-content: center; gap: var(--rds-space-2, 8px); padding: 0 var(--rds-control-padding-inline-standard, 12px); white-space: nowrap; border-radius: var(--rds-radius-control, 4px); transition: background-color var(--rds-motion-fast, 120ms) ease-out, color var(--rds-motion-fast, 120ms) ease-out; }
-.app-segmented-control--standard .app-segmented-control__content { height: var(--rds-control-height-standard, 32px); font-size: var(--rds-font-size-control, 13px); line-height: var(--rds-line-height-control, 20px); }
-.app-segmented-control--compact .app-segmented-control__content { height: var(--rds-control-height-compact, 28px); padding-right: var(--rds-control-padding-inline-compact, 8px); padding-left: var(--rds-control-padding-inline-compact, 8px); font-size: var(--rds-font-size-control-compact, 13px); line-height: var(--rds-line-height-control-compact, 16px); }
+.app-segmented-control__content { position: relative; z-index: 1; min-width: 0; box-sizing: border-box; display: inline-flex; flex: 1; align-items: center; justify-content: center; gap: var(--rds-space-2, 8px); padding: 0 var(--rds-control-padding-inline-standard, 12px); white-space: nowrap; border-radius: var(--app-segmented-control-inner-radius, var(--rds-radius-control, 4px)); transition: background-color var(--rds-motion-fast, 120ms) ease-out, color var(--rds-motion-fast, 120ms) ease-out; }
+.app-segmented-control--standard .app-segmented-control__content { font-size: var(--rds-font-size-control, 13px); line-height: var(--rds-line-height-control, 20px); }
+.app-segmented-control--compact .app-segmented-control__content { padding-right: var(--rds-control-padding-inline-compact, 8px); padding-left: var(--rds-control-padding-inline-compact, 8px); font-size: var(--rds-font-size-control-compact, 13px); line-height: var(--rds-line-height-control-compact, 16px); }
 .app-segmented-control__option:hover:not(.app-segmented-control__option--disabled) input:not(:checked) + .app-segmented-control__content { background: var(--rds-state-hover-bg, var(--app-shell-hover-bg, rgb(0 0 0 / 5%))); }
 .app-segmented-control__option input:checked + .app-segmented-control__content { background: transparent; box-shadow: none; }
 .app-segmented-control__option input:focus-visible + .app-segmented-control__content { outline: 2px solid var(--rds-state-focus-ring, var(--app-shell-accent-color, #115ea3)); outline-offset: -2px; }
