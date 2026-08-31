@@ -58,7 +58,7 @@
 .app-toggle-switch:not(.app-toggle-switch--disabled):hover input:checked + .app-toggle-switch__track .app-toggle-switch__thumb { background: var(--app-shell-accent-text-color, #fff); }
 .app-toggle-switch:not(.app-toggle-switch--disabled):active .app-toggle-switch__track { background: var(--app-toggle-switch-track-pressed-bg); border-color: var(--app-shell-text-color, #1f1f1f); }
 .app-toggle-switch:not(.app-toggle-switch--disabled):active input:checked + .app-toggle-switch__track { background: var(--rds-state-accent-pressed, var(--app-shell-accent-pressed-color, #0c4f87)); border-color: var(--rds-state-accent-pressed, var(--app-shell-accent-pressed-color, #0c4f87)); }
-.app-toggle-switch:not(.app-toggle-switch--disabled):active .app-toggle-switch__thumb { width: var(--app-toggle-switch-thumb-pressed-width); height: var(--app-toggle-switch-thumb-pressed-height); margin-left: -1.5px; border-radius: var(--rds-radius-control, 4px); transition: none; }
+.app-toggle-switch:not(.app-toggle-switch--disabled):active .app-toggle-switch__thumb { width: var(--app-toggle-switch-thumb-pressed-width); height: var(--app-toggle-switch-thumb-pressed-height); margin-left: -1.5px; border-radius: 999px; transition: none; }
 .app-toggle-switch--compact { --app-toggle-switch-thumb-size: 12px; --app-toggle-switch-thumb-hover-size: 14px; --app-toggle-switch-thumb-pressed-width: 15px; --app-toggle-switch-thumb-pressed-height: 12px; --app-toggle-switch-thumb-translate: 16px; }
 .app-toggle-switch--compact .app-toggle-switch__track { width: 34px; height: 18px; }
 .app-toggle-switch--compact .app-toggle-switch__thumb { border-radius: 50%; }
