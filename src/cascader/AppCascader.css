@@ -64,7 +64,7 @@
 }
 
 .app-cascader__clear:focus-visible {
-  outline: 2px solid var(--rds-state-focus-ring, var(--app-shell-accent-color, #005fb8));
+  outline: 2px solid var(--rds-state-focus-ring, var(--app-shell-accent-color, #115ea3));
 }
 
 .app-cascader__chevron {
@@ -159,12 +159,12 @@
 }
 
 .app-cascader__option:focus-visible {
-  outline: 2px solid var(--rds-state-focus-ring, var(--app-shell-accent-color, #005fb8));
+  outline: 2px solid var(--rds-state-focus-ring, var(--app-shell-accent-color, #115ea3));
   outline-offset: -2px;
 }
 
 .app-cascader__option[aria-selected='true'] {
-  color: var(--rds-state-selected-fg, var(--app-shell-accent-color, #005fb8));
+  color: var(--rds-state-selected-fg, var(--app-shell-accent-color, #115ea3));
   font-weight: 600;
 }
 

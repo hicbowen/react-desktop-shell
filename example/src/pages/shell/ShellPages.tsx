@@ -22,7 +22,7 @@ import { useDemoCopy } from '../../i18n/interactiveTranslations'
 
 export function AppShellPage() {
   const t = useDemoCopy()
-  const { locale, theme } = useDemoShell()
+  const { locale, theme, themePreset } = useDemoShell()
   const [activeItem, setActiveItem] = useState('home')
   const [lastAction, setLastAction] = useState('No action yet')
   const [maximized, setMaximized] = useState(false)
@@ -58,6 +58,7 @@ export function AppShellPage() {
             locale={locale}
             sidebar={{ displayMode: 'expanded', expandedWidth: 190 }}
             theme={theme}
+            themePreset={themePreset}
             title={t('Preview application')}
             titleBar={
               <AppTitleBar

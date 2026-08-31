@@ -59,7 +59,7 @@
 .app-list-view-item:focus-visible,
 .app-list-view-item__main-action:focus-visible,
 .app-list-view-item__selection:focus-visible {
-  outline: 2px solid var(--rds-state-focus-ring, var(--app-shell-accent-color, #005fb8));
+  outline: 2px solid var(--rds-state-focus-ring, var(--app-shell-accent-color, #115ea3));
   outline-offset: 2px;
   z-index: 1;
 }
@@ -83,7 +83,7 @@
   top: 25%;
   bottom: 25%;
   width: 3px;
-  background: var(--rds-state-selected-border, var(--app-shell-accent-color, #005fb8));
+  background: var(--rds-state-selected-border, var(--app-shell-accent-color, #115ea3));
   border-radius: var(--rds-radius-bar, 4px);
 }
 
@@ -108,9 +108,9 @@
 }
 
 .app-list-view-item__selection[type='radio']:checked {
-  background: var(--rds-state-selected-border, var(--app-shell-accent-color, #005fb8));
+  background: var(--rds-state-selected-border, var(--app-shell-accent-color, #115ea3));
   border: 4px solid var(--app-shell-accent-text-color, #fff);
-  box-shadow: 0 0 0 1px var(--rds-state-selected-border, var(--app-shell-accent-color, #005fb8));
+  box-shadow: 0 0 0 1px var(--rds-state-selected-border, var(--app-shell-accent-color, #115ea3));
 }
 
 .app-list-view-item__selection[type='checkbox']::after {
@@ -126,7 +126,7 @@
 }
 
 .app-list-view-item__selection[type='checkbox']:checked {
-  background: var(--rds-state-selected-border, var(--app-shell-accent-color, #005fb8));
+  background: var(--rds-state-selected-border, var(--app-shell-accent-color, #115ea3));
   border-color: transparent;
 }
 

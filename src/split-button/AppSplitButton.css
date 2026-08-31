@@ -55,7 +55,7 @@
 .app-split-button__menu:focus-visible {
   position: relative;
   z-index: 1;
-  outline: 2px solid var(--rds-state-focus-ring, var(--app-shell-accent-color, #005fb8));
+  outline: 2px solid var(--rds-state-focus-ring, var(--app-shell-accent-color, #115ea3));
   outline-offset: -2px;
 }
 

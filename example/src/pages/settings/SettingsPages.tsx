@@ -1,15 +1,26 @@
 import { useState } from 'react'
 import { BadgeInfo, Languages, ListFilter, Palette, Sparkles } from '../../components/fluentIcons'
-import { AppExpander, AppSelect, AppSettingsGroup, AppSettingsRow, AppToggleSwitch } from '../../../../src'
+import { APP_THEME_PRESETS, AppExpander, AppSelect, AppSettingsGroup, AppSettingsRow, AppToggleSwitch, type AppThemePreset } from '../../../../src'
 import { DemoPage, DemoSection } from '../../components/DemoPage'
 import { useDemoShell } from '../../components/DemoShellContext'
 import { useDemoI18n } from '../../i18n/DemoI18nContext'
 
 export function SettingsPage() {
-  const { locale, setLocale, theme, setTheme } = useDemoShell()
+  const {
+    locale,
+    setLocale,
+    theme,
+    setTheme,
+    themePreset,
+    setThemePreset,
+  } = useDemoShell()
   const { messages } = useDemoI18n()
   const text = messages.settings
   const themeOptions = Object.entries(text.themeOptions).map(([value, label]) => ({ value, label }))
+  const themePresetOptions = APP_THEME_PRESETS.map((value) => ({
+    value,
+    label: text.themePresetOptions[value],
+  }))
   const localeOptions = Object.entries(text.localeOptions).map(([value, label]) => ({ value, label }))
   const detailOptions = Object.entries(text.detailOptions).map(([value, label]) => ({ value, label }))
   const [enabled, setEnabled] = useState(true)
@@ -42,6 +53,23 @@ export function SettingsPage() {
               description={text.themeDescription}
               icon={<Palette />}
               title={text.theme}
+            />
+            <AppSettingsRow
+              control={
+                <AppSelect
+                  aria-label={text.colorThemeAria}
+                  onValueChange={(value) => {
+                    if (APP_THEME_PRESETS.includes(value as AppThemePreset)) {
+                      setThemePreset(value as AppThemePreset)
+                    }
+                  }}
+                  options={themePresetOptions}
+                  value={themePreset}
+                />
+              }
+              description={text.colorThemeDescription}
+              icon={<Palette />}
+              title={text.colorTheme}
             />
             <AppSettingsRow
               control={

@@ -8,7 +8,7 @@
 .app-select__chevron svg { width: 16px; height: 16px; display: block; fill: currentColor; stroke: none; }
 .app-select__clear { position: absolute; right: 5px; top: 50%; width: 24px; height: 24px; display: grid; place-items: center; padding: 0; color: inherit; background: transparent; border: 0; border-radius: var(--rds-radius-control, 4px); font: inherit; font-size: 18px; transform: translateY(-50%); }
 .app-select__clear:hover { background: var(--rds-state-hover-bg, var(--app-shell-card-hover-bg, rgb(0 0 0 / 5%))); }
-.app-select__clear:focus-visible { outline: 2px solid var(--rds-state-focus-ring, var(--app-shell-accent-color, #005fb8)); outline-offset: 0; }
+.app-select__clear:focus-visible { outline: 2px solid var(--rds-state-focus-ring, var(--app-shell-accent-color, #115ea3)); outline-offset: 0; }
 
 /* Chromium 135+ and other browsers implementing customizable selects expose
    the native picker to CSS while retaining select's form and keyboard behavior. */
@@ -120,7 +120,7 @@
     width: 3px;
     height: 16px;
     border-radius: 999px;
-    background: var(--rds-state-selected-border, var(--app-shell-accent-color, #005fb8));
+    background: var(--rds-state-selected-border, var(--app-shell-accent-color, #115ea3));
     transform: translateY(-50%);
   }
 

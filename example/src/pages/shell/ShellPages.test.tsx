@@ -34,7 +34,9 @@ describe('AppShellPage demo', () => {
             setLocale: () => undefined,
             setRailDisplayMode: () => undefined,
             setTheme: () => undefined,
+            setThemePreset: () => undefined,
             theme: 'light',
+            themePreset: 'blue',
           }}
         >
           <DemoSourceContext.Provider

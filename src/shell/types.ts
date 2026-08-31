@@ -5,6 +5,8 @@ import type {
 } from '../context-menu/types'
 import type { AppToastHostOptions } from '../toast/types'
 import type { AppLocale } from '../localization/types'
+import type { AppThemePreset } from '../theme/AppTheme'
+import type { AppThemeTokens } from '../theme/types'
 
 export type AppTheme = 'system' | 'light' | 'dark'
 export type PaneDisplayMode = 'expanded' | 'compact' | 'minimal' | 'auto'
@@ -12,6 +14,8 @@ export type PaneDisplayMode = 'expanded' | 'compact' | 'minimal' | 'auto'
 export interface AppShellProps {
   locale?: AppLocale
   theme?: AppTheme
+  themePreset?: AppThemePreset
+  themeTokens?: AppThemeTokens
   contextMenu?: AppContextMenuMode
   clipboard?: AppClipboardAdapter
   toastOptions?: AppToastHostOptions

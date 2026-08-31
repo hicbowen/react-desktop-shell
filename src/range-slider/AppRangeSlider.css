@@ -1,8 +1,8 @@
 .app-range-slider {
   --app-range-slider-track-size: 4px;
   --app-range-slider-thumb-size: 18px;
-  --app-range-slider-accent: var(--app-shell-accent-color, #005fb8);
-  --app-range-slider-accent-hover: var(--app-shell-accent-hover-color, #075a9e);
+  --app-range-slider-accent: var(--app-shell-accent-color, #115ea3);
+  --app-range-slider-accent-hover: var(--app-shell-accent-hover-color, #0f548f);
   --app-range-slider-accent-pressed: var(--app-shell-accent-pressed-color, #0c4f87);
   --app-range-slider-thumb-core-color: var(--app-range-slider-accent);
   --app-range-slider-thumb-border-color: var(--app-shell-border-color, rgb(0 0 0 / 18%));
@@ -131,7 +131,7 @@
 }
 .app-range-slider__input--start:focus-visible ~ .app-range-slider__thumb-layer .app-range-slider__thumb--start,
 .app-range-slider__input--end:focus-visible ~ .app-range-slider__thumb-layer .app-range-slider__thumb--end {
-  outline: 2px solid var(--rds-state-focus-ring, var(--app-shell-accent-color, #005fb8));
+  outline: 2px solid var(--rds-state-focus-ring, var(--app-shell-accent-color, #115ea3));
   outline-offset: 3px;
 }
 .app-range-slider__tooltip {

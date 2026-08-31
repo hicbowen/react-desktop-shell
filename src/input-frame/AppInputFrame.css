@@ -1,7 +1,7 @@
 .app-input-frame {
   --app-input-frame-underline-color: var(
     --rds-state-selected-border,
-    var(--app-shell-accent-color, #005fb8)
+    var(--app-shell-accent-color, #115ea3)
   );
   --app-input-frame-underline-opacity: 0;
 

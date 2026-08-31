@@ -1,0 +1,64 @@
+export interface AppThemeTokenOverrides {
+  accentColor?: string
+  accentHoverColor?: string
+  accentPressedColor?: string
+  accentTextColor?: string
+  activeBg?: string
+  focusRingColor?: string
+  chromeBg?: string
+  contentBg?: string
+  surfaceBg?: string
+  cardBg?: string
+  cardHoverBg?: string
+  cardPressedBg?: string
+  inputBg?: string
+  inputHoverBg?: string
+  inputPressedBg?: string
+  inputFocusedBg?: string
+  inputReadonlyBg?: string
+  inputDisabledBg?: string
+  inputBorderColor?: string
+  inputStrongBorderColor?: string
+  inputDisabledStrongBorderColor?: string
+  textColor?: string
+  secondaryTextColor?: string
+  mutedTextColor?: string
+  disabledTextColor?: string
+  disabledBg?: string
+  hoverBg?: string
+  controlHoverBg?: string
+  borderColor?: string
+  codeTextColor?: string
+  codeBg?: string
+  successFg?: string
+  warningFg?: string
+  dangerBg?: string
+  dangerFg?: string
+  dangerSubtleBg?: string
+  infoFg?: string
+  menuBg?: string
+  menuBorderColor?: string
+  dialogOverlayBg?: string
+  dialogBg?: string
+  dialogBorderColor?: string
+  dialogButtonBg?: string
+  dialogButtonBorderColor?: string
+  dialogPrimaryFg?: string
+  paneScrimBg?: string
+  toastBg?: string
+  toastBorderColor?: string
+  scrollbarThumbColor?: string
+  scrollbarThumbHoverColor?: string
+  scrollbarThumbActiveColor?: string
+  scrollbarTrackColor?: string
+  scrollbarTrackExpandedColor?: string
+  scrollbarArrowColor?: string
+  scrollbarArrowHoverColor?: string
+  scrollbarArrowActiveColor?: string
+}
+
+export interface AppThemeTokens {
+  common?: AppThemeTokenOverrides
+  light?: AppThemeTokenOverrides
+  dark?: AppThemeTokenOverrides
+}

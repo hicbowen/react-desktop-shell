@@ -65,7 +65,9 @@ describe('navigation page demos', () => {
             setLocale: () => undefined,
             setRailDisplayMode,
             setTheme: () => undefined,
+            setThemePreset: () => undefined,
             theme: 'light',
+            themePreset: 'blue',
           }}
         >
           <NavigationModesPage />

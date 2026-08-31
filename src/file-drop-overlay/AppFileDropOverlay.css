@@ -19,7 +19,7 @@
   display: grid;
   box-sizing: border-box;
   place-items: center;
-  color: var(--app-shell-accent-color, #005fb8);
+  color: var(--app-shell-accent-color, #115ea3);
   background: color-mix(
     in srgb,
     var(--app-shell-content-bg, #f9f9f9) 82%,
@@ -85,7 +85,7 @@
 
 .app-file-drop--pending .app-file-drop__overlay,
 .app-file-drop--accept .app-file-drop__overlay {
-  color: var(--app-shell-accent-color, #005fb8);
+  color: var(--app-shell-accent-color, #115ea3);
 }
 
 @keyframes app-file-drop-enter {

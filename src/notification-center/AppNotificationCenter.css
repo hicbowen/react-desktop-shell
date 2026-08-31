@@ -72,7 +72,7 @@
   width: 3px;
   height: 18px;
   content: '';
-  background: var(--app-shell-accent-color, #005fb8);
+  background: var(--app-shell-accent-color, #115ea3);
   border-radius: var(--rds-radius-bar, 4px);
 }
 
@@ -115,7 +115,7 @@
 }
 
 .app-notification-center__icon--info {
-  color: var(--app-shell-accent-color, #005fb8);
+  color: var(--app-shell-accent-color, #115ea3);
 }
 
 .app-notification-center__icon--success {
@@ -159,7 +159,7 @@
 }
 
 .app-notification-center__action--primary {
-  color: var(--app-shell-accent-color, #005fb8) !important;
+  color: var(--app-shell-accent-color, #115ea3) !important;
 }
 
 .app-notification-center__empty {

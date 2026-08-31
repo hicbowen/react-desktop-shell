@@ -27,6 +27,7 @@ describe('SettingsPage', () => {
 
   it('updates shell preferences and disables dependent settings', () => {
     const setTheme = vi.fn()
+    const setThemePreset = vi.fn()
     const setLocale = vi.fn()
 
     act(() =>
@@ -38,7 +39,9 @@ describe('SettingsPage', () => {
             setLocale,
             setRailDisplayMode: vi.fn(),
             setTheme,
+            setThemePreset,
             theme: 'system',
+            themePreset: 'blue',
           }}
         >
           <SettingsPage />
@@ -51,6 +54,9 @@ describe('SettingsPage', () => {
     )!
     const language = host.querySelector<HTMLSelectElement>(
       'select[aria-label="Language"]',
+    )!
+    const colorTheme = host.querySelector<HTMLSelectElement>(
+      'select[aria-label="Accent color"]',
     )!
     const feature = host.querySelector<HTMLInputElement>(
       'input[aria-label="Enable feature"]',
@@ -72,11 +78,14 @@ describe('SettingsPage', () => {
     act(() => {
       theme.value = 'dark'
       theme.dispatchEvent(new Event('change', { bubbles: true }))
+      colorTheme.value = 'violet'
+      colorTheme.dispatchEvent(new Event('change', { bubbles: true }))
       language.value = 'zh-CN'
       language.dispatchEvent(new Event('change', { bubbles: true }))
     })
 
     expect(setTheme).toHaveBeenCalledWith('dark')
+    expect(setThemePreset).toHaveBeenCalledWith('violet')
     expect(setLocale).toHaveBeenCalledWith('zh-CN')
     expect(detail.disabled).toBe(false)
 

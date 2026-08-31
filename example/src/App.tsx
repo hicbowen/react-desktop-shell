@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { AppPage, AppRail, AppShell, AppTitleBar, useResolvedAppLocale, type AppLocale, type AppTheme, type PaneDisplayMode } from '../../src'
+import { AppPage, AppRail, AppShell, AppTitleBar, useResolvedAppLocale, type AppLocale, type AppTheme, type AppThemePreset, type PaneDisplayMode } from '../../src'
 import { DemoShellContext, type DemoPageLayout } from './components/DemoShellContext'
 import { DemoComponentPage } from './components/DemoComponentPage'
 import { DemoSearch } from './components/DemoSearch'
@@ -13,6 +13,7 @@ export function ExampleApp() {
   const [activeKey, setActiveKey] = useState(() => getDemoKeyFromHash(window.location.hash, demoPageKeys))
   const [maximized, setMaximized] = useState(false)
   const [theme, setTheme] = useState<AppTheme>('system')
+  const [themePreset, setThemePreset] = useState<AppThemePreset>('blue')
   const [locale, setLocale] = useState<AppLocale>('system')
   const [railDisplayMode, setRailDisplayMode] = useState<PaneDisplayMode>('auto')
   const [pageLayoutRequest, setPageLayoutRequest] = useState<{
@@ -49,6 +50,8 @@ export function ExampleApp() {
     () => ({
       theme,
       setTheme,
+      themePreset,
+      setThemePreset,
       locale,
       setLocale,
       railDisplayMode,
@@ -57,7 +60,7 @@ export function ExampleApp() {
       navigateTo,
       setPageLayout,
     }),
-    [locale, theme, railDisplayMode, localizedPages, navigateTo, setPageLayout],
+    [locale, theme, themePreset, railDisplayMode, localizedPages, navigateTo, setPageLayout],
   )
 
   return (
@@ -70,6 +73,7 @@ export function ExampleApp() {
         title="React Desktop Shell"
         sidebar={{ displayMode: railDisplayMode, onDisplayModeChange: setRailDisplayMode, expandedWidth: 292 }}
         theme={theme}
+        themePreset={themePreset}
         titleBar={
           <AppTitleBar
             center={<DemoSearch pages={localizedPages} fallbackPages={demoPages} onNavigate={navigateTo} />}

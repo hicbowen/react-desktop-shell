@@ -23,6 +23,7 @@ import { appLocaleMessages } from '../localization/messages'
 import { useResolvedAppLocale } from '../localization/resolveAppLocale'
 import { useToastStore } from '../toast/AppToastHost'
 import { AppScrollArea } from '../scroll-area/AppScrollArea'
+import { getAppThemeStyle } from '../theme/AppTheme'
 import {
   defaultClipboardAdapter,
 } from '../context-menu/AppContextMenuTextActions'
@@ -53,6 +54,8 @@ function isAppTitleBarType(type: unknown) {
 export function AppShell({
   locale = 'system',
   theme = 'system',
+  themePreset = 'blue',
+  themeTokens,
   contextMenu = 'native',
   clipboard = defaultClipboardAdapter,
   toastOptions,
@@ -161,6 +164,7 @@ export function AppShell({
           : 'var(--app-sidebar-compact-width)'
 
       return {
+        ...getAppThemeStyle(themeTokens),
         '--app-sidebar-expanded-width': `${sidebarExpandedWidth}px`,
         '--app-sidebar-compact-width': `${sidebarCompactWidth}px`,
         '--app-sidebar-compact-effective-width': compactEffectiveWidth,
@@ -179,6 +183,7 @@ export function AppShell({
       sidebarExpandedWidth,
       sidebarNavigationOverflow,
       style,
+      themeTokens,
     ],
   )
 
@@ -226,6 +231,7 @@ export function AppShell({
                   className={rootClassName}
                   data-pane-mode={resolvedDisplayMode}
                   data-theme={theme}
+                  data-theme-preset={themePreset}
                   style={shellStyle}
                   onMouseDownCapture={contextMenuController.handleMouseDown}
                   onContextMenuCapture={contextMenuController.handleContextMenu}

@@ -1,11 +1,13 @@
 import { createContext, useContext } from 'react'
-import type { AppLocale, AppTheme, PaneDisplayMode } from '../../../src'
+import type { AppLocale, AppTheme, AppThemePreset, PaneDisplayMode } from '../../../src'
 
 export type DemoPageLayout = 'flow' | 'fill'
 
 type DemoShellValue = {
   theme: AppTheme
   setTheme: (theme: AppTheme) => void
+  themePreset: AppThemePreset
+  setThemePreset: (themePreset: AppThemePreset) => void
   locale: AppLocale
   setLocale: (locale: AppLocale) => void
   railDisplayMode: PaneDisplayMode

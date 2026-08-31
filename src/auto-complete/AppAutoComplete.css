@@ -47,7 +47,7 @@
 }
 
 .app-auto-complete__clear:focus-visible {
-  outline: 2px solid var(--rds-state-focus-ring, var(--app-shell-accent-color, #005fb8));
+  outline: 2px solid var(--rds-state-focus-ring, var(--app-shell-accent-color, #115ea3));
   outline-offset: 0;
 }
 
@@ -106,7 +106,7 @@
 }
 
 .app-auto-complete__option:focus-visible {
-  outline: 2px solid var(--rds-state-focus-ring, var(--app-shell-accent-color, #005fb8));
+  outline: 2px solid var(--rds-state-focus-ring, var(--app-shell-accent-color, #115ea3));
   outline-offset: -2px;
 }
 

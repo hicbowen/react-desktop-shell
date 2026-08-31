@@ -1,4 +1,10 @@
 export { AppShell } from './shell/AppShell'
+export { APP_THEME_PRESETS, defineAppTheme } from './theme'
+export type {
+  AppThemePreset,
+  AppThemeTokenOverrides,
+  AppThemeTokens,
+} from './theme'
 export {
   AppCommandProvider,
   executeAppCommand,

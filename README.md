@@ -138,7 +138,7 @@ code output.
 
 ## Theme
 
-`AppShell` supports light, dark, and system themes.
+`AppShell` separates the light/dark color scheme from the accent color preset.
 
 ```tsx
 <AppShell theme="system">...</AppShell>
@@ -147,6 +147,41 @@ code output.
 ```
 
 `system` is the default theme and follows the operating system color scheme through `prefers-color-scheme`. The theme is scoped to `AppShell` and does not modify `html`, `body`, or global application theme state.
+
+Use `themePreset` to switch between the built-in `blue`, `teal`, `green`,
+`violet`, `orange`, and `rose` accent palettes independently from the color
+scheme. `blue` is the default and preserves the original AppShell palette.
+
+```tsx
+<AppShell theme="system" themePreset="violet">...</AppShell>
+```
+
+For a custom brand palette, use `defineAppTheme` and `themeTokens`. `common`
+tokens apply to both schemes before the mode-specific tokens. Supplying only
+`accentColor` also derives hover, pressed, active-background, focus-ring, and
+info colors. Supply `accentTextColor` when the default white or near-black text
+does not provide enough contrast for the chosen accent.
+
+```tsx
+import { AppShell, defineAppTheme } from 'react-desktop-shell'
+
+const brandTheme = defineAppTheme({
+  light: {
+    accentColor: '#6d5ce7',
+    contentBg: '#faf9ff',
+  },
+  dark: {
+    accentColor: '#b9adff',
+    contentBg: '#252330',
+  },
+})
+
+<AppShell theme="system" themeTokens={brandTheme}>...</AppShell>
+```
+
+Theme selection is controlled state. AppShell does not persist either setting;
+applications can store `theme` and `themePreset` using their preferred state or
+settings layer.
 
 ## AppSelectorBar
 
@@ -2521,6 +2556,10 @@ Override variables on `.app-shell`, `.app-page`, `.app-rail`, and `.app-title-ba
 | `--app-shell-active-bg`            | `rgb(17 94 163 / 8%)` |
 | `--app-shell-border-color`         | `rgb(0 0 0 / 8%)`     |
 | `--app-shell-accent-color`         | `#115ea3`             |
+| `--app-shell-accent-hover-color`   | `#0f548f`             |
+| `--app-shell-accent-pressed-color` | `#0c4f87`             |
+| `--app-shell-accent-text-color`    | `#ffffff`             |
+| `--app-shell-focus-ring-color`     | `var(--app-shell-accent-color)` |
 | `--app-shell-danger-bg`            | `#ef4444`             |
 | `--rds-control-height-standard`    | `32px`                |
 | `--rds-control-height-compact`     | `28px`                |
@@ -2564,6 +2603,9 @@ Override variables on `.app-shell`, `.app-page`, `.app-rail`, and `.app-title-ba
 | `--app-title-bar-bg`               | `transparent`         |
 
 Child components use `AppShell` theme tokens as defaults while keeping their existing component-level CSS variables customizable.
+Direct CSS-variable overrides remain available as an advanced escape hatch;
+`themePreset` and `themeTokens` are preferred for application-wide color
+themes because they preserve light/dark and interaction-state relationships.
 
 ## Context menu
 
@@ -2938,6 +2980,8 @@ Calling `show` again with the same id updates the existing toast. At most four t
 | ------------------ | --------------- | ----------- | ------------------------------------------------ |
 | `locale`           | `'system' \| 'zh-CN' \| 'en-US'` | `'system'` | Controls all built-in component language, date formatting, weekday order, and time display. |
 | `theme`            | `'system' \| 'light' \| 'dark'` | `'system'` | Controls the shell color theme. |
+| `themePreset`      | `AppThemePreset` | `'blue'` | Selects a built-in accent color palette. |
+| `themeTokens`      | `AppThemeTokens` | `undefined` | Overrides preset colors with typed common, light, and dark tokens. |
 | `contextMenu`      | `'native' \| 'app'` | `'native'` | Controls whether native or shell-managed context menus are used. |
 | `clipboard`        | `AppClipboardAdapter` | Web Clipboard API | Optional clipboard bridge used by shell-managed menus. |
 | `toastOptions`     | `AppToastHostOptions` | `{ maxVisible: 4 }` | Optional toast host options. |
@@ -3113,6 +3157,8 @@ export type RailEntry = RailLinkItem | RailSubmenu | RailGroup
 ```tsx
 export interface AppShellProps {
   theme?: AppTheme
+  themePreset?: AppThemePreset
+  themeTokens?: AppThemeTokens
   title?: ReactNode
   icon?: ReactNode
   sidebar?: AppShellSidebarOptions

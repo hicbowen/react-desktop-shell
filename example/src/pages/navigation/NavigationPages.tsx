@@ -304,7 +304,7 @@ function SelectorPanelStateDemo({ label }: { label: string }) {
 
 export function NavigationModesPage() {
   const t = useDemoCopy()
-  const { locale, theme } = useDemoShell()
+  const { locale, theme, themePreset } = useDemoShell()
   const [displayMode, setDisplayMode] = useState<PaneDisplayMode>('expanded')
   const [activeItem, setActiveItem] = useState('home')
   const navigationItems = [
@@ -339,6 +339,7 @@ export function NavigationModesPage() {
             locale={locale}
             sidebar={{ displayMode, expandedWidth: 190 }}
             theme={theme}
+            themePreset={themePreset}
             title={t('Preview application')}
             titleBar={
               <AppTitleBar

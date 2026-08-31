@@ -44,8 +44,8 @@
 }
 
 .app-ai-message-actions .app-icon-button[aria-pressed='true'] {
-  color: var(--app-shell-accent-color, #005fb8);
-  background: var(--rds-state-selected-bg, var(--app-shell-selection-bg, rgb(0 120 212 / 10%)));
+  color: var(--app-shell-accent-color, #115ea3);
+  background: var(--rds-state-selected-bg, var(--app-shell-selection-bg, rgb(17 94 163 / 8%)));
 }
 
 .app-ai-message-actions .app-icon-button svg {

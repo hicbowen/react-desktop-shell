@@ -1,3 +1,41 @@
+.app-shell[data-theme-preset='blue'] {
+  --app-theme-light-accent-color: #115ea3;
+  --app-theme-light-accent-hover-color: #0f548f;
+  --app-theme-light-accent-pressed-color: #0c4f87;
+  --app-theme-light-accent-text-color: #ffffff;
+  --app-theme-light-active-bg: rgb(17 94 163 / 8%);
+  --app-theme-dark-accent-color: #60cdff;
+  --app-theme-dark-accent-hover-color: #56b8e6;
+  --app-theme-dark-accent-pressed-color: #4aa4cc;
+  --app-theme-dark-accent-text-color: #00131f;
+  --app-theme-dark-active-bg: rgb(96 205 255 / 14%);
+}
+
+.app-shell[data-theme-preset='teal'] {
+  --app-theme-light-accent-color: #0f6c6d;
+  --app-theme-dark-accent-color: #5cd6d3;
+}
+
+.app-shell[data-theme-preset='green'] {
+  --app-theme-light-accent-color: #107c10;
+  --app-theme-dark-accent-color: #6ccb5f;
+}
+
+.app-shell[data-theme-preset='violet'] {
+  --app-theme-light-accent-color: #5c2e91;
+  --app-theme-dark-accent-color: #c5a7ff;
+}
+
+.app-shell[data-theme-preset='orange'] {
+  --app-theme-light-accent-color: #a74100;
+  --app-theme-dark-accent-color: #ffb26b;
+}
+
+.app-shell[data-theme-preset='rose'] {
+  --app-theme-light-accent-color: #b1467b;
+  --app-theme-dark-accent-color: #f09ac4;
+}
+
 .app-shell,
 .app-shell[data-theme='system'],
 .app-shell[data-theme='light'] {
@@ -41,62 +79,62 @@
   --rds-space-7: 28px;
   --rds-space-8: 32px;
 
-  --app-shell-chrome-bg: #f3f3f3;
-  --app-shell-content-bg: #f7f8fa;
-  --app-shell-surface-bg: #ffffff;
-  --app-shell-card-bg: #fbfbfb;
-  --app-shell-card-hover-bg: #f6f6f6;
-  --app-shell-card-pressed-bg: #f1f1f1;
-  --app-shell-input-bg: rgb(255 255 255 / 70%);
-  --app-shell-input-hover-bg: rgb(249 249 249 / 50%);
-  --app-shell-input-pressed-bg: rgb(249 249 249 / 30%);
-  --app-shell-input-focused-bg: #ffffff;
-  --app-shell-input-readonly-bg: rgb(249 249 249 / 30%);
-  --app-shell-input-disabled-bg: rgb(249 249 249 / 30%);
-  --app-shell-input-border-color: rgb(0 0 0 / 6%);
-  --app-shell-input-strong-border-color: rgb(0 0 0 / 45%);
-  --app-shell-input-disabled-strong-border-color: rgb(0 0 0 / 22%);
+  --app-shell-chrome-bg: var(--app-theme-light-chrome-bg, #f3f3f3);
+  --app-shell-content-bg: var(--app-theme-light-content-bg, #f7f8fa);
+  --app-shell-surface-bg: var(--app-theme-light-surface-bg, #ffffff);
+  --app-shell-card-bg: var(--app-theme-light-card-bg, #fbfbfb);
+  --app-shell-card-hover-bg: var(--app-theme-light-card-hover-bg, #f6f6f6);
+  --app-shell-card-pressed-bg: var(--app-theme-light-card-pressed-bg, #f1f1f1);
+  --app-shell-input-bg: var(--app-theme-light-input-bg, rgb(255 255 255 / 70%));
+  --app-shell-input-hover-bg: var(--app-theme-light-input-hover-bg, rgb(249 249 249 / 50%));
+  --app-shell-input-pressed-bg: var(--app-theme-light-input-pressed-bg, rgb(249 249 249 / 30%));
+  --app-shell-input-focused-bg: var(--app-theme-light-input-focused-bg, #ffffff);
+  --app-shell-input-readonly-bg: var(--app-theme-light-input-readonly-bg, rgb(249 249 249 / 30%));
+  --app-shell-input-disabled-bg: var(--app-theme-light-input-disabled-bg, rgb(249 249 249 / 30%));
+  --app-shell-input-border-color: var(--app-theme-light-input-border-color, rgb(0 0 0 / 6%));
+  --app-shell-input-strong-border-color: var(--app-theme-light-input-strong-border-color, rgb(0 0 0 / 45%));
+  --app-shell-input-disabled-strong-border-color: var(--app-theme-light-input-disabled-strong-border-color, rgb(0 0 0 / 22%));
   --app-scrollbar-size: 12px;
   --app-scrollbar-thumb-inset: 3px;
-  --app-scrollbar-thumb-color: rgb(0 0 0 / 34%);
-  --app-scrollbar-thumb-hover-color: rgb(0 0 0 / 44%);
-  --app-scrollbar-thumb-active-color: rgb(0 0 0 / 54%);
-  --app-scrollbar-track-color: transparent;
-  --app-scrollbar-track-expanded-color: rgb(250 250 250 / 78%);
-  --app-scrollbar-arrow-color: rgb(0 0 0 / 62%);
-  --app-scrollbar-arrow-hover-color: rgb(0 0 0 / 6%);
-  --app-scrollbar-arrow-active-color: rgb(0 0 0 / 10%);
-  --app-shell-text-color: #1f1f1f;
-  --app-shell-muted-text-color: #707070;
-  --app-shell-secondary-text-color: #616161;
-  --app-shell-disabled-text-color: rgb(0 0 0 / 36%);
-  --app-shell-disabled-bg: rgb(0 0 0 / 6%);
-  --app-shell-hover-bg: rgb(0 0 0 / 5%);
-  --app-shell-control-hover-bg: #d4d4d4;
-  --app-shell-active-bg: rgb(17 94 163 / 8%);
-  --app-shell-border-color: rgb(0 0 0 / 8%);
-  --app-shell-accent-color: #115ea3;
-  --app-shell-accent-hover-color: #0f548f;
-  --app-shell-danger-bg: #ef4444;
-  --app-shell-danger-fg: #c42b1c;
-  --app-shell-danger-subtle-bg: rgb(196 43 28 / 10%);
-  --app-shell-success-fg: #107c10;
-  --app-shell-warning-fg: #9a6700;
-  --app-shell-info-fg: #115ea3;
-  --app-shell-code-text-color: #242424;
+  --app-scrollbar-thumb-color: var(--app-theme-light-scrollbar-thumb-color, rgb(0 0 0 / 34%));
+  --app-scrollbar-thumb-hover-color: var(--app-theme-light-scrollbar-thumb-hover-color, rgb(0 0 0 / 44%));
+  --app-scrollbar-thumb-active-color: var(--app-theme-light-scrollbar-thumb-active-color, rgb(0 0 0 / 54%));
+  --app-scrollbar-track-color: var(--app-theme-light-scrollbar-track-color, transparent);
+  --app-scrollbar-track-expanded-color: var(--app-theme-light-scrollbar-track-expanded-color, rgb(250 250 250 / 78%));
+  --app-scrollbar-arrow-color: var(--app-theme-light-scrollbar-arrow-color, rgb(0 0 0 / 62%));
+  --app-scrollbar-arrow-hover-color: var(--app-theme-light-scrollbar-arrow-hover-color, rgb(0 0 0 / 6%));
+  --app-scrollbar-arrow-active-color: var(--app-theme-light-scrollbar-arrow-active-color, rgb(0 0 0 / 10%));
+  --app-shell-text-color: var(--app-theme-light-text-color, #1f1f1f);
+  --app-shell-muted-text-color: var(--app-theme-light-muted-text-color, #707070);
+  --app-shell-secondary-text-color: var(--app-theme-light-secondary-text-color, #616161);
+  --app-shell-disabled-text-color: var(--app-theme-light-disabled-text-color, rgb(0 0 0 / 36%));
+  --app-shell-disabled-bg: var(--app-theme-light-disabled-bg, rgb(0 0 0 / 6%));
+  --app-shell-hover-bg: var(--app-theme-light-hover-bg, rgb(0 0 0 / 5%));
+  --app-shell-control-hover-bg: var(--app-theme-light-control-hover-bg, #d4d4d4);
+  --app-shell-accent-color: var(--app-theme-light-accent-color, #115ea3);
+  --app-shell-accent-hover-color: var(--app-theme-light-accent-hover-color, color-mix(in srgb, var(--app-shell-accent-color) 90%, black));
+  --app-shell-accent-pressed-color: var(--app-theme-light-accent-pressed-color, color-mix(in srgb, var(--app-shell-accent-color) 80%, black));
+  --app-shell-accent-text-color: var(--app-theme-light-accent-text-color, #ffffff);
+  --app-shell-active-bg: var(--app-theme-light-active-bg, color-mix(in srgb, var(--app-shell-accent-color) 8%, transparent));
+  --app-shell-focus-ring-color: var(--app-theme-light-focus-ring-color, var(--app-shell-accent-color));
+  --app-shell-border-color: var(--app-theme-light-border-color, rgb(0 0 0 / 8%));
+  --app-shell-danger-bg: var(--app-theme-light-danger-bg, #ef4444);
+  --app-shell-danger-fg: var(--app-theme-light-danger-fg, #c42b1c);
+  --app-shell-danger-subtle-bg: var(--app-theme-light-danger-subtle-bg, rgb(196 43 28 / 10%));
+  --app-shell-success-fg: var(--app-theme-light-success-fg, #107c10);
+  --app-shell-warning-fg: var(--app-theme-light-warning-fg, #9a6700);
+  --app-shell-info-fg: var(--app-theme-light-info-fg, var(--app-shell-accent-color));
+  --app-shell-code-text-color: var(--app-theme-light-code-text-color, #242424);
 
   /* Semantic aliases used by older component styles. They intentionally
      resolve to the same theme values so custom themes stay coherent. */
-  --app-shell-accent-pressed-color: #0c4f87;
-  --app-shell-accent-text-color: #ffffff;
-  --app-shell-focus-ring-color: var(--app-shell-accent-color);
   --app-shell-selection-bg: var(--app-shell-active-bg);
   --app-shell-strong-border-color: var(--app-shell-input-strong-border-color);
   --app-shell-card-background: var(--app-shell-card-bg);
   --app-shell-overlay-bg: var(--app-shell-menu-bg);
   --app-shell-pressed-bg: var(--app-shell-card-pressed-bg);
   --app-shell-subtle-bg: var(--app-shell-hover-bg);
-  --app-shell-code-bg: var(--app-shell-subtle-bg);
+  --app-shell-code-bg: var(--app-theme-light-code-bg, var(--app-shell-subtle-bg));
   --app-shell-subtle-background: var(--app-shell-subtle-bg);
   --app-shell-code-background: var(--app-shell-code-bg);
   --app-shell-success-color: var(--app-shell-success-fg);
@@ -123,27 +161,27 @@
   --rds-state-accent-hover: var(--app-shell-accent-hover-color);
   --rds-state-accent-pressed: var(--app-shell-accent-pressed-color);
 
-  --app-shell-menu-bg: rgb(249 249 249 / 92%);
-  --app-shell-menu-border-color: rgb(0 0 0 / 10%);
+  --app-shell-menu-bg: var(--app-theme-light-menu-bg, rgb(249 249 249 / 92%));
+  --app-shell-menu-border-color: var(--app-theme-light-menu-border-color, rgb(0 0 0 / 10%));
   --app-shell-menu-shadow:
     0 8px 20px rgb(0 0 0 / 14%),
     0 2px 6px rgb(0 0 0 / 10%);
-  --app-shell-dialog-overlay-bg: rgb(0 0 0 / 18%);
-  --app-shell-dialog-bg: rgb(249 249 249);
-  --app-shell-dialog-border-color: rgb(0 0 0 / 12%);
+  --app-shell-dialog-overlay-bg: var(--app-theme-light-dialog-overlay-bg, rgb(0 0 0 / 18%));
+  --app-shell-dialog-bg: var(--app-theme-light-dialog-bg, rgb(249 249 249));
+  --app-shell-dialog-border-color: var(--app-theme-light-dialog-border-color, rgb(0 0 0 / 12%));
   --app-shell-dialog-shadow:
     0 18px 42px rgb(0 0 0 / 18%),
     0 4px 12px rgb(0 0 0 / 10%);
-  --app-shell-dialog-button-bg: rgb(255 255 255 / 62%);
-  --app-shell-dialog-button-border-color: rgb(0 0 0 / 12%);
-  --app-shell-dialog-primary-fg: #ffffff;
-  --app-shell-pane-scrim-bg: rgb(0 0 0 / 18%);
+  --app-shell-dialog-button-bg: var(--app-theme-light-dialog-button-bg, rgb(255 255 255 / 62%));
+  --app-shell-dialog-button-border-color: var(--app-theme-light-dialog-button-border-color, rgb(0 0 0 / 12%));
+  --app-shell-dialog-primary-fg: var(--app-theme-light-dialog-primary-fg, #ffffff);
+  --app-shell-pane-scrim-bg: var(--app-theme-light-pane-scrim-bg, rgb(0 0 0 / 18%));
   --app-shell-pane-shadow:
     8px 0 28px rgb(0 0 0 / 14%),
     2px 0 8px rgb(0 0 0 / 8%);
   --app-shell-pane-content-reveal: 56px;
-  --app-shell-toast-bg: rgb(249 249 249 / 94%);
-  --app-shell-toast-border-color: rgb(0 0 0 / 12%);
+  --app-shell-toast-bg: var(--app-theme-light-toast-bg, rgb(249 249 249 / 94%));
+  --app-shell-toast-border-color: var(--app-theme-light-toast-border-color, rgb(0 0 0 / 12%));
   --app-shell-toast-shadow:
     0 10px 28px rgb(0 0 0 / 16%),
     0 2px 8px rgb(0 0 0 / 10%);
@@ -224,68 +262,71 @@
 .app-shell[data-theme='dark'] {
   color-scheme: dark;
 
-  --app-shell-chrome-bg: #202020;
-  --app-shell-content-bg: #272727;
-  --app-shell-surface-bg: #2d2d2d;
-  --app-shell-card-bg: #323232;
-  --app-shell-card-hover-bg: #383838;
-  --app-shell-card-pressed-bg: #3d3d3d;
-  --app-shell-input-bg: rgb(255 255 255 / 6%);
-  --app-shell-input-hover-bg: rgb(255 255 255 / 8%);
-  --app-shell-input-pressed-bg: rgb(255 255 255 / 3%);
-  --app-shell-input-focused-bg: rgb(30 30 30 / 70%);
-  --app-shell-input-readonly-bg: rgb(255 255 255 / 3%);
-  --app-shell-input-disabled-bg: rgb(255 255 255 / 4%);
-  --app-shell-input-border-color: rgb(255 255 255 / 7%);
-  --app-shell-input-strong-border-color: rgb(255 255 255 / 54%);
-  --app-shell-input-disabled-strong-border-color: rgb(255 255 255 / 16%);
-  --app-scrollbar-thumb-color: rgb(255 255 255 / 36%);
-  --app-scrollbar-thumb-hover-color: rgb(255 255 255 / 48%);
-  --app-scrollbar-thumb-active-color: rgb(255 255 255 / 58%);
-  --app-scrollbar-track-expanded-color: rgb(44 44 44 / 78%);
-  --app-scrollbar-arrow-color: rgb(255 255 255 / 68%);
-  --app-scrollbar-arrow-hover-color: rgb(255 255 255 / 8%);
-  --app-scrollbar-arrow-active-color: rgb(255 255 255 / 12%);
-  --app-shell-text-color: #ffffff;
-  --app-shell-muted-text-color: #a6a6a6;
-  --app-shell-secondary-text-color: #c5c5c5;
-  --app-shell-disabled-text-color: rgb(255 255 255 / 36%);
-  --app-shell-disabled-bg: rgb(255 255 255 / 6%);
-  --app-shell-hover-bg: rgb(255 255 255 / 6%);
-  --app-shell-control-hover-bg: #3a3a3a;
-  --app-shell-active-bg: rgb(96 205 255 / 14%);
-  --app-shell-border-color: rgb(255 255 255 / 8%);
-  --app-shell-accent-color: #60cdff;
-  --app-shell-accent-hover-color: #56b8e6;
-  --app-shell-accent-pressed-color: #4aa4cc;
-  --app-shell-accent-text-color: #00131f;
-  --app-shell-danger-bg: #ef4444;
-  --app-shell-danger-fg: #ff99a4;
-  --app-shell-danger-subtle-bg: rgb(255 153 164 / 12%);
-  --app-shell-success-fg: #6ccb5f;
-  --app-shell-warning-fg: #f6d46b;
-  --app-shell-info-fg: #60cdff;
-  --app-shell-code-text-color: #f5f5f5;
-  --app-shell-menu-bg: rgb(44 44 44 / 92%);
-  --app-shell-menu-border-color: rgb(255 255 255 / 12%);
+  --app-shell-chrome-bg: var(--app-theme-dark-chrome-bg, #202020);
+  --app-shell-content-bg: var(--app-theme-dark-content-bg, #272727);
+  --app-shell-surface-bg: var(--app-theme-dark-surface-bg, #2d2d2d);
+  --app-shell-card-bg: var(--app-theme-dark-card-bg, #323232);
+  --app-shell-card-hover-bg: var(--app-theme-dark-card-hover-bg, #383838);
+  --app-shell-card-pressed-bg: var(--app-theme-dark-card-pressed-bg, #3d3d3d);
+  --app-shell-input-bg: var(--app-theme-dark-input-bg, rgb(255 255 255 / 6%));
+  --app-shell-input-hover-bg: var(--app-theme-dark-input-hover-bg, rgb(255 255 255 / 8%));
+  --app-shell-input-pressed-bg: var(--app-theme-dark-input-pressed-bg, rgb(255 255 255 / 3%));
+  --app-shell-input-focused-bg: var(--app-theme-dark-input-focused-bg, rgb(30 30 30 / 70%));
+  --app-shell-input-readonly-bg: var(--app-theme-dark-input-readonly-bg, rgb(255 255 255 / 3%));
+  --app-shell-input-disabled-bg: var(--app-theme-dark-input-disabled-bg, rgb(255 255 255 / 4%));
+  --app-shell-input-border-color: var(--app-theme-dark-input-border-color, rgb(255 255 255 / 7%));
+  --app-shell-input-strong-border-color: var(--app-theme-dark-input-strong-border-color, rgb(255 255 255 / 54%));
+  --app-shell-input-disabled-strong-border-color: var(--app-theme-dark-input-disabled-strong-border-color, rgb(255 255 255 / 16%));
+  --app-scrollbar-thumb-color: var(--app-theme-dark-scrollbar-thumb-color, rgb(255 255 255 / 36%));
+  --app-scrollbar-thumb-hover-color: var(--app-theme-dark-scrollbar-thumb-hover-color, rgb(255 255 255 / 48%));
+  --app-scrollbar-thumb-active-color: var(--app-theme-dark-scrollbar-thumb-active-color, rgb(255 255 255 / 58%));
+  --app-scrollbar-track-color: var(--app-theme-dark-scrollbar-track-color, transparent);
+  --app-scrollbar-track-expanded-color: var(--app-theme-dark-scrollbar-track-expanded-color, rgb(44 44 44 / 78%));
+  --app-scrollbar-arrow-color: var(--app-theme-dark-scrollbar-arrow-color, rgb(255 255 255 / 68%));
+  --app-scrollbar-arrow-hover-color: var(--app-theme-dark-scrollbar-arrow-hover-color, rgb(255 255 255 / 8%));
+  --app-scrollbar-arrow-active-color: var(--app-theme-dark-scrollbar-arrow-active-color, rgb(255 255 255 / 12%));
+  --app-shell-text-color: var(--app-theme-dark-text-color, #ffffff);
+  --app-shell-muted-text-color: var(--app-theme-dark-muted-text-color, #a6a6a6);
+  --app-shell-secondary-text-color: var(--app-theme-dark-secondary-text-color, #c5c5c5);
+  --app-shell-disabled-text-color: var(--app-theme-dark-disabled-text-color, rgb(255 255 255 / 36%));
+  --app-shell-disabled-bg: var(--app-theme-dark-disabled-bg, rgb(255 255 255 / 6%));
+  --app-shell-hover-bg: var(--app-theme-dark-hover-bg, rgb(255 255 255 / 6%));
+  --app-shell-control-hover-bg: var(--app-theme-dark-control-hover-bg, #3a3a3a);
+  --app-shell-accent-color: var(--app-theme-dark-accent-color, #60cdff);
+  --app-shell-accent-hover-color: var(--app-theme-dark-accent-hover-color, color-mix(in srgb, var(--app-shell-accent-color) 90%, black));
+  --app-shell-accent-pressed-color: var(--app-theme-dark-accent-pressed-color, color-mix(in srgb, var(--app-shell-accent-color) 80%, black));
+  --app-shell-accent-text-color: var(--app-theme-dark-accent-text-color, #00131f);
+  --app-shell-active-bg: var(--app-theme-dark-active-bg, color-mix(in srgb, var(--app-shell-accent-color) 14%, transparent));
+  --app-shell-focus-ring-color: var(--app-theme-dark-focus-ring-color, var(--app-shell-accent-color));
+  --app-shell-border-color: var(--app-theme-dark-border-color, rgb(255 255 255 / 8%));
+  --app-shell-danger-bg: var(--app-theme-dark-danger-bg, #ef4444);
+  --app-shell-danger-fg: var(--app-theme-dark-danger-fg, #ff99a4);
+  --app-shell-danger-subtle-bg: var(--app-theme-dark-danger-subtle-bg, rgb(255 153 164 / 12%));
+  --app-shell-success-fg: var(--app-theme-dark-success-fg, #6ccb5f);
+  --app-shell-warning-fg: var(--app-theme-dark-warning-fg, #f6d46b);
+  --app-shell-info-fg: var(--app-theme-dark-info-fg, var(--app-shell-accent-color));
+  --app-shell-code-text-color: var(--app-theme-dark-code-text-color, #f5f5f5);
+  --app-shell-code-bg: var(--app-theme-dark-code-bg, var(--app-shell-subtle-bg));
+  --app-shell-menu-bg: var(--app-theme-dark-menu-bg, rgb(44 44 44 / 92%));
+  --app-shell-menu-border-color: var(--app-theme-dark-menu-border-color, rgb(255 255 255 / 12%));
   --app-shell-menu-shadow:
     0 10px 24px rgb(0 0 0 / 42%),
     0 2px 8px rgb(0 0 0 / 24%);
-  --app-shell-dialog-overlay-bg: rgb(0 0 0 / 32%);
-  --app-shell-dialog-bg: rgb(44 44 44);
-  --app-shell-dialog-border-color: rgb(255 255 255 / 12%);
+  --app-shell-dialog-overlay-bg: var(--app-theme-dark-dialog-overlay-bg, rgb(0 0 0 / 32%));
+  --app-shell-dialog-bg: var(--app-theme-dark-dialog-bg, rgb(44 44 44));
+  --app-shell-dialog-border-color: var(--app-theme-dark-dialog-border-color, rgb(255 255 255 / 12%));
   --app-shell-dialog-shadow:
     0 20px 46px rgb(0 0 0 / 48%),
     0 4px 14px rgb(0 0 0 / 28%);
-  --app-shell-dialog-button-bg: rgb(255 255 255 / 6%);
-  --app-shell-dialog-button-border-color: rgb(255 255 255 / 12%);
-  --app-shell-dialog-primary-fg: #00131f;
-  --app-shell-pane-scrim-bg: rgb(0 0 0 / 32%);
+  --app-shell-dialog-button-bg: var(--app-theme-dark-dialog-button-bg, rgb(255 255 255 / 6%));
+  --app-shell-dialog-button-border-color: var(--app-theme-dark-dialog-button-border-color, rgb(255 255 255 / 12%));
+  --app-shell-dialog-primary-fg: var(--app-theme-dark-dialog-primary-fg, #00131f);
+  --app-shell-pane-scrim-bg: var(--app-theme-dark-pane-scrim-bg, rgb(0 0 0 / 32%));
   --app-shell-pane-shadow:
     8px 0 32px rgb(0 0 0 / 38%),
     2px 0 10px rgb(0 0 0 / 24%);
-  --app-shell-toast-bg: rgb(44 44 44 / 94%);
-  --app-shell-toast-border-color: rgb(255 255 255 / 12%);
+  --app-shell-toast-bg: var(--app-theme-dark-toast-bg, rgb(44 44 44 / 94%));
+  --app-shell-toast-border-color: var(--app-theme-dark-toast-border-color, rgb(255 255 255 / 12%));
   --app-shell-toast-shadow:
     0 14px 34px rgb(0 0 0 / 46%),
     0 2px 10px rgb(0 0 0 / 28%);
@@ -581,68 +622,71 @@
   .app-shell[data-theme='system'] {
     color-scheme: dark;
 
-    --app-shell-chrome-bg: #202020;
-    --app-shell-content-bg: #272727;
-    --app-shell-surface-bg: #2d2d2d;
-    --app-shell-card-bg: #323232;
-    --app-shell-card-hover-bg: #383838;
-    --app-shell-card-pressed-bg: #3d3d3d;
-    --app-shell-input-bg: rgb(255 255 255 / 6%);
-    --app-shell-input-hover-bg: rgb(255 255 255 / 8%);
-    --app-shell-input-pressed-bg: rgb(255 255 255 / 3%);
-    --app-shell-input-focused-bg: rgb(30 30 30 / 70%);
-    --app-shell-input-readonly-bg: rgb(255 255 255 / 3%);
-    --app-shell-input-disabled-bg: rgb(255 255 255 / 4%);
-    --app-shell-input-border-color: rgb(255 255 255 / 7%);
-    --app-shell-input-strong-border-color: rgb(255 255 255 / 54%);
-    --app-shell-input-disabled-strong-border-color: rgb(255 255 255 / 16%);
-    --app-scrollbar-thumb-color: rgb(255 255 255 / 36%);
-    --app-scrollbar-thumb-hover-color: rgb(255 255 255 / 48%);
-    --app-scrollbar-thumb-active-color: rgb(255 255 255 / 58%);
-    --app-scrollbar-track-expanded-color: rgb(44 44 44 / 78%);
-    --app-scrollbar-arrow-color: rgb(255 255 255 / 68%);
-    --app-scrollbar-arrow-hover-color: rgb(255 255 255 / 8%);
-    --app-scrollbar-arrow-active-color: rgb(255 255 255 / 12%);
-    --app-shell-text-color: #ffffff;
-    --app-shell-muted-text-color: #a6a6a6;
-    --app-shell-secondary-text-color: #c5c5c5;
-    --app-shell-disabled-text-color: rgb(255 255 255 / 36%);
-    --app-shell-disabled-bg: rgb(255 255 255 / 6%);
-    --app-shell-hover-bg: rgb(255 255 255 / 6%);
-    --app-shell-control-hover-bg: #3a3a3a;
-    --app-shell-active-bg: rgb(96 205 255 / 14%);
-    --app-shell-border-color: rgb(255 255 255 / 8%);
-    --app-shell-accent-color: #60cdff;
-    --app-shell-accent-hover-color: #56b8e6;
-    --app-shell-accent-pressed-color: #4aa4cc;
-    --app-shell-accent-text-color: #00131f;
-    --app-shell-danger-bg: #ef4444;
-    --app-shell-danger-fg: #ff99a4;
-    --app-shell-danger-subtle-bg: rgb(255 153 164 / 12%);
-    --app-shell-success-fg: #6ccb5f;
-    --app-shell-warning-fg: #f6d46b;
-    --app-shell-info-fg: #60cdff;
-    --app-shell-code-text-color: #f5f5f5;
-    --app-shell-menu-bg: rgb(44 44 44 / 92%);
-    --app-shell-menu-border-color: rgb(255 255 255 / 12%);
+    --app-shell-chrome-bg: var(--app-theme-dark-chrome-bg, #202020);
+    --app-shell-content-bg: var(--app-theme-dark-content-bg, #272727);
+    --app-shell-surface-bg: var(--app-theme-dark-surface-bg, #2d2d2d);
+    --app-shell-card-bg: var(--app-theme-dark-card-bg, #323232);
+    --app-shell-card-hover-bg: var(--app-theme-dark-card-hover-bg, #383838);
+    --app-shell-card-pressed-bg: var(--app-theme-dark-card-pressed-bg, #3d3d3d);
+    --app-shell-input-bg: var(--app-theme-dark-input-bg, rgb(255 255 255 / 6%));
+    --app-shell-input-hover-bg: var(--app-theme-dark-input-hover-bg, rgb(255 255 255 / 8%));
+    --app-shell-input-pressed-bg: var(--app-theme-dark-input-pressed-bg, rgb(255 255 255 / 3%));
+    --app-shell-input-focused-bg: var(--app-theme-dark-input-focused-bg, rgb(30 30 30 / 70%));
+    --app-shell-input-readonly-bg: var(--app-theme-dark-input-readonly-bg, rgb(255 255 255 / 3%));
+    --app-shell-input-disabled-bg: var(--app-theme-dark-input-disabled-bg, rgb(255 255 255 / 4%));
+    --app-shell-input-border-color: var(--app-theme-dark-input-border-color, rgb(255 255 255 / 7%));
+    --app-shell-input-strong-border-color: var(--app-theme-dark-input-strong-border-color, rgb(255 255 255 / 54%));
+    --app-shell-input-disabled-strong-border-color: var(--app-theme-dark-input-disabled-strong-border-color, rgb(255 255 255 / 16%));
+    --app-scrollbar-thumb-color: var(--app-theme-dark-scrollbar-thumb-color, rgb(255 255 255 / 36%));
+    --app-scrollbar-thumb-hover-color: var(--app-theme-dark-scrollbar-thumb-hover-color, rgb(255 255 255 / 48%));
+    --app-scrollbar-thumb-active-color: var(--app-theme-dark-scrollbar-thumb-active-color, rgb(255 255 255 / 58%));
+    --app-scrollbar-track-color: var(--app-theme-dark-scrollbar-track-color, transparent);
+    --app-scrollbar-track-expanded-color: var(--app-theme-dark-scrollbar-track-expanded-color, rgb(44 44 44 / 78%));
+    --app-scrollbar-arrow-color: var(--app-theme-dark-scrollbar-arrow-color, rgb(255 255 255 / 68%));
+    --app-scrollbar-arrow-hover-color: var(--app-theme-dark-scrollbar-arrow-hover-color, rgb(255 255 255 / 8%));
+    --app-scrollbar-arrow-active-color: var(--app-theme-dark-scrollbar-arrow-active-color, rgb(255 255 255 / 12%));
+    --app-shell-text-color: var(--app-theme-dark-text-color, #ffffff);
+    --app-shell-muted-text-color: var(--app-theme-dark-muted-text-color, #a6a6a6);
+    --app-shell-secondary-text-color: var(--app-theme-dark-secondary-text-color, #c5c5c5);
+    --app-shell-disabled-text-color: var(--app-theme-dark-disabled-text-color, rgb(255 255 255 / 36%));
+    --app-shell-disabled-bg: var(--app-theme-dark-disabled-bg, rgb(255 255 255 / 6%));
+    --app-shell-hover-bg: var(--app-theme-dark-hover-bg, rgb(255 255 255 / 6%));
+    --app-shell-control-hover-bg: var(--app-theme-dark-control-hover-bg, #3a3a3a);
+    --app-shell-accent-color: var(--app-theme-dark-accent-color, #60cdff);
+    --app-shell-accent-hover-color: var(--app-theme-dark-accent-hover-color, color-mix(in srgb, var(--app-shell-accent-color) 90%, black));
+    --app-shell-accent-pressed-color: var(--app-theme-dark-accent-pressed-color, color-mix(in srgb, var(--app-shell-accent-color) 80%, black));
+    --app-shell-accent-text-color: var(--app-theme-dark-accent-text-color, #00131f);
+    --app-shell-active-bg: var(--app-theme-dark-active-bg, color-mix(in srgb, var(--app-shell-accent-color) 14%, transparent));
+    --app-shell-focus-ring-color: var(--app-theme-dark-focus-ring-color, var(--app-shell-accent-color));
+    --app-shell-border-color: var(--app-theme-dark-border-color, rgb(255 255 255 / 8%));
+    --app-shell-danger-bg: var(--app-theme-dark-danger-bg, #ef4444);
+    --app-shell-danger-fg: var(--app-theme-dark-danger-fg, #ff99a4);
+    --app-shell-danger-subtle-bg: var(--app-theme-dark-danger-subtle-bg, rgb(255 153 164 / 12%));
+    --app-shell-success-fg: var(--app-theme-dark-success-fg, #6ccb5f);
+    --app-shell-warning-fg: var(--app-theme-dark-warning-fg, #f6d46b);
+    --app-shell-info-fg: var(--app-theme-dark-info-fg, var(--app-shell-accent-color));
+    --app-shell-code-text-color: var(--app-theme-dark-code-text-color, #f5f5f5);
+    --app-shell-code-bg: var(--app-theme-dark-code-bg, var(--app-shell-subtle-bg));
+    --app-shell-menu-bg: var(--app-theme-dark-menu-bg, rgb(44 44 44 / 92%));
+    --app-shell-menu-border-color: var(--app-theme-dark-menu-border-color, rgb(255 255 255 / 12%));
     --app-shell-menu-shadow:
       0 10px 24px rgb(0 0 0 / 42%),
       0 2px 8px rgb(0 0 0 / 24%);
-    --app-shell-dialog-overlay-bg: rgb(0 0 0 / 32%);
-    --app-shell-dialog-bg: rgb(44 44 44);
-    --app-shell-dialog-border-color: rgb(255 255 255 / 12%);
+    --app-shell-dialog-overlay-bg: var(--app-theme-dark-dialog-overlay-bg, rgb(0 0 0 / 32%));
+    --app-shell-dialog-bg: var(--app-theme-dark-dialog-bg, rgb(44 44 44));
+    --app-shell-dialog-border-color: var(--app-theme-dark-dialog-border-color, rgb(255 255 255 / 12%));
     --app-shell-dialog-shadow:
       0 20px 46px rgb(0 0 0 / 48%),
       0 4px 14px rgb(0 0 0 / 28%);
-    --app-shell-dialog-button-bg: rgb(255 255 255 / 6%);
-    --app-shell-dialog-button-border-color: rgb(255 255 255 / 12%);
-    --app-shell-dialog-primary-fg: #00131f;
-    --app-shell-pane-scrim-bg: rgb(0 0 0 / 32%);
+    --app-shell-dialog-button-bg: var(--app-theme-dark-dialog-button-bg, rgb(255 255 255 / 6%));
+    --app-shell-dialog-button-border-color: var(--app-theme-dark-dialog-button-border-color, rgb(255 255 255 / 12%));
+    --app-shell-dialog-primary-fg: var(--app-theme-dark-dialog-primary-fg, #00131f);
+    --app-shell-pane-scrim-bg: var(--app-theme-dark-pane-scrim-bg, rgb(0 0 0 / 32%));
     --app-shell-pane-shadow:
       8px 0 32px rgb(0 0 0 / 38%),
       2px 0 10px rgb(0 0 0 / 24%);
-    --app-shell-toast-bg: rgb(44 44 44 / 94%);
-    --app-shell-toast-border-color: rgb(255 255 255 / 12%);
+    --app-shell-toast-bg: var(--app-theme-dark-toast-bg, rgb(44 44 44 / 94%));
+    --app-shell-toast-border-color: var(--app-theme-dark-toast-border-color, rgb(255 255 255 / 12%));
     --app-shell-toast-shadow:
       0 14px 34px rgb(0 0 0 / 46%),
       0 2px 10px rgb(0 0 0 / 28%);

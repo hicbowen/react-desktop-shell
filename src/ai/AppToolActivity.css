@@ -32,7 +32,7 @@
 .app-tool-activity__running-dot {
   width: 7px;
   height: 7px;
-  background: var(--app-shell-accent-color, #005fb8);
+  background: var(--app-shell-accent-color, #115ea3);
   border-radius: 50%;
 }
 

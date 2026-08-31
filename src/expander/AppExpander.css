@@ -10,7 +10,7 @@
 .app-expander__header { display: flex; align-items: stretch; }
 .app-expander__trigger { min-width: 0; min-height: 46px; display: flex; flex: 1; align-items: center; gap: 10px; padding: 7px 12px; color: inherit; background: transparent; border: 0; border-radius: inherit; text-align: start; font: inherit; }
 .app-expander__trigger:hover:not(:disabled) { background: var(--rds-state-surface-hover-bg, var(--app-shell-card-hover-bg, rgb(0 0 0 / 4%))); }
-.app-expander__trigger:focus-visible { outline: 2px solid var(--rds-state-focus-ring, var(--app-shell-accent-color, #005fb8)); outline-offset: -2px; }
+.app-expander__trigger:focus-visible { outline: 2px solid var(--rds-state-focus-ring, var(--app-shell-accent-color, #115ea3)); outline-offset: -2px; }
 .app-expander__icon { width: 18px; height: 18px; display: inline-flex; flex: 0 0 18px; color: var(--app-shell-secondary-text-color, rgb(0 0 0 / 62%)); }
 .app-expander__icon > svg { width: 100%; height: 100%; }
 .app-expander__heading { min-width: 0; display: grid; flex: 1; gap: 2px; }

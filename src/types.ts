@@ -127,6 +127,11 @@ export type {
   AppTheme,
   PaneDisplayMode,
 } from './shell/types'
+export type {
+  AppThemePreset,
+  AppThemeTokenOverrides,
+  AppThemeTokens,
+} from './theme'
 export type { AppSplitButtonProps } from './split-button/types'
 export type {
   AppTeachingTipAction,

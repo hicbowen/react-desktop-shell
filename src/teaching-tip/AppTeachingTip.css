@@ -67,7 +67,7 @@
 
 .app-teaching-tip__close:focus-visible,
 .app-teaching-tip__action:focus-visible {
-  outline: 2px solid var(--rds-state-focus-ring, var(--app-shell-accent-color, #005fb8));
+  outline: 2px solid var(--rds-state-focus-ring, var(--app-shell-accent-color, #115ea3));
   outline-offset: 1px;
 }
 
@@ -116,12 +116,12 @@
 
 .app-teaching-tip__action--primary {
   color: var(--app-shell-accent-text-color, #fff);
-  background: var(--app-shell-accent-color, #005fb8);
+  background: var(--app-shell-accent-color, #115ea3);
   border-color: transparent;
 }
 
 .app-teaching-tip__action--primary:hover {
-  background: var(--rds-state-accent-hover, var(--app-shell-accent-hover-color, #005a9e));
+  background: var(--rds-state-accent-hover, var(--app-shell-accent-hover-color, #0f548f));
 }
 
 @keyframes app-teaching-tip-enter {

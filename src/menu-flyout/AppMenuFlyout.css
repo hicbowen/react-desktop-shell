@@ -57,12 +57,12 @@
 .app-menu-flyout__item:focus-visible {
   z-index: 1;
   background: var(--rds-state-hover-bg, rgb(0 0 0 / 4%));
-  outline: 2px solid var(--rds-state-focus-ring, var(--app-shell-accent-color, #005fb8));
+  outline: 2px solid var(--rds-state-focus-ring, var(--app-shell-accent-color, #115ea3));
   outline-offset: -2px;
 }
 
 .app-menu-flyout__item:active:not(:disabled) {
-  background: var(--rds-state-pressed-bg, var(--app-shell-active-bg, rgb(0 95 184 / 10%)));
+  background: var(--rds-state-pressed-bg, var(--app-shell-active-bg, rgb(17 94 163 / 8%)));
 }
 
 .app-menu-flyout__item:disabled {

@@ -19,10 +19,10 @@
 }
 .app-button:hover:not(:disabled) { background: var(--rds-state-surface-hover-bg, var(--app-shell-card-hover-bg, rgb(0 0 0 / 4%))); }
 .app-button:active:not(:disabled) { background: var(--rds-state-pressed-bg, var(--app-shell-card-pressed-bg, rgb(0 0 0 / 8%))); }
-.app-button:focus-visible { outline: 2px solid var(--rds-state-focus-ring, var(--app-shell-accent-color, #005fb8)); outline-offset: 2px; }
+.app-button:focus-visible { outline: 2px solid var(--rds-state-focus-ring, var(--app-shell-accent-color, #115ea3)); outline-offset: 2px; }
 .app-button:disabled { color: var(--rds-state-disabled-fg, var(--app-shell-disabled-text-color, rgb(0 0 0 / 36%))); opacity: 1; }
-.app-button--primary { color: var(--app-shell-accent-text-color, #fff); background: var(--app-shell-accent-color, #005fb8); border-color: transparent; }
-.app-button--primary:hover:not(:disabled) { background: var(--rds-state-accent-hover, var(--app-shell-accent-hover-color, #075a9e)); }
+.app-button--primary { color: var(--app-shell-accent-text-color, #fff); background: var(--app-shell-accent-color, #115ea3); border-color: transparent; }
+.app-button--primary:hover:not(:disabled) { background: var(--rds-state-accent-hover, var(--app-shell-accent-hover-color, #0f548f)); }
 .app-button--primary:active:not(:disabled) { background: var(--rds-state-accent-pressed, var(--app-shell-accent-pressed-color, #0c4f87)); }
 .app-button--primary:disabled { background: var(--rds-state-disabled-bg, var(--app-shell-disabled-bg, rgb(0 0 0 / 6%))); border-color: transparent; }
 .app-button--subtle { background: transparent; border-color: transparent; }

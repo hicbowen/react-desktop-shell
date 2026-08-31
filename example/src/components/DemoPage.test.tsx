@@ -68,7 +68,9 @@ describe('DemoPage localization', () => {
       setPageLayout,
       setRailDisplayMode: vi.fn(),
       setTheme: vi.fn(),
+      setThemePreset: vi.fn(),
       theme: 'light' as const,
+      themePreset: 'blue' as const,
     }
 
     act(() => root.render(

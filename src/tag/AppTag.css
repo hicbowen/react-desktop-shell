@@ -20,7 +20,7 @@
 
 .app-tag--circular { border-radius: 999px; }
 .app-tag--small { min-height: 20px; padding: 1px 6px; font-size: 11px; }
-.app-tag--brand { --tag-color: var(--app-shell-accent-color, #005fb8); --tag-bg: var(--app-shell-active-bg, rgb(0 95 184 / 10%)); }
+.app-tag--brand { --tag-color: var(--app-shell-accent-color, #115ea3); --tag-bg: var(--app-shell-active-bg, rgb(17 94 163 / 8%)); }
 .app-tag--blue { --tag-color: #0f6cbd; --tag-bg: rgb(15 108 189 / 11%); }
 .app-tag--teal { --tag-color: #00796b; --tag-bg: rgb(0 121 107 / 11%); }
 .app-tag--green { --tag-color: #107c10; --tag-bg: rgb(16 124 16 / 11%); }

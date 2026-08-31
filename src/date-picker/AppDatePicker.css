@@ -55,7 +55,7 @@
 }
 
 .app-date-picker__icon-button:focus-visible {
-  outline: 2px solid var(--rds-state-focus-ring, var(--app-shell-accent-color, #005fb8));
+  outline: 2px solid var(--rds-state-focus-ring, var(--app-shell-accent-color, #115ea3));
   outline-offset: -2px;
 }
 
@@ -113,7 +113,7 @@
   inset-inline: 8px;
   inset-block-end: 0;
   height: 2px;
-  background: var(--app-shell-accent-color, #005fb8);
+  background: var(--app-shell-accent-color, #115ea3);
   border-radius: 999px;
   opacity: 0;
   transform: scaleX(0.45);
@@ -126,7 +126,7 @@
 .app-date-range-picker__segment--active {
   background: color-mix(
     in srgb,
-    var(--app-shell-accent-color, #005fb8) 3%,
+    var(--app-shell-accent-color, #115ea3) 3%,
     transparent
   );
 }
@@ -195,7 +195,7 @@
 
 .app-calendar__nav:focus-visible,
 .app-calendar__day:focus-visible {
-  outline: 2px solid var(--rds-state-focus-ring, var(--app-shell-accent-color, #005fb8));
+  outline: 2px solid var(--rds-state-focus-ring, var(--app-shell-accent-color, #115ea3));
   outline-offset: 1px;
 }
 
@@ -278,7 +278,7 @@
     --app-date-picker-range-bg,
     color-mix(
       in srgb,
-      var(--app-shell-accent-color, #005fb8) 12%,
+      var(--app-shell-accent-color, #115ea3) 12%,
       transparent
     )
   );
@@ -291,7 +291,7 @@
     --app-date-picker-preview-bg,
     color-mix(
       in srgb,
-      var(--app-shell-accent-color, #005fb8) 7%,
+      var(--app-shell-accent-color, #115ea3) 7%,
       transparent
     )
   );
@@ -324,7 +324,7 @@
     --app-date-picker-range-hover-bg,
     color-mix(
       in srgb,
-      var(--app-shell-accent-color, #005fb8) 18%,
+      var(--app-shell-accent-color, #115ea3) 18%,
       transparent
     )
   );
@@ -335,7 +335,7 @@
     --app-date-picker-range-bg,
     color-mix(
       in srgb,
-      var(--app-shell-accent-color, #005fb8) 12%,
+      var(--app-shell-accent-color, #115ea3) 12%,
       transparent
     )
   );
@@ -359,20 +359,20 @@
 }
 
 .app-calendar__day[aria-current='date'] {
-  border-color: var(--app-shell-accent-color, #005fb8);
+  border-color: var(--app-shell-accent-color, #115ea3);
 }
 
 .app-calendar__day--selected,
 .app-calendar__day--range-start,
 .app-calendar__day--range-end {
   color: var(--app-shell-accent-text-color, #fff);
-  background: var(--app-shell-accent-color, #005fb8);
+  background: var(--app-shell-accent-color, #115ea3);
 }
 
 .app-calendar__day--selected:hover:not(:disabled),
 .app-calendar__day--range-start:hover:not(:disabled),
 .app-calendar__day--range-end:hover:not(:disabled) {
-  background: var(--app-shell-accent-hover-color, #075a9e);
+  background: var(--app-shell-accent-hover-color, #0f548f);
 }
 
 .app-calendar__day--range-start:not(.app-calendar__day--range-end) {
@@ -387,7 +387,7 @@
 
 .app-calendar__day--preview-start,
 .app-calendar__day--preview-end {
-  border-color: var(--app-shell-accent-color, #005fb8);
+  border-color: var(--app-shell-accent-color, #115ea3);
 }
 
 .app-calendar__day--preview-start:not(.app-calendar__day--selected),
@@ -396,7 +396,7 @@
     --app-date-picker-preview-bg,
     color-mix(
       in srgb,
-      var(--app-shell-accent-color, #005fb8) 7%,
+      var(--app-shell-accent-color, #115ea3) 7%,
       transparent
     )
   );
@@ -408,7 +408,7 @@
     --app-date-picker-range-bg,
     color-mix(
       in srgb,
-      var(--app-shell-accent-color, #005fb8) 12%,
+      var(--app-shell-accent-color, #115ea3) 12%,
       transparent
     )
   );
