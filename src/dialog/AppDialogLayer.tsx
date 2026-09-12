@@ -112,6 +112,8 @@ export function AppDialogLayer({ dialogs }: AppDialogLayerProps) {
           top={entry.dialog.id === topOpenId}
           stackIndex={index}
           onExited={() => {
+            entry.dialog.onExited?.()
+
             if (entry.exiting && dialogs.length === 0 && index === 0) {
               restoreDialogFocus(entry.dialog.restoreFocusElement)
             }
@@ -149,13 +151,30 @@ function AppDialogSurface({
   const wasTopRef = useRef(false)
   const pendingLocalInitialFocusRef = useRef(false)
   const setOverlayHost = useCallback((node: HTMLDivElement | null) => {
-    dialogOverlayHostRef.current = node
-    setDialogOverlayHost(node)
-  }, [])
+    const portalHost = dialog.portalHosts?.overlay
+
+    if (node && portalHost) {
+      node.appendChild(portalHost)
+    }
+
+    const nextHost = node ? (portalHost ?? node) : null
+    dialogOverlayHostRef.current = nextHost
+    setDialogOverlayHost(nextHost)
+  }, [dialog.portalHosts?.overlay])
   const titleId = `${useId()}-title`
   const descriptionId = `${useId()}-description`
   const closeOnEscape = dialog.closeOnEscape ?? true
   const closeOnOverlayClick = dialog.closeOnOverlayClick ?? false
+  const hasTitle = dialog.portalHosts ? dialog.hasTitle : Boolean(dialog.title)
+  const hasDescription = dialog.portalHosts
+    ? dialog.hasDescription
+    : Boolean(dialog.description)
+  const hasContent = dialog.portalHosts
+    ? dialog.hasContent
+    : Boolean(dialog.children)
+  const hasActions = dialog.portalHosts
+    ? dialog.hasActions
+    : Boolean(dialog.actions)
   const width =
     typeof dialog.width === 'number' ? `${dialog.width}px` : dialog.width
 
@@ -324,8 +343,8 @@ function AppDialogSurface({
           ref={surfaceRef}
           role="dialog"
           aria-modal="true"
-          aria-labelledby={dialog.title ? titleId : undefined}
-          aria-describedby={dialog.description ? descriptionId : undefined}
+          aria-labelledby={hasTitle ? titleId : undefined}
+          aria-describedby={hasDescription ? descriptionId : undefined}
           tabIndex={-1}
           className={[
             'app-dialog',
@@ -336,31 +355,49 @@ function AppDialogSurface({
             .join(' ')}
           style={surfaceStyle}
         >
-          {dialog.title || dialog.description ? (
+          {hasTitle || hasDescription ? (
             <header className="app-dialog__header">
-              {dialog.title ? (
+              {hasTitle ? (
                 <div className="app-dialog__title" id={titleId}>
-                  {dialog.title}
+                  {dialog.portalHosts ? (
+                    <DialogPortalMount host={dialog.portalHosts.title} />
+                  ) : (
+                    dialog.title
+                  )}
                 </div>
               ) : null}
-              {dialog.description ? (
+              {hasDescription ? (
                 <div className="app-dialog__description" id={descriptionId}>
-                  {dialog.description}
+                  {dialog.portalHosts ? (
+                    <DialogPortalMount host={dialog.portalHosts.description} />
+                  ) : (
+                    dialog.description
+                  )}
                 </div>
               ) : null}
             </header>
           ) : null}
-          {dialog.children ? (
+          {hasContent ? (
             <AppScrollArea
               className="app-dialog__content-scroll"
               orientation="both"
               viewportClassName="app-dialog__content"
             >
-              {dialog.children}
+              {dialog.portalHosts ? (
+                <DialogPortalMount host={dialog.portalHosts.content} />
+              ) : (
+                dialog.children
+              )}
             </AppScrollArea>
           ) : null}
-          {dialog.actions ? (
-            <footer className="app-dialog__actions">{dialog.actions}</footer>
+          {hasActions ? (
+            <footer className="app-dialog__actions">
+              {dialog.portalHosts ? (
+                <DialogPortalMount host={dialog.portalHosts.actions} />
+              ) : (
+                dialog.actions
+              )}
+            </footer>
           ) : null}
         </div>
       </AppOverlayHostContext.Provider>
@@ -370,6 +407,28 @@ function AppDialogSurface({
       />
     </div>
   )
+}
+
+function DialogPortalMount({ host }: { host: HTMLDivElement }) {
+  const mountRef = useRef<HTMLDivElement | null>(null)
+
+  useLayoutEffect(() => {
+    const mount = mountRef.current
+
+    if (!mount) {
+      return
+    }
+
+    mount.appendChild(host)
+
+    return () => {
+      if (host.parentElement === mount) {
+        mount.removeChild(host)
+      }
+    }
+  }, [host])
+
+  return <div ref={mountRef} style={{ display: 'contents' }} />
 }
 
 function isInsideDialogScope(

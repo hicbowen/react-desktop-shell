@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 
-import { act, createRef, type ReactNode } from 'react'
+import { act, createRef, useState, type ReactNode } from 'react'
 import { createRoot, type Root } from 'react-dom/client'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import {
@@ -391,7 +391,7 @@ describe('AppDialogLayer', () => {
     expect(() => act(() => vi.advanceTimersByTime(180))).not.toThrow()
   })
 
-  it('updates an open AppDialog registration without unregistering it', () => {
+  it('updates an open AppDialog portal without refreshing its registration', () => {
     const register = vi.fn()
     const unregister = vi.fn()
     const registry = { register, unregister }
@@ -411,8 +411,58 @@ describe('AppDialogLayer', () => {
       ),
     )
 
-    expect(register).toHaveBeenCalledTimes(2)
+    const registered = register.mock.calls[0]?.[0] as AppDialogRegistration
+    expect(register).toHaveBeenCalledOnce()
     expect(unregister).not.toHaveBeenCalled()
+    expect(registered.portalHosts?.title.textContent).toBe('Updated title')
+  })
+
+  it('keeps controlled composition updates synchronous inside AppDialog', () => {
+    const register = vi.fn()
+    const unregister = vi.fn()
+    const registry = { register, unregister }
+
+    function Harness() {
+      const [value, setValue] = useState('')
+
+      return (
+        <AppDialogContext.Provider value={registry}>
+          <AppDialog open>
+            <input
+              aria-label="Composing field"
+              value={value}
+              onChange={(event) => setValue(event.currentTarget.value)}
+            />
+          </AppDialog>
+        </AppDialogContext.Provider>
+      )
+    }
+
+    act(() => root.render(<Harness />))
+    const registered = register.mock.calls[0]?.[0] as AppDialogRegistration
+    const input = registered.portalHosts?.content.querySelector<HTMLInputElement>(
+      '[aria-label="Composing field"]',
+    )
+    const valueSetter = Object.getOwnPropertyDescriptor(
+      HTMLInputElement.prototype,
+      'value',
+    )?.set
+
+    expect(input).not.toBeNull()
+    act(() => {
+      input?.dispatchEvent(new CompositionEvent('compositionstart', { bubbles: true }))
+      valueSetter?.call(input, 'nihao')
+      input?.dispatchEvent(new Event('input', { bubbles: true }))
+    })
+
+    expect(register).toHaveBeenCalledOnce()
+    expect(registered.portalHosts?.content.querySelector('input')).toBe(input)
+    expect(input?.value).toBe('nihao')
+
+    act(() => {
+      input?.dispatchEvent(new CompositionEvent('compositionend', { bubbles: true }))
+    })
+    expect(input?.value).toBe('nihao')
   })
 
   it('uses an initial focus target inside the dialog overlay scope', () => {
