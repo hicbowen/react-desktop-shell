@@ -26,7 +26,9 @@
     "url": "https://github.com/hicbowen/react-desktop-shell/issues"
   },
   "files": [
-    "dist"
+    "dist",
+    "docs",
+    "CHANGELOG.md"
   ],
   "exports": {
     ".": {
@@ -63,7 +65,8 @@
       "import": "./dist/navigation/index.js"
     },
     "./navigation/style.css": "./dist/navigation/style.css",
-    "./style.css": "./dist/style.css"
+    "./style.css": "./dist/style.css",
+    "./package.json": "./package.json"
   },
   "main": "./dist/index.js",
   "module": "./dist/index.js",
@@ -76,9 +79,14 @@
     "dev": "vite --config vite.example.config.ts",
     "build:example": "vite build --config vite.example.config.ts",
     "build": "npm run clean && vite build && node scripts/build-domain-styles.mjs && tsc -p tsconfig.build.json",
+    "format": "prettier --write .prettierrc.json README.md CHANGELOG.md docs/migration.md docs/releasing.md package.json scripts/*.mjs",
+    "format:check": "prettier --check .prettierrc.json README.md CHANGELOG.md docs/migration.md docs/releasing.md package.json scripts/*.mjs",
     "lint": "eslint .",
     "test": "vitest run",
-    "prepack": "npm run lint && npm run build",
+    "check:package": "node scripts/check-package.mjs",
+    "verify": "npm run format:check && npm run lint && npm run test && npm run build && npm run check:package",
+    "verify:publish": "npm run format:check && npm run lint && npm run build && npm run check:package",
+    "prepack": "npm run verify:publish",
     "preview": "vite preview"
   },
   "peerDependencies": {
@@ -95,7 +103,6 @@
     "@eslint/js": "^9.39.1",
     "@fluentui/react-icons": "^2.0.335",
     "@tanstack/react-table": "^8.21.3",
-    "@tanstack/react-virtual": "^3.14.6",
     "@types/node": "^24.10.1",
     "@types/react": "^19.2.5",
     "@types/react-dom": "^19.2.3",
@@ -114,6 +121,7 @@
     "vitest": "^4.1.10"
   },
   "dependencies": {
+    "@tanstack/react-virtual": "^3.14.6",
     "@shikijs/engine-javascript": "^4.3.1",
     "@shikijs/langs": "^4.3.1",
     "@shikijs/themes": "^4.3.1",
