@@ -4,6 +4,16 @@
   border-block: 1px solid var(--app-shell-border-color, rgb(0 0 0 / 12%));
 }
 
+.app-list-view--virtual {
+  display: block;
+  contain: strict;
+}
+
+.app-list-view__virtual-canvas {
+  position: relative;
+  width: 100%;
+}
+
 .app-list-view-item {
   position: relative;
   min-width: 0;

@@ -1,2 +1,7 @@
 export { AppTreeView } from './AppTreeView'
-export type { AppTreeDropInfo, AppTreeItem, AppTreeViewProps } from './types'
+export type {
+  AppTreeDropInfo,
+  AppTreeItem,
+  AppTreeViewProps,
+  AppTreeViewVirtualizationOptions,
+} from './types'

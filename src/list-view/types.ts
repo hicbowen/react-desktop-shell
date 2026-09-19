@@ -6,6 +6,16 @@ interface AppListViewBaseProps {
   children: ReactNode
   className?: string
   style?: CSSProperties
+  /** Enables fixed-row virtualization for large lists. */
+  virtualization?: boolean | AppListViewVirtualizationOptions
+  /** Enables first-character and incremental keyboard search. */
+  typeahead?: boolean
+}
+
+export interface AppListViewVirtualizationOptions {
+  itemHeight?: number
+  overscan?: number
+  viewportHeight?: number
 }
 
 interface AppListViewStaticProps {
@@ -45,6 +55,8 @@ export interface AppListViewItemProps {
   value: string
   icon?: ReactNode
   title: ReactNode
+  /** Plain text used by keyboard typeahead when title is not a string. */
+  textValue?: string
   description?: ReactNode
   secondaryText?: ReactNode
   trailing?: ReactNode
@@ -61,13 +73,13 @@ export interface AppListViewItemInternalProps extends AppListViewItemProps {
   selectionName?: string
   itemRole?: 'listitem' | 'button'
   focusable?: boolean
-  onItemSelect?: (value: string) => void
+  onItemSelect?: (value: string, event?: { shiftKey?: boolean }) => void
   onItemClick?: (
     value: string,
     event: React.MouseEvent<HTMLDivElement>,
   ) => void
   onItemKeyDown?: (
     value: string,
-    event: React.KeyboardEvent<HTMLDivElement>,
+    event: React.KeyboardEvent<HTMLElement>,
   ) => void
 }

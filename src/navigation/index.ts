@@ -6,7 +6,11 @@ export type {
 export { AppDropDownButton } from "../dropdown-button";
 export type { AppDropDownButtonProps } from "../dropdown-button";
 export { AppListView, AppListViewItem } from "../list-view";
-export type { AppListViewItemProps, AppListViewProps } from "../list-view";
+export type {
+  AppListViewItemProps,
+  AppListViewProps,
+  AppListViewVirtualizationOptions,
+} from "../list-view";
 export { AppMenuBar } from "../menu-bar";
 export type {
   AppMenuBarItem,
@@ -62,6 +66,7 @@ export type {
   AppTreeDropInfo,
   AppTreeItem,
   AppTreeViewProps,
+  AppTreeViewVirtualizationOptions,
 } from "../tree-view";
 export { AppWizard } from "../wizard";
 export type { AppWizardProps, AppWizardStep } from "../wizard";

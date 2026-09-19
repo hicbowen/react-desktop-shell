@@ -1160,7 +1160,7 @@ Non-text option labels fall back to the option `value` inside the input.
 
 ## List view
 
-`AppListView` and `AppListViewItem` form a desktop information list with mutually exclusive static, selection, and invoke modes. Static mode uses list/listitem semantics. Selection mode keeps each row as a listitem and uses a native radio or checkbox in the main label, so trailing actions remain separate controls; a disabled item disables its selection control and marks its trailing region inert. Invoke mode keeps each `role="button"` main action and its trailing controls as siblings inside a listitem, with Arrow/Home/End navigation and Enter/Space activation.
+`AppListView` and `AppListViewItem` form a desktop information list with mutually exclusive static, selection, and invoke modes. Static mode uses list/listitem semantics. Selection mode keeps each row as a listitem and uses a native radio or checkbox in the main label, so trailing actions remain separate controls; a disabled item disables its selection control and marks its trailing region inert. Invoke mode keeps each `role="button"` main action and its trailing controls as siblings inside a listitem, with Arrow/Home/End navigation and Enter/Space activation. Multiple selection supports Shift ranges. Keyboard typeahead is enabled by default; provide `textValue` when an item title is not plain text.
 
 ```tsx
 <AppListView ariaLabel="Students" selectionMode="multiple" value={selected} onValueChange={setSelected}>
@@ -1168,12 +1168,20 @@ Non-text option labels fall back to the option `value` inside the input.
 </AppListView>
 ```
 
+For long, fixed-height lists, pass `virtualization` or configure
+`{ itemHeight, overscan, viewportHeight }`. Virtualization only changes how
+many rows are mounted; selection and keyboard navigation continue to address
+the entire collection.
+
 ## Tree view
 
 `AppTreeView` presents platform-neutral hierarchical resources with single or
-multiple selection, controlled expansion, keyboard navigation, lazy child-load
-requests, invocation, and drag/drop requests. Applications retain ownership of
-the tree data and perform file-system or backend operations themselves.
+multiple selection, controlled expansion, Shift-range selection, keyboard
+navigation and typeahead, lazy child-load requests, invocation, and drag/drop
+requests. A drop reports `before`, `inside`, or `after` so applications can
+perform an exact reorder. Applications retain ownership of the tree data and
+perform file-system or backend operations themselves. Large expanded trees can
+enable fixed-height `virtualization`; use `textValue` for non-text labels.
 
 ```tsx
 <AppTreeView

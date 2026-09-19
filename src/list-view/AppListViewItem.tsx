@@ -62,7 +62,10 @@ export function AppListViewItem({
           data-value={value}
           disabled={disabled}
           name={selectionMode === 'single' ? selectionName : undefined}
-          onChange={() => onItemSelect?.(value)}
+          onChange={(event) => onItemSelect?.(value, {
+            shiftKey: (event.nativeEvent as MouseEvent).shiftKey,
+          })}
+          onKeyDown={(event) => onItemKeyDown?.(value, event)}
           type={selectionMode === 'single' ? 'radio' : 'checkbox'}
         />
         {content}

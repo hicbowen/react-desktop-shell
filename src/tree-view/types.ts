@@ -3,6 +3,8 @@ import type { CSSProperties, ReactNode } from 'react'
 export interface AppTreeItem {
   key: string
   label: ReactNode
+  /** Plain text used by keyboard typeahead when label is not a string. */
+  textValue?: string
   icon?: ReactNode
   children?: readonly AppTreeItem[]
   disabled?: boolean
@@ -13,7 +15,13 @@ export interface AppTreeItem {
 export interface AppTreeDropInfo {
   sourceKey: string
   targetKey: string
-  position: 'inside'
+  position: 'before' | 'inside' | 'after'
+}
+
+export interface AppTreeViewVirtualizationOptions {
+  rowHeight?: number
+  overscan?: number
+  viewportHeight?: number
 }
 
 export interface AppTreeViewProps {
@@ -29,6 +37,10 @@ export interface AppTreeViewProps {
   onItemInvoke?: (item: AppTreeItem) => void
   onLoadChildren?: (item: AppTreeItem) => void | Promise<void>
   onItemDrop?: (info: AppTreeDropInfo) => void
+  /** Enables first-character and incremental keyboard search. */
+  typeahead?: boolean
+  /** Enables fixed-row virtualization for large expanded trees. */
+  virtualization?: boolean | AppTreeViewVirtualizationOptions
   className?: string
   style?: CSSProperties
 }

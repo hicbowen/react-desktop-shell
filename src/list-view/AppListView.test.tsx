@@ -151,6 +151,13 @@ describe('AppListView', () => {
     expect(document.activeElement).toBe(rows()[2])
   })
 
+  it('moves invoke focus with incremental typeahead', () => {
+    render({ activationMode: 'invoke', onItemInvoke: vi.fn() })
+    act(() => rows()[0]!.focus())
+    key(rows()[0]!, 'g')
+    expect(document.activeElement).toBe(rows()[2])
+  })
+
   it('handles empty and dynamically changing selection children safely', () => {
     render({ selectionMode: 'single' }, false)
     expect(host.querySelector('[role=list]')?.children).toHaveLength(0)
