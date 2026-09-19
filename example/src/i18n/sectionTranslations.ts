@@ -128,6 +128,8 @@ const zhCNSectionText: Record<string, string> = {
   '120 options for checking picker positioning, scrolling, and viewport boundaries.': '提供 120 个选项，用于检查选择器定位、滚动和视口边界。',
   'Search input': '搜索输入',
   'Segmented controls': '分段控件',
+  'Default (standard)': '默认（标准）',
+  'Compare the default and compact control sizes while keeping both examples interactive.': '对比默认与紧凑控件尺寸，并保持两个示例均可交互。',
   'Select controls': '选择控件',
   'Strict option values': '严格选项值',
   'Selected mode': '选中模式',
