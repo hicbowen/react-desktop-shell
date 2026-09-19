@@ -43,6 +43,14 @@ export const enUSMessages = {
     resize: "Resize side pane",
     close: "Close side pane",
   },
+  dockWorkspace: {
+    label: "Dock workspace",
+    panels: "Dock panels",
+    minimize: "Minimize panel",
+    minimized: "Minimized panels",
+    resize: "Resize dock panel",
+    restore: (key: string) => `Restore ${key}`,
+  },
   breadcrumbBar: {
     label: "Breadcrumb",
     showEarlierLocations: "Show earlier locations",

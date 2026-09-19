@@ -36,6 +36,13 @@ export type {
 } from "./types";
 export { AppResizablePaneGroup } from "../resizable-pane";
 export type { AppResizablePaneGroupProps } from "../resizable-pane";
+export { AppDockWorkspace } from "../dock-workspace";
+export type {
+  AppDockLayoutState,
+  AppDockPanel,
+  AppDockPosition,
+  AppDockWorkspaceProps,
+} from "../dock-workspace";
 export {
   AppSelectorBar,
   AppSelectorPanel,

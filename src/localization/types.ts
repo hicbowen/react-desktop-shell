@@ -35,6 +35,14 @@ export interface AppLocaleMessages {
     resize: string;
     close: string;
   };
+  dockWorkspace: {
+    label: string;
+    panels: string;
+    minimize: string;
+    minimized: string;
+    resize: string;
+    restore: (key: string) => string;
+  };
   breadcrumbBar: {
     label: string;
     showEarlierLocations: string;

@@ -38,6 +38,14 @@ export const zhCNMessages = {
     resize: "调整侧边窗格大小",
     close: "关闭侧边窗格",
   },
+  dockWorkspace: {
+    label: "停靠工作区",
+    panels: "停靠面板",
+    minimize: "最小化面板",
+    minimized: "已最小化面板",
+    resize: "调整停靠面板大小",
+    restore: (key: string) => `还原 ${key}`,
+  },
   breadcrumbBar: {
     label: "面包屑导航",
     showEarlierLocations: "显示更早的位置",

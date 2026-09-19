@@ -385,6 +385,28 @@ navigation, and explicit `unmount` or `hidden` panel lifecycles.
 supports pointer dragging, arrow keys, Home/End, controlled sizing, and explicit
 minimum and maximum dimensions.
 
+## Dock workspace
+
+`AppDockWorkspace` composes left, right, and bottom tool panels around an
+application-owned central surface. Each region supports panel switching,
+pointer and keyboard resizing, and minimize/restore. Layout state contains
+region sizes, active panel keys, and minimized keys; use `layout` and
+`onLayoutChange` for application control, or provide `persistenceKey` to restore
+the uncontrolled layout from versioned localStorage data.
+
+```tsx
+<AppDockWorkspace
+  panels={[
+    { key: 'files', title: 'Files', position: 'left', content: <FileTree /> },
+    { key: 'outline', title: 'Outline', position: 'left', content: <Outline /> },
+    { key: 'output', title: 'Output', position: 'bottom', content: <Output /> },
+  ]}
+  persistenceKey="editor-workspace"
+>
+  <Editor />
+</AppDockWorkspace>
+```
+
 ## Breadcrumb paths
 
 `AppBreadcrumbBar` shows the current resource path and collapses earlier

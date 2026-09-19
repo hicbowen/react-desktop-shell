@@ -5,6 +5,7 @@
 @import "../menu-flyout/AppMenuFlyout.css";
 @import "../navigation/AppRail.css";
 @import "../resizable-pane/AppResizablePaneGroup.css";
+@import "../dock-workspace/AppDockWorkspace.css";
 @import "../selector-bar/AppSelectorBar.css";
 @import "../selector-bar/AppSelectorPanels.css";
 @import "../split-button/AppSplitButton.css";
