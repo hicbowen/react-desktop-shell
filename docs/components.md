@@ -87,7 +87,7 @@ function App() {
       rail={
         <AppRail
           value={active}
-          onChange={setActive}
+          onValueChange={setActive}
           items={[
             {
               key: 'home',
@@ -152,7 +152,7 @@ code output.
   title="My App"
   sidebar={{ displayMode: 'auto' }}
   titleBar={<AppTitleBar />}
-  rail={<AppRail value={active} items={items} onChange={setActive} />}
+  rail={<AppRail value={active} items={items} onValueChange={setActive} />}
 >
   <HomePage />
 </AppShell>
@@ -1005,7 +1005,7 @@ DataTable control or pagination locale overrides.
 
 ## Text inputs
 
-`AppTextBox` wraps native input behavior with optional icons, clear and loading affordances. Their built-in accessible labels follow the `AppShell` locale. `AppTextArea` supports character counts, full-width layout, and dependency-free automatic height within row limits, including padding and borders. Its native `style` and other textarea attributes apply to the inner control, while `className` and `fullWidth` configure the component root. Both forward refs and compose with `AppField`.
+`AppTextBox` wraps native input behavior with optional icons, clear and loading affordances. Their built-in accessible labels follow the nearest `AppProvider` or `AppShell` locale. `AppTextArea` supports character counts, full-width layout, and dependency-free automatic height within row limits, including padding and borders. Its native `style` and other textarea attributes apply to the inner control, while `className` and `fullWidth` configure the component root. Both forward refs and compose with `AppField`.
 
 `AppSearchBox` keeps `onValueChange` immediate for controlled input state while
 deferring debounced `onSearch` calls until IME composition finishes. Enter and
@@ -1997,7 +1997,7 @@ left-pinned columns occupy the space before original-order sticky columns.
 ### Row context-menu events
 
 `AppDataTable` reports context-menu events for non-interactive areas of data
-rows. Use `useAppContextMenu` inside `AppShell` when those events should open
+rows. Use `useAppContextMenu` inside `AppProvider` or `AppShell` when those events should open
 the shared application menu layer:
 
 ```tsx
@@ -2454,13 +2454,17 @@ These components do not provide controls such as `Switch` or `Select`; pass any 
 </AppCard>
 ```
 
-The toolbar does not provide buttons, inputs, selects, or command management. Pass controls from any React component library through `start` and `end`. Use `status` for passive information such as counts, synchronization state, or the current data range. When `children` is provided, AppToolbar renders custom content mode; `start`, `status`, and `end` are ignored.
+Pass arbitrary controls through `start` and `end`, or use `actions` for shared
+commands that render as buttons and automatically move into an overflow menu.
+Use `status` for passive information such as counts, synchronization state, or
+the current data range. When `children` is provided, AppToolbar renders custom
+content mode; `start`, `status`, `end`, and `actions` are ignored.
 
 `AppPage.actions` places primary page actions beside the page title. `AppToolbar` belongs below the page header and organizes content tools such as search, filters, status, import, and export controls.
 
 ## Menu Flyout
 
-`AppMenuFlyout` provides a lightweight, one-level command menu anchored to a
+`AppMenuFlyout` provides a lightweight, nested command menu anchored to a
 trigger. It defaults to `bottom-start`, automatically flips or clamps near the
 viewport edge, and supports icons, disabled commands, danger styling, and
 separators.
@@ -2478,16 +2482,18 @@ separators.
 </AppMenuFlyout>
 ```
 
-Use `onSelect` to execute the selected command. The menu opens from click,
+Use `commandId` to execute a command from `AppCommandProvider`, or `onSelect`
+for application-owned selection. The menu opens from click,
 ArrowDown, or ArrowUp and supports looping arrow navigation, Home, End, Enter,
 Space, Escape, and Tab. Selection and Escape restore focus to the trigger;
 Tab closes without trapping focus.
 
 Use `AppMenuFlyout` for a button-triggered command list and `AppContextMenu`
-for right-click menus. This first version does not support submenus, checkbox
-items, radio items, shortcuts, or controlled open state. An empty `items`
-array does not open a menu. Tab and Shift+Tab close an open menu without
-preventing normal browser focus navigation.
+for right-click menus. Items support recursive submenus, checked state,
+shortcuts, and shared command metadata; radio groups and controlled open state
+remain application-owned. An empty `items` array does not open a menu. Tab and
+Shift+Tab close an open menu without preventing normal browser focus
+navigation.
 
 ## Split Button
 
@@ -2583,7 +2589,7 @@ Use submenu entries for one level of native-like hierarchy. Submenu parents togg
 ```tsx
 <AppRail
   value={active}
-  onChange={setActive}
+  onValueChange={setActive}
   items={[
     {
       key: 'home',
@@ -2613,7 +2619,7 @@ Footer items stay pinned to the bottom of the rail.
 ```tsx
 <AppRail
   value={active}
-  onChange={setActive}
+  onValueChange={setActive}
   items={items}
   footerItems={[
     {
@@ -2639,7 +2645,7 @@ Prefer `AppShell` for WinUI-style pane display. `displayMode` controls how the N
     expandedBreakpoint: 1008,
     compactBreakpoint: 640,
   }}
-  rail={<AppRail value={active} items={items} onChange={setActive} />}
+  rail={<AppRail value={active} items={items} onValueChange={setActive} />}
 />
 ```
 
@@ -2808,7 +2814,7 @@ Custom menus are data-driven and can wrap any single React element without chang
 ### Imperative context menus
 
 `useAppContextMenu` opens dynamic menus through the same layer used by
-`AppContextMenu`. The Hook must be used within `AppShell`.
+`AppContextMenu`. The Hook must be used within `AppProvider` or `AppShell`.
 
 ```tsx
 const contextMenu = useAppContextMenu()
