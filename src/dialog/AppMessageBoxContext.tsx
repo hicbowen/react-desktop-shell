@@ -7,7 +7,7 @@ export function useAppMessageBox() {
   const messageBox = useContext(AppMessageBoxContext)
 
   if (!messageBox) {
-    throw new Error('useAppMessageBox must be used within AppProvider or AppShell')
+    throw new Error('useAppMessageBox must be used within AppShell or AppProvider')
   }
 
   return messageBox

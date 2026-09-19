@@ -7,7 +7,7 @@ export function useAppToast() {
   const toast = useContext(AppToastContext)
 
   if (!toast) {
-    throw new Error('useAppToast must be used within AppProvider or AppShell')
+    throw new Error('useAppToast must be used within AppShell or AppProvider')
   }
 
   return toast
