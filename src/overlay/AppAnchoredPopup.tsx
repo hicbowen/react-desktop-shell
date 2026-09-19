@@ -1,6 +1,7 @@
 import { useLayoutEffect, useRef, type AriaRole, type ReactNode, type RefObject } from 'react'
-import { createPortal } from 'react-dom'
+import { AppOverlayPortal } from './AppOverlayPortal'
 import { useAppOverlayHost } from './AppOverlayHostContext'
+import { useOverlayTree } from './OverlayTreeContext'
 import { OVERLAY_SURFACE_FALLBACK_STYLE } from './surfaceFallback'
 import { useAnchoredOverlayPosition } from './useAnchoredOverlayPosition'
 import { useOverlayDismiss } from './useOverlayDismiss'
@@ -34,6 +35,7 @@ export function AppAnchoredPopup({
 }) {
   const overlayRef = useRef<HTMLDivElement>(null)
   const overlayHost = useAppOverlayHost()
+  const overlayTree = useOverlayTree(open, overlayRef)
   const position = useAnchoredOverlayPosition({
     dependencies: [matchTriggerWidth, ...dependencies],
     gap: 4,
@@ -62,11 +64,13 @@ export function AppAnchoredPopup({
     overlayRef,
     restoreFocus: false,
     triggerRef,
+    isInsideBranch: overlayTree.isInsideBranch,
+    isTopMost: overlayTree.isTopMost,
   })
 
   if (!open || typeof document === 'undefined') return null
 
-  return createPortal(
+  return <AppOverlayPortal parentId={overlayTree.overlayId}>
     <div
       className={className}
       aria-multiselectable={ariaMultiselectable}
@@ -87,7 +91,6 @@ export function AppAnchoredPopup({
       }}
     >
       {children}
-    </div>,
-    overlayHost ?? document.body,
-  )
+    </div>
+  </AppOverlayPortal>
 }

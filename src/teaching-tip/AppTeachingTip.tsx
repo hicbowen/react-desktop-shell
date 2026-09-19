@@ -7,7 +7,7 @@ import {
   type ReactElement,
   type Ref,
 } from 'react'
-import { createPortal } from 'react-dom'
+import { AppOverlayPortal } from '../overlay/AppOverlayPortal'
 import { Dismiss16Regular } from '@fluentui/react-icons/svg/dismiss'
 import { useAppOverlayHost } from '../overlay/AppOverlayHostContext'
 import { OVERLAY_SURFACE_FALLBACK_STYLE } from '../overlay/surfaceFallback'
@@ -15,10 +15,7 @@ import { getElementRef, useMergedRefs } from '../overlay/trigger'
 import { useAnchoredOverlayPosition } from '../overlay/useAnchoredOverlayPosition'
 import { useOverlayDismiss } from '../overlay/useOverlayDismiss'
 import { useAppLocale } from '../localization/useAppLocale'
-import {
-  OverlayParentContext,
-  useOverlayTree,
-} from '../overlay/OverlayTreeContext'
+import { useOverlayTree } from '../overlay/OverlayTreeContext'
 import type { AppTeachingTipAction, AppTeachingTipProps } from './types'
 import './AppTeachingTip.css'
 
@@ -139,8 +136,7 @@ export function AppTeachingTip({
   return (
     <>
       {trigger}
-      {createPortal(
-        <OverlayParentContext.Provider value={overlayTree.overlayId}>
+      <AppOverlayPortal parentId={overlayTree.overlayId}>
           <div
           aria-describedby={contentId}
           aria-label={
@@ -211,9 +207,7 @@ export function AppTeachingTip({
             </div>
           ) : null}
           </div>
-        </OverlayParentContext.Provider>,
-        overlayHost ?? document.body,
-      )}
+      </AppOverlayPortal>
     </>
   )
 }

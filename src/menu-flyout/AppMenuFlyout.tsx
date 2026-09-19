@@ -15,7 +15,7 @@ import {
   type ReactElement,
   type Ref,
 } from 'react'
-import { createPortal } from 'react-dom'
+import { AppOverlayPortal } from '../overlay/AppOverlayPortal'
 import { useAppOverlayHost } from '../overlay/AppOverlayHostContext'
 import { OVERLAY_SURFACE_FALLBACK_STYLE } from '../overlay/surfaceFallback'
 import {
@@ -34,10 +34,7 @@ import {
   useOptionalAppCommands,
 } from '../command'
 import type { AppCommandApi } from '../command'
-import {
-  OverlayParentContext,
-  useOverlayTree,
-} from '../overlay/OverlayTreeContext'
+import { useOverlayTree } from '../overlay/OverlayTreeContext'
 import type {
   AppMenuFlyoutEntry,
   AppMenuFlyoutItem,
@@ -394,8 +391,7 @@ function AppMenuFlyoutInner(
   return (
     <>
       {trigger}
-      {createPortal(
-        <OverlayParentContext.Provider value={overlayTree.overlayId}>
+      <AppOverlayPortal parentId={overlayTree.overlayId}>
           <div
           aria-label={ariaLabel}
           className={menuClassName}
@@ -478,9 +474,7 @@ function AppMenuFlyoutInner(
             )
           })}
           </div>
-        </OverlayParentContext.Provider>,
-        overlayHost ?? document.body,
-      )}
+      </AppOverlayPortal>
     </>
   )
 }

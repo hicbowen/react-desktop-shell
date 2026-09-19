@@ -11,7 +11,7 @@ import {
   type ReactElement,
   type Ref,
 } from 'react'
-import { createPortal } from 'react-dom'
+import { AppOverlayPortal } from '../overlay/AppOverlayPortal'
 import { useAppOverlayHost } from '../overlay/AppOverlayHostContext'
 import { composeEventHandlers, getElementRef, useMergedRefs } from '../overlay/trigger'
 import { useAnchoredOverlayPosition } from '../overlay/useAnchoredOverlayPosition'
@@ -20,10 +20,7 @@ import {
   type OverlayDismissReason,
 } from '../overlay/useOverlayDismiss'
 import { OVERLAY_SURFACE_FALLBACK_STYLE } from '../overlay/surfaceFallback'
-import {
-  OverlayParentContext,
-  useOverlayTree,
-} from '../overlay/OverlayTreeContext'
+import { useOverlayTree } from '../overlay/OverlayTreeContext'
 import type { AppPopoverProps } from './types'
 import './AppPopover.css'
 
@@ -177,8 +174,7 @@ export function AppPopover({
 
   return <>
     {renderedTrigger}
-    {createPortal(
-      <OverlayParentContext.Provider value={overlayTree.overlayId}>
+    <AppOverlayPortal parentId={overlayTree.overlayId}>
         <div
         aria-label={ariaLabel}
         className={['app-popover', className].filter(Boolean).join(' ')}
@@ -200,8 +196,6 @@ export function AppPopover({
       >
         {children}
         </div>
-      </OverlayParentContext.Provider>,
-      overlayHost ?? document.body,
-    )}
+    </AppOverlayPortal>
   </>
 }

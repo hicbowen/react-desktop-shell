@@ -46,6 +46,12 @@ internal z-index tokens live on `.app-shell`:
 Body portal fallbacks must provide CSS fallback values and preserve any theme
 variables that would otherwise be lost outside AppShell.
 
+`AppOverlayPortal` is the single portal boundary for anchored surfaces. It
+selects the shell host (or body fallback) and propagates the overlay parent id,
+so nested menus, popovers, tooltips, teaching tips, and picker popups share the
+same branch-aware dismissal order. `AppAnchoredPopup` also registers with this
+tree; opening a nested overlay no longer dismisses its parent.
+
 Current anchored consumers are the data-table Filter menu, `RailFlyout`, the
 public `AppTooltip`, `AppMenuFlyout`, and `AppTeachingTip`. Each consumer must ensure
 its CSS `min-width` can

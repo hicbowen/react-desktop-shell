@@ -15,7 +15,7 @@ import {
   type ReactElement,
   type Ref,
 } from 'react'
-import { createPortal } from 'react-dom'
+import { AppOverlayPortal } from '../overlay/AppOverlayPortal'
 import { useAppOverlayHost } from '../overlay/AppOverlayHostContext'
 import { OVERLAY_SURFACE_FALLBACK_STYLE } from '../overlay/surfaceFallback'
 import {
@@ -25,10 +25,7 @@ import {
 } from '../overlay/trigger'
 import { useAnchoredOverlayPosition } from '../overlay/useAnchoredOverlayPosition'
 import { useOverlayDismiss } from '../overlay/useOverlayDismiss'
-import {
-  OverlayParentContext,
-  useOverlayTree,
-} from '../overlay/OverlayTreeContext'
+import { useOverlayTree } from '../overlay/OverlayTreeContext'
 import type { AppTooltipProps } from './types'
 import './AppTooltip.css'
 
@@ -271,8 +268,7 @@ function AppTooltipInner({
   return (
     <>
       {trigger}
-      {createPortal(
-        <OverlayParentContext.Provider value={overlayTree.overlayId}>
+      <AppOverlayPortal parentId={overlayTree.overlayId}>
           <div
           ref={overlayRef}
           className={tooltipClassName}
@@ -292,9 +288,7 @@ function AppTooltipInner({
         >
           {content}
           </div>
-        </OverlayParentContext.Provider>,
-        overlayHost ?? document.body,
-      )}
+      </AppOverlayPortal>
     </>
   )
 }
