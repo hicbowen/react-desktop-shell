@@ -1,12 +1,26 @@
-export { AppAiRunIndicator } from './AppAiRunIndicator'
-export { AppAiComposer } from './AppAiComposer'
-export { AppAiMarkdown } from './AppAiMarkdown'
-export { AppAiMessageActions } from './AppAiMessageActions'
-export { AppChangeReviewCard } from './AppChangeReviewCard'
-export { AppPromptSuggestions } from './AppPromptSuggestions'
-export { AppToolActivity } from './AppToolActivity'
-export { AppToolCallCard } from './AppToolCallCard'
-export { AppToolCallGroup } from './AppToolCallGroup'
+export { AppAiRunIndicator } from "./AppAiRunIndicator";
+export { AppAiComposer } from "./AppAiComposer";
+export { AppAiMarkdown } from "./AppAiMarkdown";
+export { AppAiMessageActions } from "./AppAiMessageActions";
+export { AppChangeReviewCard } from "./AppChangeReviewCard";
+export { AppPromptSuggestions } from "./AppPromptSuggestions";
+export { AppToolActivity } from "./AppToolActivity";
+export { AppToolCallCard } from "./AppToolCallCard";
+export { AppToolCallGroup } from "./AppToolCallGroup";
+export {
+  AppConversationMessage,
+  AppConversationThread,
+  AppConversationViewport,
+} from "../conversation";
+export type {
+  AppConversationMessageItem,
+  AppConversationMessageProps,
+  AppConversationMessageRole,
+  AppConversationThreadProps,
+  AppConversationViewportProps,
+} from "../conversation";
+export { AppQuickAsk } from "../quick-ask";
+export type { AppQuickAskProps } from "../quick-ask";
 export type {
   AppAiRunStatus,
   AppAiRunIndicatorProps,
@@ -27,4 +41,4 @@ export type {
   AppToolCallGroupItem,
   AppToolCallGroupProps,
   AppToolCallStatus,
-} from './types'
+} from "./types";

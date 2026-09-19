@@ -33,10 +33,36 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
     },
+    "./ai": {
+      "types": "./dist/ai/index.d.ts",
+      "import": "./dist/ai/index.js"
+    },
+    "./ai/style.css": "./dist/ai/style.css",
+    "./core": {
+      "types": "./dist/core/index.d.ts",
+      "import": "./dist/core/index.js"
+    },
+    "./core/style.css": "./dist/core/style.css",
     "./data": {
       "types": "./dist/data/index.d.ts",
       "import": "./dist/data/index.js"
     },
+    "./data/style.css": "./dist/data/style.css",
+    "./feedback": {
+      "types": "./dist/feedback/index.d.ts",
+      "import": "./dist/feedback/index.js"
+    },
+    "./feedback/style.css": "./dist/feedback/style.css",
+    "./forms": {
+      "types": "./dist/forms/index.d.ts",
+      "import": "./dist/forms/index.js"
+    },
+    "./forms/style.css": "./dist/forms/style.css",
+    "./navigation": {
+      "types": "./dist/navigation/index.d.ts",
+      "import": "./dist/navigation/index.js"
+    },
+    "./navigation/style.css": "./dist/navigation/style.css",
     "./style.css": "./dist/style.css"
   },
   "main": "./dist/index.js",
@@ -49,7 +75,7 @@
     "clean": "node -e \"import('node:fs').then(fs => fs.rmSync('dist', { recursive: true, force: true }))\"",
     "dev": "vite --config vite.example.config.ts",
     "build:example": "vite build --config vite.example.config.ts",
-    "build": "npm run clean && vite build && tsc -p tsconfig.build.json",
+    "build": "npm run clean && vite build && node scripts/build-domain-styles.mjs && tsc -p tsconfig.build.json",
     "lint": "eslint .",
     "test": "vitest run",
     "prepack": "npm run lint && npm run build",

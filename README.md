@@ -8,6 +8,24 @@ A lightweight native-like desktop app shell for building React desktop applicati
 npm install react-desktop-shell
 ```
 
+The root entry keeps the complete, backwards-compatible API. Applications that
+only need part of the library can use the domain entry points so their bundler
+does not need to traverse unrelated AI, data-grid, or form modules:
+
+```tsx
+import { AppShell, AppButton } from 'react-desktop-shell/core'
+import { AppTextBox, AppSelect } from 'react-desktop-shell/forms'
+
+import 'react-desktop-shell/core/style.css'
+import 'react-desktop-shell/forms/style.css'
+```
+
+Available domain entries are `core`, `forms`, `navigation`, `feedback`, `data`,
+and `ai`. Import `core/style.css` once when using domain styles; the other
+domain styles contain only their own component rules. The aggregate
+`react-desktop-shell/style.css` entry remains available for applications that
+prefer a single stylesheet.
+
 The basic example uses `lucide-react` for icons. Install it separately with
 `npm install lucide-react`, or replace those icons with your preferred icon
 library. Lucide is not required by `react-desktop-shell`.
