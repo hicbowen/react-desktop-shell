@@ -32,6 +32,13 @@
   font: inherit;
 }
 
+.app-notification-center button:focus-visible {
+  z-index: 1;
+  outline: 2px solid
+    var(--rds-state-focus-ring, var(--app-shell-accent-color, #115ea3));
+  outline-offset: -2px;
+}
+
 .app-notification-center__header-actions > button,
 .app-notification-center__controls > button {
   min-height: var(--rds-control-height-compact, 28px);
@@ -196,4 +203,28 @@
 .app-notification-center__empty {
   user-select: text;
   -webkit-user-select: text;
+}
+
+@media (forced-colors: active) {
+  .app-notification-center {
+    background: Canvas;
+    border-color: CanvasText;
+  }
+
+  .app-notification-center__item--unread {
+    background: Canvas;
+  }
+
+  .app-notification-center__item--unread::before {
+    background: Highlight;
+  }
+
+  .app-notification-center button:focus-visible {
+    outline-color: Highlight;
+  }
+
+  .app-notification-indicator--active {
+    color: HighlightText;
+    background: Highlight;
+  }
 }

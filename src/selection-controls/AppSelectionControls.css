@@ -168,3 +168,66 @@
     animation: none;
   }
 }
+
+@media (forced-colors: active) {
+  .app-check-box__box,
+  .app-radio-group__indicator,
+  .app-toggle-switch__track,
+  .app-toggle-switch__thumb,
+  .app-segmented-control,
+  .app-segmented-control__indicator {
+    forced-color-adjust: none;
+  }
+
+  .app-check-box__box,
+  .app-radio-group__indicator,
+  .app-toggle-switch__track,
+  .app-segmented-control {
+    color: CanvasText;
+    background: Canvas;
+    border-color: CanvasText;
+  }
+
+  .app-check-box input:checked + .app-check-box__box,
+  .app-check-box input:indeterminate + .app-check-box__box,
+  .app-check-box[data-state='checked'] .app-check-box__box,
+  .app-check-box[data-state='mixed'] .app-check-box__box,
+  .app-radio-group__option input:checked + .app-radio-group__indicator,
+  .app-toggle-switch input:checked + .app-toggle-switch__track,
+  .app-segmented-control__indicator {
+    color: HighlightText;
+    background: Highlight;
+    border-color: Highlight;
+  }
+
+  .app-radio-group__option input:checked + .app-radio-group__indicator::after,
+  .app-toggle-switch input:checked + .app-toggle-switch__track
+    .app-toggle-switch__thumb {
+    background: HighlightText;
+  }
+
+  .app-toggle-switch__thumb {
+    background: CanvasText;
+  }
+
+  .app-segmented-control__option input:checked
+    + .app-segmented-control__content {
+    color: HighlightText;
+  }
+
+  .app-check-box input:focus-visible + .app-check-box__box,
+  .app-toggle-switch input:focus-visible + .app-toggle-switch__track,
+  .app-radio-group__option input:focus-visible
+    + .app-radio-group__indicator,
+  .app-segmented-control__option input:focus-visible
+    + .app-segmented-control__content {
+    outline-color: Highlight;
+  }
+
+  .app-check-box--disabled .app-check-box__box,
+  .app-toggle-switch--disabled .app-toggle-switch__track,
+  .app-radio-group__option--disabled .app-radio-group__indicator {
+    color: GrayText;
+    border-color: GrayText;
+  }
+}

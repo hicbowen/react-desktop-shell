@@ -21,3 +21,4 @@
 .app-tree-view__label { min-width: 0; overflow: hidden; font-size: var(--rds-font-size-control, 13px); text-overflow: ellipsis; white-space: nowrap; }
 @keyframes app-tree-spin { to { transform: rotate(360deg); } }
 @media (prefers-reduced-motion: reduce) { .app-tree-view__chevron--loading { animation: none; } }
+@media (forced-colors: active) { .app-tree-view__item--selected { color: HighlightText; background: Highlight; } .app-tree-view__item:focus-visible, .app-tree-view__item[data-drop-position='inside'] { outline-color: Highlight; } .app-tree-view__item[data-drop-position='before']::before, .app-tree-view__item[data-drop-position='after']::after { background: Highlight; } }

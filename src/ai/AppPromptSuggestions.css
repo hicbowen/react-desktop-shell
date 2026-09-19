@@ -39,11 +39,13 @@
   color: var(--app-shell-text-color, #1f1f1f);
   background: var(--app-shell-card-bg, #fff);
   border: 1px solid var(--app-shell-border-color, rgb(0 0 0 / 10%));
-  border-radius: 7px;
+  border-radius: var(--rds-radius-overlay, 8px);
   font: inherit;
   text-align: start;
   cursor: pointer;
-  transition: background-color 120ms ease, border-color 120ms ease;
+  transition:
+    background-color var(--rds-motion-fast, 120ms) ease,
+    border-color var(--rds-motion-fast, 120ms) ease;
 }
 
 .app-prompt-suggestions__item:hover:not(:disabled) {
@@ -105,4 +107,10 @@
 
 .app-prompt-suggestions--compact .app-prompt-suggestions__description {
   font-size: 11px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .app-prompt-suggestions__item {
+    transition: none;
+  }
 }

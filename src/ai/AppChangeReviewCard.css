@@ -6,7 +6,7 @@
   color: var(--app-shell-text-color, #1f1f1f);
   background: var(--app-shell-card-bg, #fff);
   border: 1px solid var(--app-shell-border-color, rgb(0 0 0 / 10%));
-  border-radius: 7px;
+  border-radius: var(--rds-radius-overlay, 8px);
 }
 
 .app-change-review-card--danger {
@@ -130,7 +130,7 @@
   padding: 9px;
   color: var(--app-shell-text-color, #1f1f1f);
   background: var(--app-shell-code-bg, rgb(0 0 0 / 5%));
-  border-radius: 5px;
+  border-radius: var(--rds-radius-control, 4px);
   font-family: var(--app-shell-monospace-font-family, ui-monospace, SFMono-Regular, Consolas, monospace);
   font-size: 11px;
   line-height: 1.55;

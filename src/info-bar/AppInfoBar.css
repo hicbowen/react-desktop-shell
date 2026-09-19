@@ -116,3 +116,19 @@
   outline: 2px solid var(--rds-state-focus-ring, var(--app-shell-accent-color));
   outline-offset: 1px;
 }
+
+@media (forced-colors: active) {
+  .app-info-bar {
+    background: Canvas;
+    border-color: CanvasText;
+    border-left-color: Highlight;
+  }
+
+  .app-info-bar__icon {
+    color: Highlight;
+  }
+
+  .app-info-bar__dismiss:focus-visible {
+    outline-color: Highlight;
+  }
+}

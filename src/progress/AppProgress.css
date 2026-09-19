@@ -28,3 +28,4 @@
 @keyframes app-progress-spin { to { transform: rotate(360deg); } }
 @keyframes app-progress-slide { from { transform: translateX(-110%); } 50% { transform: translateX(90%); } to { transform: translateX(270%); } }
 @media (prefers-reduced-motion: reduce) { .app-progress-ring__indicator { animation: none; } .app-progress-bar__indicator { transition: none; } .app-progress-bar--indeterminate .app-progress-bar__indicator { animation: none; width: 55%; opacity: .72; } }
+@media (forced-colors: active) { .app-progress-ring__indicator { border-color: CanvasText; border-top-color: Highlight; } .app-progress-bar__track { background: CanvasText; } .app-progress-bar__indicator { background: Highlight; } .app-status-badge { color: CanvasText; background: Canvas; border-color: CanvasText; } .app-status-badge--filled { color: HighlightText; background: Highlight; border-color: Highlight; } }

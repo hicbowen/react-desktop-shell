@@ -125,6 +125,16 @@
   --app-shell-warning-fg: var(--app-theme-light-warning-fg, #9a6700);
   --app-shell-info-fg: var(--app-theme-light-info-fg, var(--app-shell-accent-color));
   --app-shell-code-text-color: var(--app-theme-light-code-text-color, #242424);
+  --rds-shared-blue-fg: #0f6cbd;
+  --rds-shared-teal-fg: #00796b;
+  --rds-shared-green-fg: #107c10;
+  --rds-shared-yellow-fg: #8a5d00;
+  --rds-shared-orange-fg: #a74100;
+  --rds-shared-red-fg: #c42b1c;
+  --rds-shared-purple-fg: #744da9;
+  --rds-shared-pink-fg: #a4266c;
+  --rds-shared-color-bg-mix: 8%;
+  --rds-shared-color-filled-fg: #ffffff;
 
   /* Semantic aliases used by older component styles. They intentionally
      resolve to the same theme values so custom themes stay coherent. */
@@ -200,6 +210,8 @@
   --rds-ease-standard: cubic-bezier(0.2, 0, 0, 1);
   --rds-ease-enter: cubic-bezier(0.1, 0.9, 0.2, 1);
   --rds-ease-exit: cubic-bezier(0.7, 0, 1, 0.5);
+  --rds-motion-overlay-enter-duration: var(--rds-motion-fast);
+  --rds-motion-overlay-enter-distance: 2px;
   --rds-radius-medium: var(--rds-radius-overlay);
   --rds-control-height-standard: 32px;
   --rds-control-height-compact: 28px;
@@ -306,6 +318,16 @@
   --app-shell-warning-fg: var(--app-theme-dark-warning-fg, #f6d46b);
   --app-shell-info-fg: var(--app-theme-dark-info-fg, var(--app-shell-accent-color));
   --app-shell-code-text-color: var(--app-theme-dark-code-text-color, #f5f5f5);
+  --rds-shared-blue-fg: #75b6e7;
+  --rds-shared-teal-fg: #5fd0c7;
+  --rds-shared-green-fg: #7fce78;
+  --rds-shared-yellow-fg: #f3cf47;
+  --rds-shared-orange-fg: #f7a95a;
+  --rds-shared-red-fg: #ff99a4;
+  --rds-shared-purple-fg: #c6a0f6;
+  --rds-shared-pink-fg: #efa6c8;
+  --rds-shared-color-bg-mix: 10%;
+  --rds-shared-color-filled-fg: #1f1f1f;
   --app-shell-code-bg: var(--app-theme-dark-code-bg, var(--app-shell-subtle-bg));
   --app-shell-menu-bg: var(--app-theme-dark-menu-bg, rgb(44 44 44 / 92%));
   --app-shell-menu-border-color: var(--app-theme-dark-menu-border-color, rgb(255 255 255 / 12%));
@@ -666,6 +688,16 @@
     --app-shell-warning-fg: var(--app-theme-dark-warning-fg, #f6d46b);
     --app-shell-info-fg: var(--app-theme-dark-info-fg, var(--app-shell-accent-color));
     --app-shell-code-text-color: var(--app-theme-dark-code-text-color, #f5f5f5);
+    --rds-shared-blue-fg: #75b6e7;
+    --rds-shared-teal-fg: #5fd0c7;
+    --rds-shared-green-fg: #7fce78;
+    --rds-shared-yellow-fg: #f3cf47;
+    --rds-shared-orange-fg: #f7a95a;
+    --rds-shared-red-fg: #ff99a4;
+    --rds-shared-purple-fg: #c6a0f6;
+    --rds-shared-pink-fg: #efa6c8;
+    --rds-shared-color-bg-mix: 10%;
+    --rds-shared-color-filled-fg: #1f1f1f;
     --app-shell-code-bg: var(--app-theme-dark-code-bg, var(--app-shell-subtle-bg));
     --app-shell-menu-bg: var(--app-theme-dark-menu-bg, rgb(44 44 44 / 92%));
     --app-shell-menu-border-color: var(--app-theme-dark-menu-border-color, rgb(255 255 255 / 12%));
