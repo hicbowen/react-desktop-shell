@@ -109,6 +109,8 @@ function AppDataTableInner<TData>(
   const pendingFocusRef = useRef<DataTableActiveCell | null>(null)
   const [requestedActiveCell, setRequestedActiveCell] =
     useState<DataTableActiveCell | null>(null)
+  const [loadingMore, setLoadingMore] = useState(false)
+  const requestedDataLengthRef = useRef(-1)
   const core = useAppDataTable(props)
   const stickyState = useDataTableStickyState(
     scrollRef,
@@ -125,6 +127,40 @@ function AppDataTableInner<TData>(
     (core.density === 'compact' ? 38 : 48)
   const overscan = virtualizationOptions.overscan ?? 5
   const visibleColumns = core.table.getVisibleLeafColumns()
+  const infiniteLoading = props.infiniteLoading
+  const infiniteLoadingActive = infiniteLoading?.loading ?? loadingMore
+
+  const requestMore = useCallback(() => {
+    if (
+      !infiniteLoading?.hasMore ||
+      infiniteLoadingActive ||
+      requestedDataLengthRef.current === props.data.length
+    ) return
+    requestedDataLengthRef.current = props.data.length
+    setLoadingMore(true)
+    void Promise.resolve(infiniteLoading.onLoadMore()).catch((error: unknown) => {
+      requestedDataLengthRef.current = -1
+      infiniteLoading.onError?.(error)
+    }).finally(() => setLoadingMore(false))
+  }, [infiniteLoading, infiniteLoadingActive, props.data.length])
+
+  useEffect(() => {
+    if (!infiniteLoading?.hasMore) return
+    const viewport = scrollRef.current
+    if (!viewport) return
+    const threshold = infiniteLoading.threshold ?? 160
+    const check = () => {
+      if (viewport.scrollHeight - viewport.scrollTop - viewport.clientHeight <= threshold) {
+        requestMore()
+      }
+    }
+    viewport.addEventListener('scroll', check, { passive: true })
+    const frame = requestAnimationFrame(check)
+    return () => {
+      cancelAnimationFrame(frame)
+      viewport.removeEventListener('scroll', check)
+    }
+  }, [infiniteLoading?.hasMore, infiniteLoading?.threshold, requestMore, rows.length])
   const dataColumnIds = useMemo(
     () =>
       visibleColumns
@@ -471,7 +507,7 @@ function AppDataTableInner<TData>(
   const pagination = core.paginationEnabled ? (
     <AppDataTablePagination
       compact={core.density === 'compact'}
-      loading={core.loading}
+      loading={core.loading || infiniteLoadingActive}
       options={core.paginationOptions}
       table={core.table}
     />
@@ -480,6 +516,7 @@ function AppDataTableInner<TData>(
     <DataTableRow
       cellNavigation={cellNavigation}
       cellSelection={cellSelection}
+      editing={core.editing}
       canSelect={row.getCanSelect()}
       isSelected={row.getIsSelected()}
       isSomeSelected={row.getIsSomeSelected()}
@@ -490,6 +527,7 @@ function AppDataTableInner<TData>(
       rowSelectionMode={
         core.rowSelectionEnabled ? core.rowSelectionMode : undefined
       }
+      treeRows={core.treeRows}
       stickyActiveColumnIds={stickyState.activeColumnIds}
       stickyActiveEdgeColumnId={stickyState.activeEdgeColumnId}
       stickyHeader={core.stickyHeader}
@@ -531,11 +569,14 @@ function AppDataTableInner<TData>(
       table={core.table}
       virtualized={virtualizationEnabled}
     >
-      {state ? null : virtualizationEnabled ? (
-        <Suspense fallback={null}>
-          <AppDataTableVirtualRows
+      {state ? null : (
+        <>
+          {virtualizationEnabled ? (
+            <Suspense fallback={null}>
+              <AppDataTableVirtualRows
             cellNavigation={cellNavigation}
             cellSelection={cellSelection}
+            editing={core.editing}
             columnFilters={tableState.columnFilters}
             globalFilter={tableState.globalFilter}
             initialViewportHeight={
@@ -560,6 +601,7 @@ function AppDataTableInner<TData>(
             rowSelectionMode={
               core.rowSelectionEnabled ? core.rowSelectionMode : undefined
             }
+            treeRows={core.treeRows}
             scrollRef={scrollRef}
             sorting={tableState.sorting}
             stickyHeader={core.stickyHeader}
@@ -567,10 +609,17 @@ function AppDataTableInner<TData>(
             stickyActiveEdgeColumnId={stickyState.activeEdgeColumnId}
             stickyLayout={core.stickyLayout}
             visibleColumnCount={core.visibleColumnCount}
-          />
-        </Suspense>
-      ) : (
-        normalRows
+              />
+            </Suspense>
+          ) : normalRows}
+          {infiniteLoadingActive ? (
+            <tr className="app-data-table__loading-more" role="status">
+              <td colSpan={core.visibleColumnCount}>
+                {infiniteLoading?.loadingContent ?? core.loadingContent}
+              </td>
+            </tr>
+          ) : null}
+        </>
       )}
     </DataTableFrame>
   )

@@ -6,6 +6,7 @@ import type {
   ColumnPinningState,
   ColumnResizeMode,
   ColumnSizingState,
+  ExpandedState,
   FilterFn,
   OnChangeFn,
   PaginationState,
@@ -59,6 +60,48 @@ export interface AppDataTableVirtualizationOptions {
   rowHeight?: number
   /** Number of extra rows rendered before and after the visible area. */
   overscan?: number
+}
+
+export interface AppDataTableEditCommit<TData> {
+  row: Row<TData>
+  cell: Cell<TData, unknown>
+  columnId: string
+  value: unknown
+  previousValue: unknown
+}
+
+export interface AppDataTableEditorProps<TData> extends AppDataTableEditCommit<TData> {
+  pending: boolean
+  error: unknown
+  setValue: (value: unknown) => void
+  commit: () => void
+  cancel: () => void
+}
+
+export interface AppDataTableEditingOptions<TData> {
+  onCommit: (edit: AppDataTableEditCommit<TData>) => void | Promise<void>
+  isCellEditable?: (cell: Cell<TData, unknown>) => boolean
+  renderEditor?: (props: AppDataTableEditorProps<TData>) => ReactNode
+  commitOnBlur?: boolean
+  onError?: (error: unknown, edit: AppDataTableEditCommit<TData>) => void
+}
+
+export interface AppDataTableTreeRowsOptions<TData> {
+  getSubRows: (row: TData, index: number) => TData[] | undefined
+  expanded?: ExpandedState
+  defaultExpanded?: ExpandedState
+  onExpandedChange?: OnChangeFn<ExpandedState>
+  indentSize?: number
+  expandLabel?: (row: Row<TData>, expanded: boolean) => string
+}
+
+export interface AppDataTableInfiniteLoadingOptions {
+  hasMore: boolean
+  onLoadMore: () => void | Promise<void>
+  loading?: boolean
+  threshold?: number
+  loadingContent?: ReactNode
+  onError?: (error: unknown) => void
 }
 
 export interface AppDataTableRowSelectionOptions<TData> {
@@ -116,15 +159,14 @@ export interface AppDataTableHandle {
 
 export interface AppDataTableProps<TData> {
   data: TData[]
-  /**
-   * Flat leaf-column definitions.
-   *
-   * Multi-level grouped headers are not currently supported.
-   */
+  /** TanStack leaf or grouped column definitions. */
   columns: ColumnDef<TData>[]
   controls?: AppDataTableControlsOptions<TData>
   pagination?: boolean | AppDataTablePaginationOptions
   virtualization?: boolean | AppDataTableVirtualizationOptions
+  editing?: AppDataTableEditingOptions<TData>
+  treeRows?: AppDataTableTreeRowsOptions<TData>
+  infiniteLoading?: AppDataTableInfiniteLoadingOptions
   getRowId?: TableOptions<TData>['getRowId']
   rowSelection?: AppDataTableRowSelectionOptions<TData>
   cellSelection?: boolean | AppDataTableCellSelectionOptions

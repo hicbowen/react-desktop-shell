@@ -2871,4 +2871,63 @@ describe("AppDataTable controls", () => {
     expect(text).not.toContain("Virtual 001");
     expect(text).not.toContain("Virtual 021");
   });
+
+  it("renders grouped headers without overlapping sticky header rows", () => {
+    const groupedColumns: ColumnDef<RowData>[] = [{
+      id: "details",
+      header: "Details",
+      columns: [
+        { accessorKey: "name", header: "Name" },
+        { accessorKey: "status", header: "Status" },
+      ],
+    }];
+    renderTable({ columns: groupedColumns, stickyHeader: true });
+    expect(container.querySelectorAll("thead tr")).toHaveLength(2);
+    expect(container.querySelector('th[data-header-group="true"]')?.textContent).toContain("Details");
+    expect(container.querySelector('th[data-column-id="name"]')?.style.top).toContain("* 1");
+  });
+
+  it("expands tree rows and commits an edited cell", async () => {
+    type TreeRow = RowData & { children?: TreeRow[] };
+    const commit = vi.fn();
+    const treeData: TreeRow[] = [{
+      id: "parent",
+      name: "Parent",
+      category: "Folder",
+      status: "Ready",
+      children: [{ id: "child", name: "Child", category: "File", status: "Ready" }],
+    }];
+    render(<AppDataTable<TreeRow>
+      columns={columns as ColumnDef<TreeRow>[]}
+      data={treeData}
+      editing={{ onCommit: commit, isCellEditable: (target) => target.column.id === "name" }}
+      getRowId={(row) => row.id}
+      treeRows={{ getSubRows: (row) => row.children }}
+    />);
+    expect(bodyRows()).toHaveLength(1);
+    act(() => container.querySelector<HTMLButtonElement>(".app-data-table__tree-toggle")?.click());
+    expect(bodyRows()).toHaveLength(2);
+
+    const nameCell = cell("parent", "name");
+    act(() => nameCell.dispatchEvent(new MouseEvent("dblclick", { bubbles: true })));
+    const editor = nameCell.querySelector<HTMLInputElement>(".app-data-table__cell-editor")!;
+    act(() => {
+      const setter = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value")?.set;
+      setter?.call(editor, "Renamed");
+      editor.dispatchEvent(new Event("input", { bubbles: true }));
+    });
+    await act(async () => editor.dispatchEvent(new KeyboardEvent("keydown", { bubbles: true, key: "Enter" })));
+    expect(commit).toHaveBeenCalledWith(expect.objectContaining({ columnId: "name", value: "Renamed", previousValue: "Parent" }));
+  });
+
+  it("requests the next batch near the scroll boundary", () => {
+    const loadMore = vi.fn();
+    renderTable({ infiniteLoading: { hasMore: true, onLoadMore: loadMore } });
+    const viewport = container.querySelector<HTMLElement>(".app-data-table__scroll")!;
+    act(() => {
+      viewport.scrollTop = 4800;
+      viewport.dispatchEvent(new Event("scroll"));
+    });
+    expect(loadMore).toHaveBeenCalledTimes(1);
+  });
 });

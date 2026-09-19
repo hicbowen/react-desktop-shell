@@ -690,7 +690,7 @@
 .app-data-table__state-overlay {
   position: absolute;
   z-index: 3;
-  inset: var(--app-data-header-height) 0 0;
+  inset: calc(var(--app-data-header-height) * var(--app-data-header-rows, 1)) 0 0;
   min-width: 0;
   min-height: 0;
   display: flex;
@@ -712,6 +712,13 @@
 .app-data-table__virtual-spacer > td {
   padding: 0;
   border: 0;
+}
+
+.app-data-table__loading-more > td {
+  height: var(--app-data-row-height);
+  color: var(--app-data-muted-color);
+  text-align: center;
+  background: var(--app-data-surface-bg);
 }
 
 .app-data-table--virtualized tbody > tr:not(.app-data-table__virtual-spacer),
@@ -982,6 +989,11 @@
   justify-content: center;
 }
 
+.app-data-table__header-label--group {
+  justify-content: center;
+  border-bottom: 1px solid var(--app-data-border-color);
+}
+
 .app-data-table__header-actions {
   width: 20px;
   min-width: 20px;
@@ -1168,6 +1180,66 @@
   align-items: center;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.app-data-table__tree-indent {
+  display: inline-flex;
+  align-items: center;
+  flex: 0 0 auto;
+}
+
+.app-data-table__tree-toggle,
+.app-data-table__tree-toggle-spacer {
+  width: 20px;
+  height: 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 20px;
+}
+
+.app-data-table__tree-toggle {
+  padding: 0;
+  color: inherit;
+  background: transparent;
+  border: 0;
+  border-radius: var(--rds-radius-control, 4px);
+}
+
+.app-data-table__tree-toggle:hover {
+  background: var(--app-data-hover-bg);
+}
+
+.app-data-table__tree-toggle svg {
+  width: 14px;
+  height: 14px;
+  fill: currentcolor;
+}
+
+.app-data-table td[data-editable='true'] {
+  cursor: text;
+}
+
+.app-data-table td[data-editing='true'] {
+  overflow: visible;
+}
+
+.app-data-table__cell-editor {
+  width: 100%;
+  min-width: 0;
+  height: calc(var(--app-data-row-height) - 8px);
+  box-sizing: border-box;
+  padding: 0 var(--rds-space-2, 8px);
+  color: inherit;
+  font: inherit;
+  background: var(--app-data-surface-bg);
+  border: 1px solid var(--app-data-accent);
+  border-radius: var(--rds-radius-control, 4px);
+  outline: 0;
+}
+
+.app-data-table__cell-editor[aria-invalid='true'] {
+  border-color: var(--app-shell-danger-color, #c42b1c);
 }
 
 .app-data-table td::before {

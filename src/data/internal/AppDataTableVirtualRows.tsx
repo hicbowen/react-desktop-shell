@@ -31,6 +31,8 @@ interface AppDataTableVirtualRowsProps<TData> {
   cellSelection: DataTableCellSelectionInteraction
   registerScrollToIndex: (handler: ((index: number) => void) | null) => void
   rowSelectionMode?: 'single' | 'multiple'
+  editing?: AppDataTableProps<TData>['editing']
+  treeRows?: AppDataTableProps<TData>['treeRows']
 }
 
 function DataTableVirtualSpacerRow({
@@ -69,6 +71,8 @@ export default function AppDataTableVirtualRows<TData>({
   cellSelection,
   registerScrollToIndex,
   rowSelectionMode,
+  editing,
+  treeRows,
 }: AppDataTableVirtualRowsProps<TData>) {
   const didMountRef = useRef(false)
   // TanStack Virtual intentionally exposes mutable virtualizer helpers.
@@ -125,6 +129,7 @@ export default function AppDataTableVirtualRows<TData>({
           <DataTableRow
             cellNavigation={cellNavigation}
             cellSelection={cellSelection}
+            editing={editing}
             canSelect={row.getCanSelect()}
             isSelected={row.getIsSelected()}
             isSomeSelected={row.getIsSomeSelected()}
@@ -134,6 +139,7 @@ export default function AppDataTableVirtualRows<TData>({
             row={row}
             rowHeight={rowHeight}
             rowSelectionMode={rowSelectionMode}
+            treeRows={treeRows}
             stickyHeader={stickyHeader}
             stickyActiveColumnIds={stickyActiveColumnIds}
             stickyActiveEdgeColumnId={stickyActiveEdgeColumnId}

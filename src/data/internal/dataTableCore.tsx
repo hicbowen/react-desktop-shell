@@ -15,18 +15,21 @@ import {
 import {
   flexRender,
   getCoreRowModel,
+  getExpandedRowModel,
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
   type Column,
   type ColumnDef,
+  type Cell,
   type ColumnFiltersState,
   type ColumnPinningState,
   type ColumnResizeMode,
   type ColumnSizingState,
   type OnChangeFn,
   type PaginationState,
+  type ExpandedState,
   type Row,
   type SortingState,
   type Table,
@@ -35,11 +38,14 @@ import {
 import { ArrowSortDown16Regular } from "@fluentui/react-icons/svg/arrow-sort-down";
 import { ArrowSortUp16Regular } from "@fluentui/react-icons/svg/arrow-sort-up";
 import { Pin16Regular } from "@fluentui/react-icons/svg/pin";
+import { ChevronDown16Regular } from "@fluentui/react-icons/svg/chevron-down";
+import { ChevronRight16Regular } from "@fluentui/react-icons/svg/chevron-right";
 import { DataTableCheckbox } from "../DataTableCheckbox";
 import { useAppLocale } from "../../localization/useAppLocale";
 import { AppScrollArea } from "../../scroll-area/AppScrollArea";
 import type {
   AppDataTableFilterDefinition,
+  AppDataTableEditingOptions,
   AppDataTablePaginationOptions,
   AppDataTableProps,
 } from "../types";
@@ -267,6 +273,8 @@ export function useAppDataTable<TData>({
   columns,
   controls,
   pagination,
+  editing,
+  treeRows,
   getRowId,
   rowSelection,
   sorting,
@@ -333,6 +341,9 @@ export function useAppDataTable<TData>({
       ...paginationOptions.defaultValue,
     }),
   );
+  const [internalExpanded, setInternalExpanded] = useState<ExpandedState>(
+    () => treeRows?.defaultExpanded ?? {},
+  );
   const resolvedSorting = sorting ?? internalSorting;
   const resolvedGlobalFilter =
     globalFilter !== undefined ? globalFilter : internalGlobalFilter;
@@ -341,6 +352,7 @@ export function useAppDataTable<TData>({
   const resolvedColumnSizing = columnSizing ?? internalColumnSizing;
   const resolvedColumnPinning = columnPinning ?? internalColumnPinning;
   const resolvedPagination = paginationOptions.value ?? internalPagination;
+  const resolvedExpanded = treeRows?.expanded ?? internalExpanded;
   const rowSelectionEnabled = rowSelection !== undefined;
   const rowSelectionMode = rowSelection?.mode ?? "multiple";
   const effectiveColumnPinning = useMemo<ColumnPinningState>(() => {
@@ -427,6 +439,10 @@ export function useAppDataTable<TData>({
       setInternalPagination(updater);
     }
     paginationOptions.onChange?.(updater);
+  };
+  const handleExpandedChange: OnChangeFn<ExpandedState> = (updater) => {
+    if (treeRows?.expanded === undefined) setInternalExpanded(updater);
+    treeRows?.onExpandedChange?.(updater);
   };
 
   const resolvedColumns = useMemo<ColumnDef<TData>[]>(() => {
@@ -538,6 +554,12 @@ export function useAppDataTable<TData>({
     columns: resolvedColumns,
     getRowId,
     getCoreRowModel: getCoreRowModel(),
+    ...(treeRows
+      ? {
+          getSubRows: treeRows.getSubRows,
+          getExpandedRowModel: getExpandedRowModel(),
+        }
+      : {}),
     getFilteredRowModel: getFilteredRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getPaginationRowModel: getOptionalPaginationRowModel,
@@ -560,6 +582,7 @@ export function useAppDataTable<TData>({
       columnPinning: effectiveColumnPinning,
       ...(rowSelection ? { rowSelection: rowSelection.value } : {}),
       ...(paginationEnabled ? { pagination: resolvedPagination } : {}),
+      ...(treeRows ? { expanded: resolvedExpanded } : {}),
     },
     onSortingChange: handleSortingChange,
     onGlobalFilterChange: handleGlobalFilterChange,
@@ -569,6 +592,7 @@ export function useAppDataTable<TData>({
     onColumnPinningChange: handleColumnPinningChange,
     onRowSelectionChange: rowSelection?.onChange,
     onPaginationChange: handlePaginationChange,
+    onExpandedChange: treeRows ? handleExpandedChange : undefined,
     autoResetPageIndex: paginationOptions.autoResetPageIndex ?? true,
   });
   const filterColumnIds = useMemo(
@@ -656,6 +680,8 @@ export function useAppDataTable<TData>({
     rowSelectionEnabled,
     rowSelectionMode,
     selectAllMode,
+    editing,
+    treeRows,
   };
 }
 
@@ -694,13 +720,14 @@ function DataTableHeader<TData>({
 
   return (
     <thead>
-      {table.getHeaderGroups().map((headerGroup) => (
+      {table.getHeaderGroups().map((headerGroup, headerRowIndex) => (
         <tr key={headerGroup.id}>
           {headerGroup.headers.map((header) => {
+            const isGroup = header.subHeaders.length > 0;
             const sorted = header.column.getIsSorted();
-            const canSort = header.column.getCanSort();
+            const canSort = !isGroup && header.column.getCanSort();
             const canResize =
-              enableColumnResizing && header.column.getCanResize();
+              !isGroup && enableColumnResizing && header.column.getCanResize();
             const isResizing = header.column.getIsResizing();
             const resizeOffset =
               columnResizeMode === "onEnd" && isResizing
@@ -709,12 +736,12 @@ function DataTableHeader<TData>({
             const resizeHandler = header.getResizeHandler();
             const isSelection =
               header.column.id === APP_DATA_TABLE_ROW_SELECTION_COLUMN_ID;
-            const columnFilter = filterDefinitionsByColumn.get(
+            const columnFilter = isGroup ? undefined : filterDefinitionsByColumn.get(
               header.column.id,
             );
-            const isStickyColumn = stickyLayout.offsets.has(header.column.id);
+            const isStickyColumn = !isGroup && stickyLayout.offsets.has(header.column.id);
             const pinned = header.column.getIsPinned();
-            const isPinnedColumn = !isSelection && pinned !== false;
+            const isPinnedColumn = !isGroup && !isSelection && pinned !== false;
             const columnPosition = isStickyColumn
               ? "sticky"
               : isPinnedColumn
@@ -740,8 +767,9 @@ function DataTableHeader<TData>({
                 }
                 colSpan={header.colSpan}
                 data-column-id={header.column.id}
-                data-pinned={header.column.getIsPinned() || undefined}
-                data-pinned-edge={getPinnedEdge(header.column)}
+                data-header-group={isGroup || undefined}
+                data-pinned={!isGroup ? header.column.getIsPinned() || undefined : undefined}
+                data-pinned-edge={!isGroup ? getPinnedEdge(header.column) : undefined}
                 data-sticky-column={
                   isStickyColumn || undefined
                 }
@@ -761,18 +789,32 @@ function DataTableHeader<TData>({
                 key={header.id}
                 role="columnheader"
                 style={{
-                  ...getPositionedColumnStyles(
-                    header.column,
-                    true,
-                    stickyHeader,
-                    stickyLayout,
-                  ),
+                  ...(isGroup
+                    ? {
+                        position: stickyHeader ? "sticky" as const : "relative" as const,
+                        top: stickyHeader
+                          ? `calc(var(--app-data-header-height) * ${headerRowIndex})`
+                          : undefined,
+                        width: header.getSize(),
+                        zIndex: stickyHeader ? 3 : undefined,
+                      }
+                    : {
+                        ...getPositionedColumnStyles(
+                          header.column,
+                          true,
+                          stickyHeader,
+                          stickyLayout,
+                        ),
+                        top: stickyHeader
+                          ? `calc(var(--app-data-header-height) * ${headerRowIndex})`
+                          : undefined,
+                      }),
                   ...(isResizing ? { zIndex: 5 } : {}),
                 }}
               >
                 <div className="app-data-table__header-content">
-                  {header.isPlaceholder ? null : isSelection ? (
-                    <div className="app-data-table__header-label app-data-table__header-label--control">
+                  {header.isPlaceholder ? null : isSelection || isGroup ? (
+                    <div className={isGroup ? "app-data-table__header-label app-data-table__header-label--group" : "app-data-table__header-label app-data-table__header-label--control"}>
                       {flexRender(
                         header.column.columnDef.header,
                         header.getContext(),
@@ -945,6 +987,10 @@ export function DataTableFrame<TData>({
   children,
 }: DataTableFrameProps<TData>) {
   const tableWidth = table.getTotalSize();
+  const frameStyle = {
+    ...style,
+    "--app-data-header-rows": table.getHeaderGroups().length,
+  } as CSSProperties;
 
   return (
     <div
@@ -952,7 +998,7 @@ export function DataTableFrame<TData>({
       data-cell-selecting={cellSelecting || undefined}
       data-cell-selection={cellSelectionEnabled || undefined}
       onCopy={onCopy}
-      style={style}
+      style={frameStyle}
     >
       {controls}
       <div
@@ -1029,6 +1075,8 @@ interface DataTableRowProps<TData> {
   cellNavigation?: DataTableCellNavigation;
   cellSelection?: DataTableCellSelectionInteraction;
   rowSelectionMode?: "single" | "multiple";
+  editing?: AppDataTableEditingOptions<TData>;
+  treeRows?: AppDataTableProps<TData>["treeRows"];
 }
 
 function DataTableRowImpl<TData>({
@@ -1046,7 +1094,16 @@ function DataTableRowImpl<TData>({
   cellNavigation,
   cellSelection,
   rowSelectionMode,
+  editing,
+  treeRows,
 }: DataTableRowProps<TData>) {
+  const [editingState, setEditingState] = useState<{
+    columnId: string;
+    value: unknown;
+    previousValue: unknown;
+    pending: boolean;
+    error: unknown;
+  } | null>(null);
   const selectionState = isSelected
     ? "selected"
     : isSomeSelected
@@ -1088,6 +1145,46 @@ function DataTableRowImpl<TData>({
     if (!onRowContextMenu) return;
     onRowContextMenu(row, event);
   };
+  const canEdit = (cell: Cell<TData, unknown>) =>
+    Boolean(editing) &&
+    !isAppDataTableInternalColumn(cell.column.id) &&
+    (editing?.isCellEditable?.(cell) ?? true);
+  const startEditing = (cell: Cell<TData, unknown>) => {
+    if (!canEdit(cell)) return;
+    if (editingState?.pending) return;
+    const previousValue = cell.getValue();
+    setEditingState({
+      columnId: cell.column.id,
+      value: previousValue ?? "",
+      previousValue,
+      pending: false,
+      error: null,
+    });
+  };
+  const cancelEditing = () => {
+    if (editingState?.pending) return;
+    setEditingState(null);
+  };
+  const commitEditing = (cell: Cell<TData, unknown>) => {
+    if (!editing || !editingState || editingState.pending) return;
+    const edit = {
+      row,
+      cell,
+      columnId: cell.column.id,
+      value: editingState.value,
+      previousValue: editingState.previousValue,
+    };
+    setEditingState((current) => current ? { ...current, pending: true, error: null } : current);
+    void Promise.resolve(editing.onCommit(edit)).then(() => {
+      setEditingState(null);
+    }).catch((error: unknown) => {
+      setEditingState((current) => current ? { ...current, pending: false, error } : current);
+      editing.onError?.(error, edit);
+    });
+  };
+  const firstDataColumnId = row.getVisibleCells().find(
+    (cell) => !isAppDataTableInternalColumn(cell.column.id),
+  )?.column.id;
 
   return (
     <tr
@@ -1117,6 +1214,8 @@ function DataTableRowImpl<TData>({
         const cellRangeState = navigable
           ? cellSelection?.getCellState(position)
           : undefined;
+        const editable = canEdit(cell);
+        const isEditing = editingState?.columnId === cell.column.id;
 
         return (
           <td
@@ -1133,6 +1232,8 @@ function DataTableRowImpl<TData>({
             data-cell-range-bottom={cellRangeState?.bottom || undefined}
             data-cell-range-left={cellRangeState?.left || undefined}
             data-cell-range-right={cellRangeState?.right || undefined}
+            data-editable={editable || undefined}
+            data-editing={isEditing || undefined}
             data-pinned={cell.column.getIsPinned() || undefined}
             data-pinned-edge={getPinnedEdge(cell.column)}
             data-sticky-column={
@@ -1167,6 +1268,7 @@ function DataTableRowImpl<TData>({
                     )
                 : undefined
             }
+            onDoubleClick={editable ? () => startEditing(cell) : undefined}
             onPointerDown={
               navigable && cellSelection?.enabled
                 ? (event) => cellSelection.onPointerDown(position, event)
@@ -1190,8 +1292,13 @@ function DataTableRowImpl<TData>({
             }
             onKeyDown={
               navigable && cellNavigation
-                ? (event) => {
+                  ? (event) => {
                     if (isDataTableInteractiveTarget(event.target)) return;
+                    if (editable && (event.key === "Enter" || event.key === "F2")) {
+                      event.preventDefault();
+                      startEditing(cell);
+                      return;
+                    }
                     if (
                       event.key === "Enter" &&
                       (onRowClick || rowSelectionMode === "single")
@@ -1207,7 +1314,51 @@ function DataTableRowImpl<TData>({
             }
           >
             <div className="app-data-table__cell-content">
-              {flexRender(cell.column.columnDef.cell, cell.getContext())}
+              {treeRows && cell.column.id === firstDataColumnId ? (
+                <span
+                  className="app-data-table__tree-indent"
+                  style={{ paddingLeft: row.depth * (treeRows.indentSize ?? 16) }}
+                >
+                  {row.getCanExpand() ? (
+                    <button
+                      aria-label={treeRows.expandLabel?.(row, row.getIsExpanded()) ?? `${row.getIsExpanded() ? "Collapse" : "Expand"} row`}
+                      className="app-data-table__tree-toggle"
+                      onClick={(event) => { event.stopPropagation(); row.toggleExpanded(); }}
+                      type="button"
+                    >
+                      {row.getIsExpanded() ? <ChevronDown16Regular aria-hidden="true" /> : <ChevronRight16Regular aria-hidden="true" />}
+                    </button>
+                  ) : <span aria-hidden="true" className="app-data-table__tree-toggle-spacer" />}
+                </span>
+              ) : null}
+              {isEditing && editingState && editing ? (
+                editing.renderEditor ? editing.renderEditor({
+                  row,
+                  cell,
+                  columnId: cell.column.id,
+                  value: editingState.value,
+                  previousValue: editingState.previousValue,
+                  pending: editingState.pending,
+                  error: editingState.error,
+                  setValue: (value) => setEditingState((current) => current ? { ...current, value } : current),
+                  commit: () => commitEditing(cell),
+                  cancel: cancelEditing,
+                }) : (
+                  <input
+                    aria-invalid={editingState.error ? true : undefined}
+                    autoFocus
+                    className="app-data-table__cell-editor"
+                    disabled={editingState.pending}
+                    onBlur={() => { if (editing.commitOnBlur !== false) commitEditing(cell); }}
+                    onChange={(event) => setEditingState((current) => current ? { ...current, value: event.target.value } : current)}
+                    onKeyDown={(event) => {
+                      if (event.key === "Enter") { event.preventDefault(); commitEditing(cell); }
+                      else if (event.key === "Escape") { event.preventDefault(); cancelEditing(); }
+                    }}
+                    value={String(editingState.value ?? "")}
+                  />
+                )
+              ) : flexRender(cell.column.columnDef.cell, cell.getContext())}
             </div>
           </td>
         );

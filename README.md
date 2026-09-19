@@ -1479,6 +1479,7 @@ uses TanStack Table's `ColumnDef<TData>` directly.
 The data table supports client-side pagination, client or manual sorting, optional built-in global
 search and column filters opened from each column menu, manual/server-side filtering, column
 visibility, controlled row selection, rectangular cell selection and TSV copy,
+grouped headers, editable cells, expandable tree rows, infinite loading,
 loading and empty states, comfortable and compact density, cell keyboard navigation, row activation, horizontal
 scrolling, and opt-in column sizing. Compact density is the default. Column sizing
 supports controlled or uncontrolled state, mouse and touch resizing, minimum
@@ -1569,8 +1570,20 @@ not automatically clear already selected rows outside the filtered result.
 When pagination is enabled, use `'page'` to select or clear only the current
 page; `'filtered'` continues to include matching rows on every page.
 
-`AppDataTable` currently supports flat leaf-column definitions. Multi-level
-grouped headers are not currently supported.
+Use TanStack's nested `columns` definitions for multi-level grouped headers.
+Sticky headers account for every group row while sorting, filtering, resizing,
+pinning, and navigation remain attached to leaf columns.
+
+Pass `editing` to opt into double-click, Enter, or F2 editing. The default text
+editor commits on Enter or blur and cancels on Escape; `renderEditor` supports
+typed or domain-specific controls. `onCommit` may be asynchronous, and a
+rejected commit keeps the editor open and calls `onError`.
+
+Pass `treeRows={{ getSubRows }}` for expandable hierarchical data. Expansion
+can be controlled, indentation is configurable, and the first visible data
+column receives the disclosure control. For cursor-based data sources,
+`infiniteLoading` calls `onLoadMore` once when the viewport approaches its
+bottom and can render an inline loading row. It composes with virtualization.
 
 Each ordinary column header separates its sort target from a column menu
 containing only the core sorting and filtering actions. The column panel uses
@@ -2172,12 +2185,41 @@ export interface AppDataTableVirtualizationOptions {
   overscan?: number
 }
 
+export interface AppDataTableEditingOptions<TData> {
+  onCommit: (edit: AppDataTableEditCommit<TData>) => void | Promise<void>
+  isCellEditable?: (cell: Cell<TData, unknown>) => boolean
+  renderEditor?: (props: AppDataTableEditorProps<TData>) => ReactNode
+  commitOnBlur?: boolean
+  onError?: (error: unknown, edit: AppDataTableEditCommit<TData>) => void
+}
+
+export interface AppDataTableTreeRowsOptions<TData> {
+  getSubRows: (row: TData, index: number) => TData[] | undefined
+  expanded?: ExpandedState
+  defaultExpanded?: ExpandedState
+  onExpandedChange?: OnChangeFn<ExpandedState>
+  indentSize?: number
+  expandLabel?: (row: Row<TData>, expanded: boolean) => string
+}
+
+export interface AppDataTableInfiniteLoadingOptions {
+  hasMore: boolean
+  onLoadMore: () => void | Promise<void>
+  loading?: boolean
+  threshold?: number
+  loadingContent?: ReactNode
+  onError?: (error: unknown) => void
+}
+
 export interface AppDataTableProps<TData> {
   data: TData[]
   columns: ColumnDef<TData>[]
   controls?: AppDataTableControlsOptions<TData>
   pagination?: boolean | AppDataTablePaginationOptions
   virtualization?: boolean | AppDataTableVirtualizationOptions
+  editing?: AppDataTableEditingOptions<TData>
+  treeRows?: AppDataTableTreeRowsOptions<TData>
+  infiniteLoading?: AppDataTableInfiniteLoadingOptions
   getRowId?: TableOptions<TData>['getRowId']
   rowSelection?: AppDataTableRowSelectionOptions<TData>
   cellSelection?: boolean | AppDataTableCellSelectionOptions
