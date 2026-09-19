@@ -2,6 +2,7 @@ import { useMemo } from 'react'
 import type { AppTitleBarProps } from './types'
 import { useAppLocale } from './localization/useAppLocale'
 import { appTitleBarTypeMarker } from './AppTitleBarMarker'
+import { useAppPlatform } from './provider/AppPlatformContext'
 import './AppTitleBar.css'
 
 function MinimizeIcon() {
@@ -99,7 +100,7 @@ export function AppTitleBar({
   center,
   actions,
   onMinimize,
-  maximized = false,
+  maximized,
   onToggleMaximize,
   onClose,
   showMinimize = true,
@@ -109,6 +110,8 @@ export function AppTitleBar({
   style,
 }: AppTitleBarProps) {
   const { messages } = useAppLocale()
+  const platform = useAppPlatform()
+  const resolvedMaximized = maximized ?? platform.window?.maximized ?? false
   const hasLeading = leading !== undefined
   const rootClassName = useMemo(() => {
     const classes = ['app-title-bar']
@@ -149,7 +152,10 @@ export function AppTitleBar({
             <button
               aria-label={messages.window.minimize}
               className="app-title-bar__button"
-              onClick={() => onMinimize?.()}
+              onClick={() => {
+                if (onMinimize) onMinimize()
+                else void platform.window?.minimize?.()
+              }}
               type="button"
             >
               <MinimizeIcon />
@@ -158,20 +164,34 @@ export function AppTitleBar({
           {showMaximize && (
             <button
               aria-label={
-                maximized ? messages.window.restore : messages.window.maximize
+                resolvedMaximized
+                  ? messages.window.restore
+                  : messages.window.maximize
               }
               className="app-title-bar__button"
-              onClick={() => onToggleMaximize?.()}
+              onClick={() => {
+                if (onToggleMaximize) onToggleMaximize()
+                else if (platform.window?.toggleMaximize) {
+                  void platform.window.toggleMaximize()
+                } else if (resolvedMaximized) {
+                  void platform.window?.restore?.()
+                } else {
+                  void platform.window?.maximize?.()
+                }
+              }}
               type="button"
             >
-              {maximized ? <RestoreIcon /> : <MaximizeIcon />}
+              {resolvedMaximized ? <RestoreIcon /> : <MaximizeIcon />}
             </button>
           )}
           {showClose && (
             <button
               aria-label={messages.window.close}
               className="app-title-bar__button app-title-bar__button--danger"
-              onClick={() => onClose?.()}
+              onClick={() => {
+                if (onClose) onClose()
+                else void platform.window?.close?.()
+              }}
               type="button"
             >
               <CloseIcon />

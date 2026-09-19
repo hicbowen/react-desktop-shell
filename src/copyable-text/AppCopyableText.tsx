@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { Checkmark16Regular } from '@fluentui/react-icons/svg/checkmark'
 import { Copy16Regular } from '@fluentui/react-icons/svg/copy'
 import { useAppLocale } from '../localization/useAppLocale'
+import { useAppPlatform } from '../provider/AppPlatformContext'
 import type { AppCopyableTextProps } from './types'
 import './AppCopyableText.css'
 
@@ -20,7 +21,7 @@ export function AppCopyableText({
   children,
   className,
   copiedDuration = 1600,
-  copy = writeClipboard,
+  copy,
   disabled = false,
   onCopy,
   onCopyError,
@@ -29,6 +30,7 @@ export function AppCopyableText({
   truncate = false,
 }: AppCopyableTextProps) {
   const { messages } = useAppLocale()
+  const platform = useAppPlatform()
   const [status, setStatus] = useState<'idle' | 'copied' | 'error'>('idle')
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
@@ -38,7 +40,10 @@ export function AppCopyableText({
 
   const handleCopy = async () => {
     try {
-      await copy(text)
+      if (copy) await copy(text)
+      else if (platform.clipboard?.writeText) {
+        await platform.clipboard.writeText(text)
+      } else await writeClipboard(text)
       setStatus('copied')
       onCopy?.(text)
       if (timeoutRef.current) clearTimeout(timeoutRef.current)

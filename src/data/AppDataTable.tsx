@@ -29,6 +29,7 @@ import { isDataTableInteractiveTarget } from './internal/dataTableInteraction'
 import { useDataTableCellSelection } from './internal/useDataTableCellSelection'
 import { AppDataTableControls } from './AppDataTableControls'
 import { AppDataTablePagination } from './AppDataTablePagination'
+import { useAppPlatform } from '../provider/AppPlatformContext'
 import type {
   AppDataTableCopyResult,
   AppDataTableCopyWriter,
@@ -102,6 +103,7 @@ function AppDataTableInner<TData>(
   props: AppDataTableProps<TData>,
   ref: ForwardedRef<AppDataTableHandle>,
 ) {
+  const platform = useAppPlatform()
   const scrollRef = useRef<HTMLDivElement | null>(null)
   const virtualScrollToIndexRef = useRef<((index: number) => void) | null>(null)
   const pendingFocusRef = useRef<DataTableActiveCell | null>(null)
@@ -228,6 +230,13 @@ function AppDataTableInner<TData>(
     typeof props.cellSelection.copy === 'function'
       ? props.cellSelection.copy
       : undefined
+  const platformCopyWriter = useMemo<AppDataTableCopyWriter | undefined>(
+    () =>
+      platform.clipboard?.writeText
+        ? (text) => platform.clipboard!.writeText(text)
+        : undefined,
+    [platform.clipboard],
+  )
   const copyOnCopy =
     typeof props.cellSelection === 'object'
       ? props.cellSelection.onCopy
@@ -286,7 +295,8 @@ function AppDataTableInner<TData>(
       return { status: 'skipped', reason: 'no-selection' }
     }
 
-    const writer = copyWriterRef.current ?? defaultDataTableCopyWriter
+    const writer =
+      copyWriterRef.current ?? platformCopyWriter ?? defaultDataTableCopyWriter
     try {
       // `execCommand('copy')` targets the focused element. Keep the table's
       // active cell focused so the native copy event reaches this surface when
@@ -311,6 +321,7 @@ function AppDataTableInner<TData>(
     getCopyText,
     isCellSelectionEnabled,
     runCopyWriter,
+    platformCopyWriter,
   ])
 
   const handleCopy = useCallback(
@@ -342,7 +353,8 @@ function AppDataTableInner<TData>(
         return
       }
 
-      const writer = copyWriterRef.current ?? defaultDataTableCopyWriter
+      const writer =
+        copyWriterRef.current ?? platformCopyWriter ?? defaultDataTableCopyWriter
       const text = getCopyText(range)
       event.preventDefault()
       void runCopyWriter(text, writer).catch((error) => {
@@ -355,6 +367,7 @@ function AppDataTableInner<TData>(
       getCellSelection,
       getCopyText,
       runCopyWriter,
+      platformCopyWriter,
     ],
   )
 

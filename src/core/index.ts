@@ -50,7 +50,12 @@ export type { AppDividerProps, AppSeparatorProps } from "../divider";
 export { AppLink } from "../link";
 export type { AppLinkProps } from "../link";
 export { resolveAppLocale, useResolvedAppLocale } from "../localization";
-export type { AppLocale } from "../localization";
+export type {
+  AppLocale,
+  AppLocaleMessageOverrides,
+  AppLocaleMessages,
+  BuiltInAppLocale,
+} from "../localization";
 export { AppScrollArea } from "../scroll-area";
 export type {
   AppScrollAreaGutter,
@@ -59,6 +64,12 @@ export type {
   AppScrollAreaScrollbar,
 } from "../scroll-area";
 export { AppShell } from "../shell/AppShell";
+export { AppProvider, useAppPlatform } from "../provider";
+export type {
+  AppPlatformAdapter,
+  AppProviderProps,
+  AppWindowAdapter,
+} from "../provider";
 export { AppTag } from "../tag";
 export type { AppTagAppearance, AppTagColor, AppTagProps } from "../tag";
 export { APP_THEME_PRESETS, defineAppTheme } from "../theme";

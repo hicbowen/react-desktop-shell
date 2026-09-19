@@ -1,13 +1,13 @@
-import type { ResolvedAppLocale } from './types'
+import type { BuiltInAppLocale } from './types'
 
 interface AppLocaleSetting {
-  intlLocale: ResolvedAppLocale
+  intlLocale: BuiltInAppLocale
   firstDayOfWeek: 0 | 1
   hourCycle: 12 | 24
 }
 
 export const appLocaleSettings: Record<
-  ResolvedAppLocale,
+  BuiltInAppLocale,
   AppLocaleSetting
 > = {
   'zh-CN': {

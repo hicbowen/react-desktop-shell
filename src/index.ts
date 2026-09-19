@@ -1,4 +1,10 @@
 export { AppShell } from './shell/AppShell'
+export { AppProvider, useAppPlatform } from './provider'
+export type {
+  AppPlatformAdapter,
+  AppProviderProps,
+  AppWindowAdapter,
+} from './provider'
 export { APP_THEME_PRESETS, defineAppTheme } from './theme'
 export type {
   AppThemePreset,
@@ -24,7 +30,12 @@ export type {
   AppShortcut,
 } from './command'
 export { resolveAppLocale, useResolvedAppLocale } from './localization'
-export type { AppLocale } from './localization'
+export type {
+  AppLocale,
+  AppLocaleMessageOverrides,
+  AppLocaleMessages,
+  BuiltInAppLocale,
+} from './localization'
 export { AppButton, AppIconButton } from './button'
 export { AppAvatar, AppPersona } from './avatar'
 export type { AppAvatarProps, AppAvatarSize, AppPersonaProps, AppPresenceStatus } from './avatar'

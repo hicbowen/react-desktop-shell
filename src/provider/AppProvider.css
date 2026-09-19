@@ -1,0 +1,11 @@
+.app-shell.app-provider {
+  width: auto;
+  height: auto;
+  display: contents;
+  overflow: visible;
+  color: var(--app-shell-text-color);
+  background: transparent;
+  cursor: inherit;
+  user-select: auto;
+  transition: none;
+}

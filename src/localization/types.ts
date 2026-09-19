@@ -1,6 +1,12 @@
-export type AppLocale = "system" | "zh-CN" | "en-US";
+export type BuiltInAppLocale = 'zh-CN' | 'en-US'
 
-export type ResolvedAppLocale = "zh-CN" | "en-US";
+export type AppLocale = 'system' | BuiltInAppLocale | (string & {})
+
+export type ResolvedAppLocale = Exclude<AppLocale, 'system'>
+
+export type AppLocaleMessageOverrides = {
+  [Section in keyof AppLocaleMessages]?: Partial<AppLocaleMessages[Section]>
+}
 
 export interface AppLocaleMessages {
   common: {

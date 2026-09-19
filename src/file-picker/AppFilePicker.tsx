@@ -3,12 +3,14 @@ import { Dismiss16Regular } from '@fluentui/react-icons/svg/dismiss'
 import { Document16Regular } from '@fluentui/react-icons/svg/document'
 import { AppButton } from '../button'
 import { useAppLocale } from '../localization/useAppLocale'
+import { useAppPlatform } from '../provider/AppPlatformContext'
 import { isFileAccepted } from '../file-drop-overlay/fileAcceptance'
 import type { AppFilePickerProps, AppFilePickerRejectionReason } from './types'
 import './AppFilePicker.css'
 
 export function AppFilePicker({ files, defaultFiles = [], onFilesChange, onReject, accept, multiple = false, maxFileSize, disabled = false, allowDrop = true, adapter, className, style }: AppFilePickerProps) {
   const { messages } = useAppLocale()
+  const platform = useAppPlatform()
   const text = messages.filePicker
   const controlled = files !== undefined
   const [internalFiles, setInternalFiles] = useState<File[]>(() => [...defaultFiles])
@@ -30,7 +32,8 @@ export function AppFilePicker({ files, defaultFiles = [], onFilesChange, onRejec
   }
   const open = async () => {
     if (disabled) return
-    if (adapter) receive([...await adapter.pick({ accept, multiple })])
+    const picker = adapter ?? platform.filePicker
+    if (picker) receive([...await picker.pick({ accept, multiple })])
     else inputRef.current?.click()
   }
   const handleInput = (event: ChangeEvent<HTMLInputElement>) => {

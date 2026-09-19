@@ -18,6 +18,7 @@ import { Checkmark16Regular } from '@fluentui/react-icons/svg/checkmark'
 import { Copy16Regular } from '@fluentui/react-icons/svg/copy'
 import { AppIconButton } from '../button'
 import { useAppLocale } from '../localization/useAppLocale'
+import { useAppPlatform } from '../provider/AppPlatformContext'
 import {
   highlightMarkdownCode,
   resolveMarkdownLanguage,
@@ -108,6 +109,7 @@ function MarkdownCodeBlock({
 }) {
   void node
   const { messages } = useAppLocale()
+  const platform = useAppPlatform()
   const text = messages.ai
   const [status, setStatus] = useState<'idle' | 'copied' | 'error'>('idle')
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -162,6 +164,8 @@ function MarkdownCodeBlock({
     try {
       if (onCopyCode) {
         await onCopyCode(code)
+      } else if (platform.clipboard?.writeText) {
+        await platform.clipboard.writeText(code)
       } else if (
         typeof navigator !== 'undefined' &&
         navigator.clipboard?.writeText

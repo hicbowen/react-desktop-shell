@@ -8,5 +8,6 @@
 @import "../copyable-text/AppCopyableText.css";
 @import "../divider/AppDivider.css";
 @import "../link/AppLink.css";
+@import "../provider/AppProvider.css";
 @import "../scroll-area/AppScrollArea.css";
 @import "../tag/AppTag.css";

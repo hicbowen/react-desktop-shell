@@ -201,6 +201,48 @@ Theme selection is controlled state. AppShell does not persist either setting;
 applications can store `theme` and `themePreset` using their preferred state or
 settings layer.
 
+## Provider and desktop adapters
+
+Use `AppProvider` when components need themes, localization, overlays, dialogs,
+toasts, or application context menus without rendering the full shell. `AppShell`
+uses the same provider services internally, so existing applications do not need
+an additional wrapper.
+
+```tsx
+<AppProvider
+  locale="fr-FR"
+  messages={{
+    common: { confirm: 'Confirmer', cancel: 'Annuler' },
+  }}
+  theme="dark"
+>
+  <SettingsPanel />
+</AppProvider>
+```
+
+Desktop hosts can provide native capabilities once instead of configuring each
+component separately. Component-level adapters and callbacks continue to take
+precedence.
+
+```tsx
+<AppProvider
+  platform={{
+    clipboard: nativeClipboard,
+    filePicker: nativeFilePicker,
+    window: {
+      minimize: () => hostWindow.minimize(),
+      toggleMaximize: () => hostWindow.toggleMaximize(),
+      close: () => hostWindow.close(),
+    },
+  }}
+>
+  <Application />
+</AppProvider>
+```
+
+Custom locale names are supported. Unspecified messages fall back to English;
+`messages`, `firstDayOfWeek`, and `hourCycle` can override the fallback.
+
 ## AppSelectorBar
 
 `AppSelectorBar` switches between a small number of mutually exclusive views or

@@ -11,7 +11,7 @@ export function resolveAppLocale(
   locale: AppLocale,
   systemLanguages?: readonly string[],
 ): ResolvedAppLocale {
-  if (locale === 'zh-CN' || locale === 'en-US') return locale
+  if (locale !== 'system') return locale
 
   const languages = systemLanguages ?? getSystemLanguages()
   return languages.some((language) =>

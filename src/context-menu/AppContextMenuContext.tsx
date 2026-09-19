@@ -31,7 +31,7 @@ export function useAppContextMenu(): AppContextMenuApi {
   const context = useContext(AppContextMenuContext)
 
   if (!context) {
-    throw new Error('useAppContextMenu must be used within AppShell')
+    throw new Error('useAppContextMenu must be used within AppProvider or AppShell')
   }
 
   return context.api

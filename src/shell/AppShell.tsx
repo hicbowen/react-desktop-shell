@@ -10,23 +10,10 @@ import {
 } from 'react'
 import { AppTitleBar } from '../AppTitleBar'
 import { appTitleBarTypeMarker } from '../AppTitleBarMarker'
-import { AppContextMenuContext } from '../context-menu/AppContextMenuContext'
-import { useContextMenuController } from '../context-menu/useContextMenuController'
-import { AppDialogContext } from '../dialog/AppDialogContext'
-import { AppMessageBoxContext } from '../dialog/AppMessageBoxContext'
-import { useDialogController } from '../dialog/useDialogController'
-import { AppToastContext } from '../toast/AppToastContext'
-import { AppOverlayHostContext } from '../overlay/AppOverlayHostContext'
-import { AppLocaleContext } from '../localization/AppLocaleContext'
-import { appLocaleSettings } from '../localization/localeSettings'
-import { appLocaleMessages } from '../localization/messages'
-import { useResolvedAppLocale } from '../localization/resolveAppLocale'
-import { useToastStore } from '../toast/AppToastHost'
 import { AppScrollArea } from '../scroll-area/AppScrollArea'
 import { getAppThemeStyle } from '../theme/AppTheme'
-import {
-  defaultClipboardAdapter,
-} from '../context-menu/AppContextMenuTextActions'
+import { AppServiceContexts } from '../provider/AppServiceContexts'
+import { useAppServices } from '../provider/useAppServices'
 import type { AppShellProps } from './types'
 import './AppShell.css'
 import {
@@ -53,11 +40,15 @@ function isAppTitleBarType(type: unknown) {
 
 export function AppShell({
   locale = 'system',
+  messages,
+  firstDayOfWeek,
+  hourCycle,
   theme = 'system',
   themePreset = 'blue',
   themeTokens,
   contextMenu = 'native',
-  clipboard = defaultClipboardAdapter,
+  clipboard,
+  platform,
   toastOptions,
   title,
   icon,
@@ -72,17 +63,18 @@ export function AppShell({
   contentStyle,
 }: AppShellProps) {
   const rootRef = useRef<HTMLDivElement | null>(null)
-  const resolvedLocale = useResolvedAppLocale(locale)
-  const localeContextValue = useMemo(() => {
-    const settings = appLocaleSettings[resolvedLocale]
-    return {
-      locale: settings.intlLocale,
-      messages: appLocaleMessages[resolvedLocale],
-      firstDayOfWeek: settings.firstDayOfWeek,
-      hourCycle: settings.hourCycle,
-    }
-  }, [resolvedLocale])
-  const [overlayHost, setOverlayHost] = useState<HTMLDivElement | null>(null)
+  const services = useAppServices({
+    clipboard,
+    contextMenu,
+    firstDayOfWeek,
+    hourCycle,
+    locale,
+    messages,
+    platform,
+    rootRef,
+    toastOptions,
+  })
+  const localeContextValue = services.localeContextValue
   const [sidebarNavigationOverflow, setSidebarNavigationOverflow] =
     useState<boolean | null>(null)
   const registerNavigationOverflow = useCallback(() => {
@@ -113,17 +105,6 @@ export function AppShell({
   const toggleSidebar = pane.toggle
   const paneToggleRef = useRef<HTMLButtonElement | null>(null)
   const paneInteractionModeRef = useRef<'keyboard' | 'pointer'>('keyboard')
-  const contextMenuController = useContextMenuController({
-    rootRef,
-    mode: contextMenu,
-    clipboard,
-    messages: localeContextValue.messages.contextMenu,
-  })
-  const dialogController = useDialogController(
-    localeContextValue.messages.common,
-    contextMenuController.dismissMenu,
-  )
-  const toastStore = useToastStore(toastOptions)
   const hasSidebar = rail !== undefined || sidebarHeader !== undefined
 
   const rootClassName = useMemo(() => {
@@ -220,12 +201,7 @@ export function AppShell({
       : titleBar
 
   return (
-    <AppLocaleContext.Provider value={localeContextValue}>
-      <AppToastContext.Provider value={toastStore.toast}>
-        <AppMessageBoxContext.Provider value={dialogController.messageBox}>
-          <AppDialogContext.Provider value={dialogController.registry}>
-            <AppContextMenuContext.Provider value={contextMenuController.contextValue}>
-              <AppOverlayHostContext.Provider value={overlayHost}>
+    <AppServiceContexts services={services}>
                 <div
                   ref={rootRef}
                   className={rootClassName}
@@ -233,9 +209,9 @@ export function AppShell({
                   data-theme={theme}
                   data-theme-preset={themePreset}
                   style={shellStyle}
-                  onMouseDownCapture={contextMenuController.handleMouseDown}
-                  onContextMenuCapture={contextMenuController.handleContextMenu}
-                  onKeyDownCapture={contextMenuController.handleKeyDown}
+                  onMouseDownCapture={services.contextMenuController.handleMouseDown}
+                  onContextMenuCapture={services.contextMenuController.handleContextMenu}
+                  onKeyDownCapture={services.contextMenuController.handleKeyDown}
                 >
               <div className="app-shell__titlebar">
                 {hasSidebar && !appTitleBar && (
@@ -280,19 +256,14 @@ export function AppShell({
                 </SidebarLayoutContext.Provider>
               )}
               <ShellOverlayLayer
-                  dialogs={dialogController.dialogs}
-                  contextMenu={contextMenuController.menu}
-                  onCloseContextMenu={contextMenuController.closeMenu}
-                  overlayHostRef={setOverlayHost}
-                  toastStore={toastStore}
-                  hasModalDialog={dialogController.hasModalDialog}
+                  dialogs={services.dialogController.dialogs}
+                  contextMenu={services.contextMenuController.menu}
+                  onCloseContextMenu={services.contextMenuController.closeMenu}
+                  overlayHostRef={services.setOverlayHost}
+                  toastStore={services.toastStore}
+                  hasModalDialog={services.dialogController.hasModalDialog}
               />
                 </div>
-              </AppOverlayHostContext.Provider>
-            </AppContextMenuContext.Provider>
-          </AppDialogContext.Provider>
-        </AppMessageBoxContext.Provider>
-      </AppToastContext.Provider>
-    </AppLocaleContext.Provider>
+    </AppServiceContexts>
   )
 }
