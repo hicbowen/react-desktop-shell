@@ -1,11 +1,12 @@
 import type { ReactNode } from 'react'
 import type { AppButtonAppearance, AppButtonSize } from '../button'
+import type { AppCommandReference } from '../command'
 
 export type AppToolbarAppearance = 'surface' | 'flat'
 
-export interface AppToolbarAction {
-  key: string
-  label: ReactNode
+export interface AppToolbarAction extends AppCommandReference {
+  key?: string
+  label?: ReactNode
   icon?: ReactNode
   onClick?: () => void
   disabled?: boolean

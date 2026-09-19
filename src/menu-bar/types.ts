@@ -11,6 +11,7 @@ export interface AppMenuBarItem {
   checked?: boolean
   danger?: boolean
   command?: AppCommand
+  commandId?: string
 }
 
 export interface AppMenuBarMenu {

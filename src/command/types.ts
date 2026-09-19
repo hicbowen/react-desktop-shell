@@ -27,6 +27,8 @@ export interface AppCommand {
   label: ReactNode
   description?: ReactNode
   icon?: ReactNode
+  group?: string
+  keywords?: readonly string[]
   shortcut?: AppShortcut
   disabled?: boolean
   hidden?: boolean
@@ -48,4 +50,16 @@ export interface AppCommandApi {
     context?: Omit<AppCommandExecutionContext, 'commandId'>,
   ) => boolean
   get: (commandId: string) => AppCommand | undefined
+  getError: (commandId: string) => unknown
+  getShortcutConflicts: (
+    shortcut: AppShortcut,
+    excludeCommandId?: string,
+  ) => AppCommand[]
+  isPending: (commandId: string) => boolean
+  clearError: (commandId: string) => void
+}
+
+export interface AppCommandReference {
+  command?: AppCommand
+  commandId?: string
 }

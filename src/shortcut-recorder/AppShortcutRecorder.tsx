@@ -1,6 +1,7 @@
 import { useState, type KeyboardEvent } from 'react'
 import { formatAppShortcut, normalizeAppShortcutKey } from '../command/shortcut'
 import type { AppShortcut } from '../command'
+import { useOptionalAppCommands } from '../command'
 import { useAppLocale } from '../localization/useAppLocale'
 import type { AppShortcutRecorderProps } from './types'
 import '../input-frame/AppInputFrame.css'
@@ -8,13 +9,17 @@ import './AppShortcutRecorder.css'
 
 const modifiers = new Set(['Alt', 'Control', 'Meta', 'Shift'])
 
-export function AppShortcutRecorder({ value, defaultValue = null, onValueChange, getConflict, allowSingleKey = false, disabled = false, className, style }: AppShortcutRecorderProps) {
+export function AppShortcutRecorder({ value, defaultValue = null, onValueChange, getConflict, commandId, allowSingleKey = false, disabled = false, className, style }: AppShortcutRecorderProps) {
   const { messages } = useAppLocale()
+  const commandApi = useOptionalAppCommands()
   const controlled = value !== undefined
   const [internal, setInternal] = useState<AppShortcut | null>(defaultValue)
   const [recording, setRecording] = useState(false)
   const current = value === undefined ? internal : value
-  const conflict = current ? getConflict?.(current) : null
+  const conflict = current
+    ? getConflict?.(current) ??
+      commandApi?.getShortcutConflicts(current, commandId)[0]?.label
+    : null
   const commit = (next: AppShortcut | null) => { if (!controlled) setInternal(next); onValueChange?.(next) }
   const keyDown = (event: KeyboardEvent<HTMLInputElement>) => {
     event.preventDefault()

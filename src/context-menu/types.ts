@@ -1,4 +1,5 @@
 import type { ReactElement, ReactNode } from 'react'
+import type { AppCommandReference } from '../command/types'
 
 export type AppContextMenuMode = 'native' | 'app'
 
@@ -7,9 +8,9 @@ export interface AppClipboardAdapter {
   writeText(text: string): Promise<void>
 }
 
-export interface AppContextMenuActionItem {
+export interface AppContextMenuActionItem extends AppCommandReference {
   key: string
-  label: ReactNode
+  label?: ReactNode
   icon?: ReactNode
   shortcut?: ReactNode
   disabled?: boolean
@@ -17,9 +18,9 @@ export interface AppContextMenuActionItem {
   onClick?: () => void
 }
 
-export interface AppContextMenuSubmenuItem {
+export interface AppContextMenuSubmenuItem extends AppCommandReference {
   key: string
-  label: ReactNode
+  label?: ReactNode
   icon?: ReactNode
   disabled?: boolean
   danger?: boolean

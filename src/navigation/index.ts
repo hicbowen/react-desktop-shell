@@ -19,6 +19,7 @@ export type {
   AppMenuFlyoutItem,
   AppMenuFlyoutProps,
   AppMenuFlyoutSeparator,
+  AppMenuFlyoutSubmenu,
 } from "../menu-flyout";
 export { AppRail } from "./AppRail";
 export type {

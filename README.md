@@ -421,6 +421,32 @@ ignored while users edit text by default; set `allowInEditable` only for a
 command that intentionally overrides native editing behavior. Nested providers
 inherit parent commands and may override them by id.
 
+Toolbar actions, menu-flyout items, menu-bar items, context-menu items, and the
+primary Split Button action can reference the same command by id:
+
+```tsx
+<AppToolbar actions={[{ commandId: 'file.save' }]} />
+<AppMenuFlyout
+  items={[
+    { commandId: 'file.save', key: 'save' },
+    {
+      type: 'submenu',
+      key: 'export',
+      label: 'Export',
+      items: [{ commandId: 'file.exportPdf', key: 'pdf' }],
+    },
+  ]}
+>
+  <AppButton>File</AppButton>
+</AppMenuFlyout>
+```
+
+Async commands are disabled while pending and expose their last error through
+`useAppCommandState`. `getShortcutConflicts` supports shortcut editors, and
+`AppShortcutRecorder` uses it automatically when given `commandId`. Command
+Palette search includes command ids, descriptions, groups, and keywords; omit
+its `commands` prop to consume the nearest provider.
+
 ## Menu bar
 
 `AppMenuBar` provides a traditional File/Edit/View command surface. Entries may

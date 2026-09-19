@@ -1,5 +1,9 @@
 import { useMemo, useRef, useState, type KeyboardEvent } from 'react'
-import { executeAppCommand, formatAppShortcut } from '../command'
+import {
+  executeAppCommand,
+  formatAppShortcut,
+  useOptionalAppCommands,
+} from '../command'
 import { useAppLocale } from '../localization/useAppLocale'
 import { AppSpotlightSurface } from '../spotlight-surface'
 import type { AppCommandPaletteProps } from './types'
@@ -16,6 +20,10 @@ function matches(value: string, query: string) {
   return true
 }
 
+function formatCommandError(error: unknown) {
+  return error instanceof Error ? error.message : String(error)
+}
+
 export function AppCommandPalette({
   ariaLabel,
   commands,
@@ -26,6 +34,11 @@ export function AppCommandPalette({
   placeholder,
 }: AppCommandPaletteProps) {
   const { messages } = useAppLocale()
+  const commandApi = useOptionalAppCommands()
+  const resolvedCommands = useMemo(
+    () => commands ?? commandApi?.commands ?? [],
+    [commandApi?.commands, commands],
+  )
   const text = messages.commandPalette
   const resolvedLabel = ariaLabel ?? text.label
   const [query, setQuery] = useState('')
@@ -33,23 +46,27 @@ export function AppCommandPalette({
   const inputRef = useRef<HTMLInputElement>(null)
   const results = useMemo(
     () =>
-      commands
+      resolvedCommands
         .filter(
           (command) =>
             !command.hidden &&
             matches(
-              `${typeof command.label === 'string' ? command.label : command.id} ${command.id}`,
+              `${typeof command.label === 'string' ? command.label : command.id} ${command.id} ${command.description ?? ''} ${command.group ?? ''} ${(command.keywords ?? []).join(' ')}`,
               query,
             ),
         )
         .slice(0, maxResults),
-    [commands, maxResults, query],
+    [maxResults, query, resolvedCommands],
   )
 
   const run = (index: number) => {
     const command = results[index]
-    if (!command || command.disabled) return
-    executeAppCommand(command, { source: 'palette' })
+    if (!command || command.disabled || commandApi?.isPending(command.id)) return
+    if (commandApi?.get(command.id)) {
+      commandApi.execute(command.id, { source: 'palette' })
+    } else {
+      executeAppCommand(command, { source: 'palette' })
+    }
     setQuery('')
     onOpenChange(false)
   }
@@ -96,7 +113,8 @@ export function AppCommandPalette({
               <button
                 aria-selected={active === index}
                 className="app-command-palette__result"
-                disabled={command.disabled}
+                data-group={command.group}
+                disabled={command.disabled || commandApi?.isPending(command.id)}
                 key={command.id}
                 onClick={() => run(index)}
                 onMouseEnter={() => setActive(index)}
@@ -108,8 +126,18 @@ export function AppCommandPalette({
                 </span>
                 <span className="app-command-palette__text">
                   <span>{command.label}</span>
+                  {command.group ? (
+                    <small className="app-command-palette__group">
+                      {command.group}
+                    </small>
+                  ) : null}
                   {command.description ? (
                     <small>{command.description}</small>
+                  ) : null}
+                  {commandApi?.getError(command.id) !== undefined ? (
+                    <small className="app-command-palette__error" role="alert">
+                      {formatCommandError(commandApi?.getError(command.id))}
+                    </small>
                   ) : null}
                 </span>
                 {command.shortcut ? (

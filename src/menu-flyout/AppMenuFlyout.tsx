@@ -26,6 +26,14 @@ import {
 import { useAnchoredOverlayPosition } from '../overlay/useAnchoredOverlayPosition'
 import { useOverlayDismiss } from '../overlay/useOverlayDismiss'
 import { CheckMark } from '../selection-controls/CheckBoxIndicator'
+import { ChevronRight16Regular } from '@fluentui/react-icons/svg/chevron-right'
+import {
+  executeAppCommandReference,
+  formatAppShortcut,
+  resolveAppCommand,
+  useOptionalAppCommands,
+} from '../command'
+import type { AppCommandApi } from '../command'
 import {
   OverlayParentContext,
   useOverlayTree,
@@ -34,6 +42,7 @@ import type {
   AppMenuFlyoutEntry,
   AppMenuFlyoutItem,
   AppMenuFlyoutProps,
+  AppMenuFlyoutSubmenu,
 } from './types'
 import './AppMenuFlyout.css'
 
@@ -58,7 +67,54 @@ interface MenuTriggerProps {
 }
 
 function isItem(entry: AppMenuFlyoutEntry): entry is AppMenuFlyoutItem {
-  return entry.type !== 'separator'
+  return entry.type === undefined || entry.type === 'item'
+}
+
+function isSubmenu(
+  entry: AppMenuFlyoutEntry,
+): entry is AppMenuFlyoutSubmenu {
+  return entry.type === 'submenu'
+}
+
+function resolveEntries(
+  entries: readonly AppMenuFlyoutEntry[],
+  commandApi: AppCommandApi | null,
+): AppMenuFlyoutEntry[] {
+  return entries.flatMap<AppMenuFlyoutEntry>((entry) => {
+    if (entry.type === 'separator') return [entry]
+    const command = resolveAppCommand(entry, commandApi)
+    if (command?.hidden) return []
+    const resolved = {
+      ...entry,
+      label: entry.label ?? command?.label ?? entry.key,
+      icon: entry.icon ?? command?.icon,
+      disabled:
+        Boolean(entry.disabled) ||
+        Boolean(command?.disabled) ||
+        Boolean(entry.commandId && commandApi?.isPending(entry.commandId)),
+      danger: entry.danger,
+    }
+
+    if (isSubmenu(entry)) {
+      return [
+        {
+          ...resolved,
+          type: 'submenu' as const,
+          items: resolveEntries(entry.items, commandApi),
+        },
+      ]
+    }
+
+    return [
+      {
+        ...resolved,
+        checked: entry.checked ?? command?.checked,
+        shortcut:
+          entry.shortcut ??
+          (command?.shortcut ? formatAppShortcut(command.shortcut) : undefined),
+      },
+    ]
+  })
 }
 
 function AppMenuFlyoutInner(
@@ -77,9 +133,14 @@ function AppMenuFlyoutInner(
     placement = 'bottom-start',
     ...triggerProps
   } = props as AppMenuFlyoutProps & MenuTriggerProps
+  const commandApi = useOptionalAppCommands()
+  const resolvedItems = useMemo(
+    () => resolveEntries(items, commandApi),
+    [commandApi, items],
+  )
   const [open, setOpen] = useState(false)
   const [activeIndex, setActiveIndex] = useState(-1)
-  const menuUnavailable = disabled || items.length === 0
+  const menuUnavailable = disabled || resolvedItems.length === 0
   const effectiveOpen = open && !menuUnavailable
   const triggerRef = useRef<HTMLElement | null>(null)
   const overlayRef = useRef<HTMLDivElement | null>(null)
@@ -94,10 +155,10 @@ function AppMenuFlyoutInner(
   const child = children as ReactElement<MenuTriggerProps>
   const enabledIndexes = useMemo(
     () =>
-      items.flatMap((entry, index) =>
-        isItem(entry) && !entry.disabled ? [index] : [],
+      resolvedItems.flatMap((entry, index) =>
+        (isItem(entry) || isSubmenu(entry)) && !entry.disabled ? [index] : [],
       ),
-    [items],
+    [resolvedItems],
   )
   const firstEnabledIndex = enabledIndexes[0] ?? -1
   const lastEnabledIndex = enabledIndexes.at(-1) ?? -1
@@ -111,7 +172,7 @@ function AppMenuFlyoutInner(
     viewportPadding: MENU_VIEWPORT_PADDING,
     maxHeight: resolvedMaxHeight,
     maxWidth: resolvedMaxWidth,
-    dependencies: [items.length, className],
+    dependencies: [resolvedItems.length, className],
   })
 
   const closeMenu = () => {
@@ -188,6 +249,7 @@ function AppMenuFlyoutInner(
       return
     }
 
+    executeAppCommandReference(item, commandApi, 'menu')
     onSelect?.(item.key)
     closeMenuAndRestoreFocus()
   }
@@ -219,6 +281,7 @@ function AppMenuFlyoutInner(
   }
 
   const handleMenuKeyDown: KeyboardEventHandler<HTMLDivElement> = (event) => {
+    if (event.defaultPrevented) return
     switch (event.key) {
       case 'ArrowDown':
         event.preventDefault()
@@ -240,7 +303,7 @@ function AppMenuFlyoutInner(
       case ' ':
         event.preventDefault()
         if (activeIndex >= 0) {
-          const item = items[activeIndex]
+          const item = resolvedItems[activeIndex]
 
           if (item && isItem(item)) {
             selectItem(item)
@@ -250,6 +313,12 @@ function AppMenuFlyoutInner(
       case 'Tab':
         restoreTriggerFocus()
         closeMenu()
+        break
+      case 'ArrowLeft':
+        if (placement.startsWith('right')) {
+          event.preventDefault()
+          closeMenuAndRestoreFocus()
+        }
         break
     }
   }
@@ -283,6 +352,9 @@ function AppMenuFlyoutInner(
       } else if (event.key === 'ArrowUp') {
         event.preventDefault()
         openMenu('last')
+      } else if (event.key === 'ArrowRight' && placement.startsWith('right')) {
+        event.preventDefault()
+        openMenu('first')
       }
     }),
   )
@@ -347,8 +419,8 @@ function AppMenuFlyoutInner(
             visibility: position.measured ? 'visible' : 'hidden',
           } as CSSProperties}
         >
-          {items.map((entry, index) => {
-            if (!isItem(entry)) {
+          {resolvedItems.map((entry, index) => {
+            if (entry.type === 'separator') {
               return (
                 <div
                   className="app-menu-flyout__separator"
@@ -358,7 +430,7 @@ function AppMenuFlyoutInner(
               )
             }
 
-            return (
+            const itemButton = (
               <button
                 className={[
                   'app-menu-flyout__item',
@@ -371,7 +443,7 @@ function AppMenuFlyoutInner(
                   .join(' ')}
                 disabled={entry.disabled}
                 key={entry.key}
-                onClick={() => selectItem(entry)}
+                onClick={isItem(entry) ? () => selectItem(entry) : undefined}
                 onFocus={() => setActiveIndex(index)}
                 ref={(node) => {
                   itemRefs.current[index] = node
@@ -380,10 +452,29 @@ function AppMenuFlyoutInner(
                 tabIndex={activeIndex === index ? 0 : -1}
                 type="button"
               >
-                <span className="app-menu-flyout__icon">{entry.checked ? <CheckMark /> : entry.icon}</span>
+                <span className="app-menu-flyout__icon">{isItem(entry) && entry.checked ? <CheckMark /> : entry.icon}</span>
                 <span className="app-menu-flyout__label">{entry.label}</span>
-                {entry.shortcut ? <span className="app-menu-flyout__shortcut">{entry.shortcut}</span> : null}
+                {isItem(entry) && entry.shortcut ? <span className="app-menu-flyout__shortcut">{entry.shortcut}</span> : null}
+                {isSubmenu(entry) ? <ChevronRight16Regular aria-hidden="true" focusable="false" /> : null}
               </button>
+            )
+
+            return isSubmenu(entry) ? (
+              <AppMenuFlyout
+                ariaLabel={typeof entry.label === 'string' ? entry.label : undefined}
+                disabled={entry.disabled || entry.items.length === 0}
+                items={entry.items}
+                key={entry.key}
+                onSelect={(key) => {
+                  onSelect?.(key)
+                  closeMenuAndRestoreFocus()
+                }}
+                placement="right-start"
+              >
+                {itemButton}
+              </AppMenuFlyout>
+            ) : (
+              itemButton
             )
           })}
           </div>

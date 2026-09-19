@@ -33,7 +33,9 @@ export {
   matchesAppShortcut,
   useAppCommand,
   useAppCommandExecutor,
+  useAppCommandState,
   useAppCommands,
+  useOptionalAppCommands,
 } from "../command";
 export type {
   AppCommand,
@@ -41,6 +43,7 @@ export type {
   AppCommandExecutionContext,
   AppCommandExecutionSource,
   AppCommandProviderProps,
+  AppCommandReference,
   AppShortcut,
 } from "../command";
 export { AppCopyableText } from "../copyable-text";

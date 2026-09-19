@@ -4,4 +4,5 @@ export type {
   AppMenuFlyoutItem,
   AppMenuFlyoutProps,
   AppMenuFlyoutSeparator,
+  AppMenuFlyoutSubmenu,
 } from './types'

@@ -1,5 +1,12 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { ChevronRight16Regular } from '@fluentui/react-icons/svg/chevron-right'
+import {
+  executeAppCommandReference,
+  formatAppShortcut,
+  resolveAppCommand,
+  useOptionalAppCommands,
+} from '../command'
+import type { AppCommandApi } from '../command'
 import type {
   AppContextMenuItem,
   AppContextMenuSeparatorItem,
@@ -75,6 +82,35 @@ function isEnabledItem(item: AppContextMenuItem) {
     !item.disabled &&
     (!isSubmenu(item) || item.submenu.length > 0)
   )
+}
+
+function resolveContextMenuItems(
+  items: AppContextMenuItem[],
+  commandApi: AppCommandApi | null,
+): AppContextMenuItem[] {
+  return items.flatMap<AppContextMenuItem>((item) => {
+    if (isSeparator(item)) return [item]
+    const command = resolveAppCommand(item, commandApi)
+    if (command?.hidden) return []
+    const resolved = {
+      ...item,
+      label: item.label ?? command?.label ?? item.key,
+      icon: item.icon ?? command?.icon,
+      disabled:
+        Boolean(item.disabled) ||
+        Boolean(command?.disabled) ||
+        Boolean(item.commandId && commandApi?.isPending(item.commandId)),
+      danger: item.danger,
+    }
+    return isSubmenu(item)
+      ? [{ ...resolved, submenu: resolveContextMenuItems(item.submenu, commandApi) }]
+      : [{
+          ...resolved,
+          shortcut:
+            item.shortcut ??
+            (command?.shortcut ? formatAppShortcut(command.shortcut) : undefined),
+        }]
+  })
 }
 
 function enabledIndexes(items: AppContextMenuItem[]) {
@@ -213,9 +249,20 @@ function getRenderedPlacement(
 }
 
 export function AppContextMenuLayer({
-  menu,
+  menu: providedMenu,
   onClose,
 }: AppContextMenuLayerProps) {
+  const commandApi = useOptionalAppCommands()
+  const menu = useMemo(
+    () =>
+      providedMenu
+        ? {
+            ...providedMenu,
+            items: resolveContextMenuItems(providedMenu.items, commandApi),
+          }
+        : null,
+    [commandApi, providedMenu],
+  )
   const menuRefs = useRef<Array<HTMLDivElement | null>>([])
   const itemRefs = useRef<Array<Array<HTMLButtonElement | null>>>([])
   const hoverTimerRef = useRef<number | null>(null)
@@ -495,6 +542,7 @@ export function AppContextMenuLayer({
     }
 
     try {
+      executeAppCommandReference(item, commandApi, 'menu')
       item.onClick?.()
     } finally {
       onClose()

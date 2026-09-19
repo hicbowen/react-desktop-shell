@@ -94,6 +94,7 @@ export type {
   AppMenuFlyoutItem,
   AppMenuFlyoutProps,
   AppMenuFlyoutSeparator,
+  AppMenuFlyoutSubmenu,
 } from './menu-flyout/types'
 export type {
   AppSettingsGroupProps,

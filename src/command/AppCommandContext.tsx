@@ -3,6 +3,7 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useState,
 } from 'react'
 import { AppCommandContext } from './AppCommandStore'
 import { isAppEditableTarget, matchesAppShortcut } from './shortcut'
@@ -28,12 +29,77 @@ export function AppCommandProvider({
     [mergedCommands],
   )
 
-  const execute = useCallback<AppCommandApi['execute']>((commandId, context) => {
-    const command = get(commandId)
-    if (!command || command.disabled || command.hidden) return false
-    void command.execute({ commandId, source: context?.source ?? 'api', ...context })
-    return true
-  }, [get])
+  const [pendingCommandIds, setPendingCommandIds] = useState<Set<string>>(
+    () => new Set(),
+  )
+  const [commandErrors, setCommandErrors] = useState<Map<string, unknown>>(
+    () => new Map(),
+  )
+
+  const clearError = useCallback((commandId: string) => {
+    setCommandErrors((current) => {
+      if (!current.has(commandId)) return current
+      const next = new Map(current)
+      next.delete(commandId)
+      return next
+    })
+  }, [])
+
+  const run = useCallback(
+    (
+      command: NonNullable<ReturnType<typeof get>>,
+      context: Parameters<AppCommandApi['execute']>[1],
+    ) => {
+      clearError(command.id)
+      let result: void | Promise<void>
+      try {
+        result = command.execute({
+          commandId: command.id,
+          source: context?.source ?? 'api',
+          ...context,
+        })
+      } catch (error) {
+        setCommandErrors((current) =>
+          new Map(current).set(command.id, error),
+        )
+        return
+      }
+
+      if (!result || typeof result.then !== 'function') return
+      setPendingCommandIds((current) => new Set(current).add(command.id))
+      void result
+        .catch((error) => {
+          setCommandErrors((current) =>
+            new Map(current).set(command.id, error),
+          )
+        })
+        .finally(() => {
+          setPendingCommandIds((current) => {
+            const next = new Set(current)
+            next.delete(command.id)
+            return next
+          })
+        })
+    },
+    [clearError],
+  )
+
+  const execute = useCallback<AppCommandApi['execute']>(
+    (commandId, context) => {
+      const command = get(commandId)
+      if (
+        !command ||
+        command.disabled ||
+        command.hidden ||
+        pendingCommandIds.has(commandId)
+      ) {
+        return false
+      }
+      run(command, context)
+      return true
+    },
+    [get, pendingCommandIds, run],
+  )
 
   useEffect(() => {
     if (!enableShortcuts) return
@@ -51,8 +117,7 @@ export function AppCommandProvider({
 
       if (!command) return
       event.preventDefault()
-      void command.execute({
-        commandId: command.id,
+      execute(command.id, {
         nativeEvent: event,
         source: 'keyboard',
       })
@@ -60,11 +125,43 @@ export function AppCommandProvider({
 
     document.addEventListener('keydown', onKeyDown)
     return () => document.removeEventListener('keydown', onKeyDown)
-  }, [commands, enableShortcuts])
+  }, [commands, enableShortcuts, execute])
+
+  const getShortcutConflicts = useCallback<AppCommandApi['getShortcutConflicts']>(
+    (shortcut, excludeCommandId) =>
+      mergedCommands.filter(
+        (command) =>
+          command.id !== excludeCommandId &&
+          command.shortcut !== undefined &&
+          command.shortcut.key.toLocaleLowerCase() ===
+            shortcut.key.toLocaleLowerCase() &&
+          Boolean(command.shortcut.alt) === Boolean(shortcut.alt) &&
+          Boolean(command.shortcut.ctrl) === Boolean(shortcut.ctrl) &&
+          Boolean(command.shortcut.meta) === Boolean(shortcut.meta) &&
+          Boolean(command.shortcut.shift) === Boolean(shortcut.shift),
+      ),
+    [mergedCommands],
+  )
 
   const value = useMemo<AppCommandApi>(
-    () => ({ commands: mergedCommands, execute, get }),
-    [execute, get, mergedCommands],
+    () => ({
+      clearError,
+      commands: mergedCommands,
+      execute,
+      get,
+      getError: (commandId) => commandErrors.get(commandId),
+      getShortcutConflicts,
+      isPending: (commandId) => pendingCommandIds.has(commandId),
+    }),
+    [
+      clearError,
+      commandErrors,
+      execute,
+      get,
+      getShortcutConflicts,
+      mergedCommands,
+      pendingCommandIds,
+    ],
   )
 
   return <AppCommandContext.Provider value={value}>{children}</AppCommandContext.Provider>
