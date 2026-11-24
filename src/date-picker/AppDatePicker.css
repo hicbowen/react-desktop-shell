@@ -235,8 +235,7 @@
 .app-calendar__title-button {
   min-height: 28px;
   padding: 0 3px;
-  text-decoration: underline dotted;
-  text-underline-offset: 4px;
+  cursor: pointer;
 }
 
 .app-calendar__title-button:hover,
@@ -259,13 +258,13 @@
 }
 
 .app-calendar__chooser {
+  --app-calendar-option-height: 40px;
   box-sizing: border-box;
   width: calc(7 * var(--app-date-picker-cell-size) * var(--app-calendar-visible-months, 1) + var(--app-calendar-month-gap, 0px));
-  min-height: calc(6 * var(--app-date-picker-cell-size) + 24px);
+  min-height: calc(3 * var(--app-calendar-option-height) + 16px);
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 8px;
 }
 
 .app-calendar__choices {
@@ -275,7 +274,7 @@
 }
 
 .app-calendar__option {
-  min-height: 32px;
+  min-height: var(--app-calendar-option-height);
   padding: 0 4px;
 }
 
@@ -283,19 +282,11 @@
   color: var(--app-shell-disabled-text-color, rgb(0 0 0 / 36%));
 }
 
-.app-calendar__year-entry,
 .app-calendar__year-pages {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 4px;
-}
-
-.app-calendar__year-input {
-  width: 72px;
-  min-height: 32px;
-  padding: 0 8px;
-  font: inherit;
 }
 
 .app-calendar__year-pages .app-calendar__choices {
@@ -305,16 +296,6 @@
 
 .app-calendar__year-pages .app-calendar__nav {
   flex: 0 0 30px;
-}
-
-.app-calendar__year-error {
-  color: var(--app-shell-danger-color, #b10e1c);
-  text-align: center;
-}
-
-.app-calendar__back {
-  align-self: center;
-  padding: 0 8px;
 }
 
 .app-calendar__dialog-label {

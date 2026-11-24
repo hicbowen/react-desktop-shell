@@ -335,9 +335,6 @@ export interface AppLocaleMessages {
     chooseYear: string;
     previousYears: string;
     nextYears: string;
-    goToYear: string;
-    invalidYear: (min: string, max: string) => string;
-    backToCalendar: string;
     dialogLabel: string;
   };
   dateRangePicker: {

@@ -152,29 +152,26 @@ describe('AppCalendar', () => {
     expect(focused().dataset.date).toBe('2026-07-19')
   })
 
-  it('jumps to another year by typing and choosing a month without selecting a date', () => {
+  it('pages through years and jumps to a month without selecting a date', () => {
     const onSelect = vi.fn()
     render(
       <CalendarHarness
-        initialFocus={{ year: 2026, month: 7, day: 31 }}
+        initialFocus={{ year: 1920, month: 7, day: 31 }}
+        maxValue={{ year: 1923, month: 12, day: 31 }}
         minValue={{ year: 1900, month: 3, day: 10 }}
         onSelect={onSelect}
       />,
     )
 
-    click('Choose year · 2026')
-    const input = container.querySelector('input')!
-    expect(document.activeElement).toBe(input)
-    const setYear = (value: string) => act(() => {
-      Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value')!.set!.call(input, value)
-      input.dispatchEvent(new Event('input', { bubbles: true }))
-    })
-    setYear('1899')
-    click('Go to year')
-    expect(input.getAttribute('aria-invalid')).toBe('true')
-
-    setYear('1900')
-    act(() => input.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true })))
+    click('Choose year · 1920')
+    expect(document.activeElement).toBe(button('1920'))
+    expect(container.querySelector('input')).toBeNull()
+    expect(button('Back to calendar')).toBeUndefined()
+    expect(button('Next years').disabled).toBe(true)
+    click('Previous years')
+    expect(button('Previous years').disabled).toBe(true)
+    click('1900')
+    expect(button('Back to calendar')).toBeUndefined()
     expect(button('January').disabled).toBe(true)
     expect(button('March').disabled).toBe(false)
     click('April')
@@ -193,6 +190,10 @@ describe('AppCalendar', () => {
         visibleMonths={2}
       />,
     )
+    click('Choose month · July')
+    click('Choose month · July')
+    expect(container.querySelector('.app-calendar__chooser')).toBeNull()
+    expect(document.activeElement).toBe(button('Choose month · July'))
     click('Choose month · July')
     expect(button('November').disabled).toBe(true)
     click('October')
@@ -219,15 +220,14 @@ describe('AppCalendar', () => {
     )
     expect(focused().dataset.date).toBe('0000-01-01')
     expect(button('Previous month').disabled).toBe(true)
-    click('Choose year · 0')
-    const input = container.querySelector('input')!
-    act(() => {
-      Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value')!.set!.call(input, '9999')
-      input.dispatchEvent(new Event('input', { bubbles: true }))
-    })
-    click('Go to year')
-    click('December')
-    expect(focused().dataset.date).toBe('9999-12-01')
+    render(
+      <CalendarHarness
+        key="upper-bound"
+        initialFocus={{ year: 9999, month: 12, day: 31 }}
+        maxValue={{ year: 9999, month: 12, day: 31 }}
+      />,
+    )
+    expect(focused().dataset.date).toBe('9999-12-31')
     expect(button('Next month').disabled).toBe(true)
   })
 

@@ -367,7 +367,6 @@ export function AppCalendar({
           key={navigation.mode}
           latestMonth={latestMonth}
           navigation={{ mode: navigation.mode, year: headerMonth.year }}
-          onBack={closeNavigation}
           onChooseMonth={chooseMonth}
           onChooseYear={(year) => setNavigation({ mode: 'month', year })}
         />

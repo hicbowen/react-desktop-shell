@@ -8,8 +8,8 @@ All notable changes to this project are documented here. The format follows
 
 ### Added
 
-- Month and year navigation in the calendar header, including direct year
-  entry in the standalone calendar and both date pickers.
+- Month and year navigation in the calendar header of the standalone calendar
+  and both date pickers.
 - Bundled consumer skill and AI setup guide with version-aware component
   selection and public-import recipes adapted from the example application.
 - Domain entry points and styles for core, forms, navigation, feedback, data,

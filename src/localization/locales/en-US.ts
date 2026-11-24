@@ -354,9 +354,6 @@ export const enUSMessages = {
     chooseYear: "Choose year",
     previousYears: "Previous years",
     nextYears: "Next years",
-    goToYear: "Go to year",
-    invalidYear: (min, max) => `Enter a year from ${min} to ${max}.`,
-    backToCalendar: "Back to calendar",
     dialogLabel: "Date picker",
   },
   dateRangePicker: {

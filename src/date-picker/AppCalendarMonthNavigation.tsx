@@ -1,4 +1,4 @@
-import { useEffect, useId, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { ChevronLeft16Regular } from '@fluentui/react-icons/svg/chevron-left'
 import { ChevronRight16Regular } from '@fluentui/react-icons/svg/chevron-right'
 import { useAppLocale } from '../localization/useAppLocale'
@@ -15,7 +15,6 @@ interface AppCalendarMonthNavigationProps {
   latestMonth: AppDateValue
   onChooseYear: (year: number) => void
   onChooseMonth: (month: AppDateValue) => void
-  onBack: () => void
 }
 
 const YEARS_PER_PAGE = 12
@@ -28,21 +27,16 @@ export function AppCalendarMonthNavigation({
   latestMonth,
   onChooseYear,
   onChooseMonth,
-  onBack,
 }: AppCalendarMonthNavigationProps) {
   const {
     locale,
     messages: { datePicker: messages },
   } = useAppLocale()
   const { mode, year } = navigation
-  const [yearInput, setYearInput] = useState(String(year))
-  const [invalidYear, setInvalidYear] = useState(false)
   const [yearPage, setYearPage] = useState(() =>
     Math.floor((year - earliestMonth.year) / YEARS_PER_PAGE),
   )
-  const inputRef = useRef<HTMLInputElement>(null)
-  const monthRef = useRef<HTMLButtonElement>(null)
-  const errorId = useId()
+  const preferredOptionRef = useRef<HTMLButtonElement>(null)
   const lastPage = Math.floor((latestMonth.year - earliestMonth.year) / YEARS_PER_PAGE)
   const currentPage = Math.min(yearPage, lastPage)
   const firstYear = earliestMonth.year + currentPage * YEARS_PER_PAGE
@@ -60,28 +54,8 @@ export function AppCalendarMonthNavigation({
   const focusedMonth = Math.max(minMonth, Math.min(displayedMonth.month, maxMonth))
 
   useEffect(() => {
-    if (mode === 'year') {
-      inputRef.current?.focus({ preventScroll: true })
-      inputRef.current?.select()
-    } else {
-      monthRef.current?.focus({ preventScroll: true })
-    }
+    preferredOptionRef.current?.focus({ preventScroll: true })
   }, [mode, year])
-
-  const submitYear = () => {
-    const input = yearInput.trim().normalize('NFKC')
-    const nextYear = Number(input)
-    if (
-      !/^\d{1,4}$/.test(input) ||
-      nextYear < earliestMonth.year ||
-      nextYear > latestMonth.year
-    ) {
-      setInvalidYear(true)
-      inputRef.current?.focus({ preventScroll: true })
-      return
-    }
-    onChooseYear(nextYear)
-  }
 
   return (
     <div
@@ -95,80 +69,46 @@ export function AppCalendarMonthNavigation({
       role="group"
     >
       {mode === 'year' ? (
-        <>
-          <div className="app-calendar__year-entry">
-            <input
-              aria-describedby={invalidYear ? errorId : undefined}
-              aria-invalid={invalidYear || undefined}
-              aria-label={messages.chooseYear}
-              className="app-calendar__year-input app-input-frame"
-              inputMode="numeric"
-              onChange={(event) => {
-                setYearInput(event.target.value)
-                setInvalidYear(false)
-              }}
-              onKeyDown={(event) => {
-                if (event.key === 'Enter' && !event.nativeEvent.isComposing) {
-                  event.preventDefault()
-                  submitYear()
-                }
-              }}
-              ref={inputRef}
-              type="text"
-              value={yearInput}
-            />
-            <button className="app-calendar__option" onClick={submitYear} type="button">
-              {messages.goToYear}
-            </button>
+        <div className="app-calendar__year-pages">
+          <button
+            aria-label={messages.previousYears}
+            className="app-calendar__nav"
+            disabled={currentPage === 0}
+            onClick={() => setYearPage(currentPage - 1)}
+            type="button"
+          >
+            <ChevronLeft16Regular aria-hidden="true" />
+          </button>
+          <div className="app-calendar__choices">
+            {Array.from(
+              { length: Math.min(YEARS_PER_PAGE, latestMonth.year - firstYear + 1) },
+              (_, index) => {
+                const option = firstYear + index
+                return (
+                  <button
+                    aria-current={option === year ? 'date' : undefined}
+                    className="app-calendar__option"
+                    key={option}
+                    onClick={() => onChooseYear(option)}
+                    ref={option === year ? preferredOptionRef : undefined}
+                    type="button"
+                  >
+                    {yearFormatter.format(option)}
+                  </button>
+                )
+              },
+            )}
           </div>
-          {invalidYear && (
-            <div className="app-calendar__year-error" id={errorId} role="alert">
-              {messages.invalidYear(
-                yearFormatter.format(earliestMonth.year),
-                yearFormatter.format(latestMonth.year),
-              )}
-            </div>
-          )}
-          <div className="app-calendar__year-pages">
-            <button
-              aria-label={messages.previousYears}
-              className="app-calendar__nav"
-              disabled={currentPage === 0}
-              onClick={() => setYearPage(currentPage - 1)}
-              type="button"
-            >
-              <ChevronLeft16Regular aria-hidden="true" />
-            </button>
-            <div className="app-calendar__choices">
-              {Array.from(
-                { length: Math.min(YEARS_PER_PAGE, latestMonth.year - firstYear + 1) },
-                (_, index) => {
-                  const option = firstYear + index
-                  return (
-                    <button
-                      aria-current={option === year ? 'date' : undefined}
-                      className="app-calendar__option"
-                      key={option}
-                      onClick={() => onChooseYear(option)}
-                      type="button"
-                    >
-                      {yearFormatter.format(option)}
-                    </button>
-                  )
-                },
-              )}
-            </div>
-            <button
-              aria-label={messages.nextYears}
-              className="app-calendar__nav"
-              disabled={currentPage === lastPage}
-              onClick={() => setYearPage(currentPage + 1)}
-              type="button"
-            >
-              <ChevronRight16Regular aria-hidden="true" />
-            </button>
-          </div>
-        </>
+          <button
+            aria-label={messages.nextYears}
+            className="app-calendar__nav"
+            disabled={currentPage === lastPage}
+            onClick={() => setYearPage(currentPage + 1)}
+            type="button"
+          >
+            <ChevronRight16Regular aria-hidden="true" />
+          </button>
+        </div>
       ) : (
         <div className="app-calendar__choices">
           {Array.from({ length: 12 }, (_, index) => {
@@ -187,7 +127,7 @@ export function AppCalendarMonthNavigation({
                 disabled={month < minMonth || month > maxMonth}
                 key={month}
                 onClick={() => onChooseMonth(value)}
-                ref={month === focusedMonth ? monthRef : undefined}
+                ref={month === focusedMonth ? preferredOptionRef : undefined}
                 type="button"
               >
                 {monthFormatter.format(date)}
@@ -196,13 +136,6 @@ export function AppCalendarMonthNavigation({
           })}
         </div>
       )}
-      <button
-        className="app-calendar__option app-calendar__back"
-        onClick={onBack}
-        type="button"
-      >
-        {messages.backToCalendar}
-      </button>
     </div>
   )
 }
