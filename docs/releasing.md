@@ -5,8 +5,11 @@
 1. Add user-visible changes to the `Unreleased` section of
    [CHANGELOG.md](../CHANGELOG.md).
 2. Update [migration.md](migration.md) for a breaking change or deprecation.
+   Update the affected [consumer skill references](../skills/react-desktop-shell/SKILL.md)
+   when changing public imports, props, or component behavior.
 3. Run `npm run verify` during normal development.
-4. Run `npm pack --dry-run` and inspect the file list and package size.
+4. Run `npm pack --dry-run` and inspect the file list and package size, including
+   `skills/react-desktop-shell/SKILL.md` and its `references/` directory.
 5. Bump the version only after the release contents are final.
 
 `npm run verify:publish` is also run automatically by `prepack`. It checks

@@ -8,6 +8,8 @@ All notable changes to this project are documented here. The format follows
 
 ### Added
 
+- Bundled consumer skill and AI setup guide with version-aware component
+  selection and public-import recipes adapted from the example application.
 - Domain entry points and styles for core, forms, navigation, feedback, data,
   and AI consumers.
 - Standalone `AppProvider` services and platform adapters.

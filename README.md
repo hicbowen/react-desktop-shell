@@ -21,6 +21,7 @@ For smaller dependency and style graphs, import a domain entry point:
 
 ```tsx
 import { AppTextBox, AppDatePicker } from 'react-desktop-shell/forms'
+import 'react-desktop-shell/core/style.css'
 import 'react-desktop-shell/forms/style.css'
 ```
 
@@ -31,12 +32,7 @@ Available domains are `core`, `forms`, `navigation`, `feedback`, `data`, and
 ## Quick start
 
 ```tsx
-import {
-  AppCommandProvider,
-  AppProvider,
-  AppShell,
-  type AppCommand,
-} from 'react-desktop-shell'
+import { AppCommandProvider, AppShell, type AppCommand } from 'react-desktop-shell'
 import 'react-desktop-shell/style.css'
 
 const commands: AppCommand[] = [
@@ -50,13 +46,11 @@ const commands: AppCommand[] = [
 
 export function App() {
   return (
-    <AppProvider locale="en-US">
-      <AppCommandProvider commands={commands}>
-        <AppShell title="My desktop app">
-          <Workspace />
-        </AppShell>
-      </AppCommandProvider>
-    </AppProvider>
+    <AppCommandProvider commands={commands}>
+      <AppShell locale="en-US" title="My desktop app">
+        <Workspace />
+      </AppShell>
+    </AppCommandProvider>
   )
 }
 ```
@@ -84,12 +78,26 @@ operations. The shell adds desktop layout and overlay hosts.
 
 ## Documentation
 
+- [AI coding assistant setup and copyable prompt](docs/ai.md)
+- [Consumer skill](skills/react-desktop-shell/SKILL.md)
 - [Component and API reference](docs/components.md)
 - [Migration and deprecation guide](docs/migration.md)
 - [Release process](docs/releasing.md)
 - [Changelog](CHANGELOG.md)
 
 The example application is available in [`example/`](example/).
+
+## Use with an AI coding assistant
+
+The npm package includes `skills/react-desktop-shell/`: a short skill entry
+point and focused recipes adapted from the example application. Install it
+in your assistant's skill directory, or point a file-capable assistant to the
+bundled `SKILL.md`. The skill checks your installed version before choosing
+components, props, imports, and styles.
+
+See [AI setup](docs/ai.md) for a Codex project-skill installation command and
+a general-purpose prompt. Installing the npm package alone does not activate
+the skill in an editor.
 
 ## Development
 
