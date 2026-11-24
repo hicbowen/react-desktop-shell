@@ -376,6 +376,7 @@ export function AppDateRangePicker({
           isDateUnavailable={isDateUnavailable}
           maxValue={maxValue}
           minValue={minValue}
+          navigationCancelRef={overlay.navigationCancelRef}
           onDateHover={setHoveredDate}
           onDateSelect={selectDate}
           onDisplayedMonthChange={setDisplayedMonth}

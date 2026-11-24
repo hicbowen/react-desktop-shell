@@ -137,6 +137,9 @@ objects or strings. Range controls use `{ start, end } | null`. Use exported
 parse/format helpers for serialization and keep time-zone conversion in the
 application. `allowClear` is the date/time clearing prop; it is not `clearable`.
 
+The calendar header offers month and year navigation. Browsing changes the
+displayed month. Selecting a day updates the date or the pending date range.
+
 `AppNumberBox` commits valid editing text on blur/Enter and restores the last
 committed value on Escape. Preserve `null` when using `allowEmpty` rather than
 silently turning it into zero.

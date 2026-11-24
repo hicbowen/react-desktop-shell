@@ -341,6 +341,13 @@ export const zhCNMessages = {
     clearLabel: "清除日期",
     previousMonthLabel: "上个月",
     nextMonthLabel: "下个月",
+    chooseMonth: "选择月份",
+    chooseYear: "选择年份",
+    previousYears: "上一组年份",
+    nextYears: "下一组年份",
+    goToYear: "跳转到年份",
+    invalidYear: (min, max) => `请输入 ${min} 至 ${max} 之间的年份。`,
+    backToCalendar: "返回日历",
     dialogLabel: "日期选择器",
   },
   dateRangePicker: {

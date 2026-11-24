@@ -1,5 +1,6 @@
 import {
   addDays,
+  appDateToLocalDate,
   clampAppDate,
   compareAppDates,
   startOfMonth,
@@ -11,11 +12,7 @@ export function getCalendarMonthDays(
   firstDayOfWeek: AppWeekDay,
 ) {
   const first = startOfMonth(month)
-  const firstWeekDay = new Date(
-    first.year,
-    first.month - 1,
-    first.day,
-  ).getDay()
+  const firstWeekDay = appDateToLocalDate(first).getDay()
   const leadingDays = (firstWeekDay - firstDayOfWeek + 7) % 7
   const gridStart = addDays(first, -leadingDays)
   return Array.from({ length: 42 }, (_, index) => addDays(gridStart, index))

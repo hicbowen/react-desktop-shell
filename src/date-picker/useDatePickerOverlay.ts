@@ -31,6 +31,7 @@ export function useDatePickerOverlay({
   const visible = controlled ? open : internalOpen
   const overlayHost = useAppOverlayHost()
   const overlayTree = useOverlayTree(visible, overlayRef)
+  const navigationCancelRef = useRef<(() => void) | null>(null)
   const previousVisibleRef = useRef(visible)
   const pendingCloseReasonRef = useRef<PickerCloseReason | null>(null)
   const onAfterCloseRef = useRef(onAfterClose)
@@ -73,7 +74,13 @@ export function useDatePickerOverlay({
     open: visible,
     overlayRef,
     triggerRef: anchorRef,
-    onDismiss: requestClose,
+    onDismiss: (reason) => {
+      if (reason === 'escape' && navigationCancelRef.current) {
+        navigationCancelRef.current()
+      } else {
+        requestClose(reason)
+      }
+    },
     closeOnExternalScroll: false,
     closeOnResize: false,
     closeOnWindowBlur: true,
@@ -88,6 +95,7 @@ export function useDatePickerOverlay({
     requestClose,
     overlayHost,
     overlayTree,
+    navigationCancelRef,
     position,
   }
 }

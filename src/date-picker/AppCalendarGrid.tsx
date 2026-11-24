@@ -120,6 +120,9 @@ export function AppCalendarGrid({
             {days
               .slice(weekIndex * 7, weekIndex * 7 + 7)
               .map((value) => {
+                if (value.year < 0 || value.year > 9999) {
+                  return <td className="app-calendar__cell" key={value.day} role="gridcell" />
+                }
                 const outsideMonth =
                   value.year !== month.year || value.month !== month.month
                 const unavailable = Boolean(isDateUnavailable?.(value))

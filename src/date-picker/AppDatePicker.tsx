@@ -190,6 +190,7 @@ export function AppDatePicker({
           isDateUnavailable={isDateUnavailable}
           maxValue={maxValue}
           minValue={minValue}
+          navigationCancelRef={overlay.navigationCancelRef}
           onDateSelect={selectDate}
           onDisplayedMonthChange={setDisplayedMonth}
           onFocusedDateChange={setFocusedDate}

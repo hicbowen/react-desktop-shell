@@ -1041,6 +1041,11 @@ minimum and maximum dates, unavailable-date callbacks, `AppField`, clear
 actions, and dialog-local overlays.
 `minValue` and `maxValue` also constrain calendar month navigation.
 
+Click the month in the calendar header to choose a month directly, or click
+the year to browse nearby years or enter a year, then choose its month. This
+changes the displayed month. Select a day to change the date value. The same
+navigation is available in `AppCalendar` and `AppDateRangePicker`.
+
 ```tsx
 const [date, setDate] = useState<AppDateValue | null>(null)
 

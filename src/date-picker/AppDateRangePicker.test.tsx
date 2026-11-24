@@ -129,6 +129,37 @@ describe('AppDateRangePicker', () => {
       ) ?? [],
     ).find((button) => button.textContent === label)!
 
+  it('keeps a pending start date while navigating years and months', () => {
+    const change = vi.fn()
+    render(<AppDateRangePicker defaultOpen onValueChange={change} visibleMonths={2} />)
+    flushFrames()
+    clickDate('2026-07-20')
+
+    const clickNavigation = (label: string) => act(() => {
+      Array.from(popup()!.querySelectorAll('button')).find((button) =>
+        (button.getAttribute('aria-label') ?? button.textContent) === label,
+      )!.click()
+    })
+    clickNavigation('Choose year · 2026')
+    act(() => document.activeElement?.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true })))
+    expect(popup()?.querySelector('.app-calendar__chooser')).toBeNull()
+    expect(document.activeElement?.getAttribute('aria-label')).toBe('Choose year · 2026')
+
+    clickNavigation('Choose year · 2026')
+    clickNavigation('2027')
+    clickNavigation('January')
+    expect(popup()?.querySelectorAll('.app-calendar__grid')).toHaveLength(2)
+    expect(action('Apply').disabled).toBe(true)
+    expect(change).not.toHaveBeenCalled()
+
+    clickDate('2027-01-05')
+    act(() => action('Apply').click())
+    expect(change).toHaveBeenCalledWith({
+      start: { year: 2026, month: 7, day: 20 },
+      end: { year: 2027, month: 1, day: 5 },
+    })
+  })
+
   it('keeps selection pending until Apply and sorts endpoints', () => {
     const change = vi.fn()
     render(

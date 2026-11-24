@@ -331,6 +331,13 @@ export interface AppLocaleMessages {
     clearLabel: string;
     previousMonthLabel: string;
     nextMonthLabel: string;
+    chooseMonth: string;
+    chooseYear: string;
+    previousYears: string;
+    nextYears: string;
+    goToYear: string;
+    invalidYear: (min: string, max: string) => string;
+    backToCalendar: string;
     dialogLabel: string;
   };
   dateRangePicker: {
